@@ -42,6 +42,16 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(redirectUrl)
   }
 
+  // Admin-only: redirect non-admins away from /admin/*
+  if (pathname.startsWith('/admin') && user) {
+    const role = user.user_metadata?.role ?? 'member'
+    if (role !== 'admin') {
+      const redirectUrl = request.nextUrl.clone()
+      redirectUrl.pathname = role === 'gym_owner' ? '/gym-dashboard' : '/dashboard'
+      return NextResponse.redirect(redirectUrl)
+    }
+  }
+
   return supabaseResponse
 }
 

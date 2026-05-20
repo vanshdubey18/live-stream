@@ -1,8 +1,23 @@
-export default function GymsPage() {
-  return (
-    <main className="min-h-screen bg-[#0a0a0a] p-8">
-      <h1 className="text-white text-2xl font-bold mb-6">Gyms</h1>
-      <p className="text-[#888888]">Browse partner gyms coming soon.</p>
-    </main>
-  )
+import { createClient } from '@/lib/supabase/server'
+import { getAllActiveGyms } from '@/lib/supabase/queries'
+import BrowseGymsClient from './BrowseGymsClient'
+
+export default async function BrowseGymsPage() {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  const gyms = await getAllActiveGyms()
+
+  // Get member's existing gym IDs so we can show "Joined" badge
+  let joinedGymIds: string[] = []
+  if (user) {
+    const { data } = await supabase
+      .from('memberships')
+      .select('gym_id')
+      .eq('user_id', user.id)
+      .eq('status', 'active')
+    joinedGymIds = data?.map(m => m.gym_id) ?? []
+  }
+
+  return <BrowseGymsClient gyms={gyms} joinedGymIds={joinedGymIds} isLoggedIn={!!user} />
 }

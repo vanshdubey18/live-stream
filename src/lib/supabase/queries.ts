@@ -107,6 +107,42 @@ export async function getNextSessionForGym(gymId: string) {
   return data
 }
 
+export async function getAllActiveGyms() {
+  const supabase = createClient()
+  const { data, error } = await supabase
+    .from('gyms')
+    .select('id, slug, name, city, location, disciplines, logo_url, description')
+    .eq('status', 'active')
+    .order('created_at', { ascending: false })
+  if (error) { console.error('getAllActiveGyms:', error); return [] }
+  return data ?? []
+}
+
+export async function getGymBySlug(slug: string) {
+  const supabase = createClient()
+  const { data, error } = await supabase
+    .from('gyms')
+    .select('*')
+    .eq('slug', slug)
+    .eq('status', 'active')
+    .maybeSingle()
+  if (error) { console.error('getGymBySlug:', error); return null }
+  return data
+}
+
+export async function getMembershipForGym(userId: string, gymId: string) {
+  const supabase = createClient()
+  const { data, error } = await supabase
+    .from('memberships')
+    .select('id, plan_type, status, free_until, current_period_end')
+    .eq('user_id', userId)
+    .eq('gym_id', gymId)
+    .eq('status', 'active')
+    .maybeSingle()
+  if (error) return null
+  return data
+}
+
 // ─── Gym owner queries ────────────────────────────────────────────────────────
 
 export async function getGymByOwnerId(userId: string) {

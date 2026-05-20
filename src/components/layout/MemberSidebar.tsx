@@ -17,7 +17,7 @@ import {
 
 const navItems = [
   { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-  { label: 'My Gyms', href: '/dashboard/gyms', icon: Building2 },
+  { label: 'Browse Gyms', href: '/gyms', icon: Building2 },
   { label: 'Schedule', href: '/dashboard/schedule', icon: Calendar },
   { label: 'Replays', href: '/dashboard/replays', icon: PlaySquare },
   { label: 'Billing', href: '/dashboard/billing', icon: CreditCard },

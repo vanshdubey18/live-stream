@@ -1,10 +1,15 @@
-export default function GymSignupPage() {
+import { createClient } from '@/lib/supabase/server'
+import GymSignupClient from './GymSignupClient'
+
+export default async function GymSignupPage() {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
   return (
-    <main className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
-      <div className="bg-[#111111] p-8 rounded-lg w-full max-w-md">
-        <h1 className="text-white text-2xl font-bold mb-6">Gym Sign Up</h1>
-        <p className="text-[#888888]">Gym registration coming soon.</p>
-      </div>
-    </main>
+    <GymSignupClient
+      isLoggedIn={!!user}
+      prefillName={user?.user_metadata?.full_name ?? ''}
+      prefillEmail={user?.email ?? ''}
+    />
   )
 }

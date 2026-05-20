@@ -8,20 +8,19 @@ import {
   LogOut, Menu, X, ChevronRight,
 } from 'lucide-react'
 
-const navItems = [
-  { label: 'Overview', href: '/admin', icon: LayoutDashboard },
-  { label: 'Gym Applications', href: '/admin/applications', icon: Building2, badge: 2 },
-  { label: 'Active Gyms', href: '/admin/gyms', icon: CheckSquare },
-  { label: 'All Members', href: '/admin/members', icon: Users },
-  { label: 'Coupons', href: '/admin/coupons', icon: Ticket },
-  { label: 'Payouts', href: '/admin/payouts', icon: DollarSign },
-  { label: 'Analytics', href: '/admin/analytics', icon: BarChart2 },
-  { label: 'Settings', href: '/admin/settings', icon: Settings },
-]
+interface AdminSidebarProps { active?: string; pendingCount?: number }
 
-interface AdminSidebarProps { active?: string }
-
-export default function AdminSidebar({ active = 'Overview' }: AdminSidebarProps) {
+export default function AdminSidebar({ active = 'Overview', pendingCount = 0 }: AdminSidebarProps) {
+  const navItems = [
+    { label: 'Overview', href: '/admin', icon: LayoutDashboard },
+    { label: 'Gym Applications', href: '/admin/applications', icon: Building2, badge: pendingCount > 0 ? pendingCount : undefined },
+    { label: 'Active Gyms', href: '/admin/gyms', icon: CheckSquare },
+    { label: 'All Members', href: '/admin/members', icon: Users },
+    { label: 'Coupons', href: '/admin/coupons', icon: Ticket },
+    { label: 'Payouts', href: '/admin/payouts', icon: DollarSign },
+    { label: 'Analytics', href: '/admin/analytics', icon: BarChart2 },
+    { label: 'Settings', href: '/admin/settings', icon: Settings },
+  ]
   const [open, setOpen] = useState(false)
   const router = useRouter()
 

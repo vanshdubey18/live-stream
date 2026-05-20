@@ -1,0 +1,251 @@
+'use client'
+
+import { useState } from 'react'
+import { Users, Building2, Clock, Radio, AlertTriangle, TrendingUp, ExternalLink } from 'lucide-react'
+import AdminSidebar from '@/components/layout/AdminSidebar'
+import AdminStatsCard from '@/components/admin/AdminStatsCard'
+import RevenueChart from '@/components/admin/RevenueChart'
+import ActivityFeed from '@/components/admin/ActivityFeed'
+
+interface Stats {
+  memberCount: number
+  gymCount: number
+  pendingCount: number
+  liveCount: number
+}
+
+interface Props {
+  stats: Stats
+  gyms: any[]
+  members: any[]
+  coupons: any[]
+  payouts: any[]
+}
+
+function formatDate(iso: string) {
+  return new Date(iso).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+}
+
+export default function AdminOverviewClient({ stats, gyms, members, coupons, payouts }: Props) {
+  const [activeTab, setActiveTab] = useState<'gyms' | 'members'>('gyms')
+
+  const recentGyms = gyms.slice(0, 5)
+  const recentMembers = members.slice(0, 5)
+
+  const totalRevenuePaise = payouts.reduce((acc: number, p: any) => acc + (p.amount_paise ?? 0), 0)
+  const platformCutPaise = Math.round(totalRevenuePaise * 0.3)
+
+  return (
+    <div className="min-h-screen bg-[#0a0a0a] flex">
+      <AdminSidebar active="Overview" pendingCount={stats.pendingCount} />
+
+      <main className="flex-1 lg:ml-64 min-w-0">
+        {/* Top bar */}
+        <div className="sticky top-0 z-20 bg-[#0a0a0a]/90 backdrop-blur-md border-b border-white/5 px-6 h-16 flex items-center justify-between mt-14 lg:mt-0">
+          <div>
+            <h1 className="text-white font-bold text-lg">Admin Overview</h1>
+            <p className="text-[#888888] text-xs">Platform-wide stats and management</p>
+          </div>
+          <a href="/admin/applications"
+            className="flex items-center gap-1.5 bg-[#DC2626] hover:bg-red-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition-colors">
+            Review Applications
+            {stats.pendingCount > 0 && (
+              <span className="bg-white/20 text-white text-xs font-black px-1.5 py-0.5 rounded-md ml-0.5">
+                {stats.pendingCount}
+              </span>
+            )}
+          </a>
+        </div>
+
+        <div className="px-6 py-6 space-y-8 max-w-6xl">
+
+          {/* Pending alert */}
+          {stats.pendingCount > 0 && (
+            <div className="flex items-center gap-3 bg-yellow-500/5 border border-yellow-500/20 rounded-2xl px-5 py-4">
+              <AlertTriangle size={18} className="text-yellow-400 shrink-0" />
+              <div className="flex-1">
+                <p className="text-yellow-400 font-semibold text-sm">
+                  {stats.pendingCount} gym application{stats.pendingCount > 1 ? 's' : ''} awaiting review
+                </p>
+                <p className="text-yellow-400/60 text-xs mt-0.5">Review and approve or reject pending applications</p>
+              </div>
+              <a href="/admin/applications"
+                className="flex items-center gap-1.5 text-yellow-400 text-xs font-semibold hover:text-yellow-300 transition-colors">
+                Review <ExternalLink size={12} />
+              </a>
+            </div>
+          )}
+
+          {/* Stats */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <AdminStatsCard
+              label="Total Members"
+              value={String(stats.memberCount)}
+              sub="Active memberships"
+              icon={<Users size={16} className="text-green-400" />}
+              trend="up"
+            />
+            <AdminStatsCard
+              label="Active Gyms"
+              value={String(stats.gymCount)}
+              sub={`${stats.pendingCount} pending approval`}
+              icon={<Building2 size={16} className="text-blue-400" />}
+              trend={stats.pendingCount > 0 ? 'neutral' : 'up'}
+            />
+            <AdminStatsCard
+              label="Platform Revenue"
+              value={`₹${(platformCutPaise / 100).toLocaleString('en-IN')}`}
+              sub="30% cut (all time)"
+              icon={<TrendingUp size={16} className="text-[#DC2626]" />}
+              trend="up"
+              highlight
+            />
+            <AdminStatsCard
+              label="Live Now"
+              value={String(stats.liveCount)}
+              sub="Active streams"
+              icon={<Radio size={16} className="text-[#DC2626]" />}
+              trend={stats.liveCount > 0 ? 'live' : 'neutral'}
+            />
+          </div>
+
+          {/* Revenue chart */}
+          <RevenueChart />
+
+          {/* Gyms + Members tabs */}
+          <section>
+            <div className="flex items-center gap-1 mb-4 bg-white/5 rounded-xl p-1 w-fit">
+              {(['gyms', 'members'] as const).map(tab => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`px-4 py-1.5 rounded-lg text-sm font-semibold transition-all capitalize
+                    ${activeTab === tab ? 'bg-[#DC2626] text-white' : 'text-[#888888] hover:text-white'}`}
+                >
+                  {tab}
+                </button>
+              ))}
+            </div>
+
+            {activeTab === 'gyms' ? (
+              <div className="bg-[#111111] border border-white/5 rounded-2xl overflow-hidden">
+                <div className="flex items-center justify-between px-5 py-4 border-b border-white/5">
+                  <h3 className="text-white font-bold text-sm">Recent Gyms</h3>
+                  <a href="/admin/gyms" className="text-[#888888] hover:text-white text-xs transition-colors flex items-center gap-1">
+                    View all <ExternalLink size={11} />
+                  </a>
+                </div>
+                {recentGyms.length === 0 ? (
+                  <div className="px-5 py-10 text-center text-[#888888] text-sm">No gyms yet.</div>
+                ) : (
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-white/5">
+                        {['Name', 'City', 'Status', 'Joined'].map(h => (
+                          <th key={h} className="px-4 py-3 text-left text-xs font-bold text-[#888888] uppercase tracking-wider">{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-white/5">
+                      {recentGyms.map((g: any) => (
+                        <tr key={g.id} className="hover:bg-white/2 transition-colors">
+                          <td className="px-4 py-3.5 text-white font-semibold">{g.name}</td>
+                          <td className="px-4 py-3.5 text-[#888888]">{g.city}</td>
+                          <td className="px-4 py-3.5">
+                            <span className={`text-xs font-semibold px-2.5 py-1 rounded-full
+                              ${g.status === 'active' ? 'bg-green-500/10 text-green-400' :
+                                g.status === 'pending' ? 'bg-yellow-500/10 text-yellow-400' :
+                                'bg-red-500/10 text-red-400'}`}>
+                              {g.status}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3.5 text-[#888888] text-xs">{formatDate(g.created_at)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+              </div>
+            ) : (
+              <div className="bg-[#111111] border border-white/5 rounded-2xl overflow-hidden">
+                <div className="flex items-center justify-between px-5 py-4 border-b border-white/5">
+                  <h3 className="text-white font-bold text-sm">Recent Members</h3>
+                  <a href="/admin/members" className="text-[#888888] hover:text-white text-xs transition-colors flex items-center gap-1">
+                    View all <ExternalLink size={11} />
+                  </a>
+                </div>
+                {recentMembers.length === 0 ? (
+                  <div className="px-5 py-10 text-center text-[#888888] text-sm">No members yet.</div>
+                ) : (
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-white/5">
+                        {['Name', 'Email', 'Role', 'Joined'].map(h => (
+                          <th key={h} className="px-4 py-3 text-left text-xs font-bold text-[#888888] uppercase tracking-wider">{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-white/5">
+                      {recentMembers.map((m: any) => (
+                        <tr key={m.id} className="hover:bg-white/2 transition-colors">
+                          <td className="px-4 py-3.5 text-white font-semibold">{m.name ?? '—'}</td>
+                          <td className="px-4 py-3.5 text-[#888888]">{m.email}</td>
+                          <td className="px-4 py-3.5">
+                            <span className={`text-xs font-medium px-2 py-0.5 rounded-full
+                              ${m.role === 'admin' ? 'bg-[#DC2626]/10 text-[#DC2626]' :
+                                m.role === 'gym_owner' ? 'bg-blue-500/10 text-blue-400' :
+                                'bg-white/5 text-[#888888]'}`}>
+                              {m.role}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3.5 text-[#888888] text-xs">{formatDate(m.created_at)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+              </div>
+            )}
+          </section>
+
+          {/* Bottom: Activity feed + Payouts */}
+          <div className="grid lg:grid-cols-2 gap-6">
+            <ActivityFeed />
+
+            <div className="bg-[#111111] border border-white/5 rounded-2xl overflow-hidden">
+              <div className="flex items-center justify-between px-5 py-4 border-b border-white/5">
+                <h3 className="text-white font-bold text-sm">Recent Payouts</h3>
+                <a href="/admin/payouts" className="text-[#888888] hover:text-white text-xs transition-colors flex items-center gap-1">
+                  View all <ExternalLink size={11} />
+                </a>
+              </div>
+              {payouts.length === 0 ? (
+                <div className="px-5 py-10 text-center text-[#888888] text-sm">No payouts yet.</div>
+              ) : (
+                <div className="divide-y divide-white/5">
+                  {payouts.slice(0, 6).map((p: any) => (
+                    <div key={p.id} className="flex items-center justify-between px-5 py-3.5">
+                      <div>
+                        <p className="text-white text-sm font-semibold">{p.gyms?.name ?? 'Unknown Gym'}</p>
+                        <p className="text-[#555] text-xs mt-0.5">
+                          {new Date(p.period_start).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' })}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-white font-bold text-sm">₹{(p.amount_paise / 100).toLocaleString('en-IN')}</p>
+                        <p className={`text-xs font-semibold mt-0.5 ${p.status === 'paid' ? 'text-green-400' : 'text-yellow-400'}`}>
+                          {p.status}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+        </div>
+      </main>
+    </div>
+  )
+}

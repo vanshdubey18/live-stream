@@ -13,6 +13,7 @@ import {
   X,
   LogOut,
   ChevronRight,
+  Search,
 } from 'lucide-react'
 
 const navItems = [
@@ -26,6 +27,7 @@ const navItems = [
 
 interface MemberSidebarProps {
   active?: string
+  onSearchOpen?: () => void
 }
 
 export default function MemberSidebar({ active = 'Dashboard' }: MemberSidebarProps) {

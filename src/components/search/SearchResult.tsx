@@ -1,6 +1,6 @@
 'use client'
 
-import { User, Building2, BookOpen, Radio } from 'lucide-react'
+import { Building2, BookOpen, Radio } from 'lucide-react'
 
 export type ResultCategory = 'technique' | 'coach' | 'gym' | 'class'
 

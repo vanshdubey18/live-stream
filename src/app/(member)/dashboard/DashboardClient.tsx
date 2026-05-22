@@ -349,7 +349,7 @@ function EmptyGymCards({ prefs }: { prefs: MatpeakPrefs }) {
 }
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
-export default function DashboardClient({ user, memberships, upcoming, replays, liveSession }: Props) {
+export default function DashboardClient({ user, memberships, upcoming, liveSession }: Props) {
   const [prefs, setPrefs] = useState<MatpeakPrefs>({ disciplines: [], level: '', goal: '' })
   const grouped = groupByDay(upcoming)
 

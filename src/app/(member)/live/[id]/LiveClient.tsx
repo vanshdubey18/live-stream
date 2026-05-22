@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowLeft, PictureInPicture2, Settings, MessageCircle, CheckCircle2, Circle } from 'lucide-react'
 import Link from 'next/link'

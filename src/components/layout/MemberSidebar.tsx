@@ -30,18 +30,35 @@ interface MemberSidebarProps {
   onSearchOpen?: () => void
 }
 
-export default function MemberSidebar({ active = 'Dashboard' }: MemberSidebarProps) {
+export default function MemberSidebar({ active = 'Dashboard', onSearchOpen }: MemberSidebarProps) {
   const [open, setOpen] = useState(false)
   const router = useRouter()
+
+  function handleSearchClick() {
+    if (onSearchOpen) {
+      onSearchOpen()
+    } else {
+      window.dispatchEvent(new CustomEvent('open-search'))
+    }
+  }
 
   return (
     <>
       {/* Mobile top bar */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-[#0a0a0a] border-b border-white/5 px-4 h-14 flex items-center justify-between">
         <span className="text-xl font-black tracking-tighter text-[#DC2626]">MATPEAK</span>
-        <button onClick={() => setOpen(!open)} className="text-white">
-          {open ? <X size={22} /> : <Menu size={22} />}
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleSearchClick}
+            className="w-9 h-9 flex items-center justify-center rounded-xl text-[#888888] hover:text-white hover:bg-white/5 transition-all"
+            aria-label="Search"
+          >
+            <Search size={18} />
+          </button>
+          <button onClick={() => setOpen(!open)} className="text-white">
+            {open ? <X size={22} /> : <Menu size={22} />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile overlay */}
@@ -61,6 +78,20 @@ export default function MemberSidebar({ active = 'Dashboard' }: MemberSidebarPro
         {/* Logo */}
         <div className="h-16 flex items-center px-6 border-b border-white/5">
           <span className="text-xl font-black tracking-tighter text-[#DC2626]">MATPEAK</span>
+        </div>
+
+        {/* Search button */}
+        <div className="px-3 py-3 border-b border-white/5">
+          <button
+            onClick={handleSearchClick}
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-[#888888] hover:text-white hover:bg-white/5 transition-all group"
+          >
+            <Search size={18} className="group-hover:text-white shrink-0" />
+            <span className="flex-1 text-left">Search</span>
+            <kbd className="hidden lg:flex items-center gap-0.5 text-[#444] text-[10px] bg-white/5 border border-white/10 rounded px-1.5 py-0.5 font-mono">
+              ⌘K
+            </kbd>
+          </button>
         </div>
 
         {/* Nav */}

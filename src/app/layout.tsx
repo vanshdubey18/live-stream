@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import localFont from 'next/font/local'
 import './globals.css'
 import PageTransition from '@/components/layout/PageTransition'
+import SearchProvider from '@/components/search/SearchProvider'
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',
@@ -28,9 +29,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} antialiased bg-[#0a0a0a] text-white`}>
-        <PageTransition>
-          {children}
-        </PageTransition>
+        <SearchProvider>
+          <PageTransition>
+            {children}
+          </PageTransition>
+        </SearchProvider>
       </body>
     </html>
   )

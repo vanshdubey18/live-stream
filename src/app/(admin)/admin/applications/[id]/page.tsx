@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Check, X, Loader2, MapPin, Mail, Shield } from 'lucide-react'
+import { Check, X, Loader2, MapPin, Mail } from 'lucide-react'
 import AdminSidebar from '@/components/layout/AdminSidebar'
 import Toast from '@/components/gym-dashboard/Toast'
 

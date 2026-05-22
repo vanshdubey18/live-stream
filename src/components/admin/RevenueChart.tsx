@@ -1,6 +1,6 @@
 'use client'
 
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 
 const DATA = [
   { day: 'May 1', total: 3200, platform: 960 },
@@ -42,7 +42,7 @@ export default function RevenueChart() {
           <Tooltip
             contentStyle={{ backgroundColor: '#111', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12, fontSize: 12 }}
             labelStyle={{ color: '#fff', fontWeight: 700, marginBottom: 4 }}
-            formatter={(v: number) => [`₹${v.toLocaleString('en-IN')}`, undefined]}
+            formatter={(v) => [`₹${(v as number).toLocaleString('en-IN')}`]}
           />
           <Line type="monotone" dataKey="total" stroke="#DC2626" strokeWidth={2.5} dot={false} name="Total Revenue" />
           <Line type="monotone" dataKey="platform" stroke="#60A5FA" strokeWidth={2} dot={false} strokeDasharray="4 2" name="Platform Cut" />

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Users, Building2, Clock, Radio, AlertTriangle, TrendingUp, ExternalLink } from 'lucide-react'
+import { Users, Building2, Radio, AlertTriangle, TrendingUp, ExternalLink } from 'lucide-react'
 import AdminSidebar from '@/components/layout/AdminSidebar'
 import AdminStatsCard from '@/components/admin/AdminStatsCard'
 import RevenueChart from '@/components/admin/RevenueChart'
@@ -26,7 +26,7 @@ function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
 }
 
-export default function AdminOverviewClient({ stats, gyms, members, coupons, payouts }: Props) {
+export default function AdminOverviewClient({ stats, gyms, members, payouts }: Props) {
   const [activeTab, setActiveTab] = useState<'gyms' | 'members'>('gyms')
 
   const recentGyms = gyms.slice(0, 5)

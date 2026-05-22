@@ -1,6 +1,6 @@
 'use client'
 
-import { Radio, Pencil, Trash2 } from 'lucide-react'
+import { Radio, Trash2 } from 'lucide-react'
 import type { ScheduledClass } from './ScheduleClassModal'
 
 const disciplineColors: Record<string, string> = {

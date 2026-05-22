@@ -23,7 +23,7 @@ interface Props {
   isLoggedIn: boolean
 }
 
-export default function BrowseGymsClient({ gyms, joinedGymIds, isLoggedIn }: Props) {
+export default function BrowseGymsClient({ gyms, joinedGymIds }: Props) {
   const [search, setSearch] = useState('')
   const [activeDiscipline, setActiveDiscipline] = useState('')
 

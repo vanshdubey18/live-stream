@@ -1,4 +1,4 @@
-import { Clock, User } from 'lucide-react'
+import { User } from 'lucide-react'
 
 interface ClassRowProps {
   time: string

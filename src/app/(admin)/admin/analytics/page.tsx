@@ -70,7 +70,7 @@ export default function AnalyticsPage() {
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
                 <XAxis dataKey="month" tick={tickStyle} {...axisProps} />
                 <YAxis tickFormatter={v => `₹${v / 1000}K`} tick={tickStyle} {...axisProps} width={55} />
-                <Tooltip contentStyle={tooltipStyle} labelStyle={labelStyle} formatter={(v: number) => [`₹${v.toLocaleString('en-IN')}`, 'MRR']} />
+                <Tooltip contentStyle={tooltipStyle} labelStyle={labelStyle} formatter={(v) => [`₹${(v as number).toLocaleString('en-IN')}`, 'MRR']} />
                 <Line type="monotone" dataKey="mrr" stroke="#DC2626" strokeWidth={2.5} dot={false} />
               </LineChart>
             </ResponsiveContainer>
@@ -136,7 +136,7 @@ export default function AnalyticsPage() {
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" horizontal={false} />
                 <XAxis type="number" tickFormatter={v => `₹${v}K`} tick={tickStyle} {...axisProps} />
                 <YAxis type="category" dataKey="gym" tick={tickStyle} {...axisProps} width={100} />
-                <Tooltip contentStyle={tooltipStyle} labelStyle={labelStyle} formatter={(v: number) => [`₹${v},000`, 'Revenue']} />
+                <Tooltip contentStyle={tooltipStyle} labelStyle={labelStyle} formatter={(v) => [`₹${v},000`, 'Revenue']} />
                 <Bar dataKey="rev" fill="#DC2626" radius={[0, 4, 4, 0]} />
               </BarChart>
             </ResponsiveContainer>

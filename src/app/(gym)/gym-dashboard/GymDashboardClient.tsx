@@ -56,7 +56,7 @@ export default function GymDashboardClient({ gym, ownerName, sessions, coaches, 
     setToast('Class removed')
   }
 
-  function handleGoLive(id: string) {
+  function handleGoLive(_id: string) {
     setToast('Going live… (Mux integration coming soon)')
   }
 

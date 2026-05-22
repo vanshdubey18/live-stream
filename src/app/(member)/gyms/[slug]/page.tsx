@@ -3,16 +3,12 @@ import { createClient } from '@/lib/supabase/server'
 import { getGymBySlug, getGymCoaches, getGymSessions, getGymMemberCount, getMembershipForGym } from '@/lib/supabase/queries'
 import GymDetailClient from './GymDetailClient'
 
+
 export default async function GymDetailPage({ params }: { params: { slug: string } }) {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  const [gym, coaches, sessions] = await Promise.all([
-    getGymBySlug(params.slug),
-    // coaches and sessions fetched after gym is known
-    Promise.resolve(null),
-    Promise.resolve(null),
-  ])
+  const gym = await getGymBySlug(params.slug)
 
   if (!gym) notFound()
 

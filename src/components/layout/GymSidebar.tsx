@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter, usePathname } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import {
   LayoutDashboard, Radio, CalendarDays, Users,
   DollarSign, BarChart2, Settings, LogOut, Menu, X, ChevronRight,

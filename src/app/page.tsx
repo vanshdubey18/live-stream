@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { motion } from 'framer-motion'
 import {
   Menu,
   X,
@@ -146,14 +147,29 @@ function Navbar() {
 
 // ─── Hero ─────────────────────────────────────────────────────────────────────
 function Hero() {
+  const [videoError, setVideoError] = useState(false)
+
   return (
-    <section className="relative min-h-screen flex flex-col justify-center bg-[#0a0a0a] overflow-hidden">
-      {/* Red glow bottom-left */}
-      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-[#DC2626]/10 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-10 left-10 w-[300px] h-[300px] bg-[#DC2626]/8 rounded-full blur-[80px] pointer-events-none" />
+    <section className="relative min-h-screen flex flex-col justify-center bg-black overflow-hidden">
+      {/* Animated gradient overlay behind everything */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: 'linear-gradient(135deg, #000000 0%, #0a0a0a 40%, #0d0505 70%, #0a0a0a 100%)',
+          animation: 'gradientShift 8s ease-in-out infinite alternate',
+        }}
+      />
+
+      {/* Subtle animated red glow pulse */}
+      <div
+        className="absolute bottom-0 left-0 w-[700px] h-[700px] bg-[#DC2626]/8 rounded-full blur-[140px] pointer-events-none"
+        style={{ animation: 'pulseGlow 6s ease-in-out infinite alternate' }}
+      />
+      <div className="absolute top-20 right-0 w-[400px] h-[400px] bg-[#DC2626]/5 rounded-full blur-[120px] pointer-events-none" />
+
       {/* Subtle grid texture */}
       <div
-        className="absolute inset-0 opacity-[0.03] pointer-events-none"
+        className="absolute inset-0 opacity-[0.025] pointer-events-none"
         style={{
           backgroundImage:
             'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)',
@@ -161,30 +177,50 @@ function Hero() {
         }}
       />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-20">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
         {/* Badge */}
-        <div className="inline-flex items-center gap-2 bg-[#DC2626]/10 border border-[#DC2626]/30 rounded-full px-4 py-1.5 mb-8">
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="inline-flex items-center gap-2 bg-[#DC2626]/10 border border-[#DC2626]/30 rounded-full px-4 py-1.5 mb-8"
+        >
           <span className="w-1.5 h-1.5 rounded-full bg-[#DC2626] animate-pulse" />
           <span className="text-[#DC2626] text-xs font-semibold tracking-wide uppercase">
             Live classes streaming now
           </span>
-        </div>
+        </motion.div>
 
         {/* Headline */}
-        <h1 className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-black tracking-tighter leading-none mb-4">
+        <motion.h1
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-black tracking-tighter leading-none mb-4"
+        >
           <span className="text-white block">World-class training.</span>
           <span className="text-[#DC2626] block">Wherever you are.</span>
-        </h1>
+        </motion.h1>
 
         {/* Subtext */}
-        <p className="text-[#888888] text-lg sm:text-xl max-w-xl mt-6 mb-10 leading-relaxed">
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="text-[#888888] text-lg sm:text-xl max-w-xl mt-6 mb-10 leading-relaxed"
+        >
           Stream live classes from real MMA gyms.{' '}
           <span className="text-white/70">BJJ. Boxing. Muay Thai. Wrestling.</span>{' '}
           Join as a member of any gym worldwide.
-        </p>
+        </motion.p>
 
         {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="flex flex-col sm:flex-row gap-4 mb-14"
+        >
           <a
             href="/signup"
             className="inline-flex items-center justify-center gap-2 bg-[#DC2626] hover:bg-red-700 text-white font-bold px-8 py-4 rounded-xl text-base transition-all duration-200 hover:scale-[1.02] hover:shadow-lg hover:shadow-red-900/30"
@@ -197,10 +233,76 @@ function Hero() {
           >
             <Play size={16} className="fill-white" /> Browse Gyms
           </a>
-        </div>
+        </motion.div>
+
+        {/* ── Mock Video Player ────────────────────────────────── */}
+        <motion.div
+          initial={{ opacity: 0, y: 32 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.45 }}
+          className="relative w-full max-w-3xl mx-auto"
+          style={{ aspectRatio: '16/9' }}
+        >
+          {/* Outer glow ring */}
+          <div className="absolute -inset-[1px] rounded-2xl bg-gradient-to-br from-[#DC2626]/30 via-white/5 to-transparent pointer-events-none z-10" />
+
+          {/* Video element — 404s gracefully, triggers onError */}
+          {!videoError && (
+            <video
+              autoPlay
+              muted
+              loop
+              playsInline
+              onError={() => setVideoError(true)}
+              className="absolute inset-0 w-full h-full object-cover rounded-2xl"
+              src="/placeholder-video.mp4"
+            />
+          )}
+
+          {/* Styled placeholder — shown when video fails or as base layer */}
+          <div className="absolute inset-0 bg-[#111] rounded-2xl border border-white/10 overflow-hidden flex flex-col items-center justify-center gap-4">
+            {/* Red gradient tint overlay */}
+            <div className="absolute inset-0 bg-gradient-to-br from-[#DC2626]/15 via-transparent to-[#DC2626]/5 pointer-events-none" />
+
+            {/* Pulsing play icon */}
+            <div className="relative flex items-center justify-center">
+              <div className="absolute w-24 h-24 rounded-full bg-[#DC2626]/20 animate-ping" />
+              <div className="relative w-16 h-16 rounded-full bg-[#DC2626] flex items-center justify-center shadow-xl shadow-red-900/50">
+                <Play size={28} className="fill-white text-white ml-1" />
+              </div>
+            </div>
+
+            <p className="relative text-white/80 text-sm sm:text-base font-medium tracking-wide text-center px-4">
+              Watch real classes from real gyms
+            </p>
+
+            {/* Fake playback bar */}
+            <div className="absolute bottom-4 left-4 right-4 flex flex-col gap-1.5">
+              <div className="w-full h-0.5 bg-white/10 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-[#DC2626] rounded-full"
+                  style={{ width: '38%', animation: 'progressBar 12s linear infinite' }}
+                />
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-white/30 text-[10px] font-mono">0:47</span>
+                <span className="text-white/30 text-[10px] font-mono">2:03</span>
+              </div>
+            </div>
+
+            {/* Live badge */}
+            <div className="absolute top-4 left-4 flex items-center gap-1.5 bg-[#DC2626] rounded-full px-2.5 py-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+              <span className="text-white text-[10px] font-bold tracking-widest uppercase">Live</span>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Bottom fade into page bg */}
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#0a0a0a] to-transparent pointer-events-none" />
 
         {/* Stats */}
-        <div className="flex flex-col sm:flex-row gap-6 sm:gap-12 mt-16 pt-10 border-t border-white/5">
+        <div className="flex flex-col sm:flex-row gap-6 sm:gap-12 mt-12 pt-10 border-t border-white/5 relative z-10">
           {[
             { value: '50+', label: 'Coaches' },
             { value: '4', label: 'Disciplines' },
@@ -212,6 +314,144 @@ function Hero() {
                 {stat.label}
               </span>
             </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Keyframe styles */}
+      <style>{`
+        @keyframes gradientShift {
+          0%   { background-position: 0% 50%; }
+          100% { background-position: 100% 50%; }
+        }
+        @keyframes pulseGlow {
+          0%   { opacity: 0.5; transform: scale(0.95); }
+          100% { opacity: 1;   transform: scale(1.05); }
+        }
+        @keyframes progressBar {
+          0%   { width: 0%; }
+          100% { width: 100%; }
+        }
+      `}</style>
+    </section>
+  )
+}
+
+// ─── Starting Soon ─────────────────────────────────────────────────────────────
+const UPCOMING = [
+  {
+    title: 'Boxing Fundamentals',
+    gym: 'Strike Lab Boxing',
+    coach: 'Coach Arjun',
+    discipline: 'Boxing',
+    startsIn: 23,
+    level: 'Beginner',
+  },
+  {
+    title: 'Advanced Guard Passing',
+    gym: 'Xtreme MMA Mumbai',
+    coach: 'Coach Rajan',
+    discipline: 'BJJ',
+    startsIn: 47,
+    level: 'Advanced',
+  },
+  {
+    title: 'Muay Thai Clinch Work',
+    gym: 'Xtreme MMA Mumbai',
+    coach: 'Coach Siddhi',
+    discipline: 'Muay Thai',
+    startsIn: 91,
+    level: 'Intermediate',
+  },
+]
+
+const DISCIPLINE_COLORS: Record<string, string> = {
+  Boxing: 'bg-orange-500/15 text-orange-400 border-orange-500/25',
+  BJJ: 'bg-blue-500/15 text-blue-400 border-blue-500/25',
+  'Muay Thai': 'bg-yellow-500/15 text-yellow-400 border-yellow-500/25',
+  Wrestling: 'bg-green-500/15 text-green-400 border-green-500/25',
+}
+
+const LEVEL_COLORS: Record<string, string> = {
+  Beginner: 'bg-emerald-500/10 text-emerald-400',
+  Intermediate: 'bg-yellow-500/10 text-yellow-400',
+  Advanced: 'bg-red-500/10 text-red-400',
+}
+
+function StartingSoon() {
+  return (
+    <section className="bg-[#0a0a0a] border-t border-b border-white/5 py-16 px-4 sm:px-6 lg:px-8 overflow-hidden">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.55 }}
+          className="mb-10"
+        >
+          <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+            ⚡ Starting Soon
+          </h2>
+          <p className="text-[#888888] text-sm mt-1.5">
+            Live classes you can join right now
+          </p>
+        </motion.div>
+
+        {/* Cards — horizontal scroll on mobile */}
+        <div className="flex gap-4 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-3 sm:overflow-visible snap-x snap-mandatory sm:snap-none">
+          {UPCOMING.map((cls, i) => (
+            <motion.div
+              key={cls.title}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.5, delay: i * 0.12 }}
+              className="flex-shrink-0 w-72 sm:w-auto snap-start bg-[#111] border border-white/5 rounded-2xl p-5 flex flex-col gap-4 hover:border-white/10 transition-all duration-300"
+            >
+              {/* Top row: discipline pill + level badge */}
+              <div className="flex items-center justify-between">
+                <span
+                  className={`text-xs font-bold px-2.5 py-1 rounded-full border tracking-wide ${
+                    DISCIPLINE_COLORS[cls.discipline] ?? 'bg-white/10 text-white border-white/10'
+                  }`}
+                >
+                  {cls.discipline}
+                </span>
+                <span
+                  className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
+                    LEVEL_COLORS[cls.level] ?? 'bg-white/10 text-white'
+                  }`}
+                >
+                  {cls.level}
+                </span>
+              </div>
+
+              {/* Title */}
+              <h3 className="text-white font-bold text-base leading-snug">{cls.title}</h3>
+
+              {/* Gym + Coach */}
+              <div className="flex flex-col gap-1">
+                <span className="text-[#888888] text-xs">{cls.gym}</span>
+                <span className="text-[#666] text-xs">{cls.coach}</span>
+              </div>
+
+              {/* Countdown */}
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-[#DC2626] animate-pulse shrink-0" />
+                <span className="text-[#DC2626] text-sm font-bold">
+                  Starts in {cls.startsIn}m
+                </span>
+              </div>
+
+              {/* CTA */}
+              <a
+                href="/signup"
+                className="mt-auto w-full text-center py-2.5 rounded-xl text-sm font-bold text-white border border-white/10 hover:border-[#DC2626]/40 hover:bg-[#DC2626]/10 transition-all duration-200"
+              >
+                Try Free →
+              </a>
+            </motion.div>
           ))}
         </div>
       </div>
@@ -624,6 +864,7 @@ export default function HomePage() {
     <>
       <Navbar />
       <Hero />
+      <StartingSoon />
       <HowItWorks />
       <Disciplines />
       <Pricing />

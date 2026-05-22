@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import localFont from 'next/font/local'
 import './globals.css'
+import PageTransition from '@/components/layout/PageTransition'
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',
@@ -9,8 +10,14 @@ const geistSans = localFont({
 })
 
 export const metadata: Metadata = {
-  title: 'FightStream — Live Combat Sports',
+  title: 'MATPEAK — Train with the best',
   description: 'Watch live MMA, boxing, and combat sports from top gyms across India.',
+  keywords: ['combat sports', 'MMA', 'boxing', 'live streaming', 'gym', 'training'],
+  openGraph: {
+    title: 'MATPEAK — Train with the best',
+    description: 'Watch live MMA, boxing, and combat sports from top gyms across India.',
+    type: 'website',
+  },
 }
 
 export default function RootLayout({
@@ -21,7 +28,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} antialiased bg-[#0a0a0a] text-white`}>
-        {children}
+        <PageTransition>
+          {children}
+        </PageTransition>
       </body>
     </html>
   )

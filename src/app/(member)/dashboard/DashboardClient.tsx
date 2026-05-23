@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
+import { DEMO_SUMMARY } from '@/components/ai/SessionSummary'
 import {
   ChevronDown, User, CreditCard, LogOut,
   Radio, Calendar, Play, Clock, Flame,
@@ -529,6 +530,53 @@ export default function DashboardClient({ user, memberships, upcoming, liveSessi
             <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
               {CONTINUE_WATCHING.map((item) => (
                 <ContinueCard key={item.id} item={item} />
+              ))}
+            </div>
+          </FadeSection>
+
+          {/* ── SECTION 7: Recent Session Summaries ──────────────────────── */}
+          <FadeSection delay={0.6}>
+            <div className="flex items-center justify-between mb-4">
+              <SectionHeader>📝 Recent Session Summaries</SectionHeader>
+              <a href="/dashboard/replays" className="text-[#888] hover:text-white text-sm transition-colors">
+                View all
+              </a>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {[
+                { ...DEMO_SUMMARY, date: 'Today' },
+                { ...DEMO_SUMMARY, title: 'Advanced Guard Passing', discipline: 'BJJ', coach: 'Coach Rajan', duration: '62 minutes', date: 'Yesterday' },
+                { ...DEMO_SUMMARY, title: 'Boxing Fundamentals', discipline: 'Boxing', coach: 'Coach Arjun', gym: 'Strike Lab Boxing', duration: '45 minutes', date: '2 days ago' },
+              ].map((s, i) => (
+                <motion.a
+                  key={i}
+                  href="/replay/demo"
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.6 + i * 0.08 }}
+                  className="bg-[#111111] border border-[#1f1f1f] hover:border-[#2a2a2a] rounded-xl p-5 flex flex-col gap-3 group transition-all"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <p className="text-white font-bold text-sm group-hover:text-[#DC2626] transition-colors line-clamp-1">{s.title}</p>
+                      <p className="text-[#888888] text-xs mt-0.5">{s.coach} · {s.gym}</p>
+                    </div>
+                    <span className="text-[#555] text-xs shrink-0">{s.date}</span>
+                  </div>
+                  <p className="text-[#666] text-xs leading-relaxed line-clamp-2">{s.summary}</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {s.techniques.slice(0, 3).map(t => (
+                      <span key={t} className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-[#1a1a1a] border border-[#2a2a2a] text-[#888]">{t}</span>
+                    ))}
+                    {s.techniques.length > 3 && (
+                      <span className="text-[10px] text-[#555] px-1">+{s.techniques.length - 3}</span>
+                    )}
+                  </div>
+                  <div className="flex items-center justify-between pt-1 border-t border-[#1a1a1a]">
+                    <span className="text-[#555] text-xs">{s.duration} · {s.discipline}</span>
+                    <span className="text-[#DC2626] text-xs font-semibold group-hover:underline">View summary →</span>
+                  </div>
+                </motion.a>
               ))}
             </div>
           </FadeSection>

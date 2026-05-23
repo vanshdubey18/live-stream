@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowLeft, PictureInPicture2, Settings, MessageCircle, CheckCircle2, Circle } from 'lucide-react'
 import Link from 'next/link'
+import SessionSummary, { DEMO_SUMMARY } from '@/components/ai/SessionSummary'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 type Phase = 'pre' | 'live' | 'post'
@@ -29,14 +30,6 @@ const SESSION: SessionData = {
   coachName: 'Coach Rajan',
   coachInitials: 'CR',
 }
-
-// ─── Post-class techniques ────────────────────────────────────────────────────
-const TECHNIQUES = [
-  'Guard Passing Entry',
-  'Knee Cut to Side Control',
-  'Back Take Sequence',
-  'RNC Finish Setup',
-]
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 function pad(n: number) {
@@ -371,128 +364,120 @@ function LivePhase({ onEndClass }: { onEndClass: () => void }) {
 }
 
 // ─── POST phase ───────────────────────────────────────────────────────────────
+const PROCESSING_MESSAGES = [
+  "Reviewing today's class...",
+  'Identifying techniques...',
+  'Finding key moments...',
+]
+
 function PostPhase() {
-  const [summaryReady, setSummaryReady] = useState(false)
-  const [dots, setDots] = useState('.')
+  // 'instant' → show congrats; after 1s → 'processing'; after 10s → 'ready'
+  const [stage, setStage] = useState<'instant' | 'processing' | 'ready'>('instant')
+  const [msgIdx, setMsgIdx] = useState(0)
 
   useEffect(() => {
-    const dotTimer = setInterval(() => {
-      setDots(d => (d.length >= 3 ? '.' : d + '.'))
-    }, 500)
-    const readyTimer = setTimeout(() => {
-      setSummaryReady(true)
-      clearInterval(dotTimer)
-    }, 3000)
-    return () => { clearInterval(dotTimer); clearTimeout(readyTimer) }
+    const t1 = setTimeout(() => setStage('processing'), 1200)
+    const t2 = setTimeout(() => setStage('ready'), 11000)
+    return () => { clearTimeout(t1); clearTimeout(t2) }
   }, [])
+
+  useEffect(() => {
+    if (stage !== 'processing') return
+    const t = setInterval(() => setMsgIdx(i => (i + 1) % PROCESSING_MESSAGES.length), 3000)
+    return () => clearInterval(t)
+  }, [stage])
 
   return (
     <motion.div
       key="post"
-      initial={{ opacity: 0, scale: 0.97 }}
-      animate={{ opacity: 1, scale: 1 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.4 }}
-      className="min-h-screen bg-[#050505] flex items-center justify-center px-4 py-12"
+      transition={{ duration: 0.5 }}
+      className="min-h-screen bg-[#050505] px-4 py-12 overflow-y-auto"
     >
-      <div className="max-w-lg w-full flex flex-col items-center gap-6 text-center">
-        {/* Emoji */}
-        <motion.div
-          initial={{ scale: 0, rotate: -15 }}
-          animate={{ scale: 1, rotate: 0 }}
-          transition={{ type: 'spring', stiffness: 200, damping: 14, delay: 0.1 }}
-          className="text-7xl"
-        >
-          🥋
-        </motion.div>
+      <div className="max-w-2xl mx-auto flex flex-col items-center gap-8">
 
-        {/* Heading */}
+        {/* ── STEP 1: congrats (always visible) ── */}
         <motion.div
-          initial={{ y: 16, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.25 }}
-          className="space-y-2"
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ type: 'spring', stiffness: 180, damping: 14, delay: 0.1 }}
+          className="text-center space-y-3"
         >
+          <div className="text-7xl">🥋</div>
           <h1 className="text-4xl font-black text-white tracking-tight">Great session!</h1>
           <p className="text-[#888888] text-base">You trained for 58 minutes.</p>
         </motion.div>
 
-        {/* AI summary card */}
-        <motion.div
-          initial={{ y: 16, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.4 }}
-          className="w-full bg-[#111] border border-white/10 rounded-2xl p-6"
-        >
-          <AnimatePresence mode="wait">
-            {!summaryReady ? (
-              <motion.div
-                key="loading"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="flex flex-col items-center gap-3 py-4"
-              >
-                <div className="flex gap-1.5">
-                  {[0, 1, 2].map(i => (
-                    <motion.div
-                      key={i}
-                      className="w-2 h-2 rounded-full bg-[#DC2626]"
-                      animate={{ scale: [1, 1.5, 1], opacity: [0.5, 1, 0.5] }}
-                      transition={{ duration: 0.8, delay: i * 0.2, repeat: Infinity }}
-                    />
-                  ))}
-                </div>
-                <p className="text-[#888] text-sm">AI summary ready in{dots}</p>
-              </motion.div>
-            ) : (
-              <motion.div
-                key="summary"
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="space-y-4"
-              >
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="text-xs font-bold text-[#DC2626] uppercase tracking-wider">AI Summary</span>
-                  <span className="flex-1 h-px bg-white/5" />
-                  <span className="text-xs text-[#444]">Techniques covered</span>
-                </div>
-                <div className="space-y-2.5">
-                  {TECHNIQUES.map((t, i) => (
-                    <motion.div
-                      key={t}
-                      initial={{ x: -12, opacity: 0 }}
-                      animate={{ x: 0, opacity: 1 }}
-                      transition={{ delay: i * 0.08 }}
-                      className="flex items-center gap-3"
-                    >
-                      <span className="w-5 h-5 rounded-full bg-[#DC2626]/10 flex items-center justify-center text-[#DC2626] text-xs font-bold shrink-0">
-                        {i + 1}
-                      </span>
-                      <span className="text-white text-sm text-left">{t}</span>
-                      <span className="ml-auto w-1.5 h-1.5 rounded-full bg-[#DC2626]/60 shrink-0" />
-                    </motion.div>
-                  ))}
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </motion.div>
+        {/* ── STEP 2 / 3: processing → summary ── */}
+        <AnimatePresence mode="wait">
+          {stage === 'processing' && (
+            <motion.div
+              key="processing"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.35 }}
+              className="w-full bg-[#111] border border-[#1f1f1f] rounded-2xl px-6 py-8 flex flex-col items-center gap-5"
+            >
+              {/* Animated dots */}
+              <div className="flex gap-2">
+                {[0, 1, 2].map(i => (
+                  <motion.div
+                    key={i}
+                    className="w-2.5 h-2.5 rounded-full bg-[#DC2626]"
+                    animate={{ scale: [1, 1.6, 1], opacity: [0.4, 1, 0.4] }}
+                    transition={{ duration: 0.9, delay: i * 0.25, repeat: Infinity }}
+                  />
+                ))}
+              </div>
 
-        {/* Actions */}
-        <motion.div
-          initial={{ y: 16, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.55 }}
-          className="w-full space-y-3"
-        >
-          <Link href="/dashboard" className="block w-full bg-[#DC2626] hover:bg-red-700 text-white font-bold py-3.5 rounded-xl text-sm transition-colors text-center">
-            Watch Replay Anytime
+              {/* Cycling message */}
+              <AnimatePresence mode="wait">
+                <motion.p
+                  key={msgIdx}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  transition={{ duration: 0.3 }}
+                  className="text-[#888888] text-sm font-medium"
+                >
+                  {PROCESSING_MESSAGES[msgIdx]}
+                </motion.p>
+              </AnimatePresence>
+
+              {/* Skeleton preview */}
+              <div className="w-full space-y-3 mt-2">
+                {[80, 60, 90, 50, 70].map((w, i) => (
+                  <div key={i} className="flex items-center gap-3">
+                    <div className="w-5 h-5 rounded-full bg-[#1a1a1a] animate-pulse shrink-0" />
+                    <div className={`h-3 bg-[#1a1a1a] rounded-full animate-pulse`} style={{ width: `${w}%` }} />
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+
+          {stage === 'ready' && (
+            <motion.div
+              key="summary"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="w-full"
+            >
+              <SessionSummary data={DEMO_SUMMARY} />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Back link always visible */}
+        {stage !== 'ready' && (
+          <Link href="/dashboard" className="text-[#555] hover:text-[#888] text-sm transition-colors">
+            Back to dashboard
           </Link>
-          <Link href="/dashboard" className="block w-full text-[#888888] hover:text-white text-sm font-medium text-center transition-colors py-1">
-            Back to Dashboard
-          </Link>
-        </motion.div>
+        )}
       </div>
     </motion.div>
   )

@@ -19,6 +19,7 @@ export default function StreamSetupCard({ gymId, streamKey: initialKey }: Props)
   const [streamKey, setStreamKey] = useState<string | null>(initialKey ?? null)
   const [status, setStatus] = useState<StreamStatus>('loading')
   const [creating, setCreating] = useState(false)
+  const [createError, setCreateError] = useState('')
 
   function copy(text: string, which: 'url' | 'key') {
     navigator.clipboard.writeText(text)
@@ -46,15 +47,18 @@ export default function StreamSetupCard({ gymId, streamKey: initialKey }: Props)
 
   async function createStream() {
     setCreating(true)
+    setCreateError('')
     try {
       const res = await fetch('/api/gym/create-stream', { method: 'POST' })
       const data = await res.json()
-      if (data.stream_key) {
+      if (data.stream_key || data.already_exists) {
         setStreamKey(data.stream_key)
         setStatus('idle')
+      } else {
+        setCreateError(data.error ?? 'Failed to create stream. Check your Mux API keys.')
       }
     } catch {
-      // ignore
+      setCreateError('Network error — could not reach the server.')
     } finally {
       setCreating(false)
     }
@@ -108,6 +112,9 @@ export default function StreamSetupCard({ gymId, streamKey: initialKey }: Props)
             {creating ? <Loader2 size={15} className="animate-spin" /> : null}
             {creating ? 'Creating stream…' : 'Create Live Stream'}
           </button>
+          {createError && (
+            <p className="text-red-400 text-xs text-center mt-2 max-w-xs mx-auto">{createError}</p>
+          )}
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

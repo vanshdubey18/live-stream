@@ -4,11 +4,10 @@ import { createClient } from '@supabase/supabase-js'
 
 export const runtime = 'nodejs'
 
-const mux = new Mux({
-  tokenId: process.env.MUX_TOKEN_ID!,
-  tokenSecret: process.env.MUX_TOKEN_SECRET!,
-  webhookSecret: process.env.MUX_WEBHOOK_SECRET!,
-})
+// Lazy init so env vars are read at request time
+function getMux() {
+  return new Mux({ webhookSecret: process.env.MUX_WEBHOOK_SECRET! })
+}
 
 const admin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -22,7 +21,7 @@ export async function POST(req: NextRequest) {
 
   // Verify Mux webhook signature
   try {
-    await mux.webhooks.verifySignature(rawBody, headers)
+    await getMux().webhooks.verifySignature(rawBody, headers)
   } catch {
     return NextResponse.json({ error: 'Invalid signature' }, { status: 401 })
   }

@@ -1,14 +1,14 @@
 import Mux from '@mux/mux-node'
 
-const mux = new Mux({
-  tokenId: process.env.MUX_TOKEN_ID!,
-  tokenSecret: process.env.MUX_TOKEN_SECRET!,
-})
+// Create client at request time so env vars are always loaded
+function getMux() {
+  return new Mux()
+}
 
-export const { video } = mux
-export default mux
+export default getMux()
 
 export async function createLiveStream() {
+  const { video } = getMux()
   const stream = await video.liveStreams.create({
     playback_policy: ['public'],
     new_asset_settings: {
@@ -26,13 +26,15 @@ export async function createLiveStream() {
 }
 
 export async function getLiveStreamStatus(streamId: string) {
+  const { video } = getMux()
   const stream = await video.liveStreams.retrieve(streamId)
   return {
-    status: stream.status, // 'idle' | 'active' | 'disconnected'
+    status: stream.status,
     viewer_count: 0,
   }
 }
 
 export async function deleteLiveStream(streamId: string) {
+  const { video } = getMux()
   await video.liveStreams.delete(streamId)
 }

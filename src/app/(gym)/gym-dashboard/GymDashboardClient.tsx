@@ -6,6 +6,7 @@ import GymSidebar from '@/components/layout/GymSidebar'
 import StatsCard from '@/components/gym-dashboard/StatsCard'
 import StreamSetupCard from '@/components/gym-dashboard/StreamSetupCard'
 import ScheduleClassModal, { type ScheduledClass } from '@/components/gym-dashboard/ScheduleClassModal'
+import GoLiveModal from '@/components/gym-dashboard/GoLiveModal'
 import Toast from '@/components/gym-dashboard/Toast'
 import { Radio as RadioIcon, Trash2 } from 'lucide-react'
 
@@ -40,6 +41,7 @@ function formatPaise(paise: number) {
 export default function GymDashboardClient({ gym, ownerName, sessions, coaches, memberCount, payouts }: Props) {
   const [localSessions, setLocalSessions] = useState<any[]>(sessions)
   const [showModal, setShowModal] = useState(false)
+  const [goLiveSession, setGoLiveSession] = useState<{ id: string; title: string } | null>(null)
   const [toast, setToast] = useState('')
 
   const completedCount = sessions.filter(s => s.status === 'ended').length
@@ -55,8 +57,19 @@ export default function GymDashboardClient({ gym, ownerName, sessions, coaches, 
     setToast('Class removed')
   }
 
-  function handleGoLive(_id: string) {
-    setToast('Going live… (Mux integration coming soon)')
+  function handleGoLive(id: string) {
+    const session = localSessions.find(s => s.id === id)
+    if (session) setGoLiveSession({ id, title: session.title })
+  }
+
+  function handleWentLive(id: string) {
+    setLocalSessions(p => p.map(s => s.id === id ? { ...s, status: 'live' } : s))
+    setToast('You\'re live! 🔴')
+  }
+
+  function handleStreamEnded(id: string) {
+    setLocalSessions(p => p.map(s => s.id === id ? { ...s, status: 'ended' } : s))
+    setToast('Stream ended')
   }
 
   return (
@@ -266,6 +279,16 @@ export default function GymDashboardClient({ gym, ownerName, sessions, coaches, 
         <ScheduleClassModal
           onClose={() => setShowModal(false)}
           onScheduled={handleScheduled}
+        />
+      )}
+      {goLiveSession && (
+        <GoLiveModal
+          sessionId={goLiveSession.id}
+          sessionTitle={goLiveSession.title}
+          streamKey={gym.stream_key ?? null}
+          onClose={() => setGoLiveSession(null)}
+          onWentLive={handleWentLive}
+          onEnded={handleStreamEnded}
         />
       )}
       {toast && <Toast message={toast} onClose={() => setToast('')} />}

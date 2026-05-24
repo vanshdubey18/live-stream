@@ -42,7 +42,6 @@ export default function GymDashboardClient({ gym, ownerName, sessions, coaches, 
   const [showModal, setShowModal] = useState(false)
   const [toast, setToast] = useState('')
 
-  const isLive = localSessions.some(s => s.status === 'live')
   const completedCount = sessions.filter(s => s.status === 'ended').length
   const scheduledCount = sessions.filter(s => s.status === 'scheduled').length
 
@@ -111,7 +110,7 @@ export default function GymDashboardClient({ gym, ownerName, sessions, coaches, 
           </div>
 
           {/* Stream Setup */}
-          <StreamSetupCard isLive={isLive} />
+          <StreamSetupCard gymId={gym.id} streamKey={gym.stream_key} />
 
           {/* Upcoming Classes */}
           <section>

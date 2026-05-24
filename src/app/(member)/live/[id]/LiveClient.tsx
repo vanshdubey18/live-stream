@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowLeft, PictureInPicture2, Settings, MessageCircle, CheckCircle2, Circle } from 'lucide-react'
 import Link from 'next/link'
+import MuxPlayer from '@mux/mux-player-react'
 import SessionSummary, { DEMO_SUMMARY } from '@/components/ai/SessionSummary'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -173,7 +174,7 @@ function PrePhase({ onGoLive }: { onGoLive: () => void }) {
 }
 
 // ─── LIVE phase ───────────────────────────────────────────────────────────────
-function LivePhase({ onEndClass }: { onEndClass: () => void }) {
+function LivePhase({ onEndClass, playbackId }: { onEndClass: () => void; playbackId?: string }) {
   const [uiVisible, setUiVisible] = useState(true)
   const [chatOpen, setChatOpen] = useState(false)
 
@@ -188,37 +189,46 @@ function LivePhase({ onEndClass }: { onEndClass: () => void }) {
       transition={{ duration: 0.35 }}
       className="min-h-screen bg-black relative overflow-hidden select-none"
     >
-      {/* Mock video area */}
-      <div
-        className="absolute inset-0 cursor-pointer"
-        onClick={toggleUi}
-        style={{
-          background:
-            'linear-gradient(135deg, #0a0a0a 0%, #1a0505 25%, #050a0a 50%, #0a0510 75%, #0a0a0a 100%)',
-          backgroundSize: '400% 400%',
-          animation: 'gradientShift 8s ease infinite',
-        }}
-      >
-        {/* Animated gradient overlay */}
-        <div className="absolute inset-0 opacity-30"
-          style={{
-            background: 'radial-gradient(ellipse at 30% 70%, rgba(220,38,38,0.15) 0%, transparent 60%), radial-gradient(ellipse at 70% 30%, rgba(59,130,246,0.1) 0%, transparent 60%)',
-          }}
+      {/* Tap-to-toggle overlay (above player, below UI bars) */}
+      <div className="absolute inset-0 z-[1] cursor-pointer" onClick={toggleUi} />
+
+      {/* Video: real Mux stream or animated mock fallback */}
+      {playbackId ? (
+        <MuxPlayer
+          streamType="live"
+          playbackId={playbackId}
+          autoPlay
+          accentColor="#DC2626"
+          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
         />
-        {/* MATPEAK watermark */}
-        <div className="absolute bottom-1/2 right-8 translate-y-1/2 opacity-10 pointer-events-none">
-          <span className="text-white text-4xl font-black tracking-tighter">MATPEAK</span>
-        </div>
-        {/* Center indicator */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div className="flex flex-col items-center gap-3 opacity-40">
-            <div className="w-20 h-20 rounded-full border-2 border-white/20 flex items-center justify-center">
-              <div className="w-8 h-8 rounded-full bg-white/10" />
+      ) : (
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              'linear-gradient(135deg, #0a0a0a 0%, #1a0505 25%, #050a0a 50%, #0a0510 75%, #0a0a0a 100%)',
+            backgroundSize: '400% 400%',
+            animation: 'gradientShift 8s ease infinite',
+          }}
+        >
+          <div className="absolute inset-0 opacity-30"
+            style={{
+              background: 'radial-gradient(ellipse at 30% 70%, rgba(220,38,38,0.15) 0%, transparent 60%), radial-gradient(ellipse at 70% 30%, rgba(59,130,246,0.1) 0%, transparent 60%)',
+            }}
+          />
+          <div className="absolute bottom-1/2 right-8 translate-y-1/2 opacity-10 pointer-events-none">
+            <span className="text-white text-4xl font-black tracking-tighter">MATPEAK</span>
+          </div>
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div className="flex flex-col items-center gap-3 opacity-40">
+              <div className="w-20 h-20 rounded-full border-2 border-white/20 flex items-center justify-center">
+                <div className="w-8 h-8 rounded-full bg-white/10" />
+              </div>
+              <span className="text-white/60 text-xs">Stream not started</span>
             </div>
-            <span className="text-white/60 text-xs">Tap to toggle UI</span>
           </div>
         </div>
-      </div>
+      )}
 
       {/* UI overlay */}
       <AnimatePresence>
@@ -484,7 +494,7 @@ function PostPhase() {
 }
 
 // ─── Main Client ──────────────────────────────────────────────────────────────
-export default function LiveClient() {
+export default function LiveClient({ playbackId }: { playbackId?: string }) {
   const [phase, setPhase] = useState<Phase>('pre')
 
   return (
@@ -494,7 +504,7 @@ export default function LiveClient() {
           <PrePhase key="pre" onGoLive={() => setPhase('live')} />
         )}
         {phase === 'live' && (
-          <LivePhase key="live" onEndClass={() => setPhase('post')} />
+          <LivePhase key="live" onEndClass={() => setPhase('post')} playbackId={playbackId} />
         )}
         {phase === 'post' && (
           <PostPhase key="post" />

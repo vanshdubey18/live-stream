@@ -1,9 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { ArrowLeft, Play, Pause, Volume2, Maximize, Settings } from 'lucide-react'
 import Link from 'next/link'
+import MuxPlayer from '@mux/mux-player-react'
 import SessionSummary, { DEMO_SUMMARY } from '@/components/ai/SessionSummary'
 
 const DISCIPLINE_COLORS: Record<string, string> = {
@@ -12,17 +13,23 @@ const DISCIPLINE_COLORS: Record<string, string> = {
   'Muay Thai': 'bg-orange-500/10 text-orange-400',
 }
 
-export default function ReplayClient() {
+export default function ReplayClient({ playbackId }: { playbackId?: string }) {
   const [playing, setPlaying] = useState(false)
-  const [progress, setProgress] = useState(0.28) // 28% into video
+  const [progress, setProgress] = useState(0.28) // 28% into video (mock only)
   const [jumpTo, setJumpTo] = useState<string | null>(null)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const playerRef = useRef<any>(null)
 
   function handleTimestamp(ts: string) {
-    // Convert "MM:SS" to a progress fraction (demo: total 58 min = 3480s)
     const [m, s] = ts.split(':').map(Number)
-    const totalSeconds = 58 * 60
-    const fraction = (m * 60 + s) / totalSeconds
-    setProgress(fraction)
+    const seekSeconds = m * 60 + s
+    if (playbackId && playerRef.current) {
+      playerRef.current.currentTime = seekSeconds
+    } else {
+      // Update mock scrubber
+      const totalSeconds = 58 * 60
+      setProgress(seekSeconds / totalSeconds)
+    }
     setJumpTo(ts)
     setPlaying(true)
     setTimeout(() => setJumpTo(null), 2000)
@@ -51,81 +58,99 @@ export default function ReplayClient() {
         <div className="flex-1 min-w-0 space-y-4">
 
           {/* Video area */}
-          <div className="relative bg-black rounded-2xl overflow-hidden aspect-video">
-            {/* Mock video */}
-            <div
-              className="absolute inset-0"
-              style={{
-                background: 'linear-gradient(135deg, #0a0a0a 0%, #1a0505 30%, #050a0a 70%, #0a0a0a 100%)',
-              }}
-            >
-              {/* Watermark */}
-              <div className="absolute inset-0 flex items-center justify-center opacity-5 pointer-events-none select-none">
-                <span className="text-white text-6xl font-black tracking-tighter">MATPEAK</span>
-              </div>
-
-              {/* Jump notification */}
-              {jumpTo && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="absolute top-4 left-1/2 -translate-x-1/2 bg-black/80 backdrop-blur-sm border border-white/10 rounded-xl px-4 py-2 text-white text-sm font-bold"
+          <div className="relative bg-black rounded-2xl overflow-hidden">
+            {playbackId ? (
+              <>
+                <MuxPlayer
+                  ref={playerRef}
+                  streamType="on-demand"
+                  playbackId={playbackId}
+                  accentColor="#DC2626"
+                  style={{ width: '100%', display: 'block' }}
+                />
+                {jumpTo && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="absolute top-4 left-1/2 -translate-x-1/2 bg-black/80 backdrop-blur-sm border border-white/10 rounded-xl px-4 py-2 text-white text-sm font-bold z-10"
+                  >
+                    ▶ Jumped to {jumpTo}
+                  </motion.div>
+                )}
+              </>
+            ) : (
+              /* Mock video fallback */
+              <div className="aspect-video">
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    background: 'linear-gradient(135deg, #0a0a0a 0%, #1a0505 30%, #050a0a 70%, #0a0a0a 100%)',
+                  }}
                 >
-                  ▶ Jumped to {jumpTo}
-                </motion.div>
-              )}
+                  <div className="absolute inset-0 flex items-center justify-center opacity-5 pointer-events-none select-none">
+                    <span className="text-white text-6xl font-black tracking-tighter">MATPEAK</span>
+                  </div>
 
-              {/* Center play/pause */}
-              <button
-                onClick={() => setPlaying(v => !v)}
-                className="absolute inset-0 flex items-center justify-center group"
-              >
-                <div className="w-16 h-16 rounded-full bg-white/10 group-hover:bg-white/20 backdrop-blur-sm flex items-center justify-center transition-all">
-                  {playing
-                    ? <Pause size={24} className="text-white" />
-                    : <Play size={24} className="text-white ml-1" />}
+                  {jumpTo && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="absolute top-4 left-1/2 -translate-x-1/2 bg-black/80 backdrop-blur-sm border border-white/10 rounded-xl px-4 py-2 text-white text-sm font-bold"
+                    >
+                      ▶ Jumped to {jumpTo}
+                    </motion.div>
+                  )}
+
+                  <button
+                    onClick={() => setPlaying(v => !v)}
+                    className="absolute inset-0 flex items-center justify-center group"
+                  >
+                    <div className="w-16 h-16 rounded-full bg-white/10 group-hover:bg-white/20 backdrop-blur-sm flex items-center justify-center transition-all">
+                      {playing
+                        ? <Pause size={24} className="text-white" />
+                        : <Play size={24} className="text-white ml-1" />}
+                    </div>
+                  </button>
                 </div>
-              </button>
-            </div>
 
-            {/* Controls bar */}
-            <div className="absolute bottom-0 left-0 right-0 px-4 pb-3 pt-8"
-              style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.85), transparent)' }}>
-
-              {/* Scrubber */}
-              <div className="relative h-1 bg-white/20 rounded-full mb-3 cursor-pointer group"
-                onClick={e => {
-                  const rect = e.currentTarget.getBoundingClientRect()
-                  setProgress((e.clientX - rect.left) / rect.width)
-                }}>
-                <div className="h-full bg-[#DC2626] rounded-full transition-all" style={{ width: `${progress * 100}%` }} />
-                <div className="absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-white shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
-                  style={{ left: `calc(${progress * 100}% - 6px)` }} />
+                {/* Mock controls bar */}
+                <div className="absolute bottom-0 left-0 right-0 px-4 pb-3 pt-8"
+                  style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.85), transparent)' }}>
+                  <div className="relative h-1 bg-white/20 rounded-full mb-3 cursor-pointer group"
+                    onClick={e => {
+                      const rect = e.currentTarget.getBoundingClientRect()
+                      setProgress((e.clientX - rect.left) / rect.width)
+                    }}>
+                    <div className="h-full bg-[#DC2626] rounded-full transition-all" style={{ width: `${progress * 100}%` }} />
+                    <div className="absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-white shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                      style={{ left: `calc(${progress * 100}% - 6px)` }} />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <button onClick={() => setPlaying(v => !v)} className="text-white hover:text-[#DC2626] transition-colors">
+                        {playing ? <Pause size={18} /> : <Play size={18} />}
+                      </button>
+                      <button className="text-white/60 hover:text-white transition-colors">
+                        <Volume2 size={16} />
+                      </button>
+                      <span className="text-white/60 text-xs tabular-nums">
+                        {String(Math.floor(progress * 58)).padStart(2, '0')}:{String(Math.floor((progress * 58 * 60) % 60)).padStart(2, '0')} / 58:00
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button className="text-white/60 hover:text-white transition-colors">
+                        <Settings size={15} />
+                      </button>
+                      <button className="text-white/60 hover:text-white transition-colors">
+                        <Maximize size={15} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
-
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <button onClick={() => setPlaying(v => !v)} className="text-white hover:text-[#DC2626] transition-colors">
-                    {playing ? <Pause size={18} /> : <Play size={18} />}
-                  </button>
-                  <button className="text-white/60 hover:text-white transition-colors">
-                    <Volume2 size={16} />
-                  </button>
-                  <span className="text-white/60 text-xs tabular-nums">
-                    {String(Math.floor(progress * 58)).padStart(2, '0')}:{String(Math.floor((progress * 58 * 60) % 60)).padStart(2, '0')} / 58:00
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <button className="text-white/60 hover:text-white transition-colors">
-                    <Settings size={15} />
-                  </button>
-                  <button className="text-white/60 hover:text-white transition-colors">
-                    <Maximize size={15} />
-                  </button>
-                </div>
-              </div>
-            </div>
+            )}
           </div>
 
           {/* Session meta below player */}

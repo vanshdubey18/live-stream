@@ -50,15 +50,21 @@ export default function StreamSetupCard({ gymId, streamKey: initialKey }: Props)
     setCreateError('')
     try {
       const res = await fetch('/api/gym/create-stream', { method: 'POST' })
-      const data = await res.json()
+      let data: Record<string, unknown> = {}
+      try {
+        data = await res.json()
+      } catch {
+        setCreateError(`Server error (${res.status}) — check your MUX_TOKEN_ID and MUX_TOKEN_SECRET in .env.local`)
+        return
+      }
       if (data.stream_key || data.already_exists) {
-        setStreamKey(data.stream_key)
+        setStreamKey(data.stream_key as string)
         setStatus('idle')
       } else {
-        setCreateError(data.error ?? 'Failed to create stream. Check your Mux API keys.')
+        setCreateError((data.error as string) ?? 'Failed to create stream. Check your Mux API keys.')
       }
     } catch {
-      setCreateError('Network error — could not reach the server.')
+      setCreateError('Could not reach the server. Is npm run dev running?')
     } finally {
       setCreating(false)
     }

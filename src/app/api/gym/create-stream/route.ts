@@ -40,7 +40,15 @@ export async function POST(_req: NextRequest) {
   }
 
   // Create a new Mux live stream
-  const { id, stream_key, playback_id } = await createLiveStream()
+  let muxResult: { id: string; stream_key: string | undefined; playback_id: string | undefined }
+  try {
+    muxResult = await createLiveStream()
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : 'Mux API error'
+    console.error('[create-stream] Mux error:', msg)
+    return NextResponse.json({ error: `Mux error: ${msg}` }, { status: 502 })
+  }
+  const { id, stream_key, playback_id } = muxResult
 
   // Save to Supabase using service role to bypass RLS
   const admin = createAdminClient(

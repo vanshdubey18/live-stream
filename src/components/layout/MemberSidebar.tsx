@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { createClient } from '@/lib/supabase/client'
 import {
   LayoutDashboard,
   Building2,
@@ -120,7 +121,7 @@ export default function MemberSidebar({ active = 'Dashboard', onSearchOpen }: Me
         {/* Logout */}
         <div className="px-3 py-4 border-t border-white/5">
           <button
-            onClick={() => router.push('/login')}
+            onClick={async () => { await createClient().auth.signOut(); router.push('/login') }}
             className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-[#888888] hover:text-white hover:bg-white/5 transition-all w-full"
           >
             <LogOut size={18} />

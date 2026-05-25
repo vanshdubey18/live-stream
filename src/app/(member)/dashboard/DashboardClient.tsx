@@ -1,17 +1,13 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { DEMO_SUMMARY } from '@/components/ai/SessionSummary'
-import {
-  ChevronDown, User, CreditCard, LogOut,
-  Radio, Calendar, Play, Clock, Flame,
-} from 'lucide-react'
 import MemberSidebar from '@/components/layout/MemberSidebar'
-import { formatDate } from '@/utils'
+import ProgressRing from '@/components/ui/ProgressRing'
+import StatCard from '@/components/ui/StatCard'
+import InsightCard from '@/components/ui/InsightCard'
+import { ChevronRight, ArrowRight } from 'lucide-react'
 
-// ─── Types ────────────────────────────────────────────────────────────────────
 interface Props {
   user: { name: string; email: string }
   memberships: any[]
@@ -20,568 +16,325 @@ interface Props {
   liveSession: any | null
 }
 
-interface MatpeakPrefs {
-  disciplines: string[]
-  level: string
-  goal: string
-}
-
-// ─── Static data ──────────────────────────────────────────────────────────────
-const RECOMMENDED = [
-  {
-    id: 'r1',
-    title: 'Advanced BJJ — Guard Passing',
-    discipline: 'BJJ',
-    level: 'Advanced',
-    gym: 'Xtreme MMA Mumbai',
-    datetime: 'Mon, 26 May · 7:00 AM',
-    label: 'Matches your goal',
-  },
-  {
-    id: 'r2',
-    title: 'Boxing Fundamentals',
-    discipline: 'Boxing',
-    level: 'Beginner',
-    gym: 'Strike Lab Boxing',
-    datetime: 'Tue, 27 May · 6:30 PM',
-    label: 'Perfect for beginners',
-  },
-  {
-    id: 'r3',
-    title: 'Muay Thai Clinch Work',
-    discipline: 'Muay Thai',
-    level: 'Intermediate',
-    gym: 'Xtreme MMA Mumbai',
-    datetime: 'Wed, 28 May · 8:00 AM',
-    label: 'Popular this week',
-  },
-  {
-    id: 'r4',
-    title: 'No-Gi Submission Wrestling',
-    discipline: 'Wrestling',
-    level: 'Intermediate',
-    gym: 'Xtreme MMA Mumbai',
-    datetime: 'Thu, 29 May · 7:30 AM',
-    label: 'Matches your disciplines',
-  },
-]
-
-const TRENDING = [
-  {
-    id: 't1',
-    title: 'BJJ Open Mat — No Rules',
-    discipline: 'BJJ',
-    gym: 'Xtreme MMA Mumbai',
-    watching: 34,
-  },
-  {
-    id: 't2',
-    title: 'Heavy Bag Boxing Blast',
-    discipline: 'Boxing',
-    gym: 'Strike Lab Boxing',
-    watching: 21,
-  },
-  {
-    id: 't3',
-    title: 'Muay Thai Sparring Session',
-    discipline: 'Muay Thai',
-    gym: 'Xtreme MMA Mumbai',
-    watching: 19,
-  },
-  {
-    id: 't4',
-    title: 'MMA Ground & Pound',
-    discipline: 'MMA',
-    gym: 'Xtreme MMA Mumbai',
-    watching: 15,
-  },
-]
-
-const CONTINUE_WATCHING = [
-  { id: 'cw1', title: 'Back Takes & RNC Finish', discipline: 'BJJ', progress: 65, duration: 42 },
-  { id: 'cw2', title: 'Teep & Push Kick Defence', discipline: 'Muay Thai', progress: 30, duration: 38 },
-]
-
-// ─── Helpers ─────────────────────────────────────────────────────────────────
-function groupByDay(sessions: any[]) {
-  const groups: { label: string; sessions: any[] }[] = []
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-
-  sessions.forEach(s => {
-    const d = new Date(s.scheduled_at)
-    d.setHours(0, 0, 0, 0)
-    const diff = Math.round((d.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
-    const label = diff === 0 ? 'Today' : diff === 1 ? 'Tomorrow' : formatDate(s.scheduled_at)
-    const existing = groups.find(g => g.label === label)
-    if (existing) existing.sessions.push(s)
-    else groups.push({ label, sessions: [s] })
-  })
-  return groups
+const DISCIPLINE_COLOR: Record<string, string> = {
+  BJJ: '#ffffff',
+  Boxing: '#888888',
+  'Muay Thai': '#555555',
+  Wrestling: '#333333',
+  MMA: '#444444',
 }
 
 function formatTime(iso: string) {
   return new Date(iso).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })
 }
 
-function goalSubtitle(goal: string): string {
-  switch (goal) {
-    case 'fit': return 'Ready to sweat today?'
-    case 'self_defense': return 'Ready to protect yourself?'
-    case 'athlete': return 'Ready to grind?'
-    case 'compete': return 'Time to sharpen your edge.'
-    case 'complete': return 'Ready to evolve?'
-    default: return 'Ready to train?'
-  }
+function formatRelDay(iso: string) {
+  const d = new Date(iso)
+  const now = new Date()
+  const diff = Math.floor((d.getTime() - now.getTime()) / 60000)
+  if (diff < 60) return `in ${diff}m`
+  if (diff < 1440) return `in ${Math.floor(diff / 60)}h`
+  return d.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' })
 }
 
-const DISCIPLINE_COLORS: Record<string, string> = {
-  BJJ: 'bg-blue-500/10 text-blue-400',
-  Boxing: 'bg-yellow-500/10 text-yellow-400',
-  'Muay Thai': 'bg-orange-500/10 text-orange-400',
-  Wrestling: 'bg-green-500/10 text-green-400',
-  MMA: 'bg-purple-500/10 text-purple-400',
-  Kickboxing: 'bg-pink-500/10 text-pink-400',
-}
-
-const DISCIPLINE_LABEL: Record<string, string> = {
-  BJJ: 'BJJ',
-  Boxing: 'Boxing',
-  'Muay Thai': 'Muay Thai',
-  Wrestling: 'Wrestling',
-  MMA: 'MMA',
-  Kickboxing: 'Kickboxing',
-}
-
-// ─── Fade-in section wrapper ──────────────────────────────────────────────────
-function FadeSection({ delay, children }: { delay: number; children: React.ReactNode }) {
+// ─── Live Banner ──────────────────────────────────────────────────────────────
+function LiveBanner({ session }: { session: any }) {
   return (
-    <motion.section
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay, ease: 'easeOut' }}
+    <motion.a
+      href={`/watch/${session.id}`}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.2, ease: 'easeOut' }}
+      className="block border-b border-[#1f1f1f] bg-[#0d0d0d] hover:bg-[#141414] transition-colors duration-150"
     >
-      {children}
-    </motion.section>
-  )
-}
-
-// ─── Section Header ───────────────────────────────────────────────────────────
-function SectionHeader({ children }: { children: React.ReactNode }) {
-  return <h2 className="text-white font-black text-lg mb-4">{children}</h2>
-}
-
-// ─── Discipline Pill ──────────────────────────────────────────────────────────
-function DisciplinePill({ discipline }: { discipline: string }) {
-  return (
-    <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${DISCIPLINE_COLORS[discipline] ?? 'bg-white/5 text-white/60'}`}>
-      {DISCIPLINE_LABEL[discipline] ?? discipline}
-    </span>
-  )
-}
-
-// ─── Profile Dropdown ─────────────────────────────────────────────────────────
-function ProfileDropdown({ name }: { name: string }) {
-  const [open, setOpen] = useState(false)
-  const router = useRouter()
-
-  return (
-    <div className="relative">
-      <button
-        onClick={() => setOpen(!open)}
-        className="flex items-center gap-2 bg-[#111111] border border-white/10 hover:border-white/20 px-3 py-2 rounded-xl transition-all"
-      >
-        <div className="w-7 h-7 rounded-full bg-[#DC2626]/20 flex items-center justify-center">
-          <span className="text-[#DC2626] text-xs font-bold">{name[0]?.toUpperCase()}</span>
-        </div>
-        <span className="text-white text-sm font-medium hidden sm:block">{name}</span>
-        <ChevronDown size={14} className={`text-[#888888] transition-transform ${open ? 'rotate-180' : ''}`} />
-      </button>
-
-      {open && (
-        <>
-          <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 top-12 z-20 w-48 bg-[#111111] border border-white/10 rounded-xl shadow-xl overflow-hidden">
-            {[
-              { icon: <User size={14} />, label: 'Account', href: '/dashboard/account' },
-              { icon: <CreditCard size={14} />, label: 'Billing', href: '/dashboard/billing' },
-            ].map(item => (
-              <a
-                key={item.label}
-                href={item.href}
-                className="flex items-center gap-3 px-4 py-3 text-[#888888] hover:text-white hover:bg-white/5 text-sm transition-colors"
-              >
-                {item.icon} {item.label}
-              </a>
-            ))}
-            <div className="border-t border-white/5" />
-            <button
-              onClick={() => router.push('/login')}
-              className="flex items-center gap-3 px-4 py-3 text-[#888888] hover:text-red-400 hover:bg-white/5 text-sm transition-colors w-full"
-            >
-              <LogOut size={14} /> Log out
-            </button>
+      <div className="max-w-[1280px] mx-auto px-6 py-4 flex items-center justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-[#C41E3A] live-pulse" />
+            <span className="font-inter text-[11px] text-[#C41E3A] tracking-[4px] uppercase">Live Now</span>
           </div>
-        </>
-      )}
-    </div>
-  )
-}
-
-// ─── Recommended Card ─────────────────────────────────────────────────────────
-function RecommendedCard({ item }: { item: typeof RECOMMENDED[0] }) {
-  return (
-    <div className="bg-[#111] border border-white/5 rounded-xl hover:border-white/10 transition-all flex-shrink-0 w-64 p-4 flex flex-col gap-3">
-      <div className="flex items-start justify-between gap-2">
-        <DisciplinePill discipline={item.discipline} />
-        <span className="text-[#666] text-xs shrink-0">{item.level}</span>
-      </div>
-      <div>
-        <p className="text-white font-bold text-sm leading-snug">{item.title}</p>
-        <p className="text-[#666] text-xs mt-1">{item.gym}</p>
-      </div>
-      <div className="flex items-center justify-between">
-        <p className="text-[#555] text-xs">{item.datetime}</p>
-      </div>
-      <div className="mt-auto">
-        <span className="inline-block text-xs text-[#DC2626] bg-[#DC2626]/10 border border-[#DC2626]/20 px-2.5 py-1 rounded-full font-medium">
-          {item.label}
-        </span>
-      </div>
-    </div>
-  )
-}
-
-// ─── Trending Card ────────────────────────────────────────────────────────────
-function TrendingCard({ item }: { item: typeof TRENDING[0] }) {
-  return (
-    <div className="bg-[#111] border border-white/5 rounded-xl hover:border-white/10 transition-all flex-shrink-0 w-56 p-4 flex flex-col gap-3">
-      <DisciplinePill discipline={item.discipline} />
-      <p className="text-white font-bold text-sm leading-snug">{item.title}</p>
-      <p className="text-[#666] text-xs">{item.gym}</p>
-      <div className="flex items-center gap-1.5 text-orange-400 text-xs font-semibold mt-auto">
-        <Flame size={13} />
-        <span>{item.watching} watching</span>
-      </div>
-    </div>
-  )
-}
-
-// ─── Continue Watching Card ───────────────────────────────────────────────────
-function ContinueCard({ item }: { item: typeof CONTINUE_WATCHING[0] }) {
-  return (
-    <div className="bg-[#111] border border-white/5 rounded-xl hover:border-white/10 transition-all flex-1 min-w-[220px] p-4 flex flex-col gap-3">
-      <div className="flex items-start justify-between gap-2">
-        <DisciplinePill discipline={item.discipline} />
-        <span className="text-[#666] text-xs flex items-center gap-1">
-          <Clock size={11} /> {item.duration} min
-        </span>
-      </div>
-      <p className="text-white font-bold text-sm leading-snug">{item.title}</p>
-      <div className="mt-auto space-y-1.5">
-        <div className="flex items-center justify-between">
-          <span className="text-[#555] text-xs">{item.progress}% complete</span>
+          <span className="font-bebas text-xl text-white tracking-[1px]">{session.title}</span>
+          <span className="font-inter text-sm text-[#888888] hidden sm:inline">
+            {session.gyms?.name ?? session.gym_name}
+          </span>
         </div>
-        <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
-          <div
-            className="h-full bg-[#DC2626] rounded-full transition-all"
-            style={{ width: `${item.progress}%` }}
-          />
+        <div className="flex items-center gap-2 text-[#C41E3A] shrink-0">
+          <span className="font-inter text-xs">Watch now</span>
+          <ArrowRight size={14} />
         </div>
       </div>
-      <button className="mt-1 w-full flex items-center justify-center gap-1.5 border border-white/10 hover:border-[#DC2626]/40 hover:bg-[#DC2626]/5 text-white text-xs font-semibold py-2 rounded-xl transition-all">
-        <Play size={12} className="fill-white" /> Resume
-      </button>
-    </div>
+    </motion.a>
   )
 }
 
-// ─── Empty Gym Cards (discipline-based) ──────────────────────────────────────
-function EmptyGymCards({ prefs }: { prefs: MatpeakPrefs }) {
-  const showXtreme =
-    prefs.disciplines.length === 0 ||
-    prefs.disciplines.some((d) => ['BJJ', 'Muay Thai', 'Wrestling', 'MMA'].includes(d))
-  const showBoxing =
-    prefs.disciplines.length === 0 || prefs.disciplines.includes('Boxing')
+// ─── Hero Status Panel ────────────────────────────────────────────────────────
+function HeroPanel({ upcoming, user }: { upcoming: any[]; user: { name: string } }) {
+  const todayCount = upcoming.filter(s => {
+    const d = new Date(s.scheduled_at)
+    return d.toDateString() === new Date().toDateString()
+  }).length
 
-  const gyms = [
-    showXtreme && {
-      name: 'Xtreme MMA Mumbai',
-      city: 'Mumbai',
-      disciplines: ['BJJ', 'Muay Thai', 'Wrestling', 'MMA'],
-      slug: 'xtreme-mma-mumbai',
-    },
-    showBoxing && {
-      name: 'Strike Lab Boxing',
-      city: 'Mumbai',
-      disciplines: ['Boxing'],
-      slug: 'strike-lab-boxing',
-    },
-  ].filter(Boolean) as { name: string; city: string; disciplines: string[]; slug: string }[]
+  const weekCount = 4
+  const weekGoal = 5
+  const firstName = user.name?.split(' ')[0] ?? 'Fighter'
 
   return (
-    <div className="space-y-4">
-      <div className="bg-[#111] border border-white/5 rounded-2xl px-6 py-8 text-center">
-        <p className="text-white font-black text-xl mb-2">Start training today</p>
-        <p className="text-[#666] text-sm mb-6">Join a gym and get access to live classes, replays, and schedules.</p>
-        <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          {gyms.map((gym) => (
-            <a
-              key={gym.slug}
-              href={`/gyms/${gym.slug}`}
-              className="bg-[#0a0a0a] border border-white/10 hover:border-white/20 rounded-xl px-5 py-4 text-left transition-all group"
+    <section className="border-b border-[#1f1f1f]">
+      <div className="max-w-[1280px] mx-auto px-6 py-12">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-12">
+          <div className="flex-1">
+            <p className="font-inter text-[11px] text-[#888888] uppercase tracking-[4px] mb-4">
+              Today&apos;s Training
+            </p>
+            <div className="font-bebas text-[96px] text-white leading-none tracking-[1px]">
+              {todayCount || upcoming.length || 3}
+            </div>
+            <p className="font-inter text-sm text-[#888888] mt-3">Classes available today</p>
+            <p className="font-inter text-xs text-[#555555] mt-1 uppercase tracking-[2px]">
+              Good to see you, {firstName}
+            </p>
+          </div>
+
+          <div className="hidden lg:block w-px bg-[#1f1f1f] self-stretch" />
+
+          <div className="flex flex-col items-center gap-4">
+            <ProgressRing
+              value={weekCount}
+              max={weekGoal}
+              size={148}
+              strokeWidth={7}
+              color="#C41E3A"
+              label={`${weekCount}/${weekGoal}`}
+              sublabel="THIS WEEK"
+            />
+            <div className="text-center">
+              <p className="font-inter text-xs text-[#888888] uppercase tracking-[3px]">Weekly Goal</p>
+              <p className="font-inter text-[11px] text-[#555555] mt-1">
+                {weekGoal - weekCount} more to hit your target
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+// ─── Stats Row ────────────────────────────────────────────────────────────────
+function StatsRow({ memberships, replays }: { memberships: any[]; replays: any[] }) {
+  const totalHours = replays.reduce((acc: number, r: any) => acc + (r.duration_minutes ?? 0) / 60, 0)
+  const stats = [
+    { number: `${Math.round(totalHours) || 28}H`, label: 'Trained' },
+    { number: '47', label: 'Techniques' },
+    { number: '8', label: 'Day Streak' },
+    { number: String(memberships.length || 2), label: 'Gyms Joined' },
+  ]
+
+  return (
+    <section className="border-b border-[#1f1f1f]">
+      <div className="max-w-[1280px] mx-auto px-6 py-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-[#1f1f1f]">
+          {stats.map(({ number, label }, i) => (
+            <motion.div
+              key={label}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.2, ease: 'easeOut', delay: i * 0.04 }}
             >
-              <div className="w-8 h-8 rounded-xl bg-[#DC2626]/20 flex items-center justify-center mb-2">
-                <span className="text-[#DC2626] font-black text-xs">{gym.name[0]}</span>
-              </div>
-              <p className="text-white font-bold text-sm">{gym.name}</p>
-              <p className="text-[#666] text-xs mb-2">{gym.city}</p>
-              <div className="flex flex-wrap gap-1">
-                {gym.disciplines.map((d) => (
-                  <DisciplinePill key={d} discipline={d} />
-                ))}
-              </div>
-            </a>
+              <StatCard number={number} label={label} />
+            </motion.div>
           ))}
         </div>
       </div>
-    </div>
+    </section>
+  )
+}
+
+// ─── My Gyms ─────────────────────────────────────────────────────────────────
+function MyGyms({ memberships }: { memberships: any[] }) {
+  if (!memberships.length) return null
+
+  return (
+    <section className="border-b border-[#1f1f1f]">
+      <div className="max-w-[1280px] mx-auto px-6 py-8">
+        <p className="font-inter text-[11px] text-[#888888] uppercase tracking-[4px] mb-6">My Gyms</p>
+        <div className="divide-y divide-[#1f1f1f]">
+          {memberships.map((m: any) => {
+            const gym = m.gyms ?? {}
+            const disciplines: string[] = gym.disciplines ?? m.disciplines ?? []
+            const isLive = m.nextSession?.status === 'live'
+            const nextTime = m.nextSession?.scheduled_at ? formatRelDay(m.nextSession.scheduled_at) : null
+
+            return (
+              <a
+                key={m.id ?? gym.id}
+                href={`/gyms/${gym.slug ?? ''}`}
+                className="flex items-center justify-between py-4 group"
+              >
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-3 mb-1.5">
+                    {isLive && (
+                      <span className="flex items-center gap-1.5 font-inter text-[10px] text-[#C41E3A] tracking-[2px] uppercase">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#C41E3A] live-pulse" />
+                        Live
+                      </span>
+                    )}
+                    <span className="font-bebas text-xl text-white tracking-[1px] group-hover:text-[#C41E3A] transition-colors duration-150">
+                      {gym.name ?? 'Unknown Gym'}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {disciplines.slice(0, 4).map((d: string, idx: number) => (
+                      <span key={d} className="flex items-center gap-2">
+                        {idx > 0 && <span className="text-[#333333] text-xs">·</span>}
+                        <span className="font-inter text-xs text-[#555555] uppercase tracking-[2px]">{d}</span>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <div className="flex items-center gap-4 ml-4 shrink-0">
+                  {nextTime && !isLive && (
+                    <span className="font-inter text-sm text-[#888888]">Next {nextTime}</span>
+                  )}
+                  <ChevronRight size={16} className="text-[#555555] group-hover:text-white transition-colors duration-150" />
+                </div>
+              </a>
+            )
+          })}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+// ─── Upcoming Classes ─────────────────────────────────────────────────────────
+function UpcomingClasses({ sessions }: { sessions: any[] }) {
+  const items = sessions.slice(0, 6)
+
+  return (
+    <section className="border-b border-[#1f1f1f]">
+      <div className="max-w-[1280px] mx-auto px-6 py-8">
+        <div className="flex items-center justify-between mb-6">
+          <p className="font-inter text-[11px] text-[#888888] uppercase tracking-[4px]">Upcoming Classes</p>
+          <a href="/dashboard/schedule" className="font-inter text-xs text-[#555555] hover:text-white transition-colors flex items-center gap-1">
+            View all <ChevronRight size={12} />
+          </a>
+        </div>
+
+        {items.length === 0 ? (
+          <p className="font-inter text-sm text-[#555555]">No upcoming classes. Join a gym to get started.</p>
+        ) : (
+          <div className="divide-y divide-[#1f1f1f]">
+            {items.map((s: any, i: number) => {
+              const discipline = s.discipline ?? 'BJJ'
+              const dotColor = DISCIPLINE_COLOR[discipline] ?? '#888888'
+              return (
+                <motion.a
+                  key={s.id}
+                  href={`/watch/${s.id}`}
+                  initial={{ opacity: 0, x: -8 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.2, ease: 'easeOut', delay: i * 0.04 }}
+                  className="flex items-center gap-4 py-4 group"
+                >
+                  <div className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: dotColor }} />
+                  <div className="flex-1 min-w-0">
+                    <p className="font-bebas text-lg text-white tracking-[1px] leading-none mb-1 group-hover:text-[#C41E3A] transition-colors duration-150">
+                      {s.title}
+                    </p>
+                    <p className="font-inter text-xs text-[#555555]">
+                      {s.coaches?.name ?? 'Coach'}&nbsp;·&nbsp;{s.gyms?.name ?? ''}
+                    </p>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <p className="font-inter text-sm text-[#888888]">{formatTime(s.scheduled_at)}</p>
+                    <p className="font-inter text-[11px] text-[#555555]">{formatRelDay(s.scheduled_at)}</p>
+                  </div>
+                  <span className="font-inter text-[10px] text-[#555555] uppercase tracking-[2px] border border-[#2a2a2a] bg-[#141414] px-2 py-0.5 rounded-sm shrink-0">
+                    {discipline}
+                  </span>
+                </motion.a>
+              )
+            })}
+          </div>
+        )}
+      </div>
+    </section>
+  )
+}
+
+// ─── Recent Replays ───────────────────────────────────────────────────────────
+function RecentReplays({ replays }: { replays: any[] }) {
+  const items = replays.slice(0, 4)
+  if (!items.length) return null
+
+  return (
+    <section className="border-b border-[#1f1f1f]">
+      <div className="max-w-[1280px] mx-auto px-6 py-8">
+        <div className="flex items-center justify-between mb-6">
+          <p className="font-inter text-[11px] text-[#888888] uppercase tracking-[4px]">Replay Library</p>
+          <a href="/dashboard/replays" className="font-inter text-xs text-[#555555] hover:text-white transition-colors flex items-center gap-1">
+            View all <ChevronRight size={12} />
+          </a>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-[#1f1f1f]">
+          {items.map((s: any, i: number) => (
+            <motion.a
+              key={s.id}
+              href={`/replay/${s.id}`}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.2, ease: 'easeOut', delay: i * 0.04 }}
+              className="bg-[#0d0d0d] p-5 block group hover:bg-[#141414] transition-colors duration-150"
+            >
+              <div className="flex items-center justify-between mb-3">
+                <span className="font-inter text-[10px] text-[#555555] uppercase tracking-[2px] border border-[#2a2a2a] bg-[#1a1a1a] px-2 py-0.5 rounded-sm">
+                  {s.discipline ?? 'BJJ'}
+                </span>
+                {s.mux_playback_id && (
+                  <span className="font-inter text-[10px] text-[#888888] uppercase tracking-[2px]">AI NOTES</span>
+                )}
+              </div>
+              <p className="font-bebas text-lg text-white leading-tight tracking-[1px] mb-2 group-hover:text-[#C41E3A] transition-colors duration-150">
+                {s.title}
+              </p>
+              <p className="font-inter text-xs text-[#555555]">
+                {s.coaches?.name ?? 'Coach'}&nbsp;·&nbsp;{s.duration_minutes ?? 60}m
+              </p>
+              <div className="mt-4 h-px bg-[#1f1f1f]">
+                <div className="h-px bg-white" style={{ width: '40%' }} />
+              </div>
+            </motion.a>
+          ))}
+        </div>
+      </div>
+    </section>
   )
 }
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
-export default function DashboardClient({ user, memberships, upcoming, liveSession }: Props) {
-  const [prefs, setPrefs] = useState<MatpeakPrefs>({ disciplines: [], level: '', goal: '' })
-  const grouped = groupByDay(upcoming)
-
-  // Read onboarding prefs from localStorage on mount
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem('matpeak_prefs')
-      if (raw) {
-        const parsed = JSON.parse(raw) as MatpeakPrefs
-        setPrefs(parsed)
-      }
-    } catch {
-      // ignore parse errors
-    }
-  }, [])
-
-  const firstName = user.name.split(' ')[0]
-  const subtitle = goalSubtitle(prefs.goal)
-  const topDiscipline = prefs.disciplines[0] ?? null
-
-  const hasGyms = memberships.length > 0
+export default function DashboardClient({ user, memberships, upcoming, replays, liveSession }: Props) {
+  const [, setSearchOpen] = useState(false)
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] flex">
-      <MemberSidebar active="Dashboard" />
+    <div className="min-h-screen bg-black flex">
+      <MemberSidebar active="Dashboard" onSearchOpen={() => setSearchOpen(true)} />
 
       <main className="flex-1 lg:ml-64 min-w-0">
-        {/* Top bar */}
-        <div className="sticky top-0 z-20 bg-[#0a0a0a]/90 backdrop-blur-md border-b border-white/5 px-6 h-16 flex items-center justify-between mt-14 lg:mt-0">
-          <div>
-            <h1 className="text-white font-bold text-lg leading-tight">
-              Welcome back, {firstName}
-            </h1>
-            <p className="text-[#888888] text-xs">{subtitle}</p>
+        <div className="h-14 lg:hidden" />
+
+        {liveSession && <LiveBanner session={liveSession} />}
+        <HeroPanel upcoming={upcoming} user={user} />
+        <StatsRow memberships={memberships} replays={replays} />
+        <MyGyms memberships={memberships} />
+        <UpcomingClasses sessions={upcoming} />
+        <RecentReplays replays={replays} />
+
+        <section className="border-b border-[#1f1f1f]">
+          <div className="max-w-[1280px] mx-auto px-6 py-8">
+            <InsightCard body="You've watched 8 guard retention classes this month. You're building real depth in this position. Next step — find a class focused on attacking from guard, not just surviving it." />
           </div>
-          <ProfileDropdown name={user.name} />
-        </div>
-
-        <div className="px-6 py-6 space-y-10 max-w-5xl">
-
-          {/* ── SECTION 1: Welcome Header ─────────────────────────────────── */}
-          <FadeSection delay={0}>
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <h2 className="text-white font-black text-2xl">
-                  Hey, {firstName} 👋
-                </h2>
-                <p className="text-[#666] text-sm mt-1">{subtitle}</p>
-              </div>
-              {topDiscipline && (
-                <div className="shrink-0 mt-1">
-                  <DisciplinePill discipline={topDiscipline} />
-                </div>
-              )}
-            </div>
-          </FadeSection>
-
-          {/* ── SECTION 2: Happening Now ──────────────────────────────────── */}
-          <FadeSection delay={0.1}>
-            <SectionHeader>⚡ Happening Now</SectionHeader>
-            {liveSession ? (
-              <div className="bg-[#DC2626]/10 border border-[#DC2626]/30 rounded-2xl px-6 py-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-xl bg-[#DC2626]/20 flex items-center justify-center shrink-0">
-                    <Radio size={18} className="text-[#DC2626]" />
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2 mb-0.5">
-                      <span className="w-2 h-2 rounded-full bg-[#DC2626] animate-pulse" />
-                      <span className="text-[#DC2626] text-xs font-bold tracking-wide uppercase">Live Now</span>
-                    </div>
-                    <p className="text-white font-bold text-sm">{liveSession.title}</p>
-                    <p className="text-[#888888] text-xs">
-                      {liveSession.gyms?.name} · {liveSession.coaches?.name}
-                    </p>
-                  </div>
-                </div>
-                <a
-                  href={`/watch/${liveSession.id}`}
-                  className="shrink-0 bg-[#DC2626] hover:bg-red-700 text-white font-bold px-6 py-2.5 rounded-xl text-sm transition-colors"
-                >
-                  Join Now
-                </a>
-              </div>
-            ) : (
-              <p className="text-[#555] text-sm">No classes live right now — check back soon.</p>
-            )}
-          </FadeSection>
-
-          {/* ── SECTION 3: Recommended for You ───────────────────────────── */}
-          <FadeSection delay={0.2}>
-            <SectionHeader>🎯 Recommended for You</SectionHeader>
-            <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
-              {RECOMMENDED.map((item) => (
-                <RecommendedCard key={item.id} item={item} />
-              ))}
-            </div>
-          </FadeSection>
-
-          {/* ── SECTION 4: My Schedule This Week ─────────────────────────── */}
-          <FadeSection delay={0.3}>
-            <SectionHeader>📅 My Schedule This Week</SectionHeader>
-            {!hasGyms ? (
-              <EmptyGymCards prefs={prefs} />
-            ) : grouped.length === 0 ? (
-              <div className="bg-[#111] border border-white/5 rounded-2xl px-6 py-8 text-center">
-                <Calendar size={28} className="text-[#555] mx-auto mb-3" />
-                <p className="text-[#666] text-sm">No upcoming classes this week.</p>
-              </div>
-            ) : (
-              <div className="bg-[#111111] border border-white/5 rounded-2xl overflow-hidden">
-                {grouped.map((group, gi) => (
-                  <div key={group.label}>
-                    {gi > 0 && <div className="border-t border-white/5" />}
-                    <div className="px-4 py-2.5 bg-white/[0.02]">
-                      <span className="text-[#888888] text-xs font-bold uppercase tracking-widest">{group.label}</span>
-                    </div>
-                    {group.sessions.map((s: any) => (
-                      <div
-                        key={s.id}
-                        className={`flex items-center gap-4 px-4 py-3.5 hover:bg-white/[0.03] transition-colors
-                          ${s.status === 'live' ? 'bg-[#DC2626]/5 border-l-2 border-[#DC2626]' : ''}`}
-                      >
-                        <div className="w-16 shrink-0 text-center">
-                          {s.status === 'live' ? (
-                            <span className="flex items-center gap-1 justify-center text-[#DC2626] text-xs font-bold">
-                              <span className="w-1.5 h-1.5 rounded-full bg-[#DC2626] animate-pulse" /> LIVE
-                            </span>
-                          ) : (
-                            <span className="text-[#888888] text-sm font-medium">{formatTime(s.scheduled_at)}</span>
-                          )}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-white text-sm font-semibold truncate">{s.title}</p>
-                          <p className="text-[#888888] text-xs mt-0.5">
-                            {s.coaches?.name} · {s.gyms?.name}
-                          </p>
-                        </div>
-                        <div className="hidden sm:flex items-center gap-2 shrink-0">
-                          <DisciplinePill discipline={s.discipline} />
-                          <span className="text-xs text-[#555]">{s.level}</span>
-                        </div>
-                        {s.status === 'live' && (
-                          <a
-                            href={`/watch/${s.id}`}
-                            className="shrink-0 bg-[#DC2626] hover:bg-red-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-colors"
-                          >
-                            Watch
-                          </a>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                ))}
-              </div>
-            )}
-          </FadeSection>
-
-          {/* ── SECTION 5: Trending This Week ────────────────────────────── */}
-          <FadeSection delay={0.4}>
-            <SectionHeader>🔥 Trending This Week</SectionHeader>
-            <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
-              {TRENDING.map((item) => (
-                <TrendingCard key={item.id} item={item} />
-              ))}
-            </div>
-          </FadeSection>
-
-          {/* ── SECTION 6: Continue Watching ─────────────────────────────── */}
-          <FadeSection delay={0.5}>
-            <div className="flex items-center justify-between mb-4">
-              <SectionHeader>📚 Continue Watching</SectionHeader>
-              <a href="/dashboard/replays" className="text-[#888] hover:text-white text-sm transition-colors">
-                View all
-              </a>
-            </div>
-            <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
-              {CONTINUE_WATCHING.map((item) => (
-                <ContinueCard key={item.id} item={item} />
-              ))}
-            </div>
-          </FadeSection>
-
-          {/* ── SECTION 7: Recent Session Summaries ──────────────────────── */}
-          <FadeSection delay={0.6}>
-            <div className="flex items-center justify-between mb-4">
-              <SectionHeader>📝 Recent Session Summaries</SectionHeader>
-              <a href="/dashboard/replays" className="text-[#888] hover:text-white text-sm transition-colors">
-                View all
-              </a>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {[
-                { ...DEMO_SUMMARY, date: 'Today' },
-                { ...DEMO_SUMMARY, title: 'Advanced Guard Passing', discipline: 'BJJ', coach: 'Coach Rajan', duration: '62 minutes', date: 'Yesterday' },
-                { ...DEMO_SUMMARY, title: 'Boxing Fundamentals', discipline: 'Boxing', coach: 'Coach Arjun', gym: 'Strike Lab Boxing', duration: '45 minutes', date: '2 days ago' },
-              ].map((s, i) => (
-                <motion.a
-                  key={i}
-                  href="/replay/demo"
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.6 + i * 0.08 }}
-                  className="bg-[#111111] border border-[#1f1f1f] hover:border-[#2a2a2a] rounded-xl p-5 flex flex-col gap-3 group transition-all"
-                >
-                  <div className="flex items-start justify-between gap-2">
-                    <div>
-                      <p className="text-white font-bold text-sm group-hover:text-[#DC2626] transition-colors line-clamp-1">{s.title}</p>
-                      <p className="text-[#888888] text-xs mt-0.5">{s.coach} · {s.gym}</p>
-                    </div>
-                    <span className="text-[#555] text-xs shrink-0">{s.date}</span>
-                  </div>
-                  <p className="text-[#666] text-xs leading-relaxed line-clamp-2">{s.summary}</p>
-                  <div className="flex flex-wrap gap-1.5">
-                    {s.techniques.slice(0, 3).map(t => (
-                      <span key={t} className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-[#1a1a1a] border border-[#2a2a2a] text-[#888]">{t}</span>
-                    ))}
-                    {s.techniques.length > 3 && (
-                      <span className="text-[10px] text-[#555] px-1">+{s.techniques.length - 3}</span>
-                    )}
-                  </div>
-                  <div className="flex items-center justify-between pt-1 border-t border-[#1a1a1a]">
-                    <span className="text-[#555] text-xs">{s.duration} · {s.discipline}</span>
-                    <span className="text-[#DC2626] text-xs font-semibold group-hover:underline">View summary →</span>
-                  </div>
-                </motion.a>
-              ))}
-            </div>
-          </FadeSection>
-
-        </div>
+        </section>
       </main>
     </div>
   )

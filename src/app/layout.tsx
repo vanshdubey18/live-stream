@@ -1,13 +1,20 @@
 import type { Metadata } from 'next'
-import localFont from 'next/font/local'
+import { Bebas_Neue, Inter } from 'next/font/google'
 import './globals.css'
 import PageTransition from '@/components/layout/PageTransition'
 import SearchProvider from '@/components/search/SearchProvider'
 
-const geistSans = localFont({
-  src: './fonts/GeistVF.woff',
-  variable: '--font-geist-sans',
-  weight: '100 900',
+const bebasNeue = Bebas_Neue({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-bebas',
+  display: 'swap',
+})
+
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap',
 })
 
 export const metadata: Metadata = {
@@ -28,7 +35,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} antialiased bg-[#0a0a0a] text-white`}>
+      <body className={`${bebasNeue.variable} ${inter.variable} font-inter antialiased bg-black text-white`}>
         <SearchProvider>
           <PageTransition>
             {children}

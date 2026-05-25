@@ -64,7 +64,7 @@ export default function ProgressRing({
           cy={size / 2}
           r={radius}
           fill="none"
-          stroke="#1f1f1f"
+          stroke="#2A2A2A"
           strokeWidth={strokeWidth}
         />
         <circle
@@ -87,7 +87,7 @@ export default function ProgressRing({
           </span>
         )}
         {sublabel && (
-          <span className="font-inter text-[#888888] uppercase tracking-[2px] text-center leading-tight" style={{ fontSize: size * 0.09 }}>
+          <span className="font-inter text-[#999999] uppercase tracking-[2px] text-center leading-tight" style={{ fontSize: size * 0.09 }}>
             {sublabel}
           </span>
         )}

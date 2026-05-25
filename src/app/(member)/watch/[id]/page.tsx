@@ -17,10 +17,10 @@ export default async function WatchPage({ params }: { params: { id: string } }) 
 
   if (!session) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center px-4">
+      <div className="min-h-screen bg-[#0D0D0D] flex items-center justify-center px-4">
         <div className="text-center">
           <h1 className="text-white text-2xl font-bold mb-2">Session not found</h1>
-          <Link href="/dashboard" className="text-[#DC2626] text-sm hover:underline">Back to dashboard</Link>
+          <Link href="/dashboard" className="text-[#FF3B3B] text-sm hover:underline">Back to dashboard</Link>
         </div>
       </div>
     )
@@ -41,15 +41,15 @@ export default async function WatchPage({ params }: { params: { id: string } }) 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const gymName = (session.gyms as any)?.name ?? 'this gym'
       return (
-        <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center px-4">
+        <div className="min-h-screen bg-[#0D0D0D] flex items-center justify-center px-4">
           <div className="text-center space-y-4">
             <div className="text-5xl">🔒</div>
             <h1 className="text-white text-2xl font-bold">Members only</h1>
-            <p className="text-[#888888] text-sm max-w-xs mx-auto">
+            <p className="text-[#999999] text-sm max-w-xs mx-auto">
               You need an active membership at <strong className="text-white">{gymName}</strong> to watch this class.
             </p>
             <Link href="/gyms"
-              className="inline-block bg-[#DC2626] hover:bg-red-700 text-white font-bold px-6 py-3 rounded-xl text-sm transition-colors">
+              className="inline-block bg-[#FF3B3B] hover:bg-red-700 text-white font-bold px-6 py-3 rounded-xl text-sm transition-colors">
               Browse Gyms
             </Link>
           </div>

@@ -36,18 +36,18 @@ export default function AdminOverviewClient({ stats, gyms, members, payouts }: P
   const platformCutPaise = Math.round(totalRevenuePaise * 0.3)
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] flex">
+    <div className="min-h-screen bg-[#0D0D0D] flex">
       <AdminSidebar active="Overview" pendingCount={stats.pendingCount} />
 
       <main className="flex-1 lg:ml-64 min-w-0">
         {/* Top bar */}
-        <div className="sticky top-0 z-20 bg-[#0a0a0a]/90 backdrop-blur-md border-b border-white/5 px-6 h-16 flex items-center justify-between mt-14 lg:mt-0">
+        <div className="sticky top-0 z-20 bg-[#0D0D0D]/90 backdrop-blur-md border-b border-white/5 px-6 h-16 flex items-center justify-between mt-14 lg:mt-0">
           <div>
             <h1 className="text-white font-bold text-lg">Admin Overview</h1>
-            <p className="text-[#888888] text-xs">Platform-wide stats and management</p>
+            <p className="text-[#999999] text-xs">Platform-wide stats and management</p>
           </div>
           <a href="/admin/applications"
-            className="flex items-center gap-1.5 bg-[#DC2626] hover:bg-red-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition-colors">
+            className="flex items-center gap-1.5 bg-[#FF3B3B] hover:bg-red-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition-colors">
             Review Applications
             {stats.pendingCount > 0 && (
               <span className="bg-white/20 text-white text-xs font-black px-1.5 py-0.5 rounded-md ml-0.5">
@@ -96,7 +96,7 @@ export default function AdminOverviewClient({ stats, gyms, members, payouts }: P
               label="Platform Revenue"
               value={`₹${(platformCutPaise / 100).toLocaleString('en-IN')}`}
               sub="30% cut (all time)"
-              icon={<TrendingUp size={16} className="text-[#DC2626]" />}
+              icon={<TrendingUp size={16} className="text-[#FF3B3B]" />}
               trend="up"
               highlight
             />
@@ -104,7 +104,7 @@ export default function AdminOverviewClient({ stats, gyms, members, payouts }: P
               label="Live Now"
               value={String(stats.liveCount)}
               sub="Active streams"
-              icon={<Radio size={16} className="text-[#DC2626]" />}
+              icon={<Radio size={16} className="text-[#FF3B3B]" />}
               trend={stats.liveCount > 0 ? 'live' : 'neutral'}
             />
           </div>
@@ -120,7 +120,7 @@ export default function AdminOverviewClient({ stats, gyms, members, payouts }: P
                   key={tab}
                   onClick={() => setActiveTab(tab)}
                   className={`px-4 py-1.5 rounded-lg text-sm font-semibold transition-all capitalize
-                    ${activeTab === tab ? 'bg-[#DC2626] text-white' : 'text-[#888888] hover:text-white'}`}
+                    ${activeTab === tab ? 'bg-[#FF3B3B] text-white' : 'text-[#999999] hover:text-white'}`}
                 >
                   {tab}
                 </button>
@@ -128,21 +128,21 @@ export default function AdminOverviewClient({ stats, gyms, members, payouts }: P
             </div>
 
             {activeTab === 'gyms' ? (
-              <div className="bg-[#111111] border border-white/5 rounded-2xl overflow-hidden">
+              <div className="bg-[#1A1A1A] border border-white/5 rounded-2xl overflow-hidden">
                 <div className="flex items-center justify-between px-5 py-4 border-b border-white/5">
                   <h3 className="text-white font-bold text-sm">Recent Gyms</h3>
-                  <a href="/admin/gyms" className="text-[#888888] hover:text-white text-xs transition-colors flex items-center gap-1">
+                  <a href="/admin/gyms" className="text-[#999999] hover:text-white text-xs transition-colors flex items-center gap-1">
                     View all <ExternalLink size={11} />
                   </a>
                 </div>
                 {recentGyms.length === 0 ? (
-                  <div className="px-5 py-10 text-center text-[#888888] text-sm">No gyms yet.</div>
+                  <div className="px-5 py-10 text-center text-[#999999] text-sm">No gyms yet.</div>
                 ) : (
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="border-b border-white/5">
                         {['Name', 'City', 'Status', 'Joined'].map(h => (
-                          <th key={h} className="px-4 py-3 text-left text-xs font-bold text-[#888888] uppercase tracking-wider">{h}</th>
+                          <th key={h} className="px-4 py-3 text-left text-xs font-bold text-[#999999] uppercase tracking-wider">{h}</th>
                         ))}
                       </tr>
                     </thead>
@@ -150,7 +150,7 @@ export default function AdminOverviewClient({ stats, gyms, members, payouts }: P
                       {recentGyms.map((g: any) => (
                         <tr key={g.id} className="hover:bg-white/2 transition-colors">
                           <td className="px-4 py-3.5 text-white font-semibold">{g.name}</td>
-                          <td className="px-4 py-3.5 text-[#888888]">{g.city}</td>
+                          <td className="px-4 py-3.5 text-[#999999]">{g.city}</td>
                           <td className="px-4 py-3.5">
                             <span className={`text-xs font-semibold px-2.5 py-1 rounded-full
                               ${g.status === 'active' ? 'bg-green-500/10 text-green-400' :
@@ -159,7 +159,7 @@ export default function AdminOverviewClient({ stats, gyms, members, payouts }: P
                               {g.status}
                             </span>
                           </td>
-                          <td className="px-4 py-3.5 text-[#888888] text-xs">{formatDate(g.created_at)}</td>
+                          <td className="px-4 py-3.5 text-[#999999] text-xs">{formatDate(g.created_at)}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -167,21 +167,21 @@ export default function AdminOverviewClient({ stats, gyms, members, payouts }: P
                 )}
               </div>
             ) : (
-              <div className="bg-[#111111] border border-white/5 rounded-2xl overflow-hidden">
+              <div className="bg-[#1A1A1A] border border-white/5 rounded-2xl overflow-hidden">
                 <div className="flex items-center justify-between px-5 py-4 border-b border-white/5">
                   <h3 className="text-white font-bold text-sm">Recent Members</h3>
-                  <a href="/admin/members" className="text-[#888888] hover:text-white text-xs transition-colors flex items-center gap-1">
+                  <a href="/admin/members" className="text-[#999999] hover:text-white text-xs transition-colors flex items-center gap-1">
                     View all <ExternalLink size={11} />
                   </a>
                 </div>
                 {recentMembers.length === 0 ? (
-                  <div className="px-5 py-10 text-center text-[#888888] text-sm">No members yet.</div>
+                  <div className="px-5 py-10 text-center text-[#999999] text-sm">No members yet.</div>
                 ) : (
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="border-b border-white/5">
                         {['Name', 'Email', 'Role', 'Joined'].map(h => (
-                          <th key={h} className="px-4 py-3 text-left text-xs font-bold text-[#888888] uppercase tracking-wider">{h}</th>
+                          <th key={h} className="px-4 py-3 text-left text-xs font-bold text-[#999999] uppercase tracking-wider">{h}</th>
                         ))}
                       </tr>
                     </thead>
@@ -189,16 +189,16 @@ export default function AdminOverviewClient({ stats, gyms, members, payouts }: P
                       {recentMembers.map((m: any) => (
                         <tr key={m.id} className="hover:bg-white/2 transition-colors">
                           <td className="px-4 py-3.5 text-white font-semibold">{m.name ?? '—'}</td>
-                          <td className="px-4 py-3.5 text-[#888888]">{m.email}</td>
+                          <td className="px-4 py-3.5 text-[#999999]">{m.email}</td>
                           <td className="px-4 py-3.5">
                             <span className={`text-xs font-medium px-2 py-0.5 rounded-full
-                              ${m.role === 'admin' ? 'bg-[#DC2626]/10 text-[#DC2626]' :
+                              ${m.role === 'admin' ? 'bg-[#FF3B3B]/10 text-[#FF3B3B]' :
                                 m.role === 'gym_owner' ? 'bg-blue-500/10 text-blue-400' :
-                                'bg-white/5 text-[#888888]'}`}>
+                                'bg-white/5 text-[#999999]'}`}>
                               {m.role}
                             </span>
                           </td>
-                          <td className="px-4 py-3.5 text-[#888888] text-xs">{formatDate(m.created_at)}</td>
+                          <td className="px-4 py-3.5 text-[#999999] text-xs">{formatDate(m.created_at)}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -212,15 +212,15 @@ export default function AdminOverviewClient({ stats, gyms, members, payouts }: P
           <div className="grid lg:grid-cols-2 gap-6">
             <ActivityFeed />
 
-            <div className="bg-[#111111] border border-white/5 rounded-2xl overflow-hidden">
+            <div className="bg-[#1A1A1A] border border-white/5 rounded-2xl overflow-hidden">
               <div className="flex items-center justify-between px-5 py-4 border-b border-white/5">
                 <h3 className="text-white font-bold text-sm">Recent Payouts</h3>
-                <a href="/admin/payouts" className="text-[#888888] hover:text-white text-xs transition-colors flex items-center gap-1">
+                <a href="/admin/payouts" className="text-[#999999] hover:text-white text-xs transition-colors flex items-center gap-1">
                   View all <ExternalLink size={11} />
                 </a>
               </div>
               {payouts.length === 0 ? (
-                <div className="px-5 py-10 text-center text-[#888888] text-sm">No payouts yet.</div>
+                <div className="px-5 py-10 text-center text-[#999999] text-sm">No payouts yet.</div>
               ) : (
                 <div className="divide-y divide-white/5">
                   {payouts.slice(0, 6).map((p: any) => (

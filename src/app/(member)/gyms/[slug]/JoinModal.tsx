@@ -92,7 +92,7 @@ export default function JoinModal({ gym, onClose, onJoined }: Props) {
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-full max-w-md bg-[#111111] border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
+      <div className="relative w-full max-w-md bg-[#1A1A1A] border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
 
         {step === 'success' ? (
           <div className="p-8 text-center space-y-5">
@@ -101,10 +101,10 @@ export default function JoinModal({ gym, onClose, onJoined }: Props) {
             </div>
             <div>
               <h2 className="text-white text-xl font-black">You're in!</h2>
-              <p className="text-[#888888] text-sm mt-2">You've joined <strong className="text-white">{gym.name}</strong>. Start watching classes now.</p>
+              <p className="text-[#999999] text-sm mt-2">You've joined <strong className="text-white">{gym.name}</strong>. Start watching classes now.</p>
             </div>
             <button onClick={onJoined}
-              className="w-full bg-[#DC2626] hover:bg-red-700 text-white font-bold py-3 rounded-xl text-sm transition-colors">
+              className="w-full bg-[#FF3B3B] hover:bg-red-700 text-white font-bold py-3 rounded-xl text-sm transition-colors">
               Go to Dashboard
             </button>
           </div>
@@ -113,7 +113,7 @@ export default function JoinModal({ gym, onClose, onJoined }: Props) {
             <div className="flex items-center justify-between px-6 py-5 border-b border-white/5">
               <div>
                 <h2 className="text-white font-bold text-base">Join {gym.name}</h2>
-                <p className="text-[#888888] text-xs mt-0.5">Select a plan to get started</p>
+                <p className="text-[#999999] text-xs mt-0.5">Select a plan to get started</p>
               </div>
               <button onClick={onClose} className="text-[#555] hover:text-white transition-colors">
                 <X size={20} />
@@ -129,13 +129,13 @@ export default function JoinModal({ gym, onClose, onJoined }: Props) {
                     onClick={() => { setPlan(p.id); setSelectedDisciplines([]) }}
                     className={`w-full flex items-center justify-between px-4 py-3.5 rounded-xl border text-left transition-all
                       ${plan === p.id
-                        ? 'bg-[#DC2626]/10 border-[#DC2626]/30 text-white'
-                        : 'bg-[#0a0a0a] border-white/10 text-[#888888] hover:border-white/20'}`}>
+                        ? 'bg-[#FF3B3B]/10 border-[#FF3B3B]/30 text-white'
+                        : 'bg-[#0D0D0D] border-white/10 text-[#999999] hover:border-white/20'}`}>
                     <div>
                       <p className={`text-sm font-bold ${plan === p.id ? 'text-white' : ''}`}>{p.label}</p>
                       <p className="text-xs mt-0.5 text-[#555]">{p.desc}</p>
                     </div>
-                    <span className={`text-sm font-black shrink-0 ml-4 ${plan === p.id ? 'text-[#DC2626]' : 'text-[#555]'}`}>{p.price}</span>
+                    <span className={`text-sm font-black shrink-0 ml-4 ${plan === p.id ? 'text-[#FF3B3B]' : 'text-[#555]'}`}>{p.price}</span>
                   </button>
                 ))}
               </div>
@@ -143,7 +143,7 @@ export default function JoinModal({ gym, onClose, onJoined }: Props) {
               {/* Discipline picker for single/dual */}
               {selectedPlan.disciplines < 999 && (
                 <div>
-                  <p className="text-[#888888] text-xs font-semibold uppercase tracking-wider mb-2">
+                  <p className="text-[#999999] text-xs font-semibold uppercase tracking-wider mb-2">
                     Choose {selectedPlan.disciplines === 1 ? '1 discipline' : 'up to 2 disciplines'}
                   </p>
                   <div className="flex flex-wrap gap-2">
@@ -154,7 +154,7 @@ export default function JoinModal({ gym, onClose, onJoined }: Props) {
                           key={d}
                           onClick={() => toggleDiscipline(d)}
                           className={`px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all
-                            ${active ? 'bg-[#DC2626]/10 border-[#DC2626]/30 text-[#DC2626]' : 'border-white/10 text-[#555] hover:border-white/20 hover:text-[#888]'}`}>
+                            ${active ? 'bg-[#FF3B3B]/10 border-[#FF3B3B]/30 text-[#FF3B3B]' : 'border-white/10 text-[#555] hover:border-white/20 hover:text-[#888]'}`}>
                           {d}
                         </button>
                       )
@@ -165,27 +165,27 @@ export default function JoinModal({ gym, onClose, onJoined }: Props) {
 
               {/* Coupon code */}
               <div>
-                <label className="text-[#888888] text-xs font-semibold uppercase tracking-wider block mb-1.5">
+                <label className="text-[#999999] text-xs font-semibold uppercase tracking-wider block mb-1.5">
                   <Ticket size={11} className="inline mr-1" />Coupon Code
                 </label>
                 <input
                   value={coupon}
                   onChange={e => setCoupon(e.target.value)}
                   placeholder="Enter your coupon code"
-                  className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl px-4 py-3 text-white placeholder-[#444] text-sm focus:outline-none focus:border-[#DC2626]/40 transition-colors uppercase"
+                  className="w-full bg-[#0D0D0D] border border-white/10 rounded-xl px-4 py-3 text-white placeholder-[#444] text-sm focus:outline-none focus:border-[#FF3B3B]/40 transition-colors uppercase"
                 />
               </div>
 
               {/* Razorpay placeholder */}
-              <div className="flex items-center gap-3 bg-[#0a0a0a] border border-white/5 rounded-xl px-4 py-3">
+              <div className="flex items-center gap-3 bg-[#0D0D0D] border border-white/5 rounded-xl px-4 py-3">
                 <CreditCard size={16} className="text-[#555] shrink-0" />
                 <p className="text-[#555] text-xs">Online payments coming soon. Use a coupon code to join during beta.</p>
               </div>
 
-              {error && <p className="text-[#DC2626] text-sm bg-[#DC2626]/10 border border-[#DC2626]/20 rounded-xl px-4 py-3">{error}</p>}
+              {error && <p className="text-[#FF3B3B] text-sm bg-[#FF3B3B]/10 border border-[#FF3B3B]/20 rounded-xl px-4 py-3">{error}</p>}
 
               <button onClick={handleJoin} disabled={loading}
-                className="w-full bg-[#DC2626] hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-xl text-sm transition-colors flex items-center justify-center gap-2">
+                className="w-full bg-[#FF3B3B] hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-xl text-sm transition-colors flex items-center justify-center gap-2">
                 {loading ? <><Loader2 size={16} className="animate-spin" /> Joining…</> : 'Join with Coupon'}
               </button>
             </div>

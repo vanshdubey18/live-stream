@@ -3,7 +3,7 @@ import ComingSoon from '@/components/ui/ComingSoon'
 
 export default function GymSchedulePage() {
   return (
-    <div className="min-h-screen bg-[#0a0a0a] flex">
+    <div className="min-h-screen bg-[#0D0D0D] flex">
       <GymSidebar active="Schedule Classes" />
       <ComingSoon
         title="Schedule Classes"

@@ -23,11 +23,11 @@ interface CoachCardProps {
 
 export default function CoachCard({ coach, onEdit, onRemove }: CoachCardProps) {
   return (
-    <div className="bg-[#111111] border border-white/5 rounded-2xl p-6 hover:border-white/10 transition-all duration-200 flex flex-col gap-4">
+    <div className="bg-[#1A1A1A] border border-white/5 rounded-2xl p-6 hover:border-white/10 transition-all duration-200 flex flex-col gap-4">
       {/* Avatar */}
       <div className="flex items-start justify-between">
-        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#DC2626]/20 to-[#DC2626]/5 flex items-center justify-center">
-          <span className="text-[#DC2626] text-xl font-black">{coach.name[0]}</span>
+        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#FF3B3B]/20 to-[#FF3B3B]/5 flex items-center justify-center">
+          <span className="text-[#FF3B3B] text-xl font-black">{coach.name[0]}</span>
         </div>
         <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${disciplineColors[coach.discipline] ?? 'bg-white/5 text-white/60'}`}>
           {coach.discipline}
@@ -37,7 +37,7 @@ export default function CoachCard({ coach, onEdit, onRemove }: CoachCardProps) {
       <div>
         <h3 className="text-white font-bold text-base">{coach.name}</h3>
         {coach.beltRank && (
-          <p className="text-[#888888] text-xs mt-0.5">{coach.beltRank}</p>
+          <p className="text-[#999999] text-xs mt-0.5">{coach.beltRank}</p>
         )}
         {coach.bio && (
           <p className="text-[#555] text-sm mt-2 line-clamp-2">{coach.bio}</p>

@@ -1,20 +1,20 @@
 export default function AdminLoading() {
   return (
-    <div className="min-h-screen bg-[#0a0a0a] p-6">
+    <div className="min-h-screen bg-[#0D0D0D] p-6">
       {/* Stats cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         {Array.from({ length: 4 }).map((_, i) => (
           <div key={i} className="bg-[#111] border border-white/5 rounded-xl p-5">
-            <div className="h-4 w-24 bg-[#1a1a1a] rounded animate-pulse mb-3" />
-            <div className="h-8 w-16 bg-[#1a1a1a] rounded animate-pulse" />
+            <div className="h-4 w-24 bg-[#222222] rounded animate-pulse mb-3" />
+            <div className="h-8 w-16 bg-[#222222] rounded animate-pulse" />
           </div>
         ))}
       </div>
 
       {/* Revenue chart placeholder */}
       <div className="bg-[#111] border border-white/5 rounded-xl p-5 mb-8 animate-pulse">
-        <div className="h-5 w-32 bg-[#1a1a1a] rounded mb-4" />
-        <div className="h-48 w-full bg-[#1a1a1a] rounded-lg" />
+        <div className="h-5 w-32 bg-[#222222] rounded mb-4" />
+        <div className="h-48 w-full bg-[#222222] rounded-lg" />
       </div>
 
       {/* Table skeleton */}
@@ -22,17 +22,17 @@ export default function AdminLoading() {
         {/* Table header */}
         <div className="flex gap-4 px-5 py-3 border-b border-white/5">
           {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="h-3 w-20 bg-[#1a1a1a] rounded animate-pulse" />
+            <div key={i} className="h-3 w-20 bg-[#222222] rounded animate-pulse" />
           ))}
         </div>
         {/* Table rows */}
         {Array.from({ length: 5 }).map((_, i) => (
           <div key={i} className="flex gap-4 items-center px-5 py-4 border-b border-white/5 last:border-0">
-            <div className="h-4 w-36 bg-[#1a1a1a] rounded animate-pulse" />
-            <div className="h-4 w-24 bg-[#1a1a1a] rounded animate-pulse" />
-            <div className="h-4 w-16 bg-[#1a1a1a] rounded animate-pulse" />
-            <div className="h-6 w-16 bg-[#1a1a1a] rounded-full animate-pulse ml-auto" />
-            <div className="h-4 w-20 bg-[#1a1a1a] rounded animate-pulse" />
+            <div className="h-4 w-36 bg-[#222222] rounded animate-pulse" />
+            <div className="h-4 w-24 bg-[#222222] rounded animate-pulse" />
+            <div className="h-4 w-16 bg-[#222222] rounded animate-pulse" />
+            <div className="h-6 w-16 bg-[#222222] rounded-full animate-pulse ml-auto" />
+            <div className="h-4 w-20 bg-[#222222] rounded animate-pulse" />
           </div>
         ))}
       </div>

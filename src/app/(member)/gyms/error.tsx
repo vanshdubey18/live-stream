@@ -10,7 +10,7 @@ export default function GymsError({
   reset: () => void
 }) {
   return (
-    <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-6">
+    <div className="min-h-screen bg-[#0D0D0D] flex items-center justify-center p-6">
       <div className="bg-[#111] border border-red-500/20 rounded-2xl p-8 max-w-md w-full text-center">
         <div className="text-4xl mb-4">⚠️</div>
         <h2 className="text-xl font-semibold text-white mb-2">Something went wrong</h2>

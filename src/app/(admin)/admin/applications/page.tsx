@@ -34,27 +34,27 @@ export default function ApplicationsPage() {
   const pendingCount = apps.filter(a => a.status === 'pending').length
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] flex">
+    <div className="min-h-screen bg-[#0D0D0D] flex">
       <AdminSidebar active="Gym Applications" />
 
       <main className="flex-1 lg:ml-64 min-w-0">
-        <div className="sticky top-0 z-20 bg-[#0a0a0a]/90 backdrop-blur-md border-b border-white/5 px-6 h-16 flex items-center mt-14 lg:mt-0">
+        <div className="sticky top-0 z-20 bg-[#0D0D0D]/90 backdrop-blur-md border-b border-white/5 px-6 h-16 flex items-center mt-14 lg:mt-0">
           <h1 className="text-white font-bold text-lg">Gym Applications</h1>
         </div>
 
         <div className="px-6 py-6 max-w-5xl">
           {/* Tabs */}
-          <div className="flex gap-1 bg-[#111111] border border-white/5 rounded-xl p-1 mb-6 w-fit">
+          <div className="flex gap-1 bg-[#1A1A1A] border border-white/5 rounded-xl p-1 mb-6 w-fit">
             {TABS.map(t => {
               const count = t === 'Pending' ? pendingCount : apps.filter(a => a.status === t.toLowerCase()).length
               return (
                 <button key={t} onClick={() => setTab(t)}
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all
-                    ${tab === t ? 'bg-white/10 text-white' : 'text-[#888888] hover:text-white'}`}>
+                    ${tab === t ? 'bg-white/10 text-white' : 'text-[#999999] hover:text-white'}`}>
                   {t}
                   {count > 0 && (
                     <span className={`text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center
-                      ${t === 'Pending' ? 'bg-[#DC2626] text-white' : 'bg-white/10 text-white/60'}`}>
+                      ${t === 'Pending' ? 'bg-[#FF3B3B] text-white' : 'bg-white/10 text-white/60'}`}>
                       {count}
                     </span>
                   )}
@@ -64,8 +64,8 @@ export default function ApplicationsPage() {
           </div>
 
           {filtered.length === 0 ? (
-            <div className="bg-[#111111] border border-white/5 rounded-2xl px-6 py-16 text-center">
-              <p className="text-[#888888] text-sm">No {tab.toLowerCase()} applications.</p>
+            <div className="bg-[#1A1A1A] border border-white/5 rounded-2xl px-6 py-16 text-center">
+              <p className="text-[#999999] text-sm">No {tab.toLowerCase()} applications.</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

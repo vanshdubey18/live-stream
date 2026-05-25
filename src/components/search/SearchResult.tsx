@@ -57,8 +57,8 @@ export default function SearchResult({ result, isSelected = false, onClick }: { 
   if (result.category === 'technique') {
     return (
       <div className={base} onClick={onClick}>
-        <div className="w-8 h-8 rounded-lg bg-[#DC2626]/10 flex items-center justify-center shrink-0">
-          <BookOpen size={14} className="text-[#DC2626]" />
+        <div className="w-8 h-8 rounded-lg bg-[#FF3B3B]/10 flex items-center justify-center shrink-0">
+          <BookOpen size={14} className="text-[#FF3B3B]" />
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-white text-sm font-medium truncate">{result.title}</p>
@@ -72,8 +72,8 @@ export default function SearchResult({ result, isSelected = false, onClick }: { 
   if (result.category === 'coach') {
     return (
       <div className={base} onClick={onClick}>
-        <div className="w-8 h-8 rounded-full bg-[#DC2626]/20 flex items-center justify-center shrink-0">
-          <span className="text-[#DC2626] text-xs font-bold">{result.name.split(' ').map(w => w[0]).join('')}</span>
+        <div className="w-8 h-8 rounded-full bg-[#FF3B3B]/20 flex items-center justify-center shrink-0">
+          <span className="text-[#FF3B3B] text-xs font-bold">{result.name.split(' ').map(w => w[0]).join('')}</span>
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-white text-sm font-medium truncate">{result.name}</p>
@@ -114,9 +114,9 @@ export default function SearchResult({ result, isSelected = false, onClick }: { 
     return (
       <div className={base} onClick={onClick}>
         <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center shrink-0 relative">
-          <Radio size={14} className={result.status === 'live' ? 'text-[#DC2626]' : 'text-[#888]'} />
+          <Radio size={14} className={result.status === 'live' ? 'text-[#FF3B3B]' : 'text-[#888]'} />
           {result.status === 'live' && (
-            <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-[#DC2626] animate-pulse" />
+            <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-[#FF3B3B] animate-pulse" />
           )}
         </div>
         <div className="flex-1 min-w-0">
@@ -125,7 +125,7 @@ export default function SearchResult({ result, isSelected = false, onClick }: { 
         </div>
         <div className="shrink-0 flex items-center gap-2">
           {result.status === 'live' && (
-            <span className="text-[#DC2626] text-xs font-bold uppercase">Live</span>
+            <span className="text-[#FF3B3B] text-xs font-bold uppercase">Live</span>
           )}
           <span className="text-[#444] text-xs">{result.level}</span>
         </div>

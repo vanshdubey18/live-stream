@@ -73,17 +73,17 @@ export default function GymDashboardClient({ gym, ownerName, sessions, coaches, 
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] flex">
+    <div className="min-h-screen bg-[#0D0D0D] flex">
       <GymSidebar active="Overview" />
 
       <main className="flex-1 lg:ml-64 min-w-0">
         {/* Top bar */}
-        <div className="sticky top-0 z-20 bg-[#0a0a0a]/90 backdrop-blur-md border-b border-white/5 px-6 h-16 flex items-center justify-between mt-14 lg:mt-0">
+        <div className="sticky top-0 z-20 bg-[#0D0D0D]/90 backdrop-blur-md border-b border-white/5 px-6 h-16 flex items-center justify-between mt-14 lg:mt-0">
           <div>
             <h1 className="text-white font-bold text-lg leading-tight">
               Welcome, {ownerName.split(' ')[0]}
             </h1>
-            <p className="text-[#888888] text-xs">{gym.name}</p>
+            <p className="text-[#999999] text-xs">{gym.name}</p>
           </div>
           <div className="flex items-center gap-3">
             <span className={`hidden sm:flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full border
@@ -94,7 +94,7 @@ export default function GymDashboardClient({ gym, ownerName, sessions, coaches, 
               {gym.status === 'active' ? 'Active' : 'Pending'}
             </span>
             <a href={`/gyms/${gym.slug}`}
-              className="hidden sm:flex items-center gap-1.5 text-[#888888] hover:text-white text-xs transition-colors">
+              className="hidden sm:flex items-center gap-1.5 text-[#999999] hover:text-white text-xs transition-colors">
               View gym page <ExternalLink size={12} />
             </a>
           </div>
@@ -110,16 +110,16 @@ export default function GymDashboardClient({ gym, ownerName, sessions, coaches, 
             <StatsCard label="This Month Revenue"
               value={`₹${(memberCount * 1499).toLocaleString('en-IN')}`}
               sub="Your 70% share (est.)"
-              icon={<TrendingUp size={18} className="text-[#DC2626]" />}
+              icon={<TrendingUp size={18} className="text-[#FF3B3B]" />}
               accent />
             <StatsCard label="Sessions This Week"
               value={String(localSessions.length)}
               sub={`${completedCount} completed, ${scheduledCount} scheduled`}
-              icon={<CalendarDays size={18} className="text-[#888888]" />} />
+              icon={<CalendarDays size={18} className="text-[#999999]" />} />
             <StatsCard label="Coaches"
               value={String(coaches.length)}
               sub="On your roster"
-              icon={<Radio size={18} className="text-[#888888]" />} />
+              icon={<Radio size={18} className="text-[#999999]" />} />
           </div>
 
           {/* Stream Setup */}
@@ -130,27 +130,27 @@ export default function GymDashboardClient({ gym, ownerName, sessions, coaches, 
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-white font-bold text-lg">Sessions</h2>
               <button onClick={() => setShowModal(true)}
-                className="flex items-center gap-1.5 bg-[#DC2626] hover:bg-red-700 text-white text-sm font-bold px-4 py-2 rounded-xl transition-colors">
+                className="flex items-center gap-1.5 bg-[#FF3B3B] hover:bg-red-700 text-white text-sm font-bold px-4 py-2 rounded-xl transition-colors">
                 <Plus size={15} /> Schedule New Class
               </button>
             </div>
 
             {localSessions.length === 0 ? (
-              <div className="bg-[#111111] border border-white/5 rounded-2xl px-6 py-12 text-center">
-                <p className="text-[#888888] text-sm mb-4">No sessions yet.</p>
+              <div className="bg-[#1A1A1A] border border-white/5 rounded-2xl px-6 py-12 text-center">
+                <p className="text-[#999999] text-sm mb-4">No sessions yet.</p>
                 <button onClick={() => setShowModal(true)}
-                  className="bg-[#DC2626] hover:bg-red-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition-colors">
+                  className="bg-[#FF3B3B] hover:bg-red-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition-colors">
                   Schedule your first class
                 </button>
               </div>
             ) : (
-              <div className="bg-[#111111] border border-white/5 rounded-2xl overflow-hidden">
+              <div className="bg-[#1A1A1A] border border-white/5 rounded-2xl overflow-hidden">
                 <div className="hidden md:block overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="border-b border-white/5">
                         {['Date', 'Time', 'Title', 'Discipline', 'Coach', 'Status', 'Actions'].map(h => (
-                          <th key={h} className="px-4 py-3 text-left text-xs font-bold text-[#888888] uppercase tracking-wider">{h}</th>
+                          <th key={h} className="px-4 py-3 text-left text-xs font-bold text-[#999999] uppercase tracking-wider">{h}</th>
                         ))}
                       </tr>
                     </thead>
@@ -160,7 +160,7 @@ export default function GymDashboardClient({ gym, ownerName, sessions, coaches, 
                           <td className="px-4 py-3.5 text-white font-medium whitespace-nowrap">
                             {s.scheduled_at ? formatDateShort(s.scheduled_at) : s.date}
                           </td>
-                          <td className="px-4 py-3.5 text-[#888888] whitespace-nowrap">
+                          <td className="px-4 py-3.5 text-[#999999] whitespace-nowrap">
                             {s.scheduled_at ? formatTime(s.scheduled_at) : s.time}
                           </td>
                           <td className="px-4 py-3.5 text-white font-medium">{s.title}</td>
@@ -169,25 +169,25 @@ export default function GymDashboardClient({ gym, ownerName, sessions, coaches, 
                               {s.discipline}
                             </span>
                           </td>
-                          <td className="px-4 py-3.5 text-[#888888]">
+                          <td className="px-4 py-3.5 text-[#999999]">
                             {s.coaches?.name ?? s.coach ?? '—'}
                           </td>
                           <td className="px-4 py-3.5">
                             {s.status === 'live' ? (
-                              <span className="flex items-center gap-1.5 text-[#DC2626] text-xs font-bold">
-                                <span className="w-1.5 h-1.5 rounded-full bg-[#DC2626] animate-pulse" /> Live
+                              <span className="flex items-center gap-1.5 text-[#FF3B3B] text-xs font-bold">
+                                <span className="w-1.5 h-1.5 rounded-full bg-[#FF3B3B] animate-pulse" /> Live
                               </span>
                             ) : s.status === 'ended' ? (
                               <span className="text-[#555] text-xs">Ended</span>
                             ) : (
-                              <span className="text-[#888888] text-xs bg-white/5 px-2 py-0.5 rounded-full">Scheduled</span>
+                              <span className="text-[#999999] text-xs bg-white/5 px-2 py-0.5 rounded-full">Scheduled</span>
                             )}
                           </td>
                           <td className="px-4 py-3.5">
                             <div className="flex items-center gap-2">
                               {s.status !== 'ended' && (
                                 <button onClick={() => handleGoLive(s.id)}
-                                  className="flex items-center gap-1.5 bg-[#DC2626]/10 hover:bg-[#DC2626]/20 border border-[#DC2626]/20 text-[#DC2626] text-xs font-semibold px-2.5 py-1.5 rounded-lg transition-all">
+                                  className="flex items-center gap-1.5 bg-[#FF3B3B]/10 hover:bg-[#FF3B3B]/20 border border-[#FF3B3B]/20 text-[#FF3B3B] text-xs font-semibold px-2.5 py-1.5 rounded-lg transition-all">
                                   <RadioIcon size={12} /> Go Live
                                 </button>
                               )}
@@ -210,7 +210,7 @@ export default function GymDashboardClient({ gym, ownerName, sessions, coaches, 
                       <div className="flex items-start justify-between gap-2">
                         <div>
                           <p className="text-white font-semibold text-sm">{s.title}</p>
-                          <p className="text-[#888888] text-xs mt-0.5">
+                          <p className="text-[#999999] text-xs mt-0.5">
                             {s.coaches?.name ?? s.coach} · {s.scheduled_at ? formatDateShort(s.scheduled_at) : s.date} {s.scheduled_at ? formatTime(s.scheduled_at) : s.time}
                           </p>
                         </div>
@@ -220,7 +220,7 @@ export default function GymDashboardClient({ gym, ownerName, sessions, coaches, 
                       </div>
                       <div className="flex gap-2">
                         <button onClick={() => handleGoLive(s.id)}
-                          className="flex items-center gap-1.5 bg-[#DC2626]/10 border border-[#DC2626]/20 text-[#DC2626] text-xs font-semibold px-3 py-1.5 rounded-lg">
+                          className="flex items-center gap-1.5 bg-[#FF3B3B]/10 border border-[#FF3B3B]/20 text-[#FF3B3B] text-xs font-semibold px-3 py-1.5 rounded-lg">
                           <RadioIcon size={11} /> Go Live
                         </button>
                         <button onClick={() => handleDelete(s.id)}
@@ -239,16 +239,16 @@ export default function GymDashboardClient({ gym, ownerName, sessions, coaches, 
           <section>
             <h2 className="text-white font-bold text-lg mb-4">Recent Payouts</h2>
             {payouts.length === 0 ? (
-              <div className="bg-[#111111] border border-white/5 rounded-2xl px-6 py-8 text-center">
-                <p className="text-[#888888] text-sm">No payouts yet.</p>
+              <div className="bg-[#1A1A1A] border border-white/5 rounded-2xl px-6 py-8 text-center">
+                <p className="text-[#999999] text-sm">No payouts yet.</p>
               </div>
             ) : (
-              <div className="bg-[#111111] border border-white/5 rounded-2xl overflow-hidden">
+              <div className="bg-[#1A1A1A] border border-white/5 rounded-2xl overflow-hidden">
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-white/5">
                       {['Period', 'Amount (70%)', 'Status'].map(h => (
-                        <th key={h} className="px-4 py-3 text-left text-xs font-bold text-[#888888] uppercase tracking-wider">{h}</th>
+                        <th key={h} className="px-4 py-3 text-left text-xs font-bold text-[#999999] uppercase tracking-wider">{h}</th>
                       ))}
                     </tr>
                   </thead>

@@ -10,17 +10,17 @@ const GYMS = [
 
 export default function TopGymsTable() {
   return (
-    <div className="bg-[#111111] border border-white/5 rounded-2xl overflow-hidden">
+    <div className="bg-[#1A1A1A] border border-white/5 rounded-2xl overflow-hidden">
       <div className="flex items-center justify-between px-5 py-4 border-b border-white/5">
         <h3 className="text-white font-bold text-sm">Top Gyms This Month</h3>
-        <TrendingUp size={16} className="text-[#888888]" />
+        <TrendingUp size={16} className="text-[#999999]" />
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-white/5">
               {['#', 'Gym', 'Members', 'Revenue', 'Your Cut (30%)'].map(h => (
-                <th key={h} className="px-4 py-3 text-left text-xs font-bold text-[#888888] uppercase tracking-wider">{h}</th>
+                <th key={h} className="px-4 py-3 text-left text-xs font-bold text-[#999999] uppercase tracking-wider">{h}</th>
               ))}
             </tr>
           </thead>
@@ -39,7 +39,7 @@ export default function TopGymsTable() {
                 </td>
                 <td className="px-4 py-3.5 text-white font-medium">{g.members}</td>
                 <td className="px-4 py-3.5 text-white font-medium">{g.revenue}</td>
-                <td className="px-4 py-3.5 text-[#DC2626] font-bold">{g.cut}</td>
+                <td className="px-4 py-3.5 text-[#FF3B3B] font-bold">{g.cut}</td>
               </tr>
             ))}
           </tbody>

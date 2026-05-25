@@ -45,8 +45,8 @@ export default function MemberSidebar({ active = 'Dashboard', onSearchOpen }: Me
   return (
     <>
       {/* Mobile top bar */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-black border-b border-[#1f1f1f] px-4 h-14 flex items-center justify-between">
-        <span className="font-bebas tracking-[2px] text-xl text-[#C41E3A]">MATPEAK</span>
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-[#0D0D0D] border-b border-[#333333] px-4 h-14 flex items-center justify-between">
+        <span className="font-bebas tracking-[2px] text-xl text-[#FF3B3B]">MATPEAK</span>
         <div className="flex items-center gap-2">
           <button
             onClick={handleSearchClick}
@@ -71,24 +71,24 @@ export default function MemberSidebar({ active = 'Dashboard', onSearchOpen }: Me
 
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 h-full z-40 w-64 bg-black border-r border-[#1f1f1f] flex flex-col transition-transform duration-300
+        className={`fixed top-0 left-0 h-full z-40 w-64 bg-[#0D0D0D] border-r border-[#333333] flex flex-col transition-transform duration-300
           ${open ? 'translate-x-0' : '-translate-x-full'}
           lg:translate-x-0`}
       >
         {/* Logo */}
-        <div className="h-16 flex items-center px-6 border-b border-[#1f1f1f]">
-          <span className="font-bebas tracking-[2px] text-xl text-[#C41E3A]">MATPEAK</span>
+        <div className="h-16 flex items-center px-6 border-b border-[#333333]">
+          <span className="font-bebas tracking-[2px] text-xl text-[#FF3B3B]">MATPEAK</span>
         </div>
 
         {/* Search button */}
-        <div className="px-3 py-3 border-b border-[#1f1f1f]">
+        <div className="px-3 py-3 border-b border-[#333333]">
           <button
             onClick={handleSearchClick}
             className="w-full flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm font-inter text-[#555555] hover:text-white transition-colors group"
           >
             <Search size={18} className="shrink-0" />
             <span className="flex-1 text-left">Search</span>
-            <kbd className="hidden lg:flex items-center gap-0.5 text-[#444] text-[10px] bg-[#0d0d0d] border border-[#1f1f1f] rounded-sm px-1.5 py-0.5 font-mono">
+            <kbd className="hidden lg:flex items-center gap-0.5 text-[#444] text-[10px] bg-[#1A1A1A] border border-[#333333] rounded-sm px-1.5 py-0.5 font-mono">
               ⌘K
             </kbd>
           </button>
@@ -105,11 +105,11 @@ export default function MemberSidebar({ active = 'Dashboard', onSearchOpen }: Me
                 onClick={() => setOpen(false)}
                 className={`flex items-center gap-3 px-3 py-2.5 text-sm font-inter transition-colors duration-200
                   ${isActive
-                    ? 'text-white bg-[#0d0d0d] border-l-2 border-[#C41E3A]'
+                    ? 'text-white bg-[#1A1A1A] border-l-2 border-[#FF3B3B]'
                     : 'text-[#555555] hover:text-white'
                   }`}
               >
-                <Icon size={18} className={isActive ? 'text-[#C41E3A]' : ''} />
+                <Icon size={18} className={isActive ? 'text-[#FF3B3B]' : ''} />
                 {label}
               </a>
             )
@@ -117,7 +117,7 @@ export default function MemberSidebar({ active = 'Dashboard', onSearchOpen }: Me
         </nav>
 
         {/* Logout */}
-        <div className="px-3 py-4 border-t border-[#1f1f1f]">
+        <div className="px-3 py-4 border-t border-[#333333]">
           <button
             onClick={async () => { await createClient().auth.signOut(); router.push('/login') }}
             className="flex items-center gap-3 px-3 py-2.5 text-sm font-inter text-[#555555] hover:text-white transition-colors w-full"

@@ -53,16 +53,16 @@ export default function CreateCouponModal({ onClose, onCreated }: CreateCouponMo
     }, 500)
   }
 
-  const inputCls = 'w-full bg-[#0a0a0a] border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-[#DC2626]/50 transition-colors'
-  const labelCls = 'block text-[#888888] text-xs font-medium mb-1.5'
+  const inputCls = 'w-full bg-[#0D0D0D] border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-[#FF3B3B]/50 transition-colors'
+  const labelCls = 'block text-[#999999] text-xs font-medium mb-1.5'
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-[#111111] border border-white/10 rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+      <div className="relative bg-[#1A1A1A] border border-white/10 rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between px-6 py-4 border-b border-white/5">
           <h2 className="text-white font-bold text-lg">Create Coupon</h2>
-          <button onClick={onClose} className="text-[#888888] hover:text-white transition-colors"><X size={20} /></button>
+          <button onClick={onClose} className="text-[#999999] hover:text-white transition-colors"><X size={20} /></button>
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
@@ -77,7 +77,7 @@ export default function CreateCouponModal({ onClose, onCreated }: CreateCouponMo
             <div className="grid grid-cols-2 gap-2">
               {(['percent_off', 'free_days'] as const).map(t => (
                 <label key={t} className={`flex items-center gap-2 px-4 py-3 rounded-xl border cursor-pointer transition-all text-sm
-                  ${form.type === t ? 'border-[#DC2626]/40 bg-[#DC2626]/5 text-white' : 'border-white/5 text-[#888888] hover:border-white/10'}`}>
+                  ${form.type === t ? 'border-[#FF3B3B]/40 bg-[#FF3B3B]/5 text-white' : 'border-white/5 text-[#999999] hover:border-white/10'}`}>
                   <input type="radio" name="type" value={t} checked={form.type === t} onChange={() => set('type', t)} className="hidden" />
                   {t === 'percent_off' ? '% Percentage off' : '📅 Free days'}
                 </label>
@@ -121,7 +121,7 @@ export default function CreateCouponModal({ onClose, onCreated }: CreateCouponMo
               Cancel
             </button>
             <button type="submit" disabled={loading}
-              className="flex-1 py-3 bg-[#DC2626] hover:bg-red-700 disabled:opacity-50 text-white text-sm font-bold rounded-xl transition-all flex items-center justify-center gap-2">
+              className="flex-1 py-3 bg-[#FF3B3B] hover:bg-red-700 disabled:opacity-50 text-white text-sm font-bold rounded-xl transition-all flex items-center justify-center gap-2">
               {loading ? <Loader2 size={15} className="animate-spin" /> : 'Create Coupon'}
             </button>
           </div>

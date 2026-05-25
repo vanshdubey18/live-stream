@@ -30,15 +30,15 @@ interface ApplicationCardProps {
 
 export default function ApplicationCard({ app, onApprove, onReject }: ApplicationCardProps) {
   return (
-    <div className="bg-[#111111] border border-white/5 rounded-2xl p-6 hover:border-white/10 transition-all">
+    <div className="bg-[#1A1A1A] border border-white/5 rounded-2xl p-6 hover:border-white/10 transition-all">
       <div className="flex items-start justify-between gap-4 mb-4">
         <div>
           <h3 className="text-white font-bold text-base">{app.name}</h3>
-          <div className="flex items-center gap-1.5 mt-1 text-[#888888] text-xs">
+          <div className="flex items-center gap-1.5 mt-1 text-[#999999] text-xs">
             <MapPin size={12} /> {app.location}, {app.city}
           </div>
         </div>
-        <div className="flex items-center gap-1.5 text-[#888888] text-xs shrink-0">
+        <div className="flex items-center gap-1.5 text-[#999999] text-xs shrink-0">
           <Clock size={12} /> {app.submittedAt}
         </div>
       </div>
@@ -50,11 +50,11 @@ export default function ApplicationCard({ app, onApprove, onReject }: Applicatio
       </div>
 
       <div className="grid grid-cols-2 gap-3 mb-5">
-        <div className="bg-[#0a0a0a] rounded-xl px-3 py-2.5">
+        <div className="bg-[#0D0D0D] rounded-xl px-3 py-2.5">
           <p className="text-[#555] text-xs">Coaches</p>
           <p className="text-white text-sm font-bold mt-0.5">{app.coachCount}</p>
         </div>
-        <div className="bg-[#0a0a0a] rounded-xl px-3 py-2.5">
+        <div className="bg-[#0D0D0D] rounded-xl px-3 py-2.5">
           <p className="text-[#555] text-xs">Bank Details</p>
           <p className={`text-sm font-bold mt-0.5 flex items-center gap-1 ${app.bankDetailsComplete ? 'text-green-400' : 'text-yellow-400'}`}>
             {app.bankDetailsComplete ? <><Check size={12} /> Complete</> : 'Pending'}
@@ -62,7 +62,7 @@ export default function ApplicationCard({ app, onApprove, onReject }: Applicatio
         </div>
       </div>
 
-      <div className="flex items-center gap-2 mb-5 text-xs text-[#888888]">
+      <div className="flex items-center gap-2 mb-5 text-xs text-[#999999]">
         <span>Applied by:</span>
         <span className="text-white font-medium">{app.ownerEmail}</span>
       </div>

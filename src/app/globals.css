@@ -3,13 +3,22 @@
 @tailwind utilities;
 
 :root {
-  --background: #000000;
-  --foreground: #ffffff;
+  --bg-primary: #0D0D0D;
+  --bg-secondary: #1A1A1A;
+  --bg-elevated: #222222;
+  --border-subtle: #2A2A2A;
+  --border-default: #333333;
+  --text-primary: #FFFFFF;
+  --text-secondary: #999999;
+  --text-muted: #555555;
+  --green: #00D4AA;
+  --red: #FF3B3B;
+  --yellow: #FFD60A;
 }
 
 body {
-  color: #ffffff;
-  background: #000000;
+  background-color: #0D0D0D;
+  color: #FFFFFF;
   font-family: var(--font-inter), system-ui, sans-serif;
 }
 
@@ -24,8 +33,6 @@ body {
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
-
-  /* Live pulse animation */
   .live-pulse {
     animation: pulse-live 2s ease-in-out infinite;
   }
@@ -33,17 +40,16 @@ body {
 
 @keyframes pulse-live {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
+  50% { opacity: 0.3; }
 }
 
-/* Skeleton shimmer */
 @keyframes shimmer {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
 }
 
 .skeleton {
-  background: linear-gradient(90deg, #1a1a1a 25%, #222 50%, #1a1a1a 75%);
+  background: linear-gradient(90deg, #1A1A1A 25%, #222222 50%, #1A1A1A 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }

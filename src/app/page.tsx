@@ -39,20 +39,20 @@ function Navbar() {
   }, [])
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 ${scrolled ? 'bg-black border-b border-[#1f1f1f]' : 'bg-transparent'}`}>
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 ${scrolled ? 'bg-[#0D0D0D] border-b border-[#333333]' : 'bg-transparent'}`}>
       <div className="max-w-[1280px] mx-auto px-6 h-16 flex items-center justify-between">
-        <a href="/" className="font-bebas text-2xl tracking-[2px] text-[#C41E3A]">MATPEAK</a>
+        <a href="/" className="font-bebas text-2xl tracking-[2px] text-[#FF3B3B]">MATPEAK</a>
 
         {/* Desktop */}
         <div className="hidden md:flex items-center gap-8">
-          <a href="#disciplines" className="font-inter text-sm text-[#888888] hover:text-white transition-colors duration-150">Disciplines</a>
-          <a href="#how-it-works" className="font-inter text-sm text-[#888888] hover:text-white transition-colors duration-150">How it works</a>
-          <a href="#pricing" className="font-inter text-sm text-[#888888] hover:text-white transition-colors duration-150">Pricing</a>
+          <a href="#disciplines" className="font-inter text-sm text-[#999999] hover:text-white transition-colors duration-150">Disciplines</a>
+          <a href="#how-it-works" className="font-inter text-sm text-[#999999] hover:text-white transition-colors duration-150">How it works</a>
+          <a href="#pricing" className="font-inter text-sm text-[#999999] hover:text-white transition-colors duration-150">Pricing</a>
         </div>
 
         <div className="hidden md:flex items-center gap-3">
-          <a href="/login" className="font-inter text-sm text-[#888888] hover:text-white transition-colors duration-150 px-4 py-2">Log in</a>
-          <a href="/signup" className="font-bebas text-sm tracking-[3px] bg-[#C41E3A] text-white px-6 py-2.5 rounded-sm hover:brightness-110 transition-all duration-150">
+          <a href="/login" className="font-inter text-sm text-[#999999] hover:text-white transition-colors duration-150 px-4 py-2">Log in</a>
+          <a href="/signup" className="font-bebas text-sm tracking-[3px] bg-white text-black px-6 py-2.5 rounded-sm hover:bg-[#E5E5E5] transition-all duration-150">
             START TRAINING
           </a>
         </div>
@@ -65,13 +65,13 @@ function Navbar() {
 
       {/* Mobile menu */}
       {open && (
-        <div className="md:hidden bg-black border-t border-[#1f1f1f] px-6 py-6 flex flex-col gap-4">
-          <a href="#disciplines" onClick={() => setOpen(false)} className="font-inter text-sm text-[#888888] hover:text-white transition-colors">Disciplines</a>
-          <a href="#how-it-works" onClick={() => setOpen(false)} className="font-inter text-sm text-[#888888] hover:text-white transition-colors">How it works</a>
-          <a href="#pricing" onClick={() => setOpen(false)} className="font-inter text-sm text-[#888888] hover:text-white transition-colors">Pricing</a>
-          <div className="border-t border-[#1f1f1f] pt-4 flex flex-col gap-3">
-            <a href="/login" className="font-inter text-sm text-[#888888] hover:text-white transition-colors">Log in</a>
-            <a href="/signup" className="font-bebas text-sm tracking-[3px] bg-[#C41E3A] text-white px-6 py-3 rounded-sm text-center hover:brightness-110 transition-all">
+        <div className="md:hidden bg-black border-t border-[#333333] px-6 py-6 flex flex-col gap-4">
+          <a href="#disciplines" onClick={() => setOpen(false)} className="font-inter text-sm text-[#999999] hover:text-white transition-colors">Disciplines</a>
+          <a href="#how-it-works" onClick={() => setOpen(false)} className="font-inter text-sm text-[#999999] hover:text-white transition-colors">How it works</a>
+          <a href="#pricing" onClick={() => setOpen(false)} className="font-inter text-sm text-[#999999] hover:text-white transition-colors">Pricing</a>
+          <div className="border-t border-[#333333] pt-4 flex flex-col gap-3">
+            <a href="/login" className="font-inter text-sm text-[#999999] hover:text-white transition-colors">Log in</a>
+            <a href="/signup" className="font-bebas text-sm tracking-[3px] bg-white text-black px-6 py-3 rounded-sm hover:bg-[#E5E5E5] text-center hover:brightness-110 transition-all">
               START TRAINING
             </a>
           </div>
@@ -84,14 +84,14 @@ function Navbar() {
 // ─── Hero ─────────────────────────────────────────────────────────────────────
 function Hero() {
   return (
-    <section className="relative min-h-screen bg-black flex flex-col justify-between pt-16">
+    <section className="relative min-h-screen bg-[#0D0D0D] flex flex-col justify-between pt-16">
       <div className="flex-1 flex items-center">
         <div className="max-w-[1280px] mx-auto px-6 w-full py-24">
           <motion.p
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.25, ease: 'easeOut' }}
-            className="font-inter text-[11px] text-[#888888] tracking-[4px] uppercase mb-8"
+            className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-8"
           >
             Combat Sports &bull; Live Training
           </motion.p>
@@ -105,7 +105,7 @@ function Hero() {
               <span className="block text-white" style={{ fontSize: 'clamp(56px, 9vw, 96px)' }}>
                 WORLD-CLASS TRAINING.
               </span>
-              <span className="block text-[#C41E3A]" style={{ fontSize: 'clamp(56px, 9vw, 96px)' }}>
+              <span className="block text-[#FF3B3B]" style={{ fontSize: 'clamp(56px, 9vw, 96px)' }}>
                 WHEREVER YOU ARE.
               </span>
             </h1>
@@ -115,7 +115,7 @@ function Hero() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, ease: 'easeOut', delay: 0.1 }}
-            className="font-inter text-[#888888] text-lg mt-8 max-w-[480px] leading-relaxed"
+            className="font-inter text-[#999999] text-lg mt-8 max-w-[480px] leading-relaxed"
           >
             Stream live classes from real MMA gyms.<br />
             BJJ. Boxing. Muay Thai. Wrestling.<br />
@@ -130,7 +130,7 @@ function Hero() {
           >
             <a
               href="/signup"
-              className="font-bebas text-sm tracking-[3px] bg-[#C41E3A] text-white px-8 py-4 rounded-sm hover:brightness-110 transition-all duration-150 flex items-center gap-2"
+              className="font-bebas text-sm tracking-[3px] bg-white text-black px-8 py-4 rounded-sm hover:bg-[#E5E5E5] transition-all duration-150 flex items-center gap-2"
             >
               START TRAINING <ArrowRight size={14} />
             </a>
@@ -149,10 +149,10 @@ function Hero() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.3, delay: 0.25, ease: 'easeOut' }}
-        className="border-t border-[#1f1f1f]"
+        className="border-t border-[#333333]"
       >
         <div className="max-w-[1280px] mx-auto px-6">
-          <div className="grid grid-cols-3 divide-x divide-[#1f1f1f]">
+          <div className="grid grid-cols-3 divide-x divide-[#333333]">
             {[
               { value: 2400, suffix: '+', label: 'HOURS STREAMED' },
               { value: 47, suffix: '', label: 'COACHES' },
@@ -162,7 +162,7 @@ function Hero() {
                 <div className="font-bebas text-5xl text-white tracking-[1px] leading-none">
                   <StatCounter end={value} suffix={suffix} />
                 </div>
-                <p className="font-inter text-[11px] text-[#888888] tracking-[4px] uppercase mt-2">{label}</p>
+                <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mt-2">{label}</p>
               </div>
             ))}
           </div>
@@ -202,16 +202,16 @@ const DISCIPLINES = [
 
 function Disciplines() {
   return (
-    <section id="disciplines" className="bg-black border-t border-[#1f1f1f]">
+    <section id="disciplines" className="bg-black border-t border-[#333333]">
       <div className="max-w-[1280px] mx-auto px-6 py-24">
         <div className="mb-16">
-          <p className="font-inter text-[11px] text-[#888888] tracking-[4px] uppercase mb-4">What we stream</p>
+          <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-4">What we stream</p>
           <h2 className="font-bebas text-5xl text-white tracking-[1px] leading-none">
             FOUR DISCIPLINES.<br />ONE PLATFORM.
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-[#1f1f1f]">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-[#333333]">
           {DISCIPLINES.map(({ name, full, desc, count }, i) => (
             <motion.div
               key={name}
@@ -220,17 +220,17 @@ function Disciplines() {
               viewport={{ once: true }}
               transition={{ duration: 0.25, ease: 'easeOut', delay: i * 0.05 }}
               whileHover={{ y: -2 }}
-              className="bg-black p-8 group cursor-pointer transition-colors duration-150 hover:bg-[#0d0d0d]"
+              className="bg-black p-8 group cursor-pointer transition-colors duration-150 hover:bg-[#1A1A1A]"
             >
               <div className="mb-6">
-                <span className="font-inter text-[11px] text-[#888888] tracking-[4px] uppercase border border-[#2a2a2a] bg-[#141414] px-[10px] py-1 rounded-sm">
+                <span className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase border border-[#333333] bg-[#222222] px-[10px] py-1 rounded-sm">
                   {count}
                 </span>
               </div>
-              <h3 className="font-bebas text-4xl text-white tracking-[1px] leading-none mb-3 group-hover:text-[#C41E3A] transition-colors duration-150">
+              <h3 className="font-bebas text-4xl text-white tracking-[1px] leading-none mb-3 group-hover:text-[#FF3B3B] transition-colors duration-150">
                 {name}
               </h3>
-              <p className="font-inter text-xs text-[#888888] mb-1">{full}</p>
+              <p className="font-inter text-xs text-[#999999] mb-1">{full}</p>
               <p className="font-inter text-sm text-[#555555] leading-relaxed">{desc}</p>
             </motion.div>
           ))}
@@ -261,14 +261,14 @@ const STEPS = [
 
 function HowItWorks() {
   return (
-    <section id="how-it-works" className="bg-black border-t border-[#1f1f1f]">
+    <section id="how-it-works" className="bg-black border-t border-[#333333]">
       <div className="max-w-[1280px] mx-auto px-6 py-24">
         <div className="mb-16">
-          <p className="font-inter text-[11px] text-[#888888] tracking-[4px] uppercase mb-4">The process</p>
+          <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-4">The process</p>
           <h2 className="font-bebas text-5xl text-white tracking-[1px] leading-none">HOW IT WORKS</h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-[#1f1f1f]">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-[#333333]">
           {STEPS.map(({ num, title, desc }, i) => (
             <motion.div
               key={num}
@@ -278,9 +278,9 @@ function HowItWorks() {
               transition={{ duration: 0.25, ease: 'easeOut', delay: i * 0.06 }}
               className="bg-black p-8"
             >
-              <div className="font-bebas text-6xl text-[#1f1f1f] tracking-[1px] leading-none mb-6">{num}</div>
+              <div className="font-bebas text-6xl text-[#333333] tracking-[1px] leading-none mb-6">{num}</div>
               <h3 className="font-bebas text-2xl text-white tracking-[1px] leading-none mb-4">{title}</h3>
-              <p className="font-inter text-sm text-[#888888] leading-relaxed">{desc}</p>
+              <p className="font-inter text-sm text-[#999999] leading-relaxed">{desc}</p>
             </motion.div>
           ))}
         </div>
@@ -313,14 +313,14 @@ const PLANS = [
 
 function Pricing() {
   return (
-    <section id="pricing" className="bg-black border-t border-[#1f1f1f]">
+    <section id="pricing" className="bg-black border-t border-[#333333]">
       <div className="max-w-[1280px] mx-auto px-6 py-24">
         <div className="mb-16">
-          <p className="font-inter text-[11px] text-[#888888] tracking-[4px] uppercase mb-4">Simple pricing</p>
+          <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-4">Simple pricing</p>
           <h2 className="font-bebas text-5xl text-white tracking-[1px] leading-none">TRAIN MORE.<br />PAY LESS.</h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-[#1f1f1f] max-w-3xl">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-[#333333] max-w-3xl">
           {PLANS.map(({ name, price, period, desc, features, cta, highlight }) => (
             <motion.div
               key={name}
@@ -328,26 +328,26 @@ function Pricing() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.25, ease: 'easeOut' }}
-              className={`p-8 ${highlight ? 'bg-[#0d0d0d]' : 'bg-black'}`}
+              className={`p-8 ${highlight ? 'bg-[#1A1A1A]' : 'bg-black'}`}
             >
               {highlight && (
                 <div className="mb-4">
-                  <span className="font-inter text-[11px] text-[#C41E3A] tracking-[4px] uppercase border border-[#C41E3A]/30 bg-[#C41E3A]/10 px-[10px] py-1 rounded-sm">
+                  <span className="font-inter text-[11px] text-[#FF3B3B] tracking-[4px] uppercase border border-[#FF3B3B]/30 bg-[#FF3B3B]/10 px-[10px] py-1 rounded-sm">
                     MOST POPULAR
                   </span>
                 </div>
               )}
-              <p className="font-inter text-[11px] text-[#888888] tracking-[4px] uppercase mb-6">{name}</p>
+              <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-6">{name}</p>
               <div className="flex items-baseline gap-1 mb-2">
                 <span className="font-bebas text-6xl text-white tracking-[1px] leading-none">₹{price}</span>
                 <span className="font-bebas text-xl text-[#555555] tracking-[1px]">{period}</span>
               </div>
-              <p className="font-inter text-sm text-[#888888] mb-8 leading-relaxed">{desc}</p>
-              <div className="border-t border-[#1f1f1f] pt-8 mb-8 space-y-3">
+              <p className="font-inter text-sm text-[#999999] mb-8 leading-relaxed">{desc}</p>
+              <div className="border-t border-[#333333] pt-8 mb-8 space-y-3">
                 {features.map(f => (
                   <div key={f} className="flex items-start gap-3">
-                    <div className="w-1 h-1 rounded-full bg-[#C41E3A] mt-2 shrink-0" />
-                    <p className="font-inter text-sm text-[#888888]">{f}</p>
+                    <div className="w-1 h-1 rounded-full bg-[#FF3B3B] mt-2 shrink-0" />
+                    <p className="font-inter text-sm text-[#999999]">{f}</p>
                   </div>
                 ))}
               </div>
@@ -355,7 +355,7 @@ function Pricing() {
                 href="/signup"
                 className={`block font-bebas text-sm tracking-[3px] text-center py-4 rounded-sm transition-all duration-150 ${
                   highlight
-                    ? 'bg-[#C41E3A] text-white hover:brightness-110'
+                    ? 'bg-[#FF3B3B] text-white hover:brightness-110'
                     : 'border border-[#333333] text-white hover:border-white'
                 }`}
               >
@@ -372,7 +372,7 @@ function Pricing() {
 // ─── CTA Banner ───────────────────────────────────────────────────────────────
 function CTABanner() {
   return (
-    <section className="bg-black border-t border-[#1f1f1f]">
+    <section className="bg-black border-t border-[#333333]">
       <div className="max-w-[1280px] mx-auto px-6 py-24">
         <motion.div
           initial={{ opacity: 0, y: 12 }}
@@ -380,13 +380,13 @@ function CTABanner() {
           viewport={{ once: true }}
           transition={{ duration: 0.25, ease: 'easeOut' }}
         >
-          <p className="font-inter text-[11px] text-[#888888] tracking-[4px] uppercase mb-6">Ready to start?</p>
+          <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-6">Ready to start?</p>
           <h2 className="font-bebas leading-[0.9] tracking-[1px] mb-10" style={{ fontSize: 'clamp(48px, 6vw, 72px)' }}>
             <span className="text-white">THE MAT DOESN&apos;T CARE<br />WHERE YOU&apos;RE FROM.</span>
           </h2>
           <a
             href="/signup"
-            className="inline-flex items-center gap-2 font-bebas text-sm tracking-[3px] bg-[#C41E3A] text-white px-10 py-4 rounded-sm hover:brightness-110 transition-all duration-150"
+            className="inline-flex items-center gap-2 font-bebas text-sm tracking-[3px] bg-white text-black px-10 py-4 rounded-sm hover:bg-[#E5E5E5] transition-all duration-150"
           >
             JOIN MATPEAK <ArrowRight size={14} />
           </a>
@@ -399,11 +399,11 @@ function CTABanner() {
 // ─── Footer ───────────────────────────────────────────────────────────────────
 function Footer() {
   return (
-    <footer className="bg-black border-t border-[#1f1f1f]">
+    <footer className="bg-black border-t border-[#333333]">
       <div className="max-w-[1280px] mx-auto px-6 py-12">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
           <div>
-            <span className="font-bebas text-xl tracking-[2px] text-[#C41E3A]">MATPEAK</span>
+            <span className="font-bebas text-xl tracking-[2px] text-[#FF3B3B]">MATPEAK</span>
             <p className="font-inter text-xs text-[#555555] mt-2">Combat sports live training platform.</p>
           </div>
           <div className="flex flex-wrap gap-8">
@@ -412,7 +412,7 @@ function Footer() {
             ))}
           </div>
         </div>
-        <div className="border-t border-[#1f1f1f] mt-12 pt-8">
+        <div className="border-t border-[#333333] mt-12 pt-8">
           <p className="font-inter text-[11px] text-[#555555]">© 2026 MATPEAK. All rights reserved.</p>
         </div>
       </div>

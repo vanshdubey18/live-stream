@@ -3,7 +3,7 @@ import ComingSoon from '@/components/ui/ComingSoon'
 
 export default function SchedulePage() {
   return (
-    <div className="min-h-screen bg-[#0a0a0a] flex">
+    <div className="min-h-screen bg-[#0D0D0D] flex">
       <MemberSidebar active="Schedule" />
       <ComingSoon
         title="Your Schedule"

@@ -2,18 +2,18 @@ import { UserPlus, Radio, CreditCard, Building2, Ticket } from 'lucide-react'
 
 const ACTIVITIES = [
   { icon: <UserPlus size={14} className="text-green-400" />, text: 'New member signup: Karan Singh joined Xtreme MMA Mumbai', sub: 'Full MMA plan · ₹1,999/mo', time: '2 min ago', dot: 'bg-green-400' },
-  { icon: <Radio size={14} className="text-[#DC2626]" />, text: 'Live stream started: Combat Club Jammu – Boxing', sub: '14 viewers watching', time: '18 min ago', dot: 'bg-[#DC2626]' },
+  { icon: <Radio size={14} className="text-[#FF3B3B]" />, text: 'Live stream started: Combat Club Jammu – Boxing', sub: '14 viewers watching', time: '18 min ago', dot: 'bg-[#FF3B3B]' },
   { icon: <CreditCard size={14} className="text-blue-400" />, text: 'Payment received: ₹1,499 from Priya Sharma', sub: 'Gracie Barra Delhi · Dual plan', time: '34 min ago', dot: 'bg-blue-400' },
   { icon: <Building2 size={14} className="text-yellow-400" />, text: 'New gym application: Mat Lab Kolkata', sub: 'BJJ · Wrestling · Awaiting review', time: '1 hr ago', dot: 'bg-yellow-400' },
   { icon: <Ticket size={14} className="text-purple-400" />, text: 'Coupon redeemed: PILOT100 by Aman Verma', sub: '100% off · Xtreme MMA Mumbai', time: '2 hr ago', dot: 'bg-purple-400' },
   { icon: <UserPlus size={14} className="text-green-400" />, text: 'New member: Sneha Iyer joined Champion MMA Chennai', sub: 'Single discipline · ₹999/mo', time: '3 hr ago', dot: 'bg-green-400' },
   { icon: <CreditCard size={14} className="text-blue-400" />, text: 'Payment received: ₹1,999 from Rohit Das', sub: '10th Planet Bangalore · Full MMA', time: '4 hr ago', dot: 'bg-blue-400' },
-  { icon: <Radio size={14} className="text-[#DC2626]" />, text: 'Stream ended: Gracie Barra Delhi – BJJ Fundamentals', sub: '62 viewers · 58 min', time: '5 hr ago', dot: 'bg-[#DC2626]' },
+  { icon: <Radio size={14} className="text-[#FF3B3B]" />, text: 'Stream ended: Gracie Barra Delhi – BJJ Fundamentals', sub: '62 viewers · 58 min', time: '5 hr ago', dot: 'bg-[#FF3B3B]' },
 ]
 
 export default function ActivityFeed() {
   return (
-    <div className="bg-[#111111] border border-white/5 rounded-2xl overflow-hidden">
+    <div className="bg-[#1A1A1A] border border-white/5 rounded-2xl overflow-hidden">
       <div className="px-5 py-4 border-b border-white/5">
         <h3 className="text-white font-bold text-sm">Recent Activity</h3>
       </div>

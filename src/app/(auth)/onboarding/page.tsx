@@ -46,9 +46,9 @@ function StepDots({ current, total }: { current: number; total: number }) {
           key={i}
           className={`rounded-full transition-all duration-300 ${
             i === current
-              ? 'w-6 h-2.5 bg-[#DC2626]'
+              ? 'w-6 h-2.5 bg-[#FF3B3B]'
               : i < current
-              ? 'w-2.5 h-2.5 bg-[#DC2626]/40'
+              ? 'w-2.5 h-2.5 bg-[#FF3B3B]/40'
               : 'w-2.5 h-2.5 bg-white/10'
           }`}
         />
@@ -73,7 +73,7 @@ function SelectCard({
       onClick={onClick}
       className={`w-full text-left bg-[#111] rounded-2xl p-6 border transition-all duration-200 cursor-pointer
         ${selected
-          ? 'border-[#DC2626]/50 bg-[#DC2626]/5 shadow-[0_0_0_1px_rgba(220,38,38,0.2)]'
+          ? 'border-[#FF3B3B]/50 bg-[#FF3B3B]/5 shadow-[0_0_0_1px_rgba(220,38,38,0.2)]'
           : 'border-white/10 hover:border-white/20 hover:bg-white/[0.03]'
         }`}
     >
@@ -132,10 +132,10 @@ export default function OnboardingPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#0a0a0a] flex flex-col">
+    <main className="min-h-screen bg-[#0D0D0D] flex flex-col">
       {/* Header */}
       <header className="flex items-center justify-between px-6 py-5">
-        <a href="/" className="text-xl font-black tracking-tighter text-[#DC2626]">
+        <a href="/" className="text-xl font-black tracking-tighter text-[#FF3B3B]">
           MATPEAK
         </a>
         <StepDots current={step} total={3} />
@@ -191,7 +191,7 @@ export default function OnboardingPage() {
             <button
               onClick={advance}
               disabled={!canContinue}
-              className="w-full bg-[#DC2626] hover:bg-red-700 disabled:opacity-30 disabled:cursor-not-allowed text-white font-bold py-4 rounded-2xl text-sm transition-all duration-200 flex items-center justify-center gap-2"
+              className="w-full bg-[#FF3B3B] hover:bg-red-700 disabled:opacity-30 disabled:cursor-not-allowed text-white font-bold py-4 rounded-2xl text-sm transition-all duration-200 flex items-center justify-center gap-2"
             >
               {step === 2 ? 'Go to Dashboard' : 'Continue'}
               <ArrowRight size={16} />
@@ -234,7 +234,7 @@ function StepOne({ prefs, toggleDiscipline }: { prefs: Prefs; toggleDiscipline: 
             <p className="text-[#666] text-xs mt-0.5">Train across all disciplines</p>
           </div>
           {allSelected && (
-            <div className="ml-auto w-5 h-5 rounded-full bg-[#DC2626] flex items-center justify-center">
+            <div className="ml-auto w-5 h-5 rounded-full bg-[#FF3B3B] flex items-center justify-center">
               <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
                 <path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
@@ -269,7 +269,7 @@ function StepTwo({ prefs, setPrefs }: { prefs: Prefs; setPrefs: React.Dispatch<R
                   <p className="text-[#666] text-sm mt-0.5">{l.desc}</p>
                 </div>
                 {selected && (
-                  <div className="ml-4 shrink-0 w-5 h-5 rounded-full bg-[#DC2626] flex items-center justify-center">
+                  <div className="ml-4 shrink-0 w-5 h-5 rounded-full bg-[#FF3B3B] flex items-center justify-center">
                     <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
                       <path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
@@ -305,7 +305,7 @@ function StepThree({ prefs, setPrefs }: { prefs: Prefs; setPrefs: React.Dispatch
                 <span className="text-2xl">{g.emoji}</span>
                 <p className={`font-bold text-base flex-1 ${selected ? 'text-white' : 'text-[#ccc]'}`}>{g.label}</p>
                 {selected && (
-                  <div className="shrink-0 w-5 h-5 rounded-full bg-[#DC2626] flex items-center justify-center">
+                  <div className="shrink-0 w-5 h-5 rounded-full bg-[#FF3B3B] flex items-center justify-center">
                     <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
                       <path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>

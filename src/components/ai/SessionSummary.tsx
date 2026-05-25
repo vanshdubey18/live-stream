@@ -53,7 +53,7 @@ const DISCIPLINE_COLORS: Record<string, string> = {
   Boxing: 'bg-yellow-500/10 text-yellow-400',
   'Muay Thai': 'bg-orange-500/10 text-orange-400',
   Wrestling: 'bg-green-500/10 text-green-400',
-  MMA: 'bg-[#DC2626]/10 text-[#DC2626]',
+  MMA: 'bg-[#FF3B3B]/10 text-[#FF3B3B]',
 }
 
 // ─── Section wrapper ───────────────────────────────────────────────────────────
@@ -70,14 +70,14 @@ function Section({ children, delay = 0 }: { children: React.ReactNode; delay?: n
 }
 
 function Divider() {
-  return <div className="h-px bg-[#1f1f1f]" />
+  return <div className="h-px bg-[#333333]" />
 }
 
 function SectionHeader({ icon, label }: { icon: React.ReactNode; label: string }) {
   return (
     <div className="flex items-center gap-2 mb-3">
-      <span className="text-[#DC2626]">{icon}</span>
-      <span className="text-[10px] font-black text-[#888888] uppercase tracking-[0.12em]">{label}</span>
+      <span className="text-[#FF3B3B]">{icon}</span>
+      <span className="text-[10px] font-black text-[#999999] uppercase tracking-[0.12em]">{label}</span>
     </div>
   )
 }
@@ -93,13 +93,13 @@ export default function SessionSummary({ data = DEMO_SUMMARY, onTimestampClick, 
   const [saved, setSaved] = useState(false)
 
   return (
-    <div className={`bg-[#111111] border border-[#1f1f1f] rounded-2xl overflow-hidden ${compact ? '' : ''}`}>
+    <div className={`bg-[#1A1A1A] border border-[#333333] rounded-2xl overflow-hidden ${compact ? '' : ''}`}>
 
       {/* ── Header ── */}
       <Section delay={0}>
         <div className="px-6 pt-6 pb-5">
           <div className="flex items-start justify-between gap-3 mb-4">
-            <div className="text-xs font-black text-[#DC2626] uppercase tracking-[0.12em] flex items-center gap-1.5">
+            <div className="text-xs font-black text-[#FF3B3B] uppercase tracking-[0.12em] flex items-center gap-1.5">
               <BookOpen size={12} />
               Today's Session
             </div>
@@ -108,7 +108,7 @@ export default function SessionSummary({ data = DEMO_SUMMARY, onTimestampClick, 
             </span>
           </div>
           <h2 className="text-white font-black text-xl leading-tight mb-1">{data.title}</h2>
-          <p className="text-[#888888] text-sm">{data.coach} · {data.gym}</p>
+          <p className="text-[#999999] text-sm">{data.coach} · {data.gym}</p>
           <p className="text-[#555] text-xs mt-1">{data.duration}</p>
         </div>
       </Section>
@@ -137,7 +137,7 @@ export default function SessionSummary({ data = DEMO_SUMMARY, onTimestampClick, 
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.16 + i * 0.06 }}
-                className="group px-3 py-1.5 rounded-full bg-[#1a1a1a] border border-[#2a2a2a] hover:border-[#DC2626]/40 hover:bg-[#DC2626]/5 transition-all cursor-pointer"
+                className="group px-3 py-1.5 rounded-full bg-[#222222] border border-[#333333] hover:border-[#FF3B3B]/40 hover:bg-[#FF3B3B]/5 transition-all cursor-pointer"
               >
                 <span className="text-[#cccccc] group-hover:text-white text-xs font-medium transition-colors">{t}</span>
               </motion.a>
@@ -162,12 +162,12 @@ export default function SessionSummary({ data = DEMO_SUMMARY, onTimestampClick, 
                 onClick={() => onTimestampClick?.(m.timestamp)}
                 className="w-full flex items-center gap-3 group text-left hover:bg-white/[0.03] rounded-xl px-2 py-2 -mx-2 transition-colors"
               >
-                <div className="w-7 h-7 rounded-lg bg-[#DC2626]/10 flex items-center justify-center shrink-0 group-hover:bg-[#DC2626]/20 transition-colors">
-                  <Play size={10} className="text-[#DC2626]" />
+                <div className="w-7 h-7 rounded-lg bg-[#FF3B3B]/10 flex items-center justify-center shrink-0 group-hover:bg-[#FF3B3B]/20 transition-colors">
+                  <Play size={10} className="text-[#FF3B3B]" />
                 </div>
-                <span className="text-[#DC2626] font-mono text-xs font-bold shrink-0">{m.timestamp}</span>
+                <span className="text-[#FF3B3B] font-mono text-xs font-bold shrink-0">{m.timestamp}</span>
                 <span className="text-[#aaaaaa] text-sm group-hover:text-white transition-colors flex-1">{m.label}</span>
-                <ChevronRight size={13} className="text-[#333] group-hover:text-[#DC2626] transition-colors shrink-0" />
+                <ChevronRight size={13} className="text-[#333] group-hover:text-[#FF3B3B] transition-colors shrink-0" />
               </motion.button>
             ))}
           </div>
@@ -181,7 +181,7 @@ export default function SessionSummary({ data = DEMO_SUMMARY, onTimestampClick, 
         <div className="px-6 py-5">
           <SectionHeader icon={<Lightbulb size={12} />} label="Coach's Key Point" />
           <blockquote className="relative pl-4">
-            <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-[#DC2626]/50 rounded-full" />
+            <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-[#FF3B3B]/50 rounded-full" />
             <p className="text-white text-sm leading-relaxed font-medium italic">
               &ldquo;{data.quote}&rdquo;
             </p>
@@ -203,16 +203,16 @@ export default function SessionSummary({ data = DEMO_SUMMARY, onTimestampClick, 
                 initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.48 + i * 0.07 }}
-                className="flex items-center gap-3 bg-[#0a0a0a] hover:bg-[#151515] border border-[#1f1f1f] hover:border-[#2a2a2a] rounded-xl px-4 py-3 group transition-all"
+                className="flex items-center gap-3 bg-[#0D0D0D] hover:bg-[#151515] border border-[#333333] hover:border-[#333333] rounded-xl px-4 py-3 group transition-all"
               >
-                <div className="w-8 h-8 rounded-lg bg-[#DC2626]/10 flex items-center justify-center shrink-0">
-                  <Play size={12} className="text-[#DC2626]" />
+                <div className="w-8 h-8 rounded-lg bg-[#FF3B3B]/10 flex items-center justify-center shrink-0">
+                  <Play size={12} className="text-[#FF3B3B]" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-white text-sm font-medium truncate">{c.title}</p>
                   <p className="text-[#555] text-xs">{c.coach}</p>
                 </div>
-                <ChevronRight size={14} className="text-[#333] group-hover:text-[#DC2626] transition-colors shrink-0" />
+                <ChevronRight size={14} className="text-[#333] group-hover:text-[#FF3B3B] transition-colors shrink-0" />
               </motion.a>
             ))}
           </div>
@@ -228,15 +228,15 @@ export default function SessionSummary({ data = DEMO_SUMMARY, onTimestampClick, 
             onClick={() => setSaved(v => !v)}
             className={`flex items-center justify-center gap-2 w-full border rounded-xl py-3 text-sm font-semibold transition-all
               ${saved
-                ? 'bg-[#DC2626]/10 border-[#DC2626]/30 text-[#DC2626]'
-                : 'bg-[#0a0a0a] border-[#1f1f1f] text-[#888888] hover:border-[#DC2626]/20 hover:text-white'}`}
+                ? 'bg-[#FF3B3B]/10 border-[#FF3B3B]/30 text-[#FF3B3B]'
+                : 'bg-[#0D0D0D] border-[#333333] text-[#999999] hover:border-[#FF3B3B]/20 hover:text-white'}`}
           >
-            <Bookmark size={15} className={saved ? 'fill-[#DC2626]' : ''} />
+            <Bookmark size={15} className={saved ? 'fill-[#FF3B3B]' : ''} />
             {saved ? 'Saved to journal' : 'Save to my journal'}
           </button>
           <a
             href="/dashboard"
-            className="flex items-center justify-center gap-2 w-full bg-[#DC2626] hover:bg-red-700 text-white font-bold py-3 rounded-xl text-sm transition-colors"
+            className="flex items-center justify-center gap-2 w-full bg-[#FF3B3B] hover:bg-red-700 text-white font-bold py-3 rounded-xl text-sm transition-colors"
           >
             <RotateCcw size={15} />
             Watch replay anytime

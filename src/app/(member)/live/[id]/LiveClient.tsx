@@ -73,12 +73,12 @@ function PrePhase({ onGoLive }: { onGoLive: () => void }) {
     >
       {/* Top countdown */}
       <div className="flex flex-col items-center pt-12 pb-6 px-4">
-        <span className="text-[#888888] text-sm font-medium mb-3 flex items-center gap-2">
+        <span className="text-[#999999] text-sm font-medium mb-3 flex items-center gap-2">
           <span>⏱</span> Class starts in
         </span>
         <div className="text-7xl sm:text-8xl font-black tracking-tighter tabular-nums text-white">
           {pad(mins)}
-          <span className="text-[#DC2626] mx-1">:</span>
+          <span className="text-[#FF3B3B] mx-1">:</span>
           {pad(secs)}
         </div>
       </div>
@@ -94,8 +94,8 @@ function PrePhase({ onGoLive }: { onGoLive: () => void }) {
         >
           {/* Coach avatar + info */}
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-full bg-[#DC2626]/20 flex items-center justify-center shrink-0">
-              <span className="text-[#DC2626] text-xl font-black">{SESSION.coachInitials}</span>
+            <div className="w-14 h-14 rounded-full bg-[#FF3B3B]/20 flex items-center justify-center shrink-0">
+              <span className="text-[#FF3B3B] text-xl font-black">{SESSION.coachInitials}</span>
             </div>
             <div>
               <p className="text-white font-bold text-base">{SESSION.coachName}</p>
@@ -114,12 +114,12 @@ function PrePhase({ onGoLive }: { onGoLive: () => void }) {
           </h1>
 
           {/* Description */}
-          <p className="text-[#888888] text-sm leading-relaxed">{SESSION.description}</p>
+          <p className="text-[#999999] text-sm leading-relaxed">{SESSION.description}</p>
 
           {/* Watcher count */}
           <div className="mt-auto pt-4 border-t border-white/5 flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[#DC2626] animate-pulse" />
-            <span className="text-[#888888] text-sm">
+            <span className="w-2 h-2 rounded-full bg-[#FF3B3B] animate-pulse" />
+            <span className="text-[#999999] text-sm">
               <span className="text-white font-bold">{watchers}</span> members getting ready
             </span>
           </div>
@@ -160,7 +160,7 @@ function PrePhase({ onGoLive }: { onGoLive: () => void }) {
           <div className="mt-auto pt-4 border-t border-white/5">
             <button
               onClick={onGoLive}
-              className="w-full bg-[#DC2626] hover:bg-red-700 text-white font-bold py-3 rounded-xl text-sm transition-colors flex items-center justify-center gap-2"
+              className="w-full bg-[#FF3B3B] hover:bg-red-700 text-white font-bold py-3 rounded-xl text-sm transition-colors flex items-center justify-center gap-2"
             >
               <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
               Go Live
@@ -198,7 +198,7 @@ function LivePhase({ onEndClass, playbackId }: { onEndClass: () => void; playbac
           streamType="live"
           playbackId={playbackId}
           autoPlay
-          accentColor="#DC2626"
+          accentColor="#FF3B3B"
           style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
         />
       ) : (
@@ -206,7 +206,7 @@ function LivePhase({ onEndClass, playbackId }: { onEndClass: () => void; playbac
           className="absolute inset-0"
           style={{
             background:
-              'linear-gradient(135deg, #0a0a0a 0%, #1a0505 25%, #050a0a 50%, #0a0510 75%, #0a0a0a 100%)',
+              'linear-gradient(135deg, #0D0D0D 0%, #1a0505 25%, #050a0a 50%, #0a0510 75%, #0D0D0D 100%)',
             backgroundSize: '400% 400%',
             animation: 'gradientShift 8s ease infinite',
           }}
@@ -250,7 +250,7 @@ function LivePhase({ onEndClass, playbackId }: { onEndClass: () => void; playbac
               </Link>
 
               <div className="flex items-center gap-2 bg-black/40 backdrop-blur-sm px-3 py-1.5 rounded-full">
-                <span className="w-2 h-2 rounded-full bg-[#DC2626] animate-pulse" />
+                <span className="w-2 h-2 rounded-full bg-[#FF3B3B] animate-pulse" />
                 <span className="text-white text-sm font-bold">LIVE</span>
                 <span className="text-white/60 text-sm">·</span>
                 <span className="text-white/80 text-sm">47 watching</span>
@@ -284,7 +284,7 @@ function LivePhase({ onEndClass, playbackId }: { onEndClass: () => void; playbac
                   className="relative w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
                 >
                   <MessageCircle size={16} className="text-white" />
-                  <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#DC2626] text-white text-[10px] font-bold flex items-center justify-center">
+                  <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#FF3B3B] text-white text-[10px] font-bold flex items-center justify-center">
                     12
                   </span>
                 </button>
@@ -320,7 +320,7 @@ function LivePhase({ onEndClass, playbackId }: { onEndClass: () => void; playbac
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={onEndClass}
-              className="bg-[#DC2626]/80 hover:bg-[#DC2626] border border-red-500/40 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-colors backdrop-blur-sm"
+              className="bg-[#FF3B3B]/80 hover:bg-[#FF3B3B] border border-red-500/40 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-colors backdrop-blur-sm"
             >
               End Class
             </motion.button>
@@ -336,7 +336,7 @@ function LivePhase({ onEndClass, playbackId }: { onEndClass: () => void; playbac
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: 320, opacity: 0 }}
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            className="absolute top-0 right-0 bottom-0 w-80 bg-[#0a0a0a]/95 backdrop-blur-md border-l border-white/10 z-20 flex flex-col"
+            className="absolute top-0 right-0 bottom-0 w-80 bg-[#0D0D0D]/95 backdrop-blur-md border-l border-white/10 z-20 flex flex-col"
             onClick={e => e.stopPropagation()}
           >
             <div className="px-4 h-16 flex items-center justify-between border-b border-white/5">
@@ -417,7 +417,7 @@ function PostPhase() {
         >
           <div className="text-7xl">🥋</div>
           <h1 className="text-4xl font-black text-white tracking-tight">Great session!</h1>
-          <p className="text-[#888888] text-base">You trained for 58 minutes.</p>
+          <p className="text-[#999999] text-base">You trained for 58 minutes.</p>
         </motion.div>
 
         {/* ── STEP 2 / 3: processing → summary ── */}
@@ -429,14 +429,14 @@ function PostPhase() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.35 }}
-              className="w-full bg-[#111] border border-[#1f1f1f] rounded-2xl px-6 py-8 flex flex-col items-center gap-5"
+              className="w-full bg-[#111] border border-[#333333] rounded-2xl px-6 py-8 flex flex-col items-center gap-5"
             >
               {/* Animated dots */}
               <div className="flex gap-2">
                 {[0, 1, 2].map(i => (
                   <motion.div
                     key={i}
-                    className="w-2.5 h-2.5 rounded-full bg-[#DC2626]"
+                    className="w-2.5 h-2.5 rounded-full bg-[#FF3B3B]"
                     animate={{ scale: [1, 1.6, 1], opacity: [0.4, 1, 0.4] }}
                     transition={{ duration: 0.9, delay: i * 0.25, repeat: Infinity }}
                   />
@@ -451,7 +451,7 @@ function PostPhase() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -6 }}
                   transition={{ duration: 0.3 }}
-                  className="text-[#888888] text-sm font-medium"
+                  className="text-[#999999] text-sm font-medium"
                 >
                   {PROCESSING_MESSAGES[msgIdx]}
                 </motion.p>
@@ -461,8 +461,8 @@ function PostPhase() {
               <div className="w-full space-y-3 mt-2">
                 {[80, 60, 90, 50, 70].map((w, i) => (
                   <div key={i} className="flex items-center gap-3">
-                    <div className="w-5 h-5 rounded-full bg-[#1a1a1a] animate-pulse shrink-0" />
-                    <div className={`h-3 bg-[#1a1a1a] rounded-full animate-pulse`} style={{ width: `${w}%` }} />
+                    <div className="w-5 h-5 rounded-full bg-[#222222] animate-pulse shrink-0" />
+                    <div className={`h-3 bg-[#222222] rounded-full animate-pulse`} style={{ width: `${w}%` }} />
                   </div>
                 ))}
               </div>

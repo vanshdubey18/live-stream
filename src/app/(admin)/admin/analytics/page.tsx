@@ -24,7 +24,7 @@ const DISCIPLINES = [
   { name: 'Muay Thai', value: 18 }, { name: 'Wrestling', value: 12 },
 ]
 
-const DISCIPLINE_COLORS = ['#DC2626', '#60A5FA', '#F59E0B', '#34D399']
+const DISCIPLINE_COLORS = ['#FF3B3B', '#60A5FA', '#F59E0B', '#34D399']
 
 const GYM_REVENUE = [
   { gym: 'Xtreme MMA', rev: 47 }, { gym: 'Champion MMA', rev: 38 },
@@ -44,7 +44,7 @@ const axisProps = { axisLine: false, tickLine: false }
 
 function ChartCard({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="bg-[#111111] border border-white/5 rounded-2xl p-6">
+    <div className="bg-[#1A1A1A] border border-white/5 rounded-2xl p-6">
       <h3 className="text-white font-bold mb-5 text-sm">{title}</h3>
       {children}
     </div>
@@ -53,11 +53,11 @@ function ChartCard({ title, children }: { title: string; children: React.ReactNo
 
 export default function AnalyticsPage() {
   return (
-    <div className="min-h-screen bg-[#0a0a0a] flex">
+    <div className="min-h-screen bg-[#0D0D0D] flex">
       <AdminSidebar active="Analytics" />
 
       <main className="flex-1 lg:ml-64 min-w-0">
-        <div className="sticky top-0 z-20 bg-[#0a0a0a]/90 backdrop-blur-md border-b border-white/5 px-6 h-16 flex items-center mt-14 lg:mt-0">
+        <div className="sticky top-0 z-20 bg-[#0D0D0D]/90 backdrop-blur-md border-b border-white/5 px-6 h-16 flex items-center mt-14 lg:mt-0">
           <h1 className="text-white font-bold text-lg">Analytics</h1>
         </div>
 
@@ -71,7 +71,7 @@ export default function AnalyticsPage() {
                 <XAxis dataKey="month" tick={tickStyle} {...axisProps} />
                 <YAxis tickFormatter={v => `₹${v / 1000}K`} tick={tickStyle} {...axisProps} width={55} />
                 <Tooltip contentStyle={tooltipStyle} labelStyle={labelStyle} formatter={(v) => [`₹${(v as number).toLocaleString('en-IN')}`, 'MRR']} />
-                <Line type="monotone" dataKey="mrr" stroke="#DC2626" strokeWidth={2.5} dot={false} />
+                <Line type="monotone" dataKey="mrr" stroke="#FF3B3B" strokeWidth={2.5} dot={false} />
               </LineChart>
             </ResponsiveContainer>
           </ChartCard>
@@ -85,7 +85,7 @@ export default function AnalyticsPage() {
                 <YAxis tick={tickStyle} {...axisProps} />
                 <Tooltip contentStyle={tooltipStyle} labelStyle={labelStyle} />
                 <Legend wrapperStyle={{ fontSize: 12, color: '#888' }} />
-                <Bar dataKey="new" fill="#DC2626" radius={[4, 4, 0, 0]} name="New Members" />
+                <Bar dataKey="new" fill="#FF3B3B" radius={[4, 4, 0, 0]} name="New Members" />
                 <Bar dataKey="churned" fill="rgba(255,255,255,0.1)" radius={[4, 4, 0, 0]} name="Churned" />
               </BarChart>
             </ResponsiveContainer>
@@ -107,7 +107,7 @@ export default function AnalyticsPage() {
                   {DISCIPLINES.map((d, i) => (
                     <div key={d.name} className="flex items-center gap-2.5">
                       <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: DISCIPLINE_COLORS[i] }} />
-                      <span className="text-[#888888] text-xs">{d.name}</span>
+                      <span className="text-[#999999] text-xs">{d.name}</span>
                       <span className="text-white text-xs font-bold ml-auto">{d.value}%</span>
                     </div>
                   ))}
@@ -137,7 +137,7 @@ export default function AnalyticsPage() {
                 <XAxis type="number" tickFormatter={v => `₹${v}K`} tick={tickStyle} {...axisProps} />
                 <YAxis type="category" dataKey="gym" tick={tickStyle} {...axisProps} width={100} />
                 <Tooltip contentStyle={tooltipStyle} labelStyle={labelStyle} formatter={(v) => [`₹${v},000`, 'Revenue']} />
-                <Bar dataKey="rev" fill="#DC2626" radius={[0, 4, 4, 0]} />
+                <Bar dataKey="rev" fill="#FF3B3B" radius={[0, 4, 4, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </ChartCard>

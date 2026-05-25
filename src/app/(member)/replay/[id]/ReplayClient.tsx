@@ -38,14 +38,14 @@ export default function ReplayClient({ playbackId }: { playbackId?: string }) {
   const session = DEMO_SUMMARY
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a]">
+    <div className="min-h-screen bg-[#0D0D0D]">
 
       {/* Top nav */}
-      <div className="sticky top-0 z-20 bg-[#0a0a0a]/95 backdrop-blur-md border-b border-[#1f1f1f] h-14 flex items-center px-6 gap-4">
-        <Link href="/dashboard" className="flex items-center gap-2 text-[#888888] hover:text-white text-sm transition-colors">
+      <div className="sticky top-0 z-20 bg-[#0D0D0D]/95 backdrop-blur-md border-b border-[#333333] h-14 flex items-center px-6 gap-4">
+        <Link href="/dashboard" className="flex items-center gap-2 text-[#999999] hover:text-white text-sm transition-colors">
           <ArrowLeft size={16} /> Dashboard
         </Link>
-        <div className="h-4 w-px bg-[#1f1f1f]" />
+        <div className="h-4 w-px bg-[#333333]" />
         <h1 className="text-white font-bold text-sm truncate">{session.title}</h1>
         <span className={`ml-auto text-xs font-semibold px-2.5 py-1 rounded-full ${DISCIPLINE_COLORS[session.discipline] ?? 'bg-white/5 text-white/60'}`}>
           {session.discipline}
@@ -65,7 +65,7 @@ export default function ReplayClient({ playbackId }: { playbackId?: string }) {
                   ref={playerRef}
                   streamType="on-demand"
                   playbackId={playbackId}
-                  accentColor="#DC2626"
+                  accentColor="#FF3B3B"
                   style={{ width: '100%', display: 'block' }}
                 />
                 {jumpTo && (
@@ -85,7 +85,7 @@ export default function ReplayClient({ playbackId }: { playbackId?: string }) {
                 <div
                   className="absolute inset-0"
                   style={{
-                    background: 'linear-gradient(135deg, #0a0a0a 0%, #1a0505 30%, #050a0a 70%, #0a0a0a 100%)',
+                    background: 'linear-gradient(135deg, #0D0D0D 0%, #1a0505 30%, #050a0a 70%, #0D0D0D 100%)',
                   }}
                 >
                   <div className="absolute inset-0 flex items-center justify-center opacity-5 pointer-events-none select-none">
@@ -123,13 +123,13 @@ export default function ReplayClient({ playbackId }: { playbackId?: string }) {
                       const rect = e.currentTarget.getBoundingClientRect()
                       setProgress((e.clientX - rect.left) / rect.width)
                     }}>
-                    <div className="h-full bg-[#DC2626] rounded-full transition-all" style={{ width: `${progress * 100}%` }} />
+                    <div className="h-full bg-[#FF3B3B] rounded-full transition-all" style={{ width: `${progress * 100}%` }} />
                     <div className="absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-white shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
                       style={{ left: `calc(${progress * 100}% - 6px)` }} />
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <button onClick={() => setPlaying(v => !v)} className="text-white hover:text-[#DC2626] transition-colors">
+                      <button onClick={() => setPlaying(v => !v)} className="text-white hover:text-[#FF3B3B] transition-colors">
                         {playing ? <Pause size={18} /> : <Play size={18} />}
                       </button>
                       <button className="text-white/60 hover:text-white transition-colors">
@@ -158,10 +158,10 @@ export default function ReplayClient({ playbackId }: { playbackId?: string }) {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15 }}
-            className="bg-[#111111] border border-[#1f1f1f] rounded-2xl px-6 py-5"
+            className="bg-[#1A1A1A] border border-[#333333] rounded-2xl px-6 py-5"
           >
             <h2 className="text-white font-black text-xl mb-1">{session.title}</h2>
-            <p className="text-[#888888] text-sm">{session.coach} · {session.gym} · {session.duration}</p>
+            <p className="text-[#999999] text-sm">{session.coach} · {session.gym} · {session.duration}</p>
           </motion.div>
 
           {/* Mobile: summary below video */}

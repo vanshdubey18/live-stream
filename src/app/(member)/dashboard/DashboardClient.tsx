@@ -18,7 +18,7 @@ interface Props {
 
 const DISCIPLINE_COLOR: Record<string, string> = {
   BJJ: '#ffffff',
-  Boxing: '#888888',
+  Boxing: '#999999',
   'Muay Thai': '#555555',
   Wrestling: '#333333',
   MMA: '#444444',
@@ -45,20 +45,20 @@ function LiveBanner({ session }: { session: any }) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.2, ease: 'easeOut' }}
-      className="block border-b border-[#1f1f1f] bg-[#0d0d0d] hover:bg-[#141414] transition-colors duration-150"
+      className="block border-b border-[#333333] bg-[#1A1A1A] hover:bg-[#222222] transition-colors duration-150"
     >
       <div className="max-w-[1280px] mx-auto px-6 py-4 flex items-center justify-between gap-4">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[#C41E3A] live-pulse" />
-            <span className="font-inter text-[11px] text-[#C41E3A] tracking-[4px] uppercase">Live Now</span>
+            <span className="w-2 h-2 rounded-full bg-[#FF3B3B] live-pulse" />
+            <span className="font-inter text-[11px] text-[#FF3B3B] tracking-[4px] uppercase">Live Now</span>
           </div>
           <span className="font-bebas text-xl text-white tracking-[1px]">{session.title}</span>
-          <span className="font-inter text-sm text-[#888888] hidden sm:inline">
+          <span className="font-inter text-sm text-[#999999] hidden sm:inline">
             {session.gyms?.name ?? session.gym_name}
           </span>
         </div>
-        <div className="flex items-center gap-2 text-[#C41E3A] shrink-0">
+        <div className="flex items-center gap-2 text-[#FF3B3B] shrink-0">
           <span className="font-inter text-xs">Watch now</span>
           <ArrowRight size={14} />
         </div>
@@ -79,23 +79,23 @@ function HeroPanel({ upcoming, user }: { upcoming: any[]; user: { name: string }
   const firstName = user.name?.split(' ')[0] ?? 'Fighter'
 
   return (
-    <section className="border-b border-[#1f1f1f]">
+    <section className="border-b border-[#333333]">
       <div className="max-w-[1280px] mx-auto px-6 py-12">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-12">
           <div className="flex-1">
-            <p className="font-inter text-[11px] text-[#888888] uppercase tracking-[4px] mb-4">
+            <p className="font-inter text-[11px] text-[#999999] uppercase tracking-[4px] mb-4">
               Today&apos;s Training
             </p>
             <div className="font-bebas text-[96px] text-white leading-none tracking-[1px]">
               {todayCount || upcoming.length || 3}
             </div>
-            <p className="font-inter text-sm text-[#888888] mt-3">Classes available today</p>
+            <p className="font-inter text-sm text-[#999999] mt-3">Classes available today</p>
             <p className="font-inter text-xs text-[#555555] mt-1 uppercase tracking-[2px]">
               Good to see you, {firstName}
             </p>
           </div>
 
-          <div className="hidden lg:block w-px bg-[#1f1f1f] self-stretch" />
+          <div className="hidden lg:block w-px bg-[#333333] self-stretch" />
 
           <div className="flex flex-col items-center gap-4">
             <ProgressRing
@@ -103,12 +103,12 @@ function HeroPanel({ upcoming, user }: { upcoming: any[]; user: { name: string }
               max={weekGoal}
               size={148}
               strokeWidth={7}
-              color="#C41E3A"
+              color="#FF3B3B"
               label={`${weekCount}/${weekGoal}`}
               sublabel="THIS WEEK"
             />
             <div className="text-center">
-              <p className="font-inter text-xs text-[#888888] uppercase tracking-[3px]">Weekly Goal</p>
+              <p className="font-inter text-xs text-[#999999] uppercase tracking-[3px]">Weekly Goal</p>
               <p className="font-inter text-[11px] text-[#555555] mt-1">
                 {weekGoal - weekCount} more to hit your target
               </p>
@@ -131,9 +131,9 @@ function StatsRow({ memberships, replays }: { memberships: any[]; replays: any[]
   ]
 
   return (
-    <section className="border-b border-[#1f1f1f]">
+    <section className="border-b border-[#333333]">
       <div className="max-w-[1280px] mx-auto px-6 py-8">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-[#1f1f1f]">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-[#333333]">
           {stats.map(({ number, label }, i) => (
             <motion.div
               key={label}
@@ -155,10 +155,10 @@ function MyGyms({ memberships }: { memberships: any[] }) {
   if (!memberships.length) return null
 
   return (
-    <section className="border-b border-[#1f1f1f]">
+    <section className="border-b border-[#333333]">
       <div className="max-w-[1280px] mx-auto px-6 py-8">
-        <p className="font-inter text-[11px] text-[#888888] uppercase tracking-[4px] mb-6">My Gyms</p>
-        <div className="divide-y divide-[#1f1f1f]">
+        <p className="font-inter text-[11px] text-[#999999] uppercase tracking-[4px] mb-6">My Gyms</p>
+        <div className="divide-y divide-[#333333]">
           {memberships.map((m: any) => {
             const gym = m.gyms ?? {}
             const disciplines: string[] = gym.disciplines ?? m.disciplines ?? []
@@ -174,12 +174,12 @@ function MyGyms({ memberships }: { memberships: any[] }) {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-3 mb-1.5">
                     {isLive && (
-                      <span className="flex items-center gap-1.5 font-inter text-[10px] text-[#C41E3A] tracking-[2px] uppercase">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#C41E3A] live-pulse" />
+                      <span className="flex items-center gap-1.5 font-inter text-[10px] text-[#FF3B3B] tracking-[2px] uppercase">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#FF3B3B] live-pulse" />
                         Live
                       </span>
                     )}
-                    <span className="font-bebas text-xl text-white tracking-[1px] group-hover:text-[#C41E3A] transition-colors duration-150">
+                    <span className="font-bebas text-xl text-white tracking-[1px] group-hover:text-[#FF3B3B] transition-colors duration-150">
                       {gym.name ?? 'Unknown Gym'}
                     </span>
                   </div>
@@ -194,7 +194,7 @@ function MyGyms({ memberships }: { memberships: any[] }) {
                 </div>
                 <div className="flex items-center gap-4 ml-4 shrink-0">
                   {nextTime && !isLive && (
-                    <span className="font-inter text-sm text-[#888888]">Next {nextTime}</span>
+                    <span className="font-inter text-sm text-[#999999]">Next {nextTime}</span>
                   )}
                   <ChevronRight size={16} className="text-[#555555] group-hover:text-white transition-colors duration-150" />
                 </div>
@@ -212,10 +212,10 @@ function UpcomingClasses({ sessions }: { sessions: any[] }) {
   const items = sessions.slice(0, 6)
 
   return (
-    <section className="border-b border-[#1f1f1f]">
+    <section className="border-b border-[#333333]">
       <div className="max-w-[1280px] mx-auto px-6 py-8">
         <div className="flex items-center justify-between mb-6">
-          <p className="font-inter text-[11px] text-[#888888] uppercase tracking-[4px]">Upcoming Classes</p>
+          <p className="font-inter text-[11px] text-[#999999] uppercase tracking-[4px]">Upcoming Classes</p>
           <a href="/dashboard/schedule" className="font-inter text-xs text-[#555555] hover:text-white transition-colors flex items-center gap-1">
             View all <ChevronRight size={12} />
           </a>
@@ -224,10 +224,10 @@ function UpcomingClasses({ sessions }: { sessions: any[] }) {
         {items.length === 0 ? (
           <p className="font-inter text-sm text-[#555555]">No upcoming classes. Join a gym to get started.</p>
         ) : (
-          <div className="divide-y divide-[#1f1f1f]">
+          <div className="divide-y divide-[#333333]">
             {items.map((s: any, i: number) => {
               const discipline = s.discipline ?? 'BJJ'
-              const dotColor = DISCIPLINE_COLOR[discipline] ?? '#888888'
+              const dotColor = DISCIPLINE_COLOR[discipline] ?? '#999999'
               return (
                 <motion.a
                   key={s.id}
@@ -239,7 +239,7 @@ function UpcomingClasses({ sessions }: { sessions: any[] }) {
                 >
                   <div className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: dotColor }} />
                   <div className="flex-1 min-w-0">
-                    <p className="font-bebas text-lg text-white tracking-[1px] leading-none mb-1 group-hover:text-[#C41E3A] transition-colors duration-150">
+                    <p className="font-bebas text-lg text-white tracking-[1px] leading-none mb-1 group-hover:text-[#FF3B3B] transition-colors duration-150">
                       {s.title}
                     </p>
                     <p className="font-inter text-xs text-[#555555]">
@@ -247,10 +247,10 @@ function UpcomingClasses({ sessions }: { sessions: any[] }) {
                     </p>
                   </div>
                   <div className="text-right shrink-0">
-                    <p className="font-inter text-sm text-[#888888]">{formatTime(s.scheduled_at)}</p>
+                    <p className="font-inter text-sm text-[#999999]">{formatTime(s.scheduled_at)}</p>
                     <p className="font-inter text-[11px] text-[#555555]">{formatRelDay(s.scheduled_at)}</p>
                   </div>
-                  <span className="font-inter text-[10px] text-[#555555] uppercase tracking-[2px] border border-[#2a2a2a] bg-[#141414] px-2 py-0.5 rounded-sm shrink-0">
+                  <span className="font-inter text-[10px] text-[#555555] uppercase tracking-[2px] border border-[#333333] bg-[#222222] px-2 py-0.5 rounded-sm shrink-0">
                     {discipline}
                   </span>
                 </motion.a>
@@ -269,15 +269,15 @@ function RecentReplays({ replays }: { replays: any[] }) {
   if (!items.length) return null
 
   return (
-    <section className="border-b border-[#1f1f1f]">
+    <section className="border-b border-[#333333]">
       <div className="max-w-[1280px] mx-auto px-6 py-8">
         <div className="flex items-center justify-between mb-6">
-          <p className="font-inter text-[11px] text-[#888888] uppercase tracking-[4px]">Replay Library</p>
+          <p className="font-inter text-[11px] text-[#999999] uppercase tracking-[4px]">Replay Library</p>
           <a href="/dashboard/replays" className="font-inter text-xs text-[#555555] hover:text-white transition-colors flex items-center gap-1">
             View all <ChevronRight size={12} />
           </a>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-[#1f1f1f]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-[#333333]">
           {items.map((s: any, i: number) => (
             <motion.a
               key={s.id}
@@ -285,23 +285,23 @@ function RecentReplays({ replays }: { replays: any[] }) {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.2, ease: 'easeOut', delay: i * 0.04 }}
-              className="bg-[#0d0d0d] p-5 block group hover:bg-[#141414] transition-colors duration-150"
+              className="bg-[#1A1A1A] p-5 block group hover:bg-[#222222] transition-colors duration-150"
             >
               <div className="flex items-center justify-between mb-3">
-                <span className="font-inter text-[10px] text-[#555555] uppercase tracking-[2px] border border-[#2a2a2a] bg-[#1a1a1a] px-2 py-0.5 rounded-sm">
+                <span className="font-inter text-[10px] text-[#555555] uppercase tracking-[2px] border border-[#333333] bg-[#222222] px-2 py-0.5 rounded-sm">
                   {s.discipline ?? 'BJJ'}
                 </span>
                 {s.mux_playback_id && (
-                  <span className="font-inter text-[10px] text-[#888888] uppercase tracking-[2px]">AI NOTES</span>
+                  <span className="font-inter text-[10px] text-[#999999] uppercase tracking-[2px]">AI NOTES</span>
                 )}
               </div>
-              <p className="font-bebas text-lg text-white leading-tight tracking-[1px] mb-2 group-hover:text-[#C41E3A] transition-colors duration-150">
+              <p className="font-bebas text-lg text-white leading-tight tracking-[1px] mb-2 group-hover:text-[#FF3B3B] transition-colors duration-150">
                 {s.title}
               </p>
               <p className="font-inter text-xs text-[#555555]">
                 {s.coaches?.name ?? 'Coach'}&nbsp;·&nbsp;{s.duration_minutes ?? 60}m
               </p>
-              <div className="mt-4 h-px bg-[#1f1f1f]">
+              <div className="mt-4 h-px bg-[#333333]">
                 <div className="h-px bg-white" style={{ width: '40%' }} />
               </div>
             </motion.a>
@@ -330,7 +330,7 @@ export default function DashboardClient({ user, memberships, upcoming, replays, 
         <UpcomingClasses sessions={upcoming} />
         <RecentReplays replays={replays} />
 
-        <section className="border-b border-[#1f1f1f]">
+        <section className="border-b border-[#333333]">
           <div className="max-w-[1280px] mx-auto px-6 py-8">
             <InsightCard body="You've watched 8 guard retention classes this month. You're building real depth in this position. Next step — find a class focused on attacking from guard, not just surviving it." />
           </div>

@@ -20,7 +20,7 @@ const disciplineColors: Record<string, string> = {
 const levelColors = {
   Beginner: 'text-green-400',
   Intermediate: 'text-yellow-400',
-  Advanced: 'text-[#DC2626]',
+  Advanced: 'text-[#FF3B3B]',
 }
 
 export default function ClassRow({
@@ -34,16 +34,16 @@ export default function ClassRow({
 }: ClassRowProps) {
   return (
     <div className={`flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all duration-200 group hover:bg-white/3
-      ${isLive ? 'bg-[#DC2626]/5 border border-[#DC2626]/20' : 'border border-transparent'}`}>
+      ${isLive ? 'bg-[#FF3B3B]/5 border border-[#FF3B3B]/20' : 'border border-transparent'}`}>
       {/* Time */}
       <div className="w-16 shrink-0 text-center">
         {isLive ? (
-          <span className="flex items-center gap-1 justify-center text-[#DC2626] text-xs font-bold">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#DC2626] animate-pulse" />
+          <span className="flex items-center gap-1 justify-center text-[#FF3B3B] text-xs font-bold">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#FF3B3B] animate-pulse" />
             LIVE
           </span>
         ) : (
-          <span className="text-[#888888] text-sm font-medium">{time}</span>
+          <span className="text-[#999999] text-sm font-medium">{time}</span>
         )}
       </div>
 
@@ -51,7 +51,7 @@ export default function ClassRow({
       <div className="flex-1 min-w-0">
         <p className="text-white text-sm font-semibold truncate">{title}</p>
         <div className="flex items-center gap-3 mt-0.5">
-          <span className="flex items-center gap-1 text-[#888888] text-xs">
+          <span className="flex items-center gap-1 text-[#999999] text-xs">
             <User size={11} /> {coach}
           </span>
           <span className="text-[#555] text-xs">{gym}</span>
@@ -72,7 +72,7 @@ export default function ClassRow({
       {isLive && (
         <a
           href="#"
-          className="shrink-0 bg-[#DC2626] hover:bg-red-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-colors"
+          className="shrink-0 bg-[#FF3B3B] hover:bg-red-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-colors"
         >
           Watch
         </a>

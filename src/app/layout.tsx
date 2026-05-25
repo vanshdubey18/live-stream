@@ -35,7 +35,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${bebasNeue.variable} ${inter.variable} font-inter antialiased bg-black text-white`}>
+      <body className={`${bebasNeue.variable} ${inter.variable} font-inter antialiased bg-[#0D0D0D] text-white`}>
         <SearchProvider>
           <PageTransition>
             {children}

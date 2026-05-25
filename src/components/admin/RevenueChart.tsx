@@ -26,12 +26,12 @@ function formatINR(v: number) {
 
 export default function RevenueChart() {
   return (
-    <div className="bg-[#111111] border border-white/5 rounded-2xl p-6">
+    <div className="bg-[#1A1A1A] border border-white/5 rounded-2xl p-6">
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-white font-bold">Revenue — Last 30 Days</h3>
         <div className="flex items-center gap-4 text-xs">
-          <span className="flex items-center gap-1.5 text-[#888888]"><span className="w-3 h-0.5 bg-[#DC2626] inline-block rounded" /> Total Revenue</span>
-          <span className="flex items-center gap-1.5 text-[#888888]"><span className="w-3 h-0.5 bg-blue-400 inline-block rounded" /> Platform Cut</span>
+          <span className="flex items-center gap-1.5 text-[#999999]"><span className="w-3 h-0.5 bg-[#FF3B3B] inline-block rounded" /> Total Revenue</span>
+          <span className="flex items-center gap-1.5 text-[#999999]"><span className="w-3 h-0.5 bg-blue-400 inline-block rounded" /> Platform Cut</span>
         </div>
       </div>
       <ResponsiveContainer width="100%" height={220}>
@@ -44,7 +44,7 @@ export default function RevenueChart() {
             labelStyle={{ color: '#fff', fontWeight: 700, marginBottom: 4 }}
             formatter={(v) => [`₹${(v as number).toLocaleString('en-IN')}`]}
           />
-          <Line type="monotone" dataKey="total" stroke="#DC2626" strokeWidth={2.5} dot={false} name="Total Revenue" />
+          <Line type="monotone" dataKey="total" stroke="#FF3B3B" strokeWidth={2.5} dot={false} name="Total Revenue" />
           <Line type="monotone" dataKey="platform" stroke="#60A5FA" strokeWidth={2} dot={false} strokeDasharray="4 2" name="Platform Cut" />
         </LineChart>
       </ResponsiveContainer>

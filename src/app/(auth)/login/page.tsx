@@ -45,17 +45,17 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#0a0a0a] flex items-center justify-center px-4 py-12">
+    <main className="min-h-screen bg-[#0D0D0D] flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <a href="/" className="text-2xl font-black tracking-tighter text-[#DC2626]">
+          <a href="/" className="text-2xl font-black tracking-tighter text-[#FF3B3B]">
             MATPEAK
           </a>
-          <p className="text-[#888888] text-sm mt-2">Welcome back</p>
+          <p className="text-[#999999] text-sm mt-2">Welcome back</p>
         </div>
 
-        <div className="bg-[#111111] border border-white/5 rounded-2xl p-8">
+        <div className="bg-[#1A1A1A] border border-white/5 rounded-sm p-8">
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Email */}
             <div>
@@ -69,7 +69,7 @@ export default function LoginPage() {
                 value={form.email}
                 onChange={handleChange}
                 required
-                className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl px-4 py-3 text-white placeholder-[#555] text-sm focus:outline-none focus:border-[#DC2626]/50 transition-colors"
+                className="w-full bg-[#0D0D0D] border border-white/10 rounded-sm px-4 py-3 text-white placeholder-[#555] text-sm focus:outline-none focus:border-[#FF3B3B]/50 transition-colors"
               />
             </div>
 
@@ -79,7 +79,7 @@ export default function LoginPage() {
                 <label className="text-white text-sm font-medium">Password</label>
                 <a
                   href="/forgot-password"
-                  className="text-[#888888] hover:text-white text-xs transition-colors"
+                  className="text-[#999999] hover:text-white text-xs transition-colors"
                 >
                   Forgot password?
                 </a>
@@ -92,7 +92,7 @@ export default function LoginPage() {
                   value={form.password}
                   onChange={handleChange}
                   required
-                  className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl px-4 py-3 pr-11 text-white placeholder-[#555] text-sm focus:outline-none focus:border-[#DC2626]/50 transition-colors"
+                  className="w-full bg-[#0D0D0D] border border-white/10 rounded-sm px-4 py-3 pr-11 text-white placeholder-[#555] text-sm focus:outline-none focus:border-[#FF3B3B]/50 transition-colors"
                 />
                 <button
                   type="button"
@@ -106,7 +106,7 @@ export default function LoginPage() {
 
             {/* Error */}
             {error && (
-              <div className="bg-red-900/20 border border-red-500/30 rounded-xl px-4 py-3">
+              <div className="bg-red-900/20 border border-red-500/30 rounded-sm px-4 py-3">
                 <p className="text-red-400 text-sm">{error}</p>
               </div>
             )}
@@ -115,7 +115,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-[#DC2626] hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-xl text-sm transition-all duration-200 flex items-center justify-center gap-2"
+              className="w-full bg-white hover:bg-[#E5E5E5] disabled:opacity-40 disabled:cursor-not-allowed text-black font-bebas tracking-[3px] py-3.5 rounded-sm text-sm transition-all duration-150 flex items-center justify-center gap-2"
             >
               {loading ? (
                 <Loader2 size={16} className="animate-spin" />
@@ -127,9 +127,9 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <p className="text-center text-[#888888] text-sm mt-6">
+          <p className="text-center text-[#999999] text-sm mt-6">
             Don&apos;t have an account?{' '}
-            <a href="/signup" className="text-white hover:text-[#DC2626] font-medium transition-colors">
+            <a href="/signup" className="text-white hover:text-[#FF3B3B] font-medium transition-colors">
               Sign up free
             </a>
           </p>

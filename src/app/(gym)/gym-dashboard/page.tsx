@@ -16,11 +16,11 @@ export default async function GymDashboardPage() {
   const gym = await getGymByOwnerId(user.id)
   if (!gym) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center px-4">
+      <div className="min-h-screen bg-[#0D0D0D] flex items-center justify-center px-4">
         <div className="text-center">
           <h1 className="text-white text-2xl font-bold mb-3">No gym found</h1>
-          <p className="text-[#888888] text-sm mb-6">You don't have a gym linked to your account yet.</p>
-          <a href="/gym-signup" className="bg-[#DC2626] hover:bg-red-700 text-white font-bold px-6 py-3 rounded-xl text-sm transition-colors">
+          <p className="text-[#999999] text-sm mb-6">You don't have a gym linked to your account yet.</p>
+          <a href="/gym-signup" className="bg-[#FF3B3B] hover:bg-red-700 text-white font-bold px-6 py-3 rounded-xl text-sm transition-colors">
             Apply to list your gym
           </a>
         </div>

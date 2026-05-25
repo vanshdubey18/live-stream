@@ -25,13 +25,13 @@ function ConfirmModal({ payout, onConfirm, onClose }: { payout: Payout; onConfir
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-[#111111] border border-white/10 rounded-2xl w-full max-w-sm p-6">
+      <div className="relative bg-[#1A1A1A] border border-white/10 rounded-2xl w-full max-w-sm p-6">
         <div className="flex items-start justify-between mb-4">
           <h3 className="text-white font-bold">Confirm Transfer</h3>
-          <button onClick={onClose} className="text-[#888888] hover:text-white"><X size={18} /></button>
+          <button onClick={onClose} className="text-[#999999] hover:text-white"><X size={18} /></button>
         </div>
-        <p className="text-[#888888] text-sm mb-1">Send payout to <span className="text-white font-medium">{payout.gym}</span>?</p>
-        <p className="text-[#DC2626] text-2xl font-black mb-4">{payout.gymCut}</p>
+        <p className="text-[#999999] text-sm mb-1">Send payout to <span className="text-white font-medium">{payout.gym}</span>?</p>
+        <p className="text-[#FF3B3B] text-2xl font-black mb-4">{payout.gymCut}</p>
         <div className="flex gap-3">
           <button onClick={onClose} className="flex-1 py-3 border border-white/10 text-white text-sm font-semibold rounded-xl">Cancel</button>
           <button onClick={() => { setLoading(true); setTimeout(() => { onConfirm(); setLoading(false) }, 700) }} disabled={loading}
@@ -68,11 +68,11 @@ export default function PayoutsPage() {
   const filtered = tab === 'Pending' ? pending : processed
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] flex">
+    <div className="min-h-screen bg-[#0D0D0D] flex">
       <AdminSidebar active="Payouts" />
 
       <main className="flex-1 lg:ml-64 min-w-0">
-        <div className="sticky top-0 z-20 bg-[#0a0a0a]/90 backdrop-blur-md border-b border-white/5 px-6 h-16 flex items-center justify-between mt-14 lg:mt-0">
+        <div className="sticky top-0 z-20 bg-[#0D0D0D]/90 backdrop-blur-md border-b border-white/5 px-6 h-16 flex items-center justify-between mt-14 lg:mt-0">
           <h1 className="text-white font-bold text-lg">Payouts</h1>
           {tab === 'Pending' && pending.length > 0 && (
             <button onClick={processAll}
@@ -83,11 +83,11 @@ export default function PayoutsPage() {
         </div>
 
         <div className="px-6 py-6 max-w-5xl space-y-4">
-          <div className="flex gap-1 bg-[#111111] border border-white/5 rounded-xl p-1 w-fit">
+          <div className="flex gap-1 bg-[#1A1A1A] border border-white/5 rounded-xl p-1 w-fit">
             {TABS.map(t => (
               <button key={t} onClick={() => setTab(t)}
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all
-                  ${tab === t ? 'bg-white/10 text-white' : 'text-[#888888] hover:text-white'}`}>
+                  ${tab === t ? 'bg-white/10 text-white' : 'text-[#999999] hover:text-white'}`}>
                 {t}
                 <span className="text-xs bg-white/10 text-white/60 px-1.5 py-0.5 rounded-full">
                   {t === 'Pending' ? pending.length : processed.length}
@@ -96,13 +96,13 @@ export default function PayoutsPage() {
             ))}
           </div>
 
-          <div className="bg-[#111111] border border-white/5 rounded-2xl overflow-hidden">
+          <div className="bg-[#1A1A1A] border border-white/5 rounded-2xl overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-white/5">
                     {['Gym', 'Period', 'Members', 'Revenue', 'Gym Cut (70%)', 'Platform (30%)', 'Status', ''].map(h => (
-                      <th key={h} className="px-4 py-3 text-left text-xs font-bold text-[#888888] uppercase tracking-wider">{h}</th>
+                      <th key={h} className="px-4 py-3 text-left text-xs font-bold text-[#999999] uppercase tracking-wider">{h}</th>
                     ))}
                   </tr>
                 </thead>
@@ -110,11 +110,11 @@ export default function PayoutsPage() {
                   {filtered.map(p => (
                     <tr key={p.id} className="hover:bg-white/2 transition-colors">
                       <td className="px-4 py-3.5 text-white font-medium">{p.gym}</td>
-                      <td className="px-4 py-3.5 text-[#888888]">{p.period}</td>
+                      <td className="px-4 py-3.5 text-[#999999]">{p.period}</td>
                       <td className="px-4 py-3.5 text-white">{p.members}</td>
                       <td className="px-4 py-3.5 text-white">{p.revenue}</td>
                       <td className="px-4 py-3.5 text-white font-bold">{p.gymCut}</td>
-                      <td className="px-4 py-3.5 text-[#DC2626] font-bold">{p.platformCut}</td>
+                      <td className="px-4 py-3.5 text-[#FF3B3B] font-bold">{p.platformCut}</td>
                       <td className="px-4 py-3.5">
                         {p.status === 'paid'
                           ? <span className="flex items-center gap-1.5 text-green-400 text-xs font-semibold"><CheckCircle size={13} /> Paid</span>

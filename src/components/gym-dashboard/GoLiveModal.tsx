@@ -96,20 +96,20 @@ export default function GoLiveModal({
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 16 }}
         transition={{ type: 'spring', stiffness: 280, damping: 26 }}
-        className="relative bg-[#111111] border border-white/10 rounded-2xl w-full max-w-md shadow-2xl overflow-hidden"
+        className="relative bg-[#1A1A1A] border border-white/10 rounded-2xl w-full max-w-md shadow-2xl overflow-hidden"
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
-        <div className={`px-6 py-5 border-b border-white/5 flex items-center justify-between ${stage === 'live' ? 'bg-[#DC2626]/10' : ''}`}>
+        <div className={`px-6 py-5 border-b border-white/5 flex items-center justify-between ${stage === 'live' ? 'bg-[#FF3B3B]/10' : ''}`}>
           <div className="flex items-center gap-3">
             {stage === 'live' ? (
-              <span className="flex items-center gap-2 text-[#DC2626] font-black text-base">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#DC2626] animate-pulse" />
+              <span className="flex items-center gap-2 text-[#FF3B3B] font-black text-base">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#FF3B3B] animate-pulse" />
                 LIVE NOW
               </span>
             ) : (
               <span className="text-white font-bold text-base flex items-center gap-2">
-                <Radio size={17} className="text-[#DC2626]" /> Go Live
+                <Radio size={17} className="text-[#FF3B3B]" /> Go Live
               </span>
             )}
           </div>
@@ -123,7 +123,7 @@ export default function GoLiveModal({
 
         <div className="px-6 py-5 space-y-5">
           {/* Session title */}
-          <p className="text-[#888888] text-sm">
+          <p className="text-[#999999] text-sm">
             Session: <span className="text-white font-medium">{sessionTitle}</span>
           </p>
 
@@ -136,20 +136,20 @@ export default function GoLiveModal({
                 exit={{ opacity: 0 }}
                 className="space-y-4"
               >
-                <p className="text-[#888888] text-sm">
+                <p className="text-[#999999] text-sm">
                   Copy these into OBS → Settings → Stream, then click <strong className="text-white">Start Streaming</strong>.
                 </p>
 
                 {/* Server URL */}
                 <div>
-                  <p className="text-[#888888] text-xs mb-1.5">Server URL</p>
+                  <p className="text-[#999999] text-xs mb-1.5">Server URL</p>
                   <div className="flex items-center gap-2">
-                    <div className="flex-1 bg-[#0a0a0a] border border-white/5 rounded-xl px-3 py-2.5 text-white text-xs font-mono truncate">
+                    <div className="flex-1 bg-[#0D0D0D] border border-white/5 rounded-xl px-3 py-2.5 text-white text-xs font-mono truncate">
                       {SERVER_URL}
                     </div>
                     <button
                       onClick={() => copy(SERVER_URL, 'url')}
-                      className="shrink-0 w-9 h-9 flex items-center justify-center bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl text-[#888888] hover:text-white transition-all"
+                      className="shrink-0 w-9 h-9 flex items-center justify-center bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl text-[#999999] hover:text-white transition-all"
                     >
                       {copiedUrl ? <Check size={14} className="text-green-400" /> : <Copy size={14} />}
                     </button>
@@ -158,15 +158,15 @@ export default function GoLiveModal({
 
                 {/* Stream Key */}
                 <div>
-                  <p className="text-[#888888] text-xs mb-1.5">Stream Key</p>
+                  <p className="text-[#999999] text-xs mb-1.5">Stream Key</p>
                   {streamKey ? (
                     <div className="flex items-center gap-2">
-                      <div className="flex-1 bg-[#0a0a0a] border border-white/5 rounded-xl px-3 py-2.5 text-white text-xs font-mono truncate">
+                      <div className="flex-1 bg-[#0D0D0D] border border-white/5 rounded-xl px-3 py-2.5 text-white text-xs font-mono truncate">
                         {streamKey}
                       </div>
                       <button
                         onClick={() => copy(streamKey, 'key')}
-                        className="shrink-0 w-9 h-9 flex items-center justify-center bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl text-[#888888] hover:text-white transition-all"
+                        className="shrink-0 w-9 h-9 flex items-center justify-center bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl text-[#999999] hover:text-white transition-all"
                       >
                         {copiedKey ? <Check size={14} className="text-green-400" /> : <Copy size={14} />}
                       </button>
@@ -182,7 +182,7 @@ export default function GoLiveModal({
                   href="https://obsproject.com/wiki/OBS-Studio-Quickstart"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 text-[#DC2626] text-xs font-medium hover:underline"
+                  className="flex items-center gap-1.5 text-[#FF3B3B] text-xs font-medium hover:underline"
                 >
                   OBS setup guide <ExternalLink size={11} />
                 </a>
@@ -192,7 +192,7 @@ export default function GoLiveModal({
                 <button
                   onClick={handleGoLive}
                   disabled={loading || !streamKey}
-                  className="w-full flex items-center justify-center gap-2 bg-[#DC2626] hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl text-sm transition-colors"
+                  className="w-full flex items-center justify-center gap-2 bg-[#FF3B3B] hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl text-sm transition-colors"
                 >
                   {loading
                     ? <Loader2 size={15} className="animate-spin" />
@@ -208,9 +208,9 @@ export default function GoLiveModal({
                 exit={{ opacity: 0 }}
                 className="space-y-4"
               >
-                <div className="bg-[#DC2626]/5 border border-[#DC2626]/20 rounded-xl px-4 py-4 text-center space-y-1">
+                <div className="bg-[#FF3B3B]/5 border border-[#FF3B3B]/20 rounded-xl px-4 py-4 text-center space-y-1">
                   <p className="text-white font-bold text-sm">Your class is live!</p>
-                  <p className="text-[#888888] text-xs">Members can now watch at your gym page. Stop OBS when you finish.</p>
+                  <p className="text-[#999999] text-xs">Members can now watch at your gym page. Stop OBS when you finish.</p>
                 </div>
 
                 {error && <p className="text-red-400 text-xs">{error}</p>}

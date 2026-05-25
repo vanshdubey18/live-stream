@@ -14,12 +14,12 @@ interface Prefs {
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 const DISCIPLINES = [
-  { id: 'BJJ', label: 'BJJ', emoji: '🥋' },
-  { id: 'Boxing', label: 'Boxing', emoji: '🥊' },
-  { id: 'Muay Thai', label: 'Muay Thai', emoji: '🦵' },
-  { id: 'Wrestling', label: 'Wrestling', emoji: '🤼' },
-  { id: 'MMA', label: 'MMA', emoji: '🏆' },
-  { id: 'Kickboxing', label: 'Kickboxing', emoji: '⚡' },
+  { id: 'BJJ', label: 'BJJ' },
+  { id: 'Boxing', label: 'Boxing' },
+  { id: 'Muay Thai', label: 'Muay Thai' },
+  { id: 'Wrestling', label: 'Wrestling' },
+  { id: 'MMA', label: 'MMA' },
+  { id: 'Kickboxing', label: 'Kickboxing' },
 ]
 
 const LEVELS = [
@@ -30,27 +30,23 @@ const LEVELS = [
 ]
 
 const GOALS = [
-  { id: 'fit', label: 'Get fit & lose weight', emoji: '🔥' },
-  { id: 'self_defense', label: 'Learn self defense', emoji: '🛡️' },
-  { id: 'athlete', label: 'Train consistently like an athlete', emoji: '💪' },
-  { id: 'compete', label: 'Compete in tournaments', emoji: '🏅' },
-  { id: 'complete', label: 'Become a complete fighter', emoji: '🥋' },
+  { id: 'fit', label: 'Get fit & lose weight' },
+  { id: 'self_defense', label: 'Learn self defense' },
+  { id: 'athlete', label: 'Train consistently like an athlete' },
+  { id: 'compete', label: 'Compete in tournaments' },
+  { id: 'complete', label: 'Become a complete fighter' },
 ]
 
-// ─── Step indicators ──────────────────────────────────────────────────────────
-function StepDots({ current, total }: { current: number; total: number }) {
+// ─── Step progress bar ────────────────────────────────────────────────────────
+function StepBar({ current, total }: { current: number; total: number }) {
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-1.5">
       {Array.from({ length: total }).map((_, i) => (
         <div
           key={i}
-          className={`rounded-full transition-all duration-300 ${
-            i === current
-              ? 'w-6 h-2.5 bg-[#FF3B3B]'
-              : i < current
-              ? 'w-2.5 h-2.5 bg-[#FF3B3B]/40'
-              : 'w-2.5 h-2.5 bg-white/10'
-          }`}
+          className={`h-0.5 transition-all duration-150 ease-out rounded-sm ${
+            i <= current ? 'bg-white' : 'bg-[#333333]'
+          } ${i === current ? 'w-8' : 'w-4'}`}
         />
       ))}
     </div>
@@ -71,11 +67,11 @@ function SelectCard({
     <button
       type="button"
       onClick={onClick}
-      className={`w-full text-left bg-[#111] rounded-2xl p-6 border transition-all duration-200 cursor-pointer
-        ${selected
-          ? 'border-[#FF3B3B]/50 bg-[#FF3B3B]/5 shadow-[0_0_0_1px_rgba(220,38,38,0.2)]'
-          : 'border-white/10 hover:border-white/20 hover:bg-white/[0.03]'
-        }`}
+      className={`w-full text-left rounded-sm p-4 border transition-colors duration-150 cursor-pointer ${
+        selected
+          ? 'bg-white border-white'
+          : 'bg-[#1A1A1A] border-[#333333] hover:border-white'
+      }`}
     >
       {children}
     </button>
@@ -117,7 +113,6 @@ export default function OnboardingPage() {
       setDirection(1)
       setStep((s) => s + 1)
     } else {
-      // Save and redirect
       if (typeof window !== 'undefined') {
         localStorage.setItem('matpeak_prefs', JSON.stringify(prefs))
       }
@@ -133,12 +128,13 @@ export default function OnboardingPage() {
 
   return (
     <main className="min-h-screen bg-[#0D0D0D] flex flex-col">
+
       {/* Header */}
-      <header className="flex items-center justify-between px-6 py-5">
-        <a href="/" className="text-xl font-black tracking-tighter text-[#FF3B3B]">
+      <header className="flex items-center justify-between px-6 py-5 border-b border-[#1A1A1A]">
+        <a href="/" className="font-bebas text-xl tracking-[3px] text-[#FF3B3B]">
           MATPEAK
         </a>
-        <StepDots current={step} total={3} />
+        <StepBar current={step} total={3} />
       </header>
 
       {/* Content */}
@@ -153,7 +149,7 @@ export default function OnboardingPage() {
                 initial="enter"
                 animate="center"
                 exit="exit"
-                transition={{ duration: 0.28, ease: 'easeOut' }}
+                transition={{ duration: 0.15, ease: 'easeOut' }}
               >
                 <StepOne prefs={prefs} toggleDiscipline={toggleDiscipline} />
               </motion.div>
@@ -166,7 +162,7 @@ export default function OnboardingPage() {
                 initial="enter"
                 animate="center"
                 exit="exit"
-                transition={{ duration: 0.28, ease: 'easeOut' }}
+                transition={{ duration: 0.15, ease: 'easeOut' }}
               >
                 <StepTwo prefs={prefs} setPrefs={setPrefs} />
               </motion.div>
@@ -179,7 +175,7 @@ export default function OnboardingPage() {
                 initial="enter"
                 animate="center"
                 exit="exit"
-                transition={{ duration: 0.28, ease: 'easeOut' }}
+                transition={{ duration: 0.15, ease: 'easeOut' }}
               >
                 <StepThree prefs={prefs} setPrefs={setPrefs} />
               </motion.div>
@@ -191,14 +187,15 @@ export default function OnboardingPage() {
             <button
               onClick={advance}
               disabled={!canContinue}
-              className="w-full bg-[#FF3B3B] hover:bg-red-700 disabled:opacity-30 disabled:cursor-not-allowed text-white font-bold py-4 rounded-2xl text-sm transition-all duration-200 flex items-center justify-center gap-2"
+              className="font-bebas tracking-[3px] w-full bg-white hover:bg-[#E5E5E5] disabled:opacity-30 disabled:cursor-not-allowed text-black py-4 rounded-sm text-sm transition-colors duration-150 flex items-center justify-center gap-2"
             >
-              {step === 2 ? 'Go to Dashboard' : 'Continue'}
+              {step === 2 ? 'GO TO DASHBOARD' : 'CONTINUE'}
               <ArrowRight size={16} />
             </button>
           </div>
         </div>
       </div>
+
     </main>
   )
 }
@@ -209,17 +206,22 @@ function StepOne({ prefs, toggleDiscipline }: { prefs: Prefs; toggleDiscipline: 
 
   return (
     <div>
-      <p className="text-[#888] text-sm mb-2 uppercase tracking-widest font-semibold">Step 1 of 3</p>
-      <h2 className="text-white font-black text-3xl mb-1">What do you want to train?</h2>
-      <p className="text-[#666] text-sm mb-8">Select all that apply.</p>
+      <p className="font-inter text-[#555555] text-xs tracking-[4px] uppercase mb-3">
+        Step 1 of 3
+      </p>
+      <h2 className="font-bebas tracking-[2px] text-white text-4xl mb-1">
+        WHAT DO YOU WANT TO TRAIN?
+      </h2>
+      <p className="font-inter text-[#999999] text-sm mb-8">Select all that apply.</p>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-2">
         {DISCIPLINES.map((d) => {
           const selected = prefs.disciplines.includes(d.id)
           return (
             <SelectCard key={d.id} selected={selected} onClick={() => toggleDiscipline(d.id)}>
-              <div className="text-2xl mb-2">{d.emoji}</div>
-              <p className={`font-bold text-sm ${selected ? 'text-white' : 'text-[#ccc]'}`}>{d.label}</p>
+              <p className={`font-bebas tracking-[2px] text-sm ${selected ? 'text-black' : 'text-white'}`}>
+                {d.label}
+              </p>
             </SelectCard>
           )
         })}
@@ -227,14 +229,17 @@ function StepOne({ prefs, toggleDiscipline }: { prefs: Prefs; toggleDiscipline: 
 
       {/* "I want everything" */}
       <SelectCard selected={allSelected} onClick={() => toggleDiscipline('all')}>
-        <div className="flex items-center gap-3">
-          <span className="text-2xl">🌍</span>
+        <div className="flex items-center justify-between">
           <div>
-            <p className={`font-bold text-sm ${allSelected ? 'text-white' : 'text-[#ccc]'}`}>I want everything</p>
-            <p className="text-[#666] text-xs mt-0.5">Train across all disciplines</p>
+            <p className={`font-bebas tracking-[2px] text-sm ${allSelected ? 'text-black' : 'text-white'}`}>
+              ALL DISCIPLINES
+            </p>
+            <p className="font-inter text-xs mt-0.5 text-[#555555]">
+              Train across every discipline
+            </p>
           </div>
           {allSelected && (
-            <div className="ml-auto w-5 h-5 rounded-full bg-[#FF3B3B] flex items-center justify-center">
+            <div className="ml-auto w-4 h-4 rounded-sm bg-black flex items-center justify-center">
               <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
                 <path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
@@ -250,11 +255,17 @@ function StepOne({ prefs, toggleDiscipline }: { prefs: Prefs; toggleDiscipline: 
 function StepTwo({ prefs, setPrefs }: { prefs: Prefs; setPrefs: React.Dispatch<React.SetStateAction<Prefs>> }) {
   return (
     <div>
-      <p className="text-[#888] text-sm mb-2 uppercase tracking-widest font-semibold">Step 2 of 3</p>
-      <h2 className="text-white font-black text-3xl mb-1">What's your current level?</h2>
-      <p className="text-[#666] text-sm mb-8">Be honest — we'll match you with the right classes.</p>
+      <p className="font-inter text-[#555555] text-xs tracking-[4px] uppercase mb-3">
+        Step 2 of 3
+      </p>
+      <h2 className="font-bebas tracking-[2px] text-white text-4xl mb-1">
+        WHAT&apos;S YOUR CURRENT LEVEL?
+      </h2>
+      <p className="font-inter text-[#999999] text-sm mb-8">
+        Be honest — we&apos;ll match you with the right classes.
+      </p>
 
-      <div className="space-y-3">
+      <div className="space-y-2">
         {LEVELS.map((l) => {
           const selected = prefs.level === l.id
           return (
@@ -265,11 +276,15 @@ function StepTwo({ prefs, setPrefs }: { prefs: Prefs; setPrefs: React.Dispatch<R
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className={`font-bold text-base ${selected ? 'text-white' : 'text-[#ccc]'}`}>{l.label}</p>
-                  <p className="text-[#666] text-sm mt-0.5">{l.desc}</p>
+                  <p className={`font-bebas tracking-[2px] text-sm ${selected ? 'text-black' : 'text-white'}`}>
+                    {l.label}
+                  </p>
+                  <p className="font-inter text-xs mt-0.5 text-[#555555]">
+                    {l.desc}
+                  </p>
                 </div>
                 {selected && (
-                  <div className="ml-4 shrink-0 w-5 h-5 rounded-full bg-[#FF3B3B] flex items-center justify-center">
+                  <div className="ml-4 shrink-0 w-4 h-4 rounded-sm bg-black flex items-center justify-center">
                     <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
                       <path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
@@ -288,11 +303,17 @@ function StepTwo({ prefs, setPrefs }: { prefs: Prefs; setPrefs: React.Dispatch<R
 function StepThree({ prefs, setPrefs }: { prefs: Prefs; setPrefs: React.Dispatch<React.SetStateAction<Prefs>> }) {
   return (
     <div>
-      <p className="text-[#888] text-sm mb-2 uppercase tracking-widest font-semibold">Step 3 of 3</p>
-      <h2 className="text-white font-black text-3xl mb-1">What's your training goal?</h2>
-      <p className="text-[#666] text-sm mb-8">This shapes your dashboard experience.</p>
+      <p className="font-inter text-[#555555] text-xs tracking-[4px] uppercase mb-3">
+        Step 3 of 3
+      </p>
+      <h2 className="font-bebas tracking-[2px] text-white text-4xl mb-1">
+        WHAT&apos;S YOUR TRAINING GOAL?
+      </h2>
+      <p className="font-inter text-[#999999] text-sm mb-8">
+        This shapes your dashboard experience.
+      </p>
 
-      <div className="space-y-3">
+      <div className="space-y-2">
         {GOALS.map((g) => {
           const selected = prefs.goal === g.id
           return (
@@ -301,11 +322,12 @@ function StepThree({ prefs, setPrefs }: { prefs: Prefs; setPrefs: React.Dispatch
               selected={selected}
               onClick={() => setPrefs((p) => ({ ...p, goal: g.id }))}
             >
-              <div className="flex items-center gap-4">
-                <span className="text-2xl">{g.emoji}</span>
-                <p className={`font-bold text-base flex-1 ${selected ? 'text-white' : 'text-[#ccc]'}`}>{g.label}</p>
+              <div className="flex items-center justify-between">
+                <p className={`font-bebas tracking-[2px] text-sm flex-1 ${selected ? 'text-black' : 'text-white'}`}>
+                  {g.label}
+                </p>
                 {selected && (
-                  <div className="shrink-0 w-5 h-5 rounded-full bg-[#FF3B3B] flex items-center justify-center">
+                  <div className="shrink-0 w-4 h-4 rounded-sm bg-black flex items-center justify-center">
                     <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
                       <path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>

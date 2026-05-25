@@ -1,27 +1,30 @@
 'use client'
 
 import { useState } from 'react'
-import { X, Loader2, Ticket, CheckCircle, CreditCard } from 'lucide-react'
+import { X, Loader2, Ticket, CreditCard } from 'lucide-react'
 
 const PLANS = [
   {
     id: 'single',
     label: 'Single Discipline',
-    price: '₹999/mo',
+    price: '₹999',
+    period: '/mo',
     desc: 'Access to one discipline of your choice',
     disciplines: 1,
   },
   {
     id: 'dual',
     label: 'Dual Discipline',
-    price: '₹1,499/mo',
+    price: '₹1,499',
+    period: '/mo',
     desc: 'Access to any two disciplines',
     disciplines: 2,
   },
   {
     id: 'full_mma',
     label: 'Full MMA',
-    price: '₹1,999/mo',
+    price: '₹1,999',
+    period: '/mo',
     desc: 'Unlimited access to all disciplines',
     disciplines: 999,
   },
@@ -91,60 +94,83 @@ export default function JoinModal({ gym, onClose, onJoined }: Props) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-full max-w-md bg-[#1A1A1A] border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
+      <div className="absolute inset-0 bg-black/80" onClick={onClose} />
+      <div className="relative w-full max-w-md bg-[#1A1A1A] border border-[#333333] rounded-sm overflow-hidden">
 
         {step === 'success' ? (
-          <div className="p-8 text-center space-y-5">
-            <div className="w-16 h-16 rounded-full bg-green-500/10 border border-green-500/20 flex items-center justify-center mx-auto">
-              <CheckCircle size={32} className="text-green-400" />
-            </div>
+          <div className="p-8 text-center space-y-6">
             <div>
-              <h2 className="text-white text-xl font-black">You're in!</h2>
-              <p className="text-[#999999] text-sm mt-2">You've joined <strong className="text-white">{gym.name}</strong>. Start watching classes now.</p>
+              <p className="font-inter text-xs text-[#00D4AA] tracking-[3px] uppercase mb-4">
+                ● ACTIVE MEMBER
+              </p>
+              <h2 className="font-bebas text-4xl text-white">YOU&apos;RE IN</h2>
+              <p className="font-inter text-sm text-[#999999] mt-3">
+                You&apos;ve joined <span className="text-white">{gym.name}</span>. Start watching classes now.
+              </p>
             </div>
-            <button onClick={onJoined}
-              className="w-full bg-[#FF3B3B] hover:bg-red-700 text-white font-bold py-3 rounded-xl text-sm transition-colors">
-              Go to Dashboard
+            <button
+              onClick={onJoined}
+              className="w-full bg-white text-black font-bebas tracking-[3px] py-3.5 rounded-sm hover:bg-[#E5E5E5] transition-colors text-sm"
+            >
+              GO TO DASHBOARD
             </button>
           </div>
         ) : (
           <>
-            <div className="flex items-center justify-between px-6 py-5 border-b border-white/5">
+            {/* Modal header */}
+            <div className="flex items-center justify-between px-6 py-5 border-b border-[#2A2A2A]">
               <div>
-                <h2 className="text-white font-bold text-base">Join {gym.name}</h2>
-                <p className="text-[#999999] text-xs mt-0.5">Select a plan to get started</p>
+                <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-1">Membership</p>
+                <h2 className="font-bebas text-2xl text-white">JOIN {gym.name.toUpperCase()}</h2>
               </div>
-              <button onClick={onClose} className="text-[#555] hover:text-white transition-colors">
-                <X size={20} />
+              <button
+                onClick={onClose}
+                className="text-[#555555] hover:text-white transition-colors"
+              >
+                <X size={18} />
               </button>
             </div>
 
-            <div className="p-6 space-y-5">
+            <div className="p-6 space-y-6">
+
               {/* Plan picker */}
-              <div className="space-y-2">
-                {PLANS.map(p => (
-                  <button
-                    key={p.id}
-                    onClick={() => { setPlan(p.id); setSelectedDisciplines([]) }}
-                    className={`w-full flex items-center justify-between px-4 py-3.5 rounded-xl border text-left transition-all
-                      ${plan === p.id
-                        ? 'bg-[#FF3B3B]/10 border-[#FF3B3B]/30 text-white'
-                        : 'bg-[#0D0D0D] border-white/10 text-[#999999] hover:border-white/20'}`}>
-                    <div>
-                      <p className={`text-sm font-bold ${plan === p.id ? 'text-white' : ''}`}>{p.label}</p>
-                      <p className="text-xs mt-0.5 text-[#555]">{p.desc}</p>
-                    </div>
-                    <span className={`text-sm font-black shrink-0 ml-4 ${plan === p.id ? 'text-[#FF3B3B]' : 'text-[#555]'}`}>{p.price}</span>
-                  </button>
-                ))}
+              <div>
+                <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-3">Select Plan</p>
+                <div className="space-y-2">
+                  {PLANS.map(p => (
+                    <button
+                      key={p.id}
+                      onClick={() => { setPlan(p.id); setSelectedDisciplines([]) }}
+                      className={`w-full flex items-center justify-between px-4 py-4 rounded-sm border text-left transition-colors ${
+                        plan === p.id
+                          ? 'bg-[#222222] border-white'
+                          : 'bg-[#0D0D0D] border-[#333333] hover:bg-[#1F1F1F]'
+                      }`}
+                    >
+                      <div>
+                        <p className={`font-inter text-sm ${plan === p.id ? 'text-white' : 'text-[#999999]'}`}>
+                          {p.label}
+                        </p>
+                        <p className="font-inter text-xs text-[#555555] mt-0.5">{p.desc}</p>
+                      </div>
+                      <div className="text-right shrink-0 ml-4">
+                        <span className={`font-bebas text-2xl ${plan === p.id ? 'text-white' : 'text-[#555555]'}`}>
+                          {p.price}
+                        </span>
+                        <span className={`font-inter text-xs ${plan === p.id ? 'text-[#999999]' : 'text-[#333333]'}`}>
+                          {p.period}
+                        </span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
               </div>
 
               {/* Discipline picker for single/dual */}
               {selectedPlan.disciplines < 999 && (
                 <div>
-                  <p className="text-[#999999] text-xs font-semibold uppercase tracking-wider mb-2">
-                    Choose {selectedPlan.disciplines === 1 ? '1 discipline' : 'up to 2 disciplines'}
+                  <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-3">
+                    Choose {selectedPlan.disciplines === 1 ? '1 Discipline' : 'Up To 2 Disciplines'}
                   </p>
                   <div className="flex flex-wrap gap-2">
                     {gymDisciplines.map(d => {
@@ -153,8 +179,12 @@ export default function JoinModal({ gym, onClose, onJoined }: Props) {
                         <button
                           key={d}
                           onClick={() => toggleDiscipline(d)}
-                          className={`px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all
-                            ${active ? 'bg-[#FF3B3B]/10 border-[#FF3B3B]/30 text-[#FF3B3B]' : 'border-white/10 text-[#555] hover:border-white/20 hover:text-[#888]'}`}>
+                          className={`px-4 py-1.5 rounded-sm font-inter text-xs uppercase tracking-[2px] border transition-colors ${
+                            active
+                              ? 'border-white text-white bg-[#222222]'
+                              : 'border-[#333333] text-[#555555] hover:border-[#555555] hover:text-[#999999]'
+                          }`}
+                        >
                           {d}
                         </button>
                       )
@@ -165,29 +195,43 @@ export default function JoinModal({ gym, onClose, onJoined }: Props) {
 
               {/* Coupon code */}
               <div>
-                <label className="text-[#999999] text-xs font-semibold uppercase tracking-wider block mb-1.5">
-                  <Ticket size={11} className="inline mr-1" />Coupon Code
+                <label className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase block mb-2">
+                  <Ticket size={10} className="inline mr-1.5" />Coupon Code
                 </label>
                 <input
                   value={coupon}
                   onChange={e => setCoupon(e.target.value)}
                   placeholder="Enter your coupon code"
-                  className="w-full bg-[#0D0D0D] border border-white/10 rounded-xl px-4 py-3 text-white placeholder-[#444] text-sm focus:outline-none focus:border-[#FF3B3B]/40 transition-colors uppercase"
+                  className="w-full bg-[#0D0D0D] border border-[#333333] rounded-sm px-4 py-3 text-white placeholder-[#444444] font-inter text-sm focus:outline-none focus:border-[#555555] transition-colors uppercase"
                 />
               </div>
 
-              {/* Razorpay placeholder */}
-              <div className="flex items-center gap-3 bg-[#0D0D0D] border border-white/5 rounded-xl px-4 py-3">
-                <CreditCard size={16} className="text-[#555] shrink-0" />
-                <p className="text-[#555] text-xs">Online payments coming soon. Use a coupon code to join during beta.</p>
+              {/* Payment notice */}
+              <div className="flex items-center gap-3 bg-[#0D0D0D] border border-[#2A2A2A] rounded-sm px-4 py-3">
+                <CreditCard size={14} className="text-[#555555] shrink-0" />
+                <p className="font-inter text-[#555555] text-xs">
+                  Online payments coming soon. Use a coupon code to join during beta.
+                </p>
               </div>
 
-              {error && <p className="text-[#FF3B3B] text-sm bg-[#FF3B3B]/10 border border-[#FF3B3B]/20 rounded-xl px-4 py-3">{error}</p>}
+              {/* Error */}
+              {error && (
+                <p className="font-inter text-sm text-[#FF3B3B] bg-[#FF3B3B]/5 border border-[#FF3B3B]/20 rounded-sm px-4 py-3">
+                  {error}
+                </p>
+              )}
 
-              <button onClick={handleJoin} disabled={loading}
-                className="w-full bg-[#FF3B3B] hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-xl text-sm transition-colors flex items-center justify-center gap-2">
-                {loading ? <><Loader2 size={16} className="animate-spin" /> Joining…</> : 'Join with Coupon'}
+              {/* Submit */}
+              <button
+                onClick={handleJoin}
+                disabled={loading}
+                className="w-full bg-white text-black font-bebas tracking-[3px] py-3.5 rounded-sm hover:bg-[#E5E5E5] disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 text-sm"
+              >
+                {loading
+                  ? <><Loader2 size={15} className="animate-spin" /> JOINING…</>
+                  : 'JOIN WITH COUPON'}
               </button>
+
             </div>
           </>
         )}

@@ -1,27 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import { MapPin, Users, Calendar, ChevronLeft, CheckCircle, Radio } from 'lucide-react'
+import { ChevronLeft } from 'lucide-react'
 import JoinModal from './JoinModal'
 
-const DISCIPLINE_COLORS: Record<string, string> = {
-  BJJ: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
-  Boxing: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20',
-  'Muay Thai': 'bg-orange-500/10 text-orange-400 border-orange-500/20',
-  Wrestling: 'bg-green-500/10 text-green-400 border-green-500/20',
-  MMA: 'bg-[#FF3B3B]/10 text-[#FF3B3B] border-[#FF3B3B]/20',
-  Kickboxing: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
-  Judo: 'bg-pink-500/10 text-pink-400 border-pink-500/20',
-  Sambo: 'bg-teal-500/10 text-teal-400 border-teal-500/20',
-}
-
-const LEVEL_COLORS: Record<string, string> = {
-  Beginner: 'text-green-400 bg-green-500/10',
-  Intermediate: 'text-yellow-400 bg-yellow-500/10',
-  Advanced: 'text-[#FF3B3B] bg-[#FF3B3B]/10',
-}
-
-function formatDateTime(iso: string) {
+function formatTime(iso: string) {
   const d = new Date(iso)
   return d.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' }) +
     ' · ' + d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })
@@ -42,79 +25,120 @@ export default function GymDetailClient({ gym, coaches, sessions, memberCount, m
 
   const upcomingSessions = sessions.filter((s: any) => s.status !== 'ended')
   const liveSessions = sessions.filter((s: any) => s.status === 'live')
+  const disciplines: string[] = gym.disciplines ?? []
 
   return (
     <div className="min-h-screen bg-[#0D0D0D]">
+
       {/* Back nav */}
-      <div className="sticky top-0 z-20 bg-[#0D0D0D]/90 backdrop-blur-md border-b border-white/5 px-6 h-14 flex items-center gap-3">
-        <a href="/gyms" className="flex items-center gap-1.5 text-[#999999] hover:text-white text-sm transition-colors">
-          <ChevronLeft size={16} /> All Gyms
+      <div className="sticky top-0 z-20 bg-[#0D0D0D] border-b border-[#1F1F1F] px-6 h-14 flex items-center gap-3">
+        <a
+          href="/gyms"
+          className="flex items-center gap-1.5 font-inter text-sm text-[#555555] hover:text-white transition-colors"
+        >
+          <ChevronLeft size={15} />
+          ALL GYMS
         </a>
       </div>
 
-      <div className="max-w-4xl mx-auto px-6 py-8 space-y-8">
+      <div className="max-w-4xl mx-auto px-6 py-10 space-y-10">
 
-        {/* Hero */}
-        <div className="bg-[#1A1A1A] border border-white/5 rounded-2xl p-8">
-          <div className="flex flex-col sm:flex-row items-start gap-6">
-            <div className="w-20 h-20 rounded-2xl bg-[#FF3B3B]/15 flex items-center justify-center shrink-0">
-              <span className="text-[#FF3B3B] font-black text-3xl">{gym.name[0]}</span>
+        {/* Hero block */}
+        <div>
+          {/* Active member badge */}
+          {joined && (
+            <p className="font-inter text-xs text-[#00D4AA] tracking-[3px] uppercase mb-3">
+              ● ACTIVE MEMBER
+            </p>
+          )}
+
+          {/* Live badge */}
+          {liveSessions.length > 0 && (
+            <p className="font-inter text-xs text-[#FF3B3B] tracking-[3px] uppercase mb-3">
+              ● LIVE NOW
+            </p>
+          )}
+
+          <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-2">Gym Profile</p>
+          <h1 className="font-bebas text-6xl lg:text-7xl text-white leading-none">{gym.name}</h1>
+
+          {gym.city && (
+            <p className="font-inter text-sm text-[#999999] mt-3">
+              {gym.city}{gym.location ? `, ${gym.location}` : ''}
+            </p>
+          )}
+
+          {/* Stats row */}
+          <div className="flex flex-wrap gap-8 mt-6 pb-6 border-b border-[#1F1F1F]">
+            <div>
+              <p className="font-bebas text-3xl text-white">{memberCount}</p>
+              <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase">Members</p>
             </div>
-            <div className="flex-1 min-w-0">
-              <h1 className="text-white text-2xl font-black">{gym.name}</h1>
-              {gym.city && (
-                <p className="text-[#999999] text-sm flex items-center gap-1.5 mt-1">
-                  <MapPin size={13} /> {gym.city}{gym.location ? `, ${gym.location}` : ''}
-                </p>
-              )}
-              {gym.description && (
-                <p className="text-[#999999] text-sm mt-3 leading-relaxed">{gym.description}</p>
-              )}
-              <div className="flex flex-wrap gap-2 mt-4">
-                {(gym.disciplines ?? []).map((d: string) => (
-                  <span key={d} className={`text-xs font-semibold px-3 py-1 rounded-full border ${DISCIPLINE_COLORS[d] ?? 'bg-white/5 text-white/60 border-white/10'}`}>
-                    {d}
-                  </span>
-                ))}
+            {gym.classes_per_week != null && (
+              <div>
+                <p className="font-bebas text-3xl text-white">{gym.classes_per_week}</p>
+                <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase">Classes / Week</p>
               </div>
-            </div>
-            <div className="shrink-0 flex flex-col items-end gap-3">
-              <div className="text-right">
-                <p className="text-white font-black text-2xl">{memberCount}</p>
-                <p className="text-[#999999] text-xs flex items-center gap-1 justify-end"><Users size={11} /> members</p>
+            )}
+            {disciplines.length > 0 && (
+              <div>
+                <p className="font-bebas text-3xl text-white">{disciplines.length}</p>
+                <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase">Disciplines</p>
               </div>
-              {joined ? (
-                <span className="flex items-center gap-1.5 bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-bold px-5 py-2.5 rounded-xl">
-                  <CheckCircle size={15} /> Joined
-                </span>
-              ) : (
-                <button
-                  onClick={() => isLoggedIn ? setShowJoin(true) : window.location.href = `/signup?redirectTo=/gyms/${gym.slug}`}
-                  className="bg-[#FF3B3B] hover:bg-red-700 text-white font-bold px-6 py-2.5 rounded-xl text-sm transition-colors">
-                  Join Gym
-                </button>
-              )}
-            </div>
+            )}
+          </div>
+
+          {/* Disciplines dot-separated */}
+          {disciplines.length > 0 && (
+            <p className="font-inter text-xs text-[#555555] uppercase tracking-[2px] mt-4">
+              {disciplines.join(' · ')}
+            </p>
+          )}
+
+          {/* Description */}
+          {gym.description && (
+            <p className="font-inter text-sm text-[#999999] mt-4 leading-relaxed max-w-2xl">
+              {gym.description}
+            </p>
+          )}
+
+          {/* Join / Active CTA */}
+          <div className="mt-6">
+            {joined ? (
+              <span className="font-inter text-xs text-[#00D4AA] tracking-[3px] uppercase px-4 py-2 border border-[#00D4AA]/30 rounded-sm inline-block">
+                ● ACTIVE MEMBER
+              </span>
+            ) : (
+              <button
+                onClick={() =>
+                  isLoggedIn
+                    ? setShowJoin(true)
+                    : (window.location.href = `/signup?redirectTo=/gyms/${gym.slug}`)
+                }
+                className="bg-white text-black font-bebas tracking-[3px] px-8 py-3 rounded-sm hover:bg-[#E5E5E5] transition-colors text-sm"
+              >
+                JOIN GYM
+              </button>
+            )}
           </div>
         </div>
 
-        {/* Live now banner */}
+        {/* Live session banner */}
         {liveSessions.length > 0 && (
-          <div className="bg-[#FF3B3B]/10 border border-[#FF3B3B]/30 rounded-2xl px-6 py-4 flex items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#FF3B3B] animate-pulse" />
-              <div>
-                <p className="text-[#FF3B3B] text-xs font-bold uppercase tracking-wide">Live Now</p>
-                <p className="text-white font-semibold text-sm">{liveSessions[0].title}</p>
-              </div>
+          <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm px-6 py-4 flex items-center justify-between gap-4">
+            <div>
+              <p className="font-inter text-xs text-[#FF3B3B] tracking-[3px] uppercase mb-1">● Live Now</p>
+              <p className="font-bebas text-xl text-white">{liveSessions[0].title}</p>
             </div>
             {joined ? (
-              <a href={`/watch/${liveSessions[0].id}`}
-                className="bg-[#FF3B3B] hover:bg-red-700 text-white font-bold px-5 py-2 rounded-xl text-sm transition-colors flex items-center gap-1.5">
-                <Radio size={14} /> Watch
+              <a
+                href={`/watch/${liveSessions[0].id}`}
+                className="bg-white text-black font-bebas tracking-[3px] px-6 py-2.5 rounded-sm hover:bg-[#E5E5E5] transition-colors text-sm shrink-0"
+              >
+                WATCH →
               </a>
             ) : (
-              <span className="text-[#999999] text-xs">Join to watch</span>
+              <span className="font-inter text-xs text-[#555555]">Join to watch</span>
             )}
           </div>
         )}
@@ -122,57 +146,63 @@ export default function GymDetailClient({ gym, coaches, sessions, memberCount, m
         {/* Coaches */}
         {coaches.length > 0 && (
           <section>
-            <h2 className="text-white font-bold text-lg mb-4">Coaches</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-4">Coaches</p>
+            <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm divide-y divide-[#2A2A2A]">
               {coaches.map((c: any) => (
-                <div key={c.id} className="bg-[#1A1A1A] border border-white/5 rounded-2xl p-5 flex items-start gap-4">
-                  <div className="w-11 h-11 rounded-xl bg-white/5 flex items-center justify-center shrink-0">
-                    <span className="text-white font-bold text-base">{c.name[0]}</span>
+                <div key={c.id} className="flex items-center gap-4 px-5 py-4 hover:bg-[#222222] transition-colors">
+                  <div className="w-8 h-8 rounded-sm bg-[#2A2A2A] flex items-center justify-center shrink-0">
+                    <span className="font-bebas text-white text-sm">{c.name[0]}</span>
                   </div>
-                  <div className="min-w-0">
-                    <p className="text-white font-semibold text-sm">{c.name}</p>
-                    <span className={`inline-block text-xs font-medium px-2 py-0.5 rounded-full mt-1 ${DISCIPLINE_COLORS[c.discipline]?.split(' ').slice(0, 2).join(' ') ?? 'bg-white/5 text-white/60'}`}>
-                      {c.discipline}
-                    </span>
-                    {c.belt_rank && <p className="text-[#555] text-xs mt-1">{c.belt_rank}</p>}
-                    {c.bio && <p className="text-[#555] text-xs mt-1 line-clamp-2">{c.bio}</p>}
+                  <div className="flex-1 min-w-0">
+                    <p className="font-bebas text-lg text-white leading-tight">{c.name}</p>
+                    <p className="font-inter text-sm text-[#999999]">
+                      {c.discipline}{c.belt_rank ? ` · ${c.belt_rank}` : ''}
+                    </p>
                   </div>
+                  {c.bio && (
+                    <p className="font-inter text-xs text-[#555555] max-w-xs line-clamp-1 hidden sm:block">
+                      {c.bio}
+                    </p>
+                  )}
                 </div>
               ))}
             </div>
           </section>
         )}
 
-        {/* Upcoming schedule */}
+        {/* Upcoming Schedule */}
         <section>
-          <h2 className="text-white font-bold text-lg mb-4">Upcoming Schedule</h2>
+          <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-4">Upcoming Schedule</p>
           {upcomingSessions.length === 0 ? (
-            <div className="bg-[#1A1A1A] border border-white/5 rounded-2xl px-6 py-10 text-center">
-              <p className="text-[#999999] text-sm">No upcoming classes scheduled yet.</p>
+            <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm px-6 py-10 text-center">
+              <p className="font-inter text-[#555555] text-sm">No upcoming classes scheduled yet.</p>
             </div>
           ) : (
-            <div className="bg-[#1A1A1A] border border-white/5 rounded-2xl overflow-hidden">
-              <div className="divide-y divide-white/5">
+            <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm overflow-hidden">
+              {/* Table header */}
+              <div className="grid grid-cols-[1fr_1fr_auto_auto] gap-4 px-5 py-3 border-b border-[#2A2A2A]">
+                <span className="font-inter text-[10px] text-[#555555] uppercase tracking-[3px]">Time</span>
+                <span className="font-inter text-[10px] text-[#555555] uppercase tracking-[3px]">Class</span>
+                <span className="font-inter text-[10px] text-[#555555] uppercase tracking-[3px]">Coach</span>
+                <span className="font-inter text-[10px] text-[#555555] uppercase tracking-[3px]">Level</span>
+              </div>
+              <div className="divide-y divide-[#2A2A2A]">
                 {upcomingSessions.map((s: any) => (
-                  <div key={s.id} className="flex items-center gap-4 px-5 py-4">
-                    <div className={`flex items-center gap-1.5 shrink-0 w-5 ${s.status === 'live' ? 'text-[#FF3B3B]' : 'text-[#555]'}`}>
-                      {s.status === 'live' && <span className="w-1.5 h-1.5 rounded-full bg-[#FF3B3B] animate-pulse" />}
-                      <Calendar size={14} />
+                  <div key={s.id} className="grid grid-cols-[1fr_1fr_auto_auto] gap-4 px-5 py-3.5 hover:bg-[#222222] transition-colors items-center">
+                    <div>
+                      {s.status === 'live' && (
+                        <span className="font-inter text-[10px] text-[#FF3B3B] tracking-[2px] block mb-0.5">● LIVE</span>
+                      )}
+                      <p className="font-inter text-xs text-[#999999]">{formatTime(s.scheduled_at)}</p>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-white font-semibold text-sm">{s.title}</p>
-                      <p className="text-[#555] text-xs mt-0.5">
-                        {formatDateTime(s.scheduled_at)} · {s.duration_minutes}min · {s.coaches?.name ?? '—'}
-                      </p>
+                    <div>
+                      <p className="font-inter text-sm text-white">{s.title}</p>
+                      {s.discipline && (
+                        <p className="font-inter text-xs text-[#555555] uppercase tracking-[1px] mt-0.5">{s.discipline}</p>
+                      )}
                     </div>
-                    <div className="flex items-center gap-2 shrink-0">
-                      <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${DISCIPLINE_COLORS[s.discipline]?.split(' ').slice(0, 2).join(' ') ?? 'bg-white/5 text-white/60'}`}>
-                        {s.discipline}
-                      </span>
-                      <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${LEVEL_COLORS[s.level] ?? 'text-[#888] bg-white/5'}`}>
-                        {s.level}
-                      </span>
-                    </div>
+                    <p className="font-inter text-sm text-[#999999]">{s.coaches?.name ?? '—'}</p>
+                    <p className="font-inter text-xs text-[#555555]">{s.level ?? '—'}</p>
                   </div>
                 ))}
               </div>
@@ -180,17 +210,41 @@ export default function GymDetailClient({ gym, coaches, sessions, memberCount, m
           )}
         </section>
 
-        {/* CTA if not joined */}
+        {/* Pricing / Join CTA if not joined */}
         {!joined && (
-          <div className="bg-[#1A1A1A] border border-white/5 rounded-2xl px-8 py-10 text-center space-y-4">
-            <h3 className="text-white font-black text-xl">Ready to train at {gym.name}?</h3>
-            <p className="text-[#999999] text-sm">Join to watch live classes and replays from anywhere.</p>
-            <button
-              onClick={() => isLoggedIn ? setShowJoin(true) : window.location.href = `/signup?redirectTo=/gyms/${gym.slug}`}
-              className="bg-[#FF3B3B] hover:bg-red-700 text-white font-bold px-8 py-3 rounded-xl text-sm transition-colors">
-              Join {gym.name}
-            </button>
-          </div>
+          <section>
+            <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-4">Membership</p>
+            <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm p-8">
+              <h3 className="font-bebas text-4xl text-white mb-2">JOIN {gym.name.toUpperCase()}</h3>
+              <p className="font-inter text-sm text-[#999999] mb-6">
+                Access live classes and replays from anywhere.
+              </p>
+              <div className="flex flex-wrap gap-4 mb-8">
+                <div className="border border-[#333333] rounded-sm p-5 min-w-[140px]">
+                  <p className="font-bebas text-5xl text-white">₹999</p>
+                  <p className="font-inter text-[11px] text-[#999999] tracking-[3px] uppercase mt-1">Single · /mo</p>
+                </div>
+                <div className="border border-[#333333] rounded-sm p-5 min-w-[140px]">
+                  <p className="font-bebas text-5xl text-white">₹1,499</p>
+                  <p className="font-inter text-[11px] text-[#999999] tracking-[3px] uppercase mt-1">Dual · /mo</p>
+                </div>
+                <div className="border border-[#333333] rounded-sm p-5 min-w-[140px]">
+                  <p className="font-bebas text-5xl text-white">₹1,999</p>
+                  <p className="font-inter text-[11px] text-[#999999] tracking-[3px] uppercase mt-1">Full MMA · /mo</p>
+                </div>
+              </div>
+              <button
+                onClick={() =>
+                  isLoggedIn
+                    ? setShowJoin(true)
+                    : (window.location.href = `/signup?redirectTo=/gyms/${gym.slug}`)
+                }
+                className="bg-white text-black font-bebas tracking-[3px] px-10 py-3 rounded-sm hover:bg-[#E5E5E5] transition-colors text-sm"
+              >
+                JOIN NOW →
+              </button>
+            </div>
+          </section>
         )}
 
       </div>

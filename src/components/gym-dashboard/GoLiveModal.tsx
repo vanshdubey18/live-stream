@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Copy, Check, X, Radio, StopCircle, ExternalLink, Loader2 } from 'lucide-react'
+import { Copy, Check, X, ExternalLink, Loader2, StopCircle } from 'lucide-react'
 
 const SERVER_URL = 'rtmp://live.mux.com/app'
 
@@ -86,46 +86,42 @@ export default function GoLiveModal({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/80"
         onClick={onClose}
       />
 
       {/* Modal */}
       <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 16 }}
+        initial={{ opacity: 0, scale: 0.97, y: 12 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 16 }}
-        transition={{ type: 'spring', stiffness: 280, damping: 26 }}
-        className="relative bg-[#1A1A1A] border border-white/10 rounded-2xl w-full max-w-md shadow-2xl overflow-hidden"
+        exit={{ opacity: 0, scale: 0.97, y: 12 }}
+        transition={{ type: 'spring', stiffness: 300, damping: 28 }}
+        className="relative bg-[#1A1A1A] border border-[#333333] rounded-sm w-full max-w-md overflow-hidden"
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
-        <div className={`px-6 py-5 border-b border-white/5 flex items-center justify-between ${stage === 'live' ? 'bg-[#FF3B3B]/10' : ''}`}>
-          <div className="flex items-center gap-3">
+        <div className="px-6 py-5 border-b border-[#333333] flex items-center justify-between">
+          <div>
             {stage === 'live' ? (
-              <span className="flex items-center gap-2 text-[#FF3B3B] font-black text-base">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#FF3B3B] animate-pulse" />
-                LIVE NOW
-              </span>
+              <span className="font-bebas text-[#FF3B3B] text-2xl tracking-[1px]">● LIVE NOW</span>
             ) : (
-              <span className="text-white font-bold text-base flex items-center gap-2">
-                <Radio size={17} className="text-[#FF3B3B]" /> Go Live
-              </span>
+              <span className="font-bebas text-white text-2xl tracking-[1px]">GO LIVE</span>
             )}
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 flex items-center justify-center text-[#555] hover:text-white hover:bg-white/5 rounded-lg transition-all"
+            className="w-8 h-8 flex items-center justify-center border border-[#333333] text-[#555555] hover:text-white hover:bg-[#222222] rounded-sm transition-all"
           >
-            <X size={16} />
+            <X size={15} />
           </button>
         </div>
 
         <div className="px-6 py-5 space-y-5">
           {/* Session title */}
-          <p className="text-[#999999] text-sm">
-            Session: <span className="text-white font-medium">{sessionTitle}</span>
-          </p>
+          <div className="border-b border-[#222222] pb-4">
+            <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-1">Session</p>
+            <p className="font-inter text-white text-sm font-medium">{sessionTitle}</p>
+          </div>
 
           <AnimatePresence mode="wait">
             {stage === 'setup' ? (
@@ -136,43 +132,44 @@ export default function GoLiveModal({
                 exit={{ opacity: 0 }}
                 className="space-y-4"
               >
-                <p className="text-[#999999] text-sm">
-                  Copy these into OBS → Settings → Stream, then click <strong className="text-white">Start Streaming</strong>.
+                <p className="font-inter text-[#555555] text-xs leading-relaxed">
+                  Copy these into OBS → Settings → Stream, then click{' '}
+                  <span className="text-white">Start Streaming</span>.
                 </p>
 
                 {/* Server URL */}
                 <div>
-                  <p className="text-[#999999] text-xs mb-1.5">Server URL</p>
+                  <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-2">Server URL</p>
                   <div className="flex items-center gap-2">
-                    <div className="flex-1 bg-[#0D0D0D] border border-white/5 rounded-xl px-3 py-2.5 text-white text-xs font-mono truncate">
+                    <div className="flex-1 bg-[#0D0D0D] border border-[#333333] rounded-sm px-3 py-2.5 font-mono text-xs text-[#999999] truncate">
                       {SERVER_URL}
                     </div>
                     <button
                       onClick={() => copy(SERVER_URL, 'url')}
-                      className="shrink-0 w-9 h-9 flex items-center justify-center bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl text-[#999999] hover:text-white transition-all"
+                      className="shrink-0 w-9 h-9 flex items-center justify-center border border-[#333333] text-[#555555] hover:text-white hover:bg-[#222222] rounded-sm transition-all"
                     >
-                      {copiedUrl ? <Check size={14} className="text-green-400" /> : <Copy size={14} />}
+                      {copiedUrl ? <Check size={13} className="text-[#00D4AA]" /> : <Copy size={13} />}
                     </button>
                   </div>
                 </div>
 
                 {/* Stream Key */}
                 <div>
-                  <p className="text-[#999999] text-xs mb-1.5">Stream Key</p>
+                  <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-2">Stream Key</p>
                   {streamKey ? (
                     <div className="flex items-center gap-2">
-                      <div className="flex-1 bg-[#0D0D0D] border border-white/5 rounded-xl px-3 py-2.5 text-white text-xs font-mono truncate">
+                      <div className="flex-1 bg-[#0D0D0D] border border-[#333333] rounded-sm px-3 py-2.5 font-mono text-xs text-[#999999] truncate">
                         {streamKey}
                       </div>
                       <button
                         onClick={() => copy(streamKey, 'key')}
-                        className="shrink-0 w-9 h-9 flex items-center justify-center bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl text-[#999999] hover:text-white transition-all"
+                        className="shrink-0 w-9 h-9 flex items-center justify-center border border-[#333333] text-[#555555] hover:text-white hover:bg-[#222222] rounded-sm transition-all"
                       >
-                        {copiedKey ? <Check size={14} className="text-green-400" /> : <Copy size={14} />}
+                        {copiedKey ? <Check size={13} className="text-[#00D4AA]" /> : <Copy size={13} />}
                       </button>
                     </div>
                   ) : (
-                    <p className="text-yellow-400 text-xs bg-yellow-400/10 border border-yellow-400/20 rounded-xl px-3 py-2.5">
+                    <p className="font-inter text-[#FFD60A] text-xs bg-[#FFD60A]/5 border border-[#FFD60A]/20 rounded-sm px-3 py-2.5">
                       No stream configured. Go to Stream Setup and create a stream first.
                     </p>
                   )}
@@ -182,48 +179,46 @@ export default function GoLiveModal({
                   href="https://obsproject.com/wiki/OBS-Studio-Quickstart"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 text-[#FF3B3B] text-xs font-medium hover:underline"
+                  className="flex items-center gap-1.5 font-inter text-[11px] text-[#555555] hover:text-white transition-colors tracking-[2px] uppercase"
                 >
-                  OBS setup guide <ExternalLink size={11} />
+                  OBS Setup Guide <ExternalLink size={10} />
                 </a>
 
-                {error && <p className="text-red-400 text-xs">{error}</p>}
+                {error && <p className="font-inter text-[#FF3B3B] text-xs">{error}</p>}
 
                 <button
                   onClick={handleGoLive}
                   disabled={loading || !streamKey}
-                  className="w-full flex items-center justify-center gap-2 bg-[#FF3B3B] hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl text-sm transition-colors"
+                  className="w-full flex items-center justify-center gap-2 bg-white hover:bg-[#E5E5E5] disabled:opacity-40 disabled:cursor-not-allowed text-black font-bebas tracking-[3px] py-3 rounded-sm text-sm transition-colors"
                 >
-                  {loading
-                    ? <Loader2 size={15} className="animate-spin" />
-                    : <span className="w-2 h-2 rounded-full bg-white animate-pulse" />}
-                  {loading ? 'Starting…' : "I'm live in OBS — Go Live"}
+                  {loading ? <Loader2 size={14} className="animate-spin" /> : null}
+                  {loading ? 'STARTING...' : "I'M LIVE IN OBS — GO LIVE"}
                 </button>
               </motion.div>
             ) : (
               <motion.div
                 key="live"
-                initial={{ opacity: 0, y: 8 }}
+                initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
                 className="space-y-4"
               >
-                <div className="bg-[#FF3B3B]/5 border border-[#FF3B3B]/20 rounded-xl px-4 py-4 text-center space-y-1">
-                  <p className="text-white font-bold text-sm">Your class is live!</p>
-                  <p className="text-[#999999] text-xs">Members can now watch at your gym page. Stop OBS when you finish.</p>
+                <div className="bg-[#0D0D0D] border border-[#333333] rounded-sm px-4 py-4 space-y-1">
+                  <p className="font-bebas text-white text-lg tracking-[1px]">YOUR CLASS IS LIVE</p>
+                  <p className="font-inter text-[#555555] text-xs">
+                    Members can now watch at your gym page. Stop OBS when you finish.
+                  </p>
                 </div>
 
-                {error && <p className="text-red-400 text-xs">{error}</p>}
+                {error && <p className="font-inter text-[#FF3B3B] text-xs">{error}</p>}
 
                 <button
                   onClick={handleEndStream}
                   disabled={loading}
-                  className="w-full flex items-center justify-center gap-2 bg-[#111] hover:bg-white/5 border border-red-500/30 text-red-400 hover:text-red-300 font-bold py-3 rounded-xl text-sm transition-all disabled:opacity-50"
+                  className="w-full flex items-center justify-center gap-2 bg-[#FF3B3B] hover:bg-[#cc2f2f] text-white font-bebas tracking-[3px] py-3 rounded-sm text-sm transition-colors disabled:opacity-50"
                 >
-                  {loading
-                    ? <Loader2 size={15} className="animate-spin" />
-                    : <StopCircle size={15} />}
-                  {loading ? 'Ending stream…' : 'End Stream'}
+                  {loading ? <Loader2 size={14} className="animate-spin" /> : <StopCircle size={14} />}
+                  {loading ? 'ENDING...' : 'END STREAM'}
                 </button>
               </motion.div>
             )}

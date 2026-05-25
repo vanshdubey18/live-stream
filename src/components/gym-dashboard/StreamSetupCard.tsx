@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { Copy, Eye, EyeOff, ExternalLink, Check, RefreshCw, Loader2 } from 'lucide-react'
+import { Copy, Eye, EyeOff, ExternalLink, Check, Loader2 } from 'lucide-react'
 
 const SERVER_URL = 'rtmp://live.mux.com/app'
 
@@ -70,117 +70,103 @@ export default function StreamSetupCard({ gymId, streamKey: initialKey }: Props)
     }
   }
 
-  const statusBadge = (() => {
+  /* ── Status display ── */
+  const statusDisplay = (() => {
     switch (status) {
       case 'active':
-        return (
-          <span className="flex items-center gap-2 bg-[#FF3B3B]/10 border border-[#FF3B3B]/30 text-[#FF3B3B] text-xs font-bold px-3 py-1.5 rounded-full">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#FF3B3B] animate-pulse" /> LIVE NOW
-          </span>
-        )
+        return <span className="font-bebas text-[#FF3B3B] text-5xl tracking-[1px]">● LIVE NOW</span>
       case 'disconnected':
-        return (
-          <span className="flex items-center gap-2 bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 text-xs font-bold px-3 py-1.5 rounded-full">
-            <RefreshCw size={11} className="animate-spin" /> Reconnecting...
-          </span>
-        )
+        return <span className="font-bebas text-[#FFD60A] text-5xl tracking-[1px]">⟳ RECONNECTING</span>
       case 'loading':
         return (
-          <span className="flex items-center gap-2 bg-white/5 border border-white/10 text-[#999999] text-xs font-bold px-3 py-1.5 rounded-full">
-            <Loader2 size={11} className="animate-spin" /> Checking...
+          <span className="font-bebas text-[#555555] text-5xl tracking-[1px] flex items-center gap-3">
+            <Loader2 size={28} className="animate-spin" /> CHECKING
           </span>
         )
       case 'idle':
       default:
-        return (
-          <span className="flex items-center gap-2 bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-bold px-3 py-1.5 rounded-full">
-            <span className="w-1.5 h-1.5 rounded-full bg-green-400" /> Ready to stream
-          </span>
-        )
+        return <span className="font-bebas text-white text-5xl tracking-[1px]">READY</span>
     }
   })()
 
   return (
-    <div className="bg-[#1A1A1A] border border-[#FF3B3B]/30 rounded-2xl p-6">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-white font-bold text-lg">🎥 Stream Setup</h2>
-        {statusBadge}
-      </div>
+    <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm p-6">
 
-      {!streamKey ? (
-        /* No stream yet — prompt to create */
-        <div className="text-center py-6 space-y-4">
-          <p className="text-[#999999] text-sm">No stream configured yet. Create your Mux live stream to get your credentials.</p>
-          <button
-            onClick={createStream}
-            disabled={creating}
-            className="flex items-center gap-2 mx-auto bg-[#FF3B3B] hover:bg-red-700 disabled:opacity-60 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition-colors">
-            {creating ? <Loader2 size={15} className="animate-spin" /> : null}
-            {creating ? 'Creating stream…' : 'Create Live Stream'}
-          </button>
-          {createError && (
-            <p className="text-red-400 text-xs text-center mt-2 max-w-xs mx-auto">{createError}</p>
-          )}
+      {/* Header row: status left, copy controls right */}
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6 mb-6">
+        <div>
+          <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-2">Stream Status</p>
+          {statusDisplay}
         </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Left */}
-          <div className="space-y-3">
-            <div className="bg-[#0D0D0D] border border-white/5 rounded-xl px-4 py-3">
-              <p className="text-[#999999] text-xs mb-1">Status</p>
-              <p className="text-white text-sm font-medium">
-                {status === 'active' ? '🔴 Streaming live'
-                  : status === 'disconnected' ? '⟳ Reconnecting…'
-                  : 'Offline'}
-              </p>
-            </div>
-            <div className="bg-[#0D0D0D] border border-white/5 rounded-xl px-4 py-3">
-              <p className="text-[#999999] text-xs mb-1">Auto-refreshes</p>
-              <p className="text-white text-sm font-medium">Every 30 seconds</p>
-            </div>
-            <a
-              href="https://obsproject.com/wiki/OBS-Studio-Quickstart"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1.5 text-[#FF3B3B] text-sm font-medium hover:underline">
-              How to set up OBS <ExternalLink size={13} />
-            </a>
-          </div>
 
-          {/* Right */}
-          <div className="space-y-3">
+        {streamKey && (
+          <div className="flex flex-col gap-2 sm:items-end">
             {/* Server URL */}
-            <div>
-              <p className="text-[#999999] text-xs mb-1.5">Server URL</p>
-              <div className="flex items-center gap-2">
-                <div className="flex-1 bg-[#0D0D0D] border border-white/5 rounded-xl px-3 py-2.5 text-white text-xs font-mono truncate">
-                  {SERVER_URL}
-                </div>
-                <button onClick={() => copy(SERVER_URL, 'url')}
-                  className="shrink-0 w-9 h-9 flex items-center justify-center bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl text-[#999999] hover:text-white transition-all">
-                  {copiedUrl ? <Check size={14} className="text-green-400" /> : <Copy size={14} />}
-                </button>
+            <div className="flex items-center gap-2">
+              <span className="font-inter text-[11px] text-[#555555] tracking-[2px] uppercase">Server URL</span>
+              <div className="bg-[#0D0D0D] border border-[#333333] rounded-sm px-3 py-1.5 font-mono text-xs text-[#999999] truncate max-w-[180px]">
+                {SERVER_URL}
               </div>
+              <button
+                onClick={() => copy(SERVER_URL, 'url')}
+                className="w-8 h-8 flex items-center justify-center border border-[#333333] text-[#555555] hover:text-white hover:bg-[#222222] rounded-sm transition-all"
+              >
+                {copiedUrl ? <Check size={13} className="text-[#00D4AA]" /> : <Copy size={13} />}
+              </button>
             </div>
 
             {/* Stream Key */}
-            <div>
-              <p className="text-[#999999] text-xs mb-1.5">Stream Key</p>
-              <div className="flex items-center gap-2">
-                <div className="flex-1 bg-[#0D0D0D] border border-white/5 rounded-xl px-3 py-2.5 text-white text-xs font-mono truncate">
-                  {showKey ? streamKey : '••••••••••••••••••••'}
-                </div>
-                <button onClick={() => setShowKey(!showKey)}
-                  className="shrink-0 w-9 h-9 flex items-center justify-center bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl text-[#999999] hover:text-white transition-all">
-                  {showKey ? <EyeOff size={14} /> : <Eye size={14} />}
-                </button>
-                <button onClick={() => copy(streamKey, 'key')}
-                  className="shrink-0 w-9 h-9 flex items-center justify-center bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl text-[#999999] hover:text-white transition-all">
-                  {copiedKey ? <Check size={14} className="text-green-400" /> : <Copy size={14} />}
-                </button>
+            <div className="flex items-center gap-2">
+              <span className="font-inter text-[11px] text-[#555555] tracking-[2px] uppercase">Stream Key</span>
+              <div className="bg-[#0D0D0D] border border-[#333333] rounded-sm px-3 py-1.5 font-mono text-xs text-[#999999] truncate max-w-[180px]">
+                {showKey ? streamKey : '••••••••••••••••'}
               </div>
+              <button
+                onClick={() => setShowKey(!showKey)}
+                className="w-8 h-8 flex items-center justify-center border border-[#333333] text-[#555555] hover:text-white hover:bg-[#222222] rounded-sm transition-all"
+              >
+                {showKey ? <EyeOff size={13} /> : <Eye size={13} />}
+              </button>
+              <button
+                onClick={() => copy(streamKey, 'key')}
+                className="w-8 h-8 flex items-center justify-center border border-[#333333] text-[#555555] hover:text-white hover:bg-[#222222] rounded-sm transition-all"
+              >
+                {copiedKey ? <Check size={13} className="text-[#00D4AA]" /> : <Copy size={13} />}
+              </button>
             </div>
           </div>
+        )}
+      </div>
+
+      {/* Footer */}
+      {!streamKey ? (
+        <div className="border-t border-[#222222] pt-6 flex flex-col items-start gap-3">
+          <p className="font-inter text-[#555555] text-sm">
+            No stream configured yet. Create your Mux live stream to get your credentials.
+          </p>
+          <button
+            onClick={createStream}
+            disabled={creating}
+            className="flex items-center gap-2 bg-white hover:bg-[#E5E5E5] disabled:opacity-50 text-black font-bebas tracking-[3px] px-6 py-2.5 rounded-sm transition-colors text-sm"
+          >
+            {creating ? <Loader2 size={14} className="animate-spin" /> : null}
+            {creating ? 'CREATING...' : 'CREATE LIVE STREAM'}
+          </button>
+          {createError && (
+            <p className="font-inter text-[#FF3B3B] text-xs mt-1 max-w-sm">{createError}</p>
+          )}
+        </div>
+      ) : (
+        <div className="border-t border-[#222222] pt-4 flex items-center gap-4">
+          <span className="font-inter text-[11px] text-[#555555]">Auto-refreshes every 30s</span>
+          <a
+            href="https://obsproject.com/wiki/OBS-Studio-Quickstart"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1.5 font-inter text-[11px] text-[#999999] hover:text-white transition-colors tracking-[2px] uppercase"
+          >
+            OBS Setup Guide <ExternalLink size={11} />
+          </a>
         </div>
       )}
     </div>

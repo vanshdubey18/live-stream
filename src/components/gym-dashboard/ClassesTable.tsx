@@ -1,68 +1,90 @@
 'use client'
 
-import { Radio, Trash2 } from 'lucide-react'
-import type { ScheduledClass } from './ScheduleClassModal'
-
-const disciplineColors: Record<string, string> = {
-  BJJ: 'bg-blue-500/10 text-blue-400',
-  Boxing: 'bg-yellow-500/10 text-yellow-400',
-  'Muay Thai': 'bg-orange-500/10 text-orange-400',
-  Wrestling: 'bg-green-500/10 text-green-400',
+import { Trash2 } from 'lucide-react'
+interface SessionRow {
+  id: string
+  title: string
+  discipline: string
+  scheduled_at?: string
+  date?: string
+  time?: string
+  coach?: string
+  level?: string
+  status?: string
 }
 
 interface ClassesTableProps {
-  classes: ScheduledClass[]
+  classes: SessionRow[]
   onDelete: (id: string) => void
   onGoLive: (id: string) => void
+}
+
+function StatusBadge({ status }: { status?: string }) {
+  const s = (status ?? 'scheduled').toLowerCase()
+  if (s === 'live') {
+    return <span className="font-bebas tracking-[1px] text-[#FF3B3B] text-sm">● LIVE</span>
+  }
+  if (s === 'ended') {
+    return <span className="font-bebas tracking-[1px] text-[#555555] text-sm">ENDED</span>
+  }
+  return <span className="font-bebas tracking-[1px] text-white text-sm">SCHEDULED</span>
 }
 
 export default function ClassesTable({ classes, onDelete, onGoLive }: ClassesTableProps) {
   if (classes.length === 0) {
     return (
-      <div className="bg-[#1A1A1A] border border-white/5 rounded-2xl px-6 py-12 text-center">
-        <p className="text-[#999999] text-sm">No classes scheduled yet.</p>
+      <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm px-6 py-12 text-center">
+        <p className="font-inter text-[#555555] text-sm">No classes scheduled yet.</p>
       </div>
     )
   }
 
   return (
-    <div className="bg-[#1A1A1A] border border-white/5 rounded-2xl overflow-hidden">
+    <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm overflow-hidden">
+
       {/* Desktop table */}
       <div className="hidden md:block overflow-x-auto">
-        <table className="w-full text-sm">
+        <table className="w-full">
           <thead>
-            <tr className="border-b border-white/5">
-              {['Date', 'Time', 'Title', 'Discipline', 'Coach', 'Status', 'Actions'].map(h => (
-                <th key={h} className="px-4 py-3 text-left text-xs font-bold text-[#999999] uppercase tracking-wider">{h}</th>
+            <tr className="border-b border-[#333333]">
+              {['Title', 'Discipline', 'Date / Time', 'Status', 'Actions'].map(h => (
+                <th key={h} className="px-5 py-3 text-left font-inter text-[11px] text-[#999999] tracking-[4px] uppercase">
+                  {h}
+                </th>
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-white/5">
-            {classes.map(cls => (
-              <tr key={cls.id} className="hover:bg-white/2 transition-colors">
-                <td className="px-4 py-3.5 text-white font-medium whitespace-nowrap">{cls.date}</td>
-                <td className="px-4 py-3.5 text-[#999999] whitespace-nowrap">{cls.time}</td>
-                <td className="px-4 py-3.5 text-white font-medium">{cls.title}</td>
-                <td className="px-4 py-3.5">
-                  <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${disciplineColors[cls.discipline] ?? 'bg-white/5 text-white/60'}`}>
-                    {cls.discipline}
-                  </span>
+          <tbody>
+            {classes.map((cls, i) => (
+              <tr
+                key={cls.id}
+                className={`hover:bg-[#222222] transition-colors ${i < classes.length - 1 ? 'border-b border-[#222222]' : ''}`}
+              >
+                <td className="px-5 py-4 font-inter text-white text-sm font-medium">{cls.title}</td>
+                <td className="px-5 py-4">
+                  <span className="font-inter text-[11px] text-[#999999] tracking-[2px] uppercase">{cls.discipline}</span>
                 </td>
-                <td className="px-4 py-3.5 text-[#999999]">{cls.coach}</td>
-                <td className="px-4 py-3.5">
-                  <span className="text-xs font-medium text-[#999999] bg-white/5 px-2.5 py-1 rounded-full">
-                    {cls.status}
-                  </span>
+                <td className="px-5 py-4 font-inter text-[#999999] text-sm whitespace-nowrap">
+                  {cls.date} · {cls.time}
                 </td>
-                <td className="px-4 py-3.5">
+                <td className="px-5 py-4">
+                  <StatusBadge status={cls.status} />
+                </td>
+                <td className="px-5 py-4">
                   <div className="flex items-center gap-2">
-                    <button onClick={() => onGoLive(cls.id)}
-                      className="flex items-center gap-1.5 bg-[#FF3B3B]/10 hover:bg-[#FF3B3B]/20 border border-[#FF3B3B]/20 text-[#FF3B3B] text-xs font-semibold px-2.5 py-1.5 rounded-lg transition-all">
-                      <Radio size={12} /> Go Live
-                    </button>
-                    <button onClick={() => onDelete(cls.id)}
-                      className="w-7 h-7 flex items-center justify-center text-[#555] hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-all">
-                      <Trash2 size={13} />
+                    {(cls.status as string) !== 'ended' && (
+                      <button
+                        onClick={() => onGoLive(cls.id)}
+                        className="font-bebas tracking-[2px] text-sm bg-white text-black px-3 py-1 rounded-sm hover:bg-[#E5E5E5] transition-colors"
+                      >
+                        {(cls.status as string) === 'live' ? 'MANAGE' : 'GO LIVE'}
+                      </button>
+                    )}
+                    <button
+                      onClick={() => onDelete(cls.id)}
+                      className="w-7 h-7 flex items-center justify-center border border-[#333333] text-[#555555] hover:text-white hover:border-[#555555] rounded-sm transition-all"
+                    >
+                      <Trash2 size={12} />
                     </button>
                   </div>
                 </td>
@@ -72,32 +94,38 @@ export default function ClassesTable({ classes, onDelete, onGoLive }: ClassesTab
         </table>
       </div>
 
-      {/* Mobile cards */}
-      <div className="md:hidden divide-y divide-white/5">
+      {/* Mobile rows */}
+      <div className="md:hidden divide-y divide-[#222222]">
         {classes.map(cls => (
-          <div key={cls.id} className="px-4 py-4 space-y-2">
+          <div key={cls.id} className="px-4 py-4 space-y-3 hover:bg-[#222222] transition-colors">
             <div className="flex items-start justify-between gap-2">
               <div>
-                <p className="text-white font-semibold text-sm">{cls.title}</p>
-                <p className="text-[#999999] text-xs mt-0.5">{cls.coach} · {cls.date} {cls.time}</p>
+                <p className="font-inter text-white text-sm font-medium">{cls.title}</p>
+                <p className="font-inter text-[#999999] text-xs mt-0.5 tracking-[2px] uppercase">{cls.discipline}</p>
+                <p className="font-inter text-[#555555] text-xs mt-0.5">{cls.date} · {cls.time}</p>
               </div>
-              <span className={`text-xs font-medium px-2 py-0.5 rounded-full shrink-0 ${disciplineColors[cls.discipline] ?? 'bg-white/5 text-white/60'}`}>
-                {cls.discipline}
-              </span>
+              <StatusBadge status={cls.status} />
             </div>
             <div className="flex gap-2">
-              <button onClick={() => onGoLive(cls.id)}
-                className="flex items-center gap-1.5 bg-[#FF3B3B]/10 border border-[#FF3B3B]/20 text-[#FF3B3B] text-xs font-semibold px-3 py-1.5 rounded-lg">
-                <Radio size={11} /> Go Live
-              </button>
-              <button onClick={() => onDelete(cls.id)}
-                className="flex items-center gap-1.5 text-[#555] hover:text-red-400 text-xs px-2 py-1.5 rounded-lg">
-                <Trash2 size={12} /> Remove
+              {cls.status !== 'ended' && (
+                <button
+                  onClick={() => onGoLive(cls.id)}
+                  className="font-bebas tracking-[2px] text-sm bg-white text-black px-4 py-1.5 rounded-sm hover:bg-[#E5E5E5] transition-colors"
+                >
+                  {cls.status === 'live' ? 'MANAGE' : 'GO LIVE'}
+                </button>
+              )}
+              <button
+                onClick={() => onDelete(cls.id)}
+                className="flex items-center gap-1.5 border border-[#333333] text-[#555555] hover:text-white font-inter text-xs px-3 py-1.5 rounded-sm transition-all"
+              >
+                <Trash2 size={11} /> Remove
               </button>
             </div>
           </div>
         ))}
       </div>
+
     </div>
   )
 }

@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { Eye, EyeOff, ArrowRight, Loader2 } from 'lucide-react'
+import { Eye, EyeOff, Loader2 } from 'lucide-react'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -46,21 +46,26 @@ export default function LoginPage() {
 
   return (
     <main className="min-h-screen bg-[#0D0D0D] flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-md">
-        {/* Logo */}
+      <div className="w-full max-w-sm">
+
+        {/* Wordmark */}
         <div className="text-center mb-8">
-          <a href="/" className="text-2xl font-black tracking-tighter text-[#FF3B3B]">
+          <a href="/" className="font-bebas text-3xl tracking-[3px] text-[#FF3B3B]">
             MATPEAK
           </a>
-          <p className="text-[#999999] text-sm mt-2">Welcome back</p>
+          <p className="font-inter text-xs text-[#999999] tracking-[4px] uppercase mt-2">
+            WELCOME BACK
+          </p>
         </div>
 
-        <div className="bg-[#1A1A1A] border border-white/5 rounded-sm p-8">
+        {/* Card */}
+        <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm p-8">
           <form onSubmit={handleSubmit} className="space-y-5">
+
             {/* Email */}
             <div>
-              <label className="block text-white text-sm font-medium mb-2">
-                Email
+              <label className="block font-bebas tracking-[2px] text-white text-sm mb-2">
+                EMAIL
               </label>
               <input
                 name="email"
@@ -69,17 +74,19 @@ export default function LoginPage() {
                 value={form.email}
                 onChange={handleChange}
                 required
-                className="w-full bg-[#0D0D0D] border border-white/10 rounded-sm px-4 py-3 text-white placeholder-[#555] text-sm focus:outline-none focus:border-[#FF3B3B]/50 transition-colors"
+                className="font-inter w-full bg-[#0D0D0D] border border-[#333333] rounded-sm px-4 py-3 text-white placeholder-[#555555] text-sm focus:outline-none focus:border-white transition-colors duration-150"
               />
             </div>
 
             {/* Password */}
             <div>
               <div className="flex items-center justify-between mb-2">
-                <label className="text-white text-sm font-medium">Password</label>
+                <label className="font-bebas tracking-[2px] text-white text-sm">
+                  PASSWORD
+                </label>
                 <a
                   href="/forgot-password"
-                  className="text-[#999999] hover:text-white text-xs transition-colors"
+                  className="font-inter text-[#555555] hover:text-white text-xs transition-colors duration-150"
                 >
                   Forgot password?
                 </a>
@@ -92,12 +99,13 @@ export default function LoginPage() {
                   value={form.password}
                   onChange={handleChange}
                   required
-                  className="w-full bg-[#0D0D0D] border border-white/10 rounded-sm px-4 py-3 pr-11 text-white placeholder-[#555] text-sm focus:outline-none focus:border-[#FF3B3B]/50 transition-colors"
+                  className="font-inter w-full bg-[#0D0D0D] border border-[#333333] rounded-sm px-4 py-3 pr-11 text-white placeholder-[#555555] text-sm focus:outline-none focus:border-white transition-colors duration-150"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#555] hover:text-white transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#555555] hover:text-white transition-colors duration-150"
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
                   {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
@@ -106,34 +114,32 @@ export default function LoginPage() {
 
             {/* Error */}
             {error && (
-              <div className="bg-red-900/20 border border-red-500/30 rounded-sm px-4 py-3">
-                <p className="text-red-400 text-sm">{error}</p>
-              </div>
+              <p className="font-inter text-[#FF3B3B] text-sm mt-2">{error}</p>
             )}
 
             {/* Submit */}
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-white hover:bg-[#E5E5E5] disabled:opacity-40 disabled:cursor-not-allowed text-black font-bebas tracking-[3px] py-3.5 rounded-sm text-sm transition-all duration-150 flex items-center justify-center gap-2"
+              className="font-bebas tracking-[3px] w-full bg-white hover:bg-[#E5E5E5] disabled:opacity-40 disabled:cursor-not-allowed text-black py-4 rounded-sm text-sm transition-colors duration-150 flex items-center justify-center gap-2"
             >
               {loading ? (
                 <Loader2 size={16} className="animate-spin" />
               ) : (
-                <>
-                  Log In <ArrowRight size={16} />
-                </>
+                'LOG IN'
               )}
             </button>
           </form>
 
-          <p className="text-center text-[#999999] text-sm mt-6">
+          {/* Bottom link */}
+          <p className="font-inter text-center text-[#555555] text-sm mt-6">
             Don&apos;t have an account?{' '}
-            <a href="/signup" className="text-white hover:text-[#FF3B3B] font-medium transition-colors">
-              Sign up free
+            <a href="/signup" className="text-white hover:text-[#E5E5E5] transition-colors duration-150">
+              Sign up
             </a>
           </p>
         </div>
+
       </div>
     </main>
   )

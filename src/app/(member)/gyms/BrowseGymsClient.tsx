@@ -1,21 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import { Search, MapPin, CheckCircle, ChevronRight } from 'lucide-react'
+import { Search } from 'lucide-react'
 import MemberSidebar from '@/components/layout/MemberSidebar'
 
 const ALL_DISCIPLINES = ['BJJ', 'Boxing', 'Muay Thai', 'Wrestling', 'MMA', 'Kickboxing', 'Judo', 'Sambo']
-
-const DISCIPLINE_COLORS: Record<string, string> = {
-  BJJ: 'bg-blue-500/10 text-blue-400',
-  Boxing: 'bg-yellow-500/10 text-yellow-400',
-  'Muay Thai': 'bg-orange-500/10 text-orange-400',
-  Wrestling: 'bg-green-500/10 text-green-400',
-  MMA: 'bg-[#FF3B3B]/10 text-[#FF3B3B]',
-  Kickboxing: 'bg-purple-500/10 text-purple-400',
-  Judo: 'bg-pink-500/10 text-pink-400',
-  Sambo: 'bg-teal-500/10 text-teal-400',
-}
 
 interface Props {
   gyms: any[]
@@ -42,97 +31,122 @@ export default function BrowseGymsClient({ gyms, joinedGymIds }: Props) {
       <MemberSidebar active="Browse Gyms" />
 
       <main className="flex-1 lg:ml-64 min-w-0">
-        <div className="sticky top-0 z-20 bg-[#0D0D0D]/90 backdrop-blur-md border-b border-white/5 px-6 h-16 flex items-center mt-14 lg:mt-0">
-          <h1 className="text-white font-bold text-lg">Browse Gyms</h1>
+        {/* Top nav bar */}
+        <div className="sticky top-0 z-20 bg-[#0D0D0D] border-b border-[#1F1F1F] px-6 h-14 flex items-center mt-14 lg:mt-0">
+          <span className="font-inter text-[11px] text-[#555555] tracking-[4px] uppercase">Member Portal</span>
         </div>
 
-        <div className="px-6 py-6 max-w-5xl space-y-6">
+        <div className="px-6 py-8 max-w-5xl space-y-8">
 
-          {/* Search + filters */}
-          <div className="flex flex-col sm:flex-row gap-3">
-            <div className="relative flex-1">
-              <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#555]" />
-              <input
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-                placeholder="Search gyms or cities…"
-                className="w-full bg-[#1A1A1A] border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-white placeholder-[#444] text-sm focus:outline-none focus:border-[#FF3B3B]/40 transition-colors"
-              />
-            </div>
+          {/* Page header */}
+          <div>
+            <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-2">Discover</p>
+            <h1 className="font-bebas text-4xl text-white tracking-wide">FIND YOUR GYM</h1>
           </div>
 
-          {/* Discipline pills */}
-          <div className="flex flex-wrap gap-2">
-            <button
-              onClick={() => setActiveDiscipline('')}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all
-                ${!activeDiscipline ? 'bg-white/10 border-white/20 text-white' : 'border-white/10 text-[#555] hover:text-[#888]'}`}>
-              All
-            </button>
-            {ALL_DISCIPLINES.map(d => (
-              <button
-                key={d}
-                onClick={() => setActiveDiscipline(d === activeDiscipline ? '' : d)}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all
-                  ${activeDiscipline === d
-                    ? (DISCIPLINE_COLORS[d] ?? 'bg-white/10 text-white') + ' border-current'
-                    : 'border-white/10 text-[#555] hover:text-[#888]'}`}>
-                {d}
-              </button>
-            ))}
+          {/* Search input */}
+          <div className="relative max-w-md">
+            <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#555555]" />
+            <input
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              placeholder="Search gyms or cities…"
+              className="w-full bg-[#1A1A1A] border border-[#333333] rounded-sm pl-10 pr-4 py-2.5 text-white placeholder-[#555555] font-inter text-sm focus:outline-none focus:border-[#444444] transition-colors"
+            />
+          </div>
+
+          {/* Discipline filter tabs */}
+          <div className="flex flex-wrap gap-0">
+            {['All', ...ALL_DISCIPLINES].map(d => {
+              const isActive = d === 'All' ? !activeDiscipline : activeDiscipline === d
+              return (
+                <button
+                  key={d}
+                  onClick={() => setActiveDiscipline(d === 'All' ? '' : (d === activeDiscipline ? '' : d))}
+                  className={`mr-6 pb-2 font-inter text-sm transition-colors border-b-2 ${
+                    isActive
+                      ? 'text-white border-[#FF3B3B]'
+                      : 'text-[#555555] border-transparent hover:text-[#888888]'
+                  }`}
+                >
+                  {d}
+                </button>
+              )
+            })}
           </div>
 
           {/* Results */}
           {filtered.length === 0 ? (
-            <div className="bg-[#1A1A1A] border border-white/5 rounded-2xl px-6 py-16 text-center">
-              <p className="text-[#999999] text-sm">No gyms match your search.</p>
+            <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm px-6 py-16 text-center">
+              <p className="font-inter text-[#999999] text-sm">No gyms match your search.</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {filtered.map(g => {
                 const isJoined = joinedGymIds.includes(g.id)
+                const disciplines: string[] = g.disciplines ?? []
+                const isLive = (g.sessions ?? []).some((s: any) => s.status === 'live')
+
                 return (
                   <a
                     key={g.id}
                     href={`/gyms/${g.slug}`}
-                    className="bg-[#1A1A1A] border border-white/5 rounded-2xl p-5 hover:border-white/15 transition-all flex flex-col gap-4 group">
-                    {/* Logo / initial */}
-                    <div className="flex items-start justify-between">
-                      <div className="w-12 h-12 rounded-xl bg-[#FF3B3B]/15 flex items-center justify-center">
-                        <span className="text-[#FF3B3B] font-black text-lg">{g.name[0]}</span>
-                      </div>
+                    className="bg-[#1A1A1A] border border-[#333333] rounded-sm p-5 hover:bg-[#222222] transition-colors flex flex-col gap-4 group"
+                  >
+                    {/* Top row: live badge + joined */}
+                    <div className="flex items-center justify-between min-h-[20px]">
+                      {isLive ? (
+                        <span className="font-inter text-xs text-[#FF3B3B] tracking-[1px]">
+                          ● LIVE NOW
+                        </span>
+                      ) : (
+                        <span />
+                      )}
                       {isJoined && (
-                        <span className="flex items-center gap-1 text-green-400 text-xs font-semibold bg-green-500/10 px-2.5 py-1 rounded-full border border-green-500/20">
-                          <CheckCircle size={11} /> Joined
+                        <span className="font-inter text-xs text-[#00D4AA] tracking-[1px]">
+                          ● ACTIVE MEMBER
                         </span>
                       )}
                     </div>
 
+                    {/* Gym name */}
                     <div>
-                      <h3 className="text-white font-bold text-base group-hover:text-[#FF3B3B] transition-colors">{g.name}</h3>
+                      <h3 className="font-bebas text-2xl text-white leading-tight">{g.name}</h3>
                       {g.city && (
-                        <p className="text-[#999999] text-xs flex items-center gap-1 mt-1">
-                          <MapPin size={11} /> {g.city}{g.location ? `, ${g.location}` : ''}
+                        <p className="font-inter text-sm text-[#999999] mt-1">
+                          {g.city}{g.location ? `, ${g.location}` : ''}
                         </p>
                       )}
-                      {g.description && (
-                        <p className="text-[#555] text-xs mt-2 line-clamp-2">{g.description}</p>
+                    </div>
+
+                    {/* Disciplines as dot-separated text */}
+                    {disciplines.length > 0 && (
+                      <p className="font-inter text-xs text-[#555555] uppercase tracking-[2px]">
+                        {disciplines.join(' · ')}
+                      </p>
+                    )}
+
+                    {/* Stats row */}
+                    <div className="flex items-end gap-6">
+                      {g.member_count != null && (
+                        <div>
+                          <span className="font-bebas text-xl text-white">{g.member_count}</span>
+                          <p className="font-inter text-[10px] text-[#555555] uppercase tracking-[2px]">Members</p>
+                        </div>
+                      )}
+                      {g.classes_per_week != null && (
+                        <div>
+                          <span className="font-bebas text-xl text-white">{g.classes_per_week}</span>
+                          <p className="font-inter text-[10px] text-[#555555] uppercase tracking-[2px]">Classes/wk</p>
+                        </div>
                       )}
                     </div>
 
-                    <div className="flex flex-wrap gap-1.5 mt-auto">
-                      {(g.disciplines ?? []).slice(0, 4).map((d: string) => (
-                        <span key={d} className={`text-xs font-medium px-2 py-0.5 rounded-full ${DISCIPLINE_COLORS[d] ?? 'bg-white/5 text-white/60'}`}>
-                          {d}
-                        </span>
-                      ))}
-                      {(g.disciplines?.length ?? 0) > 4 && (
-                        <span className="text-xs text-[#555] px-2 py-0.5">+{g.disciplines.length - 4}</span>
-                      )}
-                    </div>
-
-                    <div className="flex items-center gap-1 text-[#FF3B3B] text-xs font-semibold">
-                      View gym <ChevronRight size={13} />
+                    {/* CTA */}
+                    <div className="mt-auto">
+                      <span className="font-inter text-sm text-[#999999] group-hover:text-white transition-colors">
+                        VIEW GYM →
+                      </span>
                     </div>
                   </a>
                 )

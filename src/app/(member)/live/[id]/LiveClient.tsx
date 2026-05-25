@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowLeft, PictureInPicture2, Settings, MessageCircle, CheckCircle2, Circle } from 'lucide-react'
+import { ArrowLeft, CheckCircle2, Circle } from 'lucide-react'
 import Link from 'next/link'
 import MuxPlayer from '@mux/mux-player-react'
 import SessionSummary, { DEMO_SUMMARY } from '@/components/ai/SessionSummary'
@@ -69,105 +69,107 @@ function PrePhase({ onGoLive }: { onGoLive: () => void }) {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0, scale: 0.98 }}
       transition={{ duration: 0.4 }}
-      className="min-h-screen bg-[#050505] text-white flex flex-col"
+      className="min-h-screen bg-[#0D0D0D] text-white flex flex-col"
     >
-      {/* Top countdown */}
-      <div className="flex flex-col items-center pt-12 pb-6 px-4">
-        <span className="text-[#999999] text-sm font-medium mb-3 flex items-center gap-2">
-          <span>⏱</span> Class starts in
-        </span>
-        <div className="text-7xl sm:text-8xl font-black tracking-tighter tabular-nums text-white">
-          {pad(mins)}
-          <span className="text-[#FF3B3B] mx-1">:</span>
-          {pad(secs)}
-        </div>
+      {/* Back nav */}
+      <div className="px-6 pt-6">
+        <Link href="/dashboard" className="inline-flex items-center gap-2 text-[#999999] hover:text-white font-inter text-sm transition-colors">
+          <ArrowLeft size={14} /> Dashboard
+        </Link>
       </div>
 
-      {/* Main content */}
-      <div className="flex-1 px-4 pb-8 max-w-4xl mx-auto w-full flex flex-col lg:flex-row gap-6">
-        {/* Session card */}
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.15 }}
-          className="flex-1 bg-[#111] border border-white/10 rounded-2xl p-6 flex flex-col gap-5"
-        >
-          {/* Coach avatar + info */}
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-full bg-[#FF3B3B]/20 flex items-center justify-center shrink-0">
-              <span className="text-[#FF3B3B] text-xl font-black">{SESSION.coachInitials}</span>
-            </div>
-            <div>
-              <p className="text-white font-bold text-base">{SESSION.coachName}</p>
-              <div className="flex items-center gap-2 mt-0.5">
-                <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400">
-                  {SESSION.discipline}
-                </span>
-                <span className="text-[#555] text-xs">{SESSION.level}</span>
-              </div>
-            </div>
+      {/* Center content */}
+      <div className="flex flex-col items-center justify-center flex-1 px-4 py-12 text-center">
+
+        {/* Status badge */}
+        <div className="flex items-center gap-2 mb-8">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#FF3B3B] animate-pulse" />
+          <span className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase">Waiting for stream</span>
+        </div>
+
+        {/* Session title */}
+        <h1 className="font-bebas text-5xl text-white tracking-[1px] mb-2">{SESSION.title}</h1>
+
+        {/* Coach */}
+        <p className="font-inter text-[#999999] text-sm mb-12">
+          {SESSION.coachName} · {SESSION.discipline}
+        </p>
+
+        {/* Countdown */}
+        <div className="flex flex-col items-center gap-3 mb-12">
+          <span className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase">Starts in</span>
+          <div className="font-bebas text-7xl text-white tracking-[1px] tabular-nums">
+            {pad(mins)}
+            <span className="text-[#333333] mx-1">:</span>
+            {pad(secs)}
           </div>
+        </div>
 
-          {/* Title */}
-          <h1 className="text-3xl sm:text-4xl font-black tracking-tight leading-tight">
-            {SESSION.title}
-          </h1>
+        {/* Two panels */}
+        <div className="w-full max-w-2xl flex flex-col sm:flex-row gap-4">
 
-          {/* Description */}
-          <p className="text-[#999999] text-sm leading-relaxed">{SESSION.description}</p>
+          {/* Session info panel */}
+          <motion.div
+            initial={{ y: 16, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.15 }}
+            className="flex-1 bg-[#1A1A1A] border border-[#333333] rounded-sm p-5 text-left"
+          >
+            <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-4">Session</p>
+            <div className="space-y-1 mb-4">
+              <p className="font-bebas text-[18px] text-white tracking-[1px]">{SESSION.coachName}</p>
+              <p className="font-inter text-[#999999] text-xs">{SESSION.discipline} · {SESSION.level}</p>
+            </div>
+            <p className="font-inter text-[#999999] text-xs leading-relaxed border-t border-[#2A2A2A] pt-4">
+              {SESSION.description}
+            </p>
+            <div className="border-t border-[#2A2A2A] pt-4 mt-4 flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#FF3B3B] animate-pulse" />
+              <span className="font-inter text-[#999999] text-xs">
+                <span className="text-white font-medium">{watchers}</span> members getting ready
+              </span>
+            </div>
+          </motion.div>
 
-          {/* Watcher count */}
-          <div className="mt-auto pt-4 border-t border-white/5 flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[#FF3B3B] animate-pulse" />
-            <span className="text-[#999999] text-sm">
-              <span className="text-white font-bold">{watchers}</span> members getting ready
-            </span>
-          </div>
-        </motion.div>
-
-        {/* Right panel */}
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.25 }}
-          className="lg:w-72 bg-[#111] border border-white/10 rounded-2xl p-6 flex flex-col gap-4"
-        >
-          <h2 className="text-white font-bold text-base">Get Ready Checklist</h2>
-          <div className="space-y-3">
-            {checkItems.map((item, i) => (
-              <button
-                key={item}
-                onClick={() => toggle(i)}
-                className="w-full flex items-center gap-3 text-left group"
-              >
-                {checklist[i] ? (
-                  <CheckCircle2 size={20} className="text-green-400 shrink-0" />
-                ) : (
-                  <Circle size={20} className="text-[#444] shrink-0 group-hover:text-[#666] transition-colors" />
-                )}
-                <span
-                  className={`text-sm transition-colors ${
-                    checklist[i] ? 'text-green-400 line-through decoration-green-400/50' : 'text-[#aaa] group-hover:text-white'
-                  }`}
+          {/* Checklist */}
+          <motion.div
+            initial={{ y: 16, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.25 }}
+            className="sm:w-64 bg-[#1A1A1A] border border-[#333333] rounded-sm p-5 text-left flex flex-col gap-4"
+          >
+            <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase">Get ready</p>
+            <div className="space-y-3">
+              {checkItems.map((item, i) => (
+                <button
+                  key={item}
+                  onClick={() => toggle(i)}
+                  className="w-full flex items-center gap-3 text-left group"
                 >
-                  {item}
-                </span>
-              </button>
-            ))}
-          </div>
+                  {checklist[i] ? (
+                    <CheckCircle2 size={16} className="text-white shrink-0" />
+                  ) : (
+                    <Circle size={16} className="text-[#444] shrink-0 group-hover:text-[#666] transition-colors" />
+                  )}
+                  <span className={`font-inter text-sm transition-colors ${checklist[i] ? 'text-[#999999] line-through' : 'text-[#aaa] group-hover:text-white'}`}>
+                    {item}
+                  </span>
+                </button>
+              ))}
+            </div>
 
-          {/* Dev shortcut */}
-          <div className="mt-auto pt-4 border-t border-white/5">
-            <button
-              onClick={onGoLive}
-              className="w-full bg-[#FF3B3B] hover:bg-red-700 text-white font-bold py-3 rounded-xl text-sm transition-colors flex items-center justify-center gap-2"
-            >
-              <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
-              Go Live
-            </button>
-            <p className="text-center text-[#444] text-xs mt-2">Dev shortcut</p>
-          </div>
-        </motion.div>
+            {/* Dev shortcut */}
+            <div className="mt-auto pt-4 border-t border-[#2A2A2A]">
+              <button
+                onClick={onGoLive}
+                className="w-full bg-[#FF3B3B] hover:bg-red-700 text-white font-inter font-bold py-2.5 rounded-sm text-xs tracking-[2px] uppercase transition-colors"
+              >
+                Go Live
+              </button>
+              <p className="text-center text-[#444] font-inter text-xs mt-2">Dev shortcut</p>
+            </div>
+          </motion.div>
+        </div>
       </div>
     </motion.div>
   )
@@ -175,10 +177,17 @@ function PrePhase({ onGoLive }: { onGoLive: () => void }) {
 
 // ─── LIVE phase ───────────────────────────────────────────────────────────────
 function LivePhase({ onEndClass, playbackId }: { onEndClass: () => void; playbackId?: string }) {
-  const [uiVisible, setUiVisible] = useState(true)
-  const [chatOpen, setChatOpen] = useState(false)
+  const [elapsed, setElapsed] = useState(0)
+  const toggleUi = useCallback(() => {}, [])
 
-  const toggleUi = useCallback(() => setUiVisible(v => !v), [])
+  // Elapsed timer
+  useEffect(() => {
+    const t = setInterval(() => setElapsed(s => s + 1), 1000)
+    return () => clearInterval(t)
+  }, [])
+
+  const elapsedMins = Math.floor(elapsed / 60)
+  const elapsedSecs = elapsed % 60
 
   return (
     <motion.div
@@ -187,188 +196,84 @@ function LivePhase({ onEndClass, playbackId }: { onEndClass: () => void; playbac
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.35 }}
-      className="min-h-screen bg-black relative overflow-hidden select-none"
+      className="min-h-screen bg-[#0D0D0D] flex flex-col lg:flex-row"
+      onClick={toggleUi}
     >
-      {/* Tap-to-toggle overlay (above player, below UI bars) */}
-      <div className="absolute inset-0 z-[1] cursor-pointer" onClick={toggleUi} />
-
-      {/* Video: real Mux stream or animated mock fallback */}
-      {playbackId ? (
-        <MuxPlayer
-          streamType="live"
-          playbackId={playbackId}
-          autoPlay
-          accentColor="#FF3B3B"
-          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
-        />
-      ) : (
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              'linear-gradient(135deg, #0D0D0D 0%, #1a0505 25%, #050a0a 50%, #0a0510 75%, #0D0D0D 100%)',
-            backgroundSize: '400% 400%',
-            animation: 'gradientShift 8s ease infinite',
-          }}
-        >
-          <div className="absolute inset-0 opacity-30"
-            style={{
-              background: 'radial-gradient(ellipse at 30% 70%, rgba(220,38,38,0.15) 0%, transparent 60%), radial-gradient(ellipse at 70% 30%, rgba(59,130,246,0.1) 0%, transparent 60%)',
-            }}
+      {/* Left: video — 70% on desktop */}
+      <div className="flex-1 lg:w-[70%] bg-black flex items-center min-h-[56vw] lg:min-h-screen">
+        {playbackId ? (
+          <MuxPlayer
+            streamType="live"
+            playbackId={playbackId}
+            autoPlay
+            accentColor="#FF3B3B"
+            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
           />
-          <div className="absolute bottom-1/2 right-8 translate-y-1/2 opacity-10 pointer-events-none">
-            <span className="text-white text-4xl font-black tracking-tighter">MATPEAK</span>
-          </div>
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="flex flex-col items-center gap-3 opacity-40">
-              <div className="w-20 h-20 rounded-full border-2 border-white/20 flex items-center justify-center">
-                <div className="w-8 h-8 rounded-full bg-white/10" />
+        ) : (
+          <div className="w-full aspect-video flex items-center justify-center bg-black">
+            <div className="flex flex-col items-center gap-4">
+              <div className="flex gap-2">
+                {[0, 1, 2].map(i => (
+                  <motion.div key={i} className="w-2 h-2 rounded-full bg-[#FF3B3B]"
+                    animate={{ scale: [1, 1.5, 1], opacity: [0.4, 1, 0.4] }}
+                    transition={{ duration: 0.9, delay: i * 0.25, repeat: Infinity }} />
+                ))}
               </div>
-              <span className="text-white/60 text-xs">Stream not started</span>
+              <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase">Stream not started</p>
             </div>
           </div>
-        </div>
-      )}
-
-      {/* UI overlay */}
-      <AnimatePresence>
-        {uiVisible && (
-          <>
-            {/* Top bar */}
-            <motion.div
-              initial={{ opacity: 0, y: -16 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -16 }}
-              transition={{ duration: 0.2 }}
-              className="absolute top-0 left-0 right-0 z-10 px-4 h-16 flex items-center justify-between"
-              style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.8), transparent)' }}
-            >
-              <Link href="/dashboard">
-                <button className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors">
-                  <ArrowLeft size={18} className="text-white" />
-                </button>
-              </Link>
-
-              <div className="flex items-center gap-2 bg-black/40 backdrop-blur-sm px-3 py-1.5 rounded-full">
-                <span className="w-2 h-2 rounded-full bg-[#FF3B3B] animate-pulse" />
-                <span className="text-white text-sm font-bold">LIVE</span>
-                <span className="text-white/60 text-sm">·</span>
-                <span className="text-white/80 text-sm">47 watching</span>
-              </div>
-            </motion.div>
-
-            {/* Bottom bar */}
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 16 }}
-              transition={{ duration: 0.2 }}
-              className="absolute bottom-0 left-0 right-0 z-10 px-4 py-4 flex items-end justify-between"
-              style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.85), transparent)' }}
-            >
-              {/* Left: Coach info */}
-              <div className="flex items-center gap-2">
-                <div className="flex flex-col">
-                  <span className="text-white font-bold text-sm">{SESSION.coachName}</span>
-                  <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400 w-fit mt-0.5">
-                    {SESSION.discipline}
-                  </span>
-                </div>
-              </div>
-
-              {/* Right: controls */}
-              <div className="flex items-center gap-2">
-                {/* Chat */}
-                <button
-                  onClick={e => { e.stopPropagation(); setChatOpen(v => !v) }}
-                  className="relative w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
-                >
-                  <MessageCircle size={16} className="text-white" />
-                  <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#FF3B3B] text-white text-[10px] font-bold flex items-center justify-center">
-                    12
-                  </span>
-                </button>
-
-                {/* PiP */}
-                <button
-                  onClick={e => e.stopPropagation()}
-                  className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
-                >
-                  <PictureInPicture2 size={16} className="text-white" />
-                </button>
-
-                {/* Quality */}
-                <button
-                  onClick={e => e.stopPropagation()}
-                  className="h-10 px-3 rounded-full bg-white/10 hover:bg-white/20 flex items-center gap-1.5 transition-colors"
-                >
-                  <Settings size={14} className="text-white" />
-                  <span className="text-white text-xs font-bold">HD</span>
-                </button>
-              </div>
-            </motion.div>
-          </>
         )}
-      </AnimatePresence>
-
-      {/* Dev: End Class */}
-      <div className="absolute top-4 right-4 z-20" onClick={e => e.stopPropagation()}>
-        <AnimatePresence>
-          {uiVisible && (
-            <motion.button
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={onEndClass}
-              className="bg-[#FF3B3B]/80 hover:bg-[#FF3B3B] border border-red-500/40 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-colors backdrop-blur-sm"
-            >
-              End Class
-            </motion.button>
-          )}
-        </AnimatePresence>
       </div>
 
-      {/* Chat panel */}
-      <AnimatePresence>
-        {chatOpen && (
-          <motion.div
-            initial={{ x: 320, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{ x: 320, opacity: 0 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            className="absolute top-0 right-0 bottom-0 w-80 bg-[#0D0D0D]/95 backdrop-blur-md border-l border-white/10 z-20 flex flex-col"
-            onClick={e => e.stopPropagation()}
-          >
-            <div className="px-4 h-16 flex items-center justify-between border-b border-white/5">
-              <span className="text-white font-bold text-sm">Live Chat</span>
-              <button onClick={() => setChatOpen(false)} className="text-[#888] hover:text-white transition-colors text-xs">
-                Close
-              </button>
-            </div>
-            <div className="flex-1 p-4 space-y-3 overflow-y-auto">
-              {['Alex: Great technique! 🔥', 'Priya: When does he cover the back take?', 'Sam: Loving this class', 'Ravi: 🥋🥋', 'Neha: Finally understand the pressure pass'].map((msg, i) => (
-                <div key={i} className="text-[#aaa] text-sm">{msg}</div>
-              ))}
-            </div>
-            <div className="p-4 border-t border-white/5">
-              <input
-                type="text"
-                placeholder="Say something..."
-                className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2 text-white text-sm placeholder:text-[#555] focus:outline-none focus:border-white/20"
-              />
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Right: data panel — 30% on desktop */}
+      <div className="lg:w-[30%] bg-[#1A1A1A] border-t lg:border-t-0 border-l-0 lg:border-l border-[#333333] flex flex-col" onClick={e => e.stopPropagation()}>
 
-      {/* Gradient animation style */}
-      <style jsx>{`
-        @keyframes gradientShift {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
-        }
-      `}</style>
+        {/* Nav */}
+        <div className="px-5 h-12 border-b border-[#2A2A2A] flex items-center justify-between">
+          <Link href="/dashboard" className="text-[#999999] hover:text-white transition-colors">
+            <ArrowLeft size={16} />
+          </Link>
+          {/* Dev: end class */}
+          <button
+            onClick={onEndClass}
+            className="font-inter text-[11px] text-[#999999] hover:text-white tracking-[2px] uppercase transition-colors"
+          >
+            End class
+          </button>
+        </div>
+
+        {/* Section 1: LIVE badge + title */}
+        <div className="px-5 py-5 border-b border-[#2A2A2A]">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="inline-flex items-center gap-1.5 bg-[#FF3B3B] px-2 py-0.5 rounded-sm">
+              <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+              <span className="font-inter text-white text-[11px] tracking-[4px] uppercase font-medium">Live</span>
+            </span>
+          </div>
+          <h1 className="font-bebas text-[28px] text-white tracking-[1px] leading-tight">{SESSION.title}</h1>
+        </div>
+
+        {/* Section 2: viewer count */}
+        <div className="px-5 py-5 border-b border-[#2A2A2A]">
+          <div className="font-bebas text-[56px] text-[#FF3B3B] leading-none tracking-[1px]">47</div>
+          <div className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mt-1">Watching now</div>
+        </div>
+
+        {/* Section 3: coach + gym */}
+        <div className="px-5 py-5 border-b border-[#2A2A2A]">
+          <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-2">Coach</p>
+          <p className="font-bebas text-[18px] text-white tracking-[1px]">{SESSION.coachName}</p>
+          <p className="font-inter text-[11px] text-[#999999] mt-0.5">{SESSION.discipline}</p>
+        </div>
+
+        {/* Section 4: elapsed time */}
+        <div className="px-5 py-5">
+          <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-2">Elapsed</p>
+          <div className="font-bebas text-[40px] text-white tracking-[1px] tabular-nums leading-none">
+            {pad(elapsedMins)}:{pad(elapsedSecs)}
+          </div>
+        </div>
+      </div>
     </motion.div>
   )
 }
@@ -381,7 +286,6 @@ const PROCESSING_MESSAGES = [
 ]
 
 function PostPhase() {
-  // 'instant' → show congrats; after 1s → 'processing'; after 10s → 'ready'
   const [stage, setStage] = useState<'instant' | 'processing' | 'ready'>('instant')
   const [msgIdx, setMsgIdx] = useState(0)
 
@@ -404,23 +308,23 @@ function PostPhase() {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
-      className="min-h-screen bg-[#050505] px-4 py-12 overflow-y-auto"
+      className="min-h-screen bg-[#0D0D0D] px-4 py-12 overflow-y-auto"
     >
       <div className="max-w-2xl mx-auto flex flex-col items-center gap-8">
 
-        {/* ── STEP 1: congrats (always visible) ── */}
+        {/* Header */}
         <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ type: 'spring', stiffness: 180, damping: 14, delay: 0.1 }}
-          className="text-center space-y-3"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="text-center space-y-2"
         >
-          <div className="text-7xl">🥋</div>
-          <h1 className="text-4xl font-black text-white tracking-tight">Great session!</h1>
-          <p className="text-[#999999] text-base">You trained for 58 minutes.</p>
+          <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase">Session complete</p>
+          <h1 className="font-bebas text-5xl text-white tracking-[1px]">Class Ended</h1>
+          <p className="font-inter text-[#999999] text-sm">Great work on the mat.</p>
         </motion.div>
 
-        {/* ── STEP 2 / 3: processing → summary ── */}
+        {/* Processing / summary */}
         <AnimatePresence mode="wait">
           {stage === 'processing' && (
             <motion.div
@@ -429,21 +333,18 @@ function PostPhase() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.35 }}
-              className="w-full bg-[#111] border border-[#333333] rounded-2xl px-6 py-8 flex flex-col items-center gap-5"
+              className="w-full bg-[#1A1A1A] border border-[#333333] rounded-sm px-6 py-8 flex flex-col items-center gap-5"
             >
-              {/* Animated dots */}
               <div className="flex gap-2">
                 {[0, 1, 2].map(i => (
                   <motion.div
                     key={i}
-                    className="w-2.5 h-2.5 rounded-full bg-[#FF3B3B]"
+                    className="w-2 h-2 rounded-full bg-[#FF3B3B]"
                     animate={{ scale: [1, 1.6, 1], opacity: [0.4, 1, 0.4] }}
                     transition={{ duration: 0.9, delay: i * 0.25, repeat: Infinity }}
                   />
                 ))}
               </div>
-
-              {/* Cycling message */}
               <AnimatePresence mode="wait">
                 <motion.p
                   key={msgIdx}
@@ -451,18 +352,16 @@ function PostPhase() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -6 }}
                   transition={{ duration: 0.3 }}
-                  className="text-[#999999] text-sm font-medium"
+                  className="font-inter text-[#999999] text-sm"
                 >
                   {PROCESSING_MESSAGES[msgIdx]}
                 </motion.p>
               </AnimatePresence>
-
-              {/* Skeleton preview */}
               <div className="w-full space-y-3 mt-2">
                 {[80, 60, 90, 50, 70].map((w, i) => (
                   <div key={i} className="flex items-center gap-3">
-                    <div className="w-5 h-5 rounded-full bg-[#222222] animate-pulse shrink-0" />
-                    <div className={`h-3 bg-[#222222] rounded-full animate-pulse`} style={{ width: `${w}%` }} />
+                    <div className="w-4 h-4 bg-[#222222] animate-pulse shrink-0" />
+                    <div className="h-2 bg-[#222222] animate-pulse rounded-sm" style={{ width: `${w}%` }} />
                   </div>
                 ))}
               </div>
@@ -482,9 +381,8 @@ function PostPhase() {
           )}
         </AnimatePresence>
 
-        {/* Back link always visible */}
         {stage !== 'ready' && (
-          <Link href="/dashboard" className="text-[#555] hover:text-[#888] text-sm transition-colors">
+          <Link href="/dashboard" className="font-inter text-[#555] hover:text-[#888] text-sm transition-colors">
             Back to dashboard
           </Link>
         )}
@@ -498,7 +396,7 @@ export default function LiveClient({ playbackId }: { playbackId?: string }) {
   const [phase, setPhase] = useState<Phase>('pre')
 
   return (
-    <div className="min-h-screen bg-[#050505] overflow-x-hidden">
+    <div className="min-h-screen bg-[#0D0D0D] overflow-x-hidden">
       <AnimatePresence mode="wait">
         {phase === 'pre' && (
           <PrePhase key="pre" onGoLive={() => setPhase('live')} />

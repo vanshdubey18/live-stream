@@ -70,103 +70,113 @@ function WaitingRoom({ session, onGoLive }: { session: SessionInfo; onGoLive: ()
       animate={{ opacity: 1 }}
       exit={{ opacity: 0, scale: 0.98 }}
       transition={{ duration: 0.4 }}
-      className="min-h-screen bg-[#050505] text-white flex flex-col"
+      className="min-h-screen bg-[#0D0D0D] text-white flex flex-col"
     >
       {/* Back nav */}
-      <div className="px-4 pt-5">
-        <Link href="/dashboard" className="inline-flex items-center gap-2 text-[#999999] hover:text-white text-sm transition-colors">
-          <ArrowLeft size={15} /> Dashboard
+      <div className="px-6 pt-6">
+        <Link href="/dashboard" className="inline-flex items-center gap-2 text-[#999999] hover:text-white font-inter text-sm transition-colors">
+          <ArrowLeft size={14} /> Dashboard
         </Link>
       </div>
 
-      {/* Countdown */}
-      <div className="flex flex-col items-center pt-8 pb-6 px-4">
-        <span className="text-[#999999] text-sm font-medium mb-3">⏱ Class starts in</span>
-        <div className="text-7xl sm:text-8xl font-black tracking-tighter tabular-nums text-white">
-          {pad(Math.floor(mins / 60) > 0 ? Math.floor(mins / 60) : mins)}
-          <span className="text-[#FF3B3B] mx-1">:</span>
-          {pad(Math.floor(mins / 60) > 0 ? mins % 60 : secs)}
-        </div>
-        {seconds === 0 && (
-          <p className="text-[#999999] text-sm mt-3 animate-pulse">Waiting for the gym to start the stream…</p>
-        )}
-      </div>
+      {/* Center content */}
+      <div className="flex flex-col items-center justify-center flex-1 px-4 py-12 text-center">
 
-      <div className="flex-1 px-4 pb-8 max-w-4xl mx-auto w-full flex flex-col lg:flex-row gap-6">
-        {/* Session card */}
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.15 }}
-          className="flex-1 bg-[#111] border border-white/10 rounded-2xl p-6 flex flex-col gap-5"
-        >
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-full bg-[#FF3B3B]/20 flex items-center justify-center shrink-0">
-              <span className="text-[#FF3B3B] text-xl font-black">
-                {(session.coaches?.name ?? 'C').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()}
+        {/* Status badge */}
+        <div className="flex items-center gap-2 mb-8">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#FF3B3B] animate-pulse" />
+          <span className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase">Waiting for stream</span>
+        </div>
+
+        {/* Session title */}
+        <h1 className="font-bebas text-5xl text-white tracking-[1px] mb-2">{session.title}</h1>
+
+        {/* Gym / Coach */}
+        <p className="font-inter text-[#999999] text-sm mb-12">
+          {session.coaches?.name ?? 'Coach'}{session.gyms?.name ? ` · ${session.gyms.name}` : ''}
+        </p>
+
+        {/* Countdown */}
+        <div className="flex flex-col items-center gap-3 mb-12">
+          <span className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase">Starts in</span>
+          <div className="font-bebas text-7xl text-white tracking-[1px] tabular-nums">
+            {pad(Math.floor(mins / 60) > 0 ? Math.floor(mins / 60) : mins)}
+            <span className="text-[#333333] mx-1">:</span>
+            {pad(Math.floor(mins / 60) > 0 ? mins % 60 : secs)}
+          </div>
+          {seconds === 0 && (
+            <p className="font-inter text-[#999999] text-sm animate-pulse">Waiting for the gym to start…</p>
+          )}
+        </div>
+
+        {/* Two panels */}
+        <div className="w-full max-w-2xl flex flex-col sm:flex-row gap-4">
+
+          {/* Session info */}
+          <motion.div
+            initial={{ y: 16, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.15 }}
+            className="flex-1 bg-[#1A1A1A] border border-[#333333] rounded-sm p-5 text-left"
+          >
+            <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-4">Session</p>
+            <div className="space-y-1 mb-4">
+              <p className="font-inter text-white text-sm font-medium">{session.coaches?.name ?? 'Coach'}</p>
+              <p className="font-inter text-[#999999] text-xs">{session.gyms?.name}</p>
+            </div>
+            <div className="border-t border-[#2A2A2A] pt-4 flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#FF3B3B] animate-pulse" />
+              <span className="font-inter text-[#999999] text-xs">
+                <span className="text-white font-medium">{watchers}</span> members getting ready
               </span>
             </div>
-            <div>
-              <p className="text-white font-bold">{session.coaches?.name ?? 'Coach'}</p>
-              <p className="text-[#999999] text-xs mt-0.5">{session.gyms?.name}</p>
+          </motion.div>
+
+          {/* Checklist */}
+          <motion.div
+            initial={{ y: 16, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.25 }}
+            className="sm:w-64 bg-[#1A1A1A] border border-[#333333] rounded-sm p-5 text-left flex flex-col gap-4"
+          >
+            <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase">Get ready</p>
+            <div className="space-y-3">
+              {checkItems.map((item, i) => (
+                <button key={item} onClick={() => toggle(i)} className="w-full flex items-center gap-3 text-left group">
+                  {checklist[i]
+                    ? <CheckCircle2 size={16} className="text-white shrink-0" />
+                    : <Circle size={16} className="text-[#444] shrink-0 group-hover:text-[#666] transition-colors" />}
+                  <span className={`font-inter text-sm transition-colors ${checklist[i] ? 'text-[#999999] line-through' : 'text-[#aaa] group-hover:text-white'}`}>
+                    {item}
+                  </span>
+                </button>
+              ))}
             </div>
-          </div>
 
-          <div>
-            <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 mr-2">{session.discipline}</span>
-            <span className="text-[#555] text-xs">{session.level}</span>
-          </div>
-
-          <h1 className="text-3xl sm:text-4xl font-black tracking-tight leading-tight">{session.title}</h1>
-
-          <div className="mt-auto pt-4 border-t border-white/5 flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[#FF3B3B] animate-pulse" />
-            <span className="text-[#999999] text-sm">
-              <span className="text-white font-bold">{watchers}</span> members getting ready
-            </span>
-          </div>
-        </motion.div>
-
-        {/* Checklist */}
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.25 }}
-          className="lg:w-72 bg-[#111] border border-white/10 rounded-2xl p-6 flex flex-col gap-4"
-        >
-          <h2 className="text-white font-bold">Get Ready Checklist</h2>
-          <div className="space-y-3">
-            {checkItems.map((item, i) => (
-              <button key={item} onClick={() => toggle(i)} className="w-full flex items-center gap-3 text-left group">
-                {checklist[i]
-                  ? <CheckCircle2 size={20} className="text-green-400 shrink-0" />
-                  : <Circle size={20} className="text-[#444] shrink-0 group-hover:text-[#666] transition-colors" />}
-                <span className={`text-sm transition-colors ${checklist[i] ? 'text-green-400 line-through' : 'text-[#aaa] group-hover:text-white'}`}>
-                  {item}
-                </span>
+            {/* Dev shortcut */}
+            <div className="mt-auto pt-4 border-t border-[#2A2A2A]">
+              <button
+                onClick={onGoLive}
+                className="w-full bg-[#FF3B3B] hover:bg-red-700 text-white font-inter font-bold py-2.5 rounded-sm text-xs tracking-[2px] uppercase transition-colors"
+              >
+                Skip to stream
               </button>
-            ))}
-          </div>
-
-          {/* Dev shortcut */}
-          <div className="mt-auto pt-4 border-t border-white/5">
-            <button
-              onClick={onGoLive}
-              className="w-full bg-[#FF3B3B] hover:bg-red-700 text-white font-bold py-3 rounded-xl text-sm transition-colors flex items-center justify-center gap-2"
-            >
-              <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
-              Skip to stream
-            </button>
-            <p className="text-center text-[#444] text-xs mt-2">Dev shortcut</p>
-          </div>
-        </motion.div>
+              <p className="text-center text-[#444] font-inter text-xs mt-2">Dev shortcut</p>
+            </div>
+          </motion.div>
+        </div>
       </div>
     </motion.div>
   )
 }
 
 // ─── Live viewer ──────────────────────────────────────────────────────────────
-function LiveViewer({ playbackId, sessionId, onEnded }: { playbackId: string | null; sessionId: string; onEnded: () => void }) {
+function LiveViewer({ playbackId, sessionId, session, onEnded }: {
+  playbackId: string | null
+  sessionId: string
+  session: SessionInfo
+  onEnded: () => void
+}) {
   const router = useRouter()
 
   // Poll every 15s — if session flips to 'ended', transition to post-phase
@@ -187,22 +197,10 @@ function LiveViewer({ playbackId, sessionId, onEnded }: { playbackId: string | n
       key="live"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="min-h-screen bg-black flex flex-col"
+      className="min-h-screen bg-[#0D0D0D] flex flex-col lg:flex-row"
     >
-      {/* Top bar */}
-      <div className="flex items-center justify-between px-4 h-14 bg-black/80 backdrop-blur-sm border-b border-white/5">
-        <Link href="/dashboard" className="text-[#999999] hover:text-white transition-colors">
-          <ArrowLeft size={18} />
-        </Link>
-        <div className="flex items-center gap-2 bg-[#FF3B3B]/10 border border-[#FF3B3B]/30 px-3 py-1 rounded-full">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#FF3B3B] animate-pulse" />
-          <span className="text-[#FF3B3B] text-xs font-bold">LIVE</span>
-        </div>
-        <div className="w-6" />
-      </div>
-
-      {/* Player */}
-      <div className="flex-1 flex items-center bg-black">
+      {/* Left: video player — 70% on desktop */}
+      <div className="flex-1 lg:w-[70%] bg-black flex items-center min-h-[56vw] lg:min-h-screen">
         {playbackId ? (
           <MuxPlayer
             streamType="live"
@@ -213,18 +211,62 @@ function LiveViewer({ playbackId, sessionId, onEnded }: { playbackId: string | n
           />
         ) : (
           <div className="w-full aspect-video flex items-center justify-center">
-            <div className="text-center space-y-3">
+            <div className="text-center space-y-6">
+              {/* Top bar nav inside player fallback */}
               <div className="flex gap-2 justify-center">
                 {[0, 1, 2].map(i => (
-                  <motion.div key={i} className="w-2.5 h-2.5 rounded-full bg-[#FF3B3B]"
+                  <motion.div key={i} className="w-2 h-2 rounded-full bg-[#FF3B3B]"
                     animate={{ scale: [1, 1.5, 1], opacity: [0.4, 1, 0.4] }}
                     transition={{ duration: 0.9, delay: i * 0.25, repeat: Infinity }} />
                 ))}
               </div>
-              <p className="text-[#999999] text-sm">Stream starting…</p>
+              <p className="font-inter text-[#999999] text-sm tracking-[2px] uppercase text-[11px]">Stream starting…</p>
             </div>
           </div>
         )}
+      </div>
+
+      {/* Right: data panel — 30% on desktop */}
+      <div className="lg:w-[30%] bg-[#1A1A1A] border-t lg:border-t-0 border-l-0 lg:border-l border-[#333333] flex flex-col">
+
+        {/* Nav bar */}
+        <div className="px-5 h-12 border-b border-[#2A2A2A] flex items-center">
+          <Link href="/dashboard" className="text-[#999999] hover:text-white transition-colors">
+            <ArrowLeft size={16} />
+          </Link>
+        </div>
+
+        {/* Section 1: LIVE badge + title */}
+        <div className="px-5 py-5 border-b border-[#2A2A2A]">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="inline-flex items-center gap-1.5 bg-[#FF3B3B] px-2 py-0.5 rounded-sm">
+              <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+              <span className="font-inter text-white text-[11px] tracking-[4px] uppercase font-medium">Live</span>
+            </span>
+          </div>
+          <h1 className="font-bebas text-[28px] text-white tracking-[1px] leading-tight">{session.title}</h1>
+        </div>
+
+        {/* Section 2: viewer count */}
+        <div className="px-5 py-5 border-b border-[#2A2A2A]">
+          <div className="font-bebas text-[56px] text-[#FF3B3B] leading-none tracking-[1px]">47</div>
+          <div className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mt-1">Watching now</div>
+        </div>
+
+        {/* Section 3: coach + gym */}
+        <div className="px-5 py-5 border-b border-[#2A2A2A]">
+          <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-2">Coach</p>
+          <p className="font-bebas text-[18px] text-white tracking-[1px]">{session.coaches?.name ?? 'Coach'}</p>
+          {session.gyms?.name && (
+            <p className="font-inter text-[11px] text-[#999999] mt-0.5">{session.gyms.name}</p>
+          )}
+        </div>
+
+        {/* Section 4: elapsed time */}
+        <div className="px-5 py-5">
+          <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-2">Elapsed</p>
+          <div className="font-bebas text-[40px] text-white tracking-[1px] tabular-nums leading-none">00:00</div>
+        </div>
       </div>
     </motion.div>
   )
@@ -250,39 +292,44 @@ function PostViewer() {
   }, [stage])
 
   return (
-    <motion.div key="post" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="min-h-screen bg-[#050505] px-4 py-12 overflow-y-auto">
+    <motion.div key="post" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="min-h-screen bg-[#0D0D0D] px-4 py-12 overflow-y-auto">
       <div className="max-w-2xl mx-auto flex flex-col items-center gap-8">
-        <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-          transition={{ type: 'spring', stiffness: 180, damping: 14, delay: 0.1 }}
-          className="text-center space-y-3">
-          <div className="text-7xl">🥋</div>
-          <h1 className="text-4xl font-black text-white tracking-tight">Great session!</h1>
-          <p className="text-[#999999] text-base">Class has ended.</p>
+
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="text-center space-y-2"
+        >
+          <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase">Session complete</p>
+          <h1 className="font-bebas text-5xl text-white tracking-[1px]">Stream Ended</h1>
+          <p className="font-inter text-[#999999] text-sm">Class has ended.</p>
         </motion.div>
 
         <AnimatePresence mode="wait">
           {stage === 'processing' && (
             <motion.div key="proc" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
-              className="w-full bg-[#111] border border-[#333333] rounded-2xl px-6 py-8 flex flex-col items-center gap-5">
+              className="w-full bg-[#1A1A1A] border border-[#333333] rounded-sm px-6 py-8 flex flex-col items-center gap-5">
               <div className="flex gap-2">
                 {[0, 1, 2].map(i => (
-                  <motion.div key={i} className="w-2.5 h-2.5 rounded-full bg-[#FF3B3B]"
+                  <motion.div key={i} className="w-2 h-2 rounded-full bg-[#FF3B3B]"
                     animate={{ scale: [1, 1.6, 1], opacity: [0.4, 1, 0.4] }}
                     transition={{ duration: 0.9, delay: i * 0.25, repeat: Infinity }} />
                 ))}
               </div>
               <AnimatePresence mode="wait">
                 <motion.p key={msgIdx} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -6 }} className="text-[#999999] text-sm font-medium">
+                  exit={{ opacity: 0, y: -6 }} className="font-inter text-[#999999] text-sm">
                   {POST_MESSAGES[msgIdx]}
                 </motion.p>
               </AnimatePresence>
               <div className="w-full space-y-3 mt-2">
                 {[80, 60, 90, 50, 70].map((w, i) => (
                   <div key={i} className="flex items-center gap-3">
-                    <div className="w-5 h-5 rounded-full bg-[#222222] animate-pulse shrink-0" />
-                    <div className="h-3 bg-[#222222] rounded-full animate-pulse" style={{ width: `${w}%` }} />
+                    <div className="w-4 h-4 bg-[#222222] animate-pulse shrink-0" />
+                    <div className="h-2 bg-[#222222] animate-pulse rounded-sm" style={{ width: `${w}%` }} />
                   </div>
                 ))}
               </div>
@@ -296,7 +343,7 @@ function PostViewer() {
         </AnimatePresence>
 
         {stage !== 'ready' && (
-          <Link href="/dashboard" className="text-[#555] hover:text-[#888] text-sm transition-colors">
+          <Link href="/dashboard" className="font-inter text-[#555] hover:text-[#888] text-sm transition-colors">
             Back to dashboard
           </Link>
         )}
@@ -319,13 +366,13 @@ export default function WatchClient({ session, initialPhase, initialPlaybackId }
   const [playbackId] = useState<string | null>(initialPlaybackId)
 
   return (
-    <div className="min-h-screen bg-[#050505] overflow-x-hidden">
+    <div className="min-h-screen bg-[#0D0D0D] overflow-x-hidden">
       <AnimatePresence mode="wait">
         {phase === 'waiting' && (
           <WaitingRoom key="waiting" session={session} onGoLive={() => setPhase('live')} />
         )}
         {phase === 'live' && (
-          <LiveViewer key="live" playbackId={playbackId} sessionId={session.id} onEnded={() => setPhase('post')} />
+          <LiveViewer key="live" playbackId={playbackId} sessionId={session.id} session={session} onEnded={() => setPhase('post')} />
         )}
         {phase === 'post' && (
           <PostViewer key="post" />

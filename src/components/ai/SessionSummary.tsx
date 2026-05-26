@@ -49,10 +49,10 @@ export const DEMO_SUMMARY: SessionSummaryData = {
 }
 
 const DISCIPLINE_COLORS: Record<string, string> = {
-  BJJ: 'bg-blue-500/10 text-blue-400',
-  Boxing: 'bg-yellow-500/10 text-yellow-400',
-  'Muay Thai': 'bg-orange-500/10 text-orange-400',
-  Wrestling: 'bg-green-500/10 text-green-400',
+  BJJ: 'bg-[#1A1A1A] text-[#999999]',
+  Boxing: 'bg-[#FFD60A]/10 text-[#FFD60A]',
+  'Muay Thai': 'bg-[#1A1A1A] text-[#999999]',
+  Wrestling: 'bg-[#00D4AA]/10 text-[#00D4AA]',
   MMA: 'bg-[#FF3B3B]/10 text-[#FF3B3B]',
 }
 
@@ -103,7 +103,7 @@ export default function SessionSummary({ data = DEMO_SUMMARY, onTimestampClick, 
               <BookOpen size={12} />
               Today's Session
             </div>
-            <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${DISCIPLINE_COLORS[data.discipline] ?? 'bg-white/5 text-white/60'}`}>
+            <span className={`font-inter text-[10px] tracking-[2px] uppercase px-2 py-1 rounded-sm ${DISCIPLINE_COLORS[data.discipline] ?? 'bg-[#1A1A1A] text-[#999999]'}`}>
               {data.discipline}
             </span>
           </div>
@@ -137,7 +137,7 @@ export default function SessionSummary({ data = DEMO_SUMMARY, onTimestampClick, 
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.16 + i * 0.06 }}
-                className="group px-3 py-1.5 rounded-full bg-[#222222] border border-[#333333] hover:border-[#FF3B3B]/40 hover:bg-[#FF3B3B]/5 transition-all cursor-pointer"
+                className="group px-3 py-1.5 rounded-sm bg-[#222222] border border-[#333333] hover:border-[#FF3B3B]/40 hover:bg-[#FF3B3B]/5 transition-all cursor-pointer"
               >
                 <span className="text-[#cccccc] group-hover:text-white text-xs font-medium transition-colors">{t}</span>
               </motion.a>
@@ -160,7 +160,7 @@ export default function SessionSummary({ data = DEMO_SUMMARY, onTimestampClick, 
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.28 + i * 0.07 }}
                 onClick={() => onTimestampClick?.(m.timestamp)}
-                className="w-full flex items-center gap-3 group text-left hover:bg-white/[0.03] rounded-sm px-2 py-2 -mx-2 transition-colors"
+                className="w-full flex items-center gap-3 group text-left hover:bg-[#1F1F1F] rounded-sm px-2 py-2 -mx-2 transition-colors"
               >
                 <div className="w-7 h-7 rounded-sm bg-[#FF3B3B]/10 flex items-center justify-center shrink-0 group-hover:bg-[#FF3B3B]/20 transition-colors">
                   <Play size={10} className="text-[#FF3B3B]" />
@@ -236,7 +236,7 @@ export default function SessionSummary({ data = DEMO_SUMMARY, onTimestampClick, 
           </button>
           <a
             href="/dashboard"
-            className="flex items-center justify-center gap-2 w-full bg-[#FF3B3B] hover:bg-red-700 text-white font-bold py-3 rounded-sm text-sm transition-colors"
+            className="flex items-center justify-center gap-2 w-full bg-white hover:bg-[#E5E5E5] text-black font-bebas tracking-[2px] py-3 rounded-sm text-sm transition-colors"
           >
             <RotateCcw size={15} />
             Watch replay anytime

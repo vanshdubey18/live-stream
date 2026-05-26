@@ -24,7 +24,7 @@ export default function ComingSoon({
         transition={{ duration: 0.4 }}
         className="text-center space-y-4 max-w-sm"
       >
-        <div className="w-14 h-14 rounded-sm bg-[#111] border border-white/10 flex items-center justify-center mx-auto">
+        <div className="w-14 h-14 rounded-sm bg-[#111] border border-[#333333] flex items-center justify-center mx-auto">
           <Construction size={24} className="text-[#FF3B3B]" />
         </div>
         <h1 className="text-white font-bold text-xl">{title}</h1>

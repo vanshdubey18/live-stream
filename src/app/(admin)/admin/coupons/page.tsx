@@ -33,28 +33,28 @@ export default function CouponsPage() {
       <AdminSidebar active="Coupons" />
 
       <main className="flex-1 lg:ml-64 min-w-0">
-        <div className="sticky top-0 z-20 bg-[#0D0D0D]/90 backdrop-blur-md border-b border-white/5 px-6 h-16 flex items-center justify-between mt-14 lg:mt-0">
+        <div className="sticky top-0 z-20 bg-[#0D0D0D]  border-b border-[#2A2A2A] px-6 h-16 flex items-center justify-between mt-14 lg:mt-0">
           <h1 className="text-white font-bold text-lg">Coupons</h1>
           <button onClick={() => setShowModal(true)}
-            className="flex items-center gap-1.5 bg-[#FF3B3B] hover:bg-red-700 text-white text-sm font-bold px-4 py-2 rounded-sm transition-colors">
+            className="flex items-center gap-1.5 bg-white hover:bg-[#E5E5E5] text-black text-sm font-bold px-4 py-2 rounded-sm transition-colors">
             <Plus size={15} /> Create Coupon
           </button>
         </div>
 
         <div className="px-6 py-6 max-w-5xl">
-          <div className="bg-[#1A1A1A] border border-white/5 rounded-sm overflow-hidden">
+          <div className="bg-[#1A1A1A] border border-[#2A2A2A] rounded-sm overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-white/5">
+                  <tr className="border-b border-[#2A2A2A]">
                     {['Code', 'Type', 'Value', 'Used / Max', 'Plan', 'Expires', 'Status'].map(h => (
                       <th key={h} className="px-4 py-3 text-left text-xs font-bold text-[#999999] uppercase tracking-wider">{h}</th>
                     ))}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/5">
+                <tbody className="divide-y divide-[#1F1F1F]">
                   {coupons.map(c => (
-                    <tr key={c.id} className="hover:bg-white/2 transition-colors">
+                    <tr key={c.id} className="hover:bg-[#1F1F1F] transition-colors">
                       <td className="px-4 py-3.5">
                         <span className="text-white font-mono font-bold text-sm">{c.code}</span>
                         {c.notes && <p className="text-[#555] text-xs mt-0.5 max-w-[160px] truncate">{c.notes}</p>}
@@ -67,7 +67,7 @@ export default function CouponsPage() {
                       </td>
                       <td className="px-4 py-3.5">
                         <div className="flex items-center gap-1.5">
-                          <div className="h-1.5 w-16 bg-white/5 rounded-full overflow-hidden">
+                          <div className="h-1.5 w-16 bg-[#1A1A1A] rounded-full overflow-hidden">
                             <div className="h-full bg-[#FF3B3B] rounded-full" style={{ width: `${Math.min((c.timesUsed / c.maxUses) * 100, 100)}%` }} />
                           </div>
                           <span className="text-[#999999] text-xs">{c.timesUsed}/{c.maxUses}</span>
@@ -78,7 +78,7 @@ export default function CouponsPage() {
                       <td className="px-4 py-3.5">
                         <button onClick={() => toggleActive(c.id)} className="flex items-center gap-1.5 transition-colors">
                           {c.isActive
-                            ? <><CheckCircle size={15} className="text-green-400" /><span className="text-green-400 text-xs font-semibold">Active</span></>
+                            ? <><CheckCircle size={15} className="text-[#00D4AA]" /><span className="text-[#00D4AA] text-xs font-semibold">Active</span></>
                             : <><XCircle size={15} className="text-[#555]" /><span className="text-[#555] text-xs">Inactive</span></>}
                         </button>
                       </td>

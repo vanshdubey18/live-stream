@@ -30,9 +30,9 @@ export default function ActiveGymsPage() {
       <AdminSidebar active="Active Gyms" />
 
       <main className="flex-1 lg:ml-64 min-w-0">
-        <div className="sticky top-0 z-20 bg-[#0D0D0D]/90 backdrop-blur-md border-b border-white/5 px-6 h-16 flex items-center mt-14 lg:mt-0">
+        <div className="sticky top-0 z-20 bg-[#0D0D0D]  border-b border-[#2A2A2A] px-6 h-16 flex items-center mt-14 lg:mt-0">
           <h1 className="text-white font-bold text-lg">Active Gyms</h1>
-          <span className="ml-3 text-xs text-[#999999] bg-white/5 px-2 py-1 rounded-full">{GYMS.length} gyms</span>
+          <span className="ml-3 text-xs text-[#999999] bg-[#1A1A1A] px-2 py-1 rounded-sm">{GYMS.length} gyms</span>
         </div>
 
         <div className="px-6 py-6 max-w-6xl space-y-4">
@@ -41,28 +41,28 @@ export default function ActiveGymsPage() {
             <div className="relative flex-1">
               <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#555]" />
               <input value={search} onChange={e => setSearch(e.target.value)}
-                placeholder="Search gyms..." className="w-full bg-[#1A1A1A] border border-white/5 rounded-sm pl-9 pr-4 py-2.5 text-white text-sm focus:outline-none focus:border-white/20 transition-colors" />
+                placeholder="Search gyms..." className="w-full bg-[#1A1A1A] border border-[#2A2A2A] rounded-sm pl-9 pr-4 py-2.5 text-white text-sm focus:outline-none focus:border-[#333333] transition-colors" />
             </div>
             <select value={cityFilter} onChange={e => setCityFilter(e.target.value)}
-              className="bg-[#1A1A1A] border border-white/5 rounded-sm px-4 py-2.5 text-white text-sm focus:outline-none">
+              className="bg-[#1A1A1A] border border-[#2A2A2A] rounded-sm px-4 py-2.5 text-white text-sm focus:outline-none">
               {cities.map(c => <option key={c}>{c}</option>)}
             </select>
           </div>
 
           {/* Table */}
-          <div className="bg-[#1A1A1A] border border-white/5 rounded-sm overflow-hidden">
+          <div className="bg-[#1A1A1A] border border-[#2A2A2A] rounded-sm overflow-hidden">
             <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-white/5">
+                  <tr className="border-b border-[#2A2A2A]">
                     {['Gym', 'City', 'Members', 'Revenue', 'Disciplines', 'Last Active', ''].map(h => (
                       <th key={h} className="px-4 py-3 text-left text-xs font-bold text-[#999999] uppercase tracking-wider">{h}</th>
                     ))}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/5">
+                <tbody className="divide-y divide-[#1F1F1F]">
                   {filtered.map(g => (
-                    <tr key={g.id} className="hover:bg-white/2 transition-colors cursor-pointer">
+                    <tr key={g.id} className="hover:bg-[#1F1F1F] transition-colors cursor-pointer">
                       <td className="px-4 py-3.5">
                         <div className="flex items-center gap-3">
                           <div className="w-8 h-8 rounded-sm bg-[#FF3B3B]/10 flex items-center justify-center shrink-0">
@@ -77,7 +77,7 @@ export default function ActiveGymsPage() {
                       <td className="px-4 py-3.5">
                         <div className="flex flex-wrap gap-1">
                           {g.disciplines.slice(0, 2).map(d => (
-                            <span key={d} className="text-xs bg-white/5 text-[#999999] px-2 py-0.5 rounded-full">{d}</span>
+                            <span key={d} className="text-xs bg-[#1A1A1A] text-[#999999] px-2 py-0.5 rounded-sm">{d}</span>
                           ))}
                           {g.disciplines.length > 2 && <span className="text-xs text-[#555]">+{g.disciplines.length - 2}</span>}
                         </div>
@@ -93,7 +93,7 @@ export default function ActiveGymsPage() {
             </div>
 
             {/* Mobile */}
-            <div className="md:hidden divide-y divide-white/5">
+            <div className="md:hidden divide-y divide-[#1F1F1F]">
               {filtered.map(g => (
                 <div key={g.id} className="px-4 py-4 flex items-center justify-between gap-3">
                   <div>

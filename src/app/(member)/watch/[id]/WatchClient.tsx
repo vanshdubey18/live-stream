@@ -343,7 +343,7 @@ function PostViewer() {
         </AnimatePresence>
 
         {stage !== 'ready' && (
-          <Link href="/dashboard" className="font-inter text-[#555] hover:text-[#888] text-sm transition-colors">
+          <Link href="/dashboard" className="font-inter text-[#555] hover:text-[#999999] text-sm transition-colors">
             Back to dashboard
           </Link>
         )}

@@ -11,25 +11,25 @@ export default function AdminError({
 }) {
   return (
     <div className="min-h-screen bg-[#0D0D0D] flex items-center justify-center p-6">
-      <div className="bg-[#111] border border-red-500/20 rounded-sm p-8 max-w-md w-full text-center">
-        <div className="text-4xl mb-4">⚠️</div>
-        <h2 className="text-xl font-semibold text-white mb-2">Something went wrong</h2>
-        <p className="text-white/50 text-sm mb-6">
+      <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm p-8 max-w-md w-full text-center">
+        <p className="font-inter text-[11px] text-[#FF3B3B] tracking-[4px] uppercase mb-4">Admin Error</p>
+        <h2 className="font-bebas text-3xl text-white tracking-[1px] mb-2">SOMETHING WENT WRONG</h2>
+        <p className="font-inter text-[#999999] text-sm mb-6">
           We couldn&apos;t load the admin panel. Please try again or contact support if the issue persists.
         </p>
         {error.digest && (
-          <p className="text-white/20 text-xs mb-6 font-mono">Error ID: {error.digest}</p>
+          <p className="font-mono text-[#555555] text-xs mb-6">Error ID: {error.digest}</p>
         )}
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <button
             onClick={reset}
-            className="px-6 py-2.5 bg-red-600 hover:bg-red-500 text-white text-sm font-medium rounded-sm transition-colors"
+            className="px-6 py-2.5 bg-white hover:bg-[#E5E5E5] text-black font-bebas tracking-[2px] text-sm rounded-sm transition-colors"
           >
-            Try Again
+            TRY AGAIN
           </button>
           <Link
             href="/"
-            className="px-6 py-2.5 bg-white/5 hover:bg-white/10 text-white text-sm font-medium rounded-sm transition-colors"
+            className="px-6 py-2.5 bg-[#1A1A1A] border border-[#333333] hover:bg-[#222222] text-white font-inter text-sm rounded-sm transition-colors"
           >
             Go Home
           </Link>

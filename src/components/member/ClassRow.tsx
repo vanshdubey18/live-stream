@@ -11,15 +11,15 @@ interface ClassRowProps {
 }
 
 const disciplineColors: Record<string, string> = {
-  BJJ: 'bg-blue-500/10 text-blue-400',
-  Boxing: 'bg-yellow-500/10 text-yellow-400',
-  'Muay Thai': 'bg-orange-500/10 text-orange-400',
-  Wrestling: 'bg-green-500/10 text-green-400',
+  BJJ: 'bg-[#1A1A1A] text-[#999999]',
+  Boxing: 'bg-[#FFD60A]/10 text-[#FFD60A]',
+  'Muay Thai': 'bg-[#1A1A1A] text-[#999999]',
+  Wrestling: 'bg-[#00D4AA]/10 text-[#00D4AA]',
 }
 
 const levelColors = {
-  Beginner: 'text-green-400',
-  Intermediate: 'text-yellow-400',
+  Beginner: 'text-[#00D4AA]',
+  Intermediate: 'text-[#FFD60A]',
   Advanced: 'text-[#FF3B3B]',
 }
 
@@ -60,7 +60,7 @@ export default function ClassRow({
 
       {/* Tags */}
       <div className="hidden sm:flex items-center gap-2 shrink-0">
-        <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${disciplineColors[discipline] ?? 'bg-white/5 text-white/60'}`}>
+        <span className={`text-xs font-medium px-2.5 py-1 rounded-sm ${disciplineColors[discipline] ?? 'bg-[#1A1A1A] text-white/60'}`}>
           {discipline}
         </span>
         <span className={`text-xs font-medium ${levelColors[level]}`}>

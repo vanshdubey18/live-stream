@@ -17,11 +17,12 @@ export default async function GymDashboardPage() {
   if (!gym) {
     return (
       <div className="min-h-screen bg-[#0D0D0D] flex items-center justify-center px-4">
-        <div className="text-center">
-          <h1 className="text-white text-2xl font-bold mb-3">No gym found</h1>
-          <p className="text-[#999999] text-sm mb-6">You don't have a gym linked to your account yet.</p>
-          <a href="/gym-signup" className="bg-[#FF3B3B] hover:bg-red-700 text-white font-bold px-6 py-3 rounded-sm text-sm transition-colors">
-            Apply to list your gym
+        <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm p-10 max-w-md w-full text-center">
+          <p className="font-inter text-[11px] text-[#555555] tracking-[4px] uppercase mb-3">Gym Dashboard</p>
+          <h1 className="font-bebas text-3xl text-white tracking-[1px] mb-2">NO GYM FOUND</h1>
+          <p className="font-inter text-[#999999] text-sm mb-6">You don't have a gym linked to your account yet.</p>
+          <a href="/gym-signup" className="bg-white hover:bg-[#E5E5E5] text-black font-bebas tracking-[3px] px-6 py-3 rounded-sm text-sm transition-colors">
+            APPLY TO LIST YOUR GYM
           </a>
         </div>
       </div>

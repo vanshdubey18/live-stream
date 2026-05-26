@@ -43,15 +43,15 @@ interface ClassResult extends BaseResult {
 export type SearchResultItem = TechniqueResult | CoachResult | GymResult | ClassResult
 
 const DISCIPLINE_COLORS: Record<string, string> = {
-  BJJ: 'bg-blue-500/10 text-blue-400',
-  Boxing: 'bg-yellow-500/10 text-yellow-400',
-  'Muay Thai': 'bg-orange-500/10 text-orange-400',
-  Wrestling: 'bg-green-500/10 text-green-400',
+  BJJ: 'bg-[#1A1A1A] text-[#999999]',
+  Boxing: 'bg-[#FFD60A]/10 text-[#FFD60A]',
+  'Muay Thai': 'bg-[#1A1A1A] text-[#999999]',
+  Wrestling: 'bg-[#00D4AA]/10 text-[#00D4AA]',
 }
 
 export default function SearchResult({ result, isSelected = false, onClick }: { result: SearchResultItem; isSelected?: boolean; onClick?: () => void }) {
   const base = `flex items-center gap-3 px-4 py-3 cursor-pointer transition-colors ${
-    isSelected ? 'bg-white/[0.08]' : 'hover:bg-white/[0.05]'
+    isSelected ? 'bg-[#1A1A1A]' : 'hover:bg-[#1F1F1F]'
   }`
 
   if (result.category === 'technique') {
@@ -72,14 +72,14 @@ export default function SearchResult({ result, isSelected = false, onClick }: { 
   if (result.category === 'coach') {
     return (
       <div className={base} onClick={onClick}>
-        <div className="w-8 h-8 rounded-full bg-[#FF3B3B]/20 flex items-center justify-center shrink-0">
+        <div className="w-8 h-8 rounded-sm bg-[#FF3B3B]/20 flex items-center justify-center shrink-0">
           <span className="text-[#FF3B3B] text-xs font-bold">{result.name.split(' ').map(w => w[0]).join('')}</span>
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-white text-sm font-medium truncate">{result.name}</p>
           <p className="text-[#555] text-xs truncate">{result.gym}</p>
         </div>
-        <span className={`shrink-0 text-xs font-semibold px-2 py-0.5 rounded-full ${DISCIPLINE_COLORS[result.discipline] ?? 'bg-white/5 text-white/50'}`}>
+        <span className={`shrink-0 text-xs font-semibold px-2 py-0.5 rounded-sm ${DISCIPLINE_COLORS[result.discipline] ?? 'bg-[#1A1A1A] text-white/50'}`}>
           {result.discipline}
         </span>
       </div>
@@ -89,8 +89,8 @@ export default function SearchResult({ result, isSelected = false, onClick }: { 
   if (result.category === 'gym') {
     return (
       <div className={base} onClick={onClick}>
-        <div className="w-8 h-8 rounded-sm bg-white/5 flex items-center justify-center shrink-0">
-          <Building2 size={14} className="text-[#888]" />
+        <div className="w-8 h-8 rounded-sm bg-[#1A1A1A] flex items-center justify-center shrink-0">
+          <Building2 size={14} className="text-[#999999]" />
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-white text-sm font-medium truncate">{result.name}</p>
@@ -98,7 +98,7 @@ export default function SearchResult({ result, isSelected = false, onClick }: { 
         </div>
         <div className="shrink-0 flex gap-1">
           {result.disciplines.slice(0, 2).map(d => (
-            <span key={d} className={`text-xs font-medium px-1.5 py-0.5 rounded-full ${DISCIPLINE_COLORS[d] ?? 'bg-white/5 text-white/40'}`}>
+            <span key={d} className={`text-xs font-medium px-1.5 py-0.5 rounded-sm ${DISCIPLINE_COLORS[d] ?? 'bg-[#1A1A1A] text-white/40'}`}>
               {d}
             </span>
           ))}
@@ -113,10 +113,10 @@ export default function SearchResult({ result, isSelected = false, onClick }: { 
   if (result.category === 'class') {
     return (
       <div className={base} onClick={onClick}>
-        <div className="w-8 h-8 rounded-sm bg-white/5 flex items-center justify-center shrink-0 relative">
-          <Radio size={14} className={result.status === 'live' ? 'text-[#FF3B3B]' : 'text-[#888]'} />
+        <div className="w-8 h-8 rounded-sm bg-[#1A1A1A] flex items-center justify-center shrink-0 relative">
+          <Radio size={14} className={result.status === 'live' ? 'text-[#FF3B3B]' : 'text-[#999999]'} />
           {result.status === 'live' && (
-            <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-[#FF3B3B] animate-pulse" />
+            <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-sm bg-[#FF3B3B] animate-pulse" />
           )}
         </div>
         <div className="flex-1 min-w-0">

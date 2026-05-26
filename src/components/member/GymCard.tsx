@@ -10,8 +10,8 @@ interface GymCardProps {
 }
 
 const planColors = {
-  Single: 'bg-white/5 text-white/60 border-white/10',
-  Dual: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
+  Single: 'bg-[#1A1A1A] text-white/60 border-[#333333]',
+  Dual: 'bg-[#1A1A1A] text-[#999999] border-blue-500/20',
   'Full MMA': 'bg-[#FF3B3B]/10 text-[#FF3B3B] border-[#FF3B3B]/20',
 }
 
@@ -24,17 +24,14 @@ export default function GymCard({
   city,
 }: GymCardProps) {
   return (
-    <div className="bg-[#1A1A1A] border border-white/5 rounded-sm p-6 hover:border-white/10 transition-all duration-200 flex flex-col gap-4">
+    <div className="bg-[#1A1A1A] border border-[#2A2A2A] rounded-sm p-6 hover:border-[#333333] transition-all duration-200 flex flex-col gap-4">
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
-          <div className="w-10 h-10 rounded-sm bg-[#FF3B3B]/20 flex items-center justify-center mb-3">
-            <span className="text-[#FF3B3B] font-black text-sm">{name[0]}</span>
-          </div>
-          <h3 className="text-white font-bold text-base leading-tight">{name}</h3>
-          <p className="text-[#999999] text-xs mt-0.5">{city}</p>
+          <h3 className="font-bebas text-2xl text-white leading-tight">{name}</h3>
+          <p className="font-inter text-sm text-[#999999] mt-0.5">{city}</p>
         </div>
-        <span className={`text-xs font-semibold px-2.5 py-1 rounded-full border ${planColors[plan]}`}>
+        <span className={`font-inter text-[10px] tracking-[2px] uppercase px-2 py-1 rounded-sm border ${planColors[plan]}`}>
           {plan}
         </span>
       </div>
@@ -44,7 +41,7 @@ export default function GymCard({
         {disciplines.map((d) => (
           <span
             key={d}
-            className="text-xs text-[#999999] bg-white/5 px-2.5 py-1 rounded-full"
+            className="font-inter text-[10px] text-[#555555] tracking-[2px] uppercase"
           >
             {d}
           </span>
@@ -63,7 +60,7 @@ export default function GymCard({
       {/* CTA */}
       <a
         href="#"
-        className="flex items-center justify-center gap-1.5 border border-white/10 hover:border-white/20 hover:bg-white/5 text-white text-sm font-semibold py-2.5 rounded-sm transition-all duration-200"
+        className="flex items-center justify-center gap-1.5 border border-[#333333] hover:border-[#333333] hover:bg-[#1A1A1A] text-white text-sm font-semibold py-2.5 rounded-sm transition-all duration-200"
       >
         View Schedule <ChevronRight size={14} />
       </a>

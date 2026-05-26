@@ -24,7 +24,7 @@ const DISCIPLINES = [
   { name: 'Muay Thai', value: 18 }, { name: 'Wrestling', value: 12 },
 ]
 
-const DISCIPLINE_COLORS = ['#FF3B3B', '#60A5FA', '#F59E0B', '#34D399']
+const DISCIPLINE_COLORS = ['#FF3B3B', '#FFFFFF', '#FFD60A', '#00D4AA']
 
 const GYM_REVENUE = [
   { gym: 'Xtreme MMA', rev: 47 }, { gym: 'Champion MMA', rev: 38 },
@@ -37,15 +37,15 @@ const VIEWERSHIP = [
   { day: 'Thu', viewers: 88 }, { day: 'Fri', viewers: 71 }, { day: 'Sat', viewers: 103 }, { day: 'Sun', viewers: 95 },
 ]
 
-const tooltipStyle = { backgroundColor: '#111', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12, fontSize: 12 }
+const tooltipStyle = { backgroundColor: '#1A1A1A', border: '1px solid #333333', borderRadius: 2, fontSize: 12 }
 const labelStyle = { color: '#fff', fontWeight: 700 }
 const tickStyle = { fill: '#555', fontSize: 11 }
 const axisProps = { axisLine: false, tickLine: false }
 
 function ChartCard({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="bg-[#1A1A1A] border border-white/5 rounded-sm p-6">
-      <h3 className="text-white font-bold mb-5 text-sm">{title}</h3>
+    <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm p-6">
+      <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-5">{title}</p>
       {children}
     </div>
   )
@@ -57,8 +57,8 @@ export default function AnalyticsPage() {
       <AdminSidebar active="Analytics" />
 
       <main className="flex-1 lg:ml-64 min-w-0">
-        <div className="sticky top-0 z-20 bg-[#0D0D0D]/90 backdrop-blur-md border-b border-white/5 px-6 h-16 flex items-center mt-14 lg:mt-0">
-          <h1 className="text-white font-bold text-lg">Analytics</h1>
+        <div className="sticky top-0 z-20 bg-[#0D0D0D]  border-b border-[#2A2A2A] px-6 h-16 flex items-center mt-14 lg:mt-0">
+          <h1 className="font-bebas text-2xl text-white tracking-[1px]">ANALYTICS</h1>
         </div>
 
         <div className="px-6 py-6 max-w-6xl space-y-6">
@@ -123,7 +123,7 @@ export default function AnalyticsPage() {
                   <XAxis dataKey="day" tick={tickStyle} {...axisProps} />
                   <YAxis tick={tickStyle} {...axisProps} />
                   <Tooltip contentStyle={tooltipStyle} labelStyle={labelStyle} />
-                  <Line type="monotone" dataKey="viewers" stroke="#60A5FA" strokeWidth={2.5} dot={false} name="Viewers" />
+                  <Line type="monotone" dataKey="viewers" stroke="#FFFFFF" strokeWidth={2} dot={false} name="Viewers" />
                 </LineChart>
               </ResponsiveContainer>
             </ChartCard>

@@ -17,21 +17,21 @@ function ConfirmModal({ title, message, confirmLabel, confirmClass, onConfirm, o
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-[#1A1A1A] border border-white/10 rounded-sm w-full max-w-md p-6">
+      <div className="absolute inset-0 bg-black/70 " onClick={onClose} />
+      <div className="relative bg-[#1A1A1A] border border-[#333333] rounded-sm w-full max-w-md p-6">
         <h3 className="text-white font-bold text-lg mb-2">{title}</h3>
         <p className="text-[#999999] text-sm mb-4">{message}</p>
         {showTextarea && (
-          <textarea className="w-full bg-[#0D0D0D] border border-white/10 rounded-sm px-4 py-3 text-white text-sm resize-none h-24 focus:outline-none focus:border-[#FF3B3B]/50 mb-4"
+          <textarea className="w-full bg-[#0D0D0D] border border-[#333333] rounded-sm px-4 py-3 text-white text-sm resize-none h-24 focus:outline-none focus:border-[#FF3B3B]/50 mb-4"
             placeholder="Reason for rejection (will be emailed to gym owner)..."
             value={reason} onChange={e => setReason(e.target.value)} />
         )}
         <div className="flex gap-3">
-          <button onClick={onClose} className="flex-1 py-3 border border-white/10 text-white text-sm font-semibold rounded-sm hover:border-white/20 transition-all">
+          <button onClick={onClose} className="flex-1 py-3 border border-[#333333] text-white text-sm font-semibold rounded-sm hover:border-[#333333] transition-all">
             Cancel
           </button>
           <button onClick={handleConfirm} disabled={loading}
-            className={`flex-1 py-3 text-white text-sm font-bold rounded-sm transition-all flex items-center justify-center gap-2 ${confirmClass}`}>
+            className={`flex-1 py-3 text-sm rounded-sm transition-all flex items-center justify-center gap-2 ${confirmClass}`}>
             {loading ? <Loader2 size={15} className="animate-spin" /> : confirmLabel}
           </button>
         </div>
@@ -64,12 +64,12 @@ export default function ApplicationDetailPage() {
       <AdminSidebar active="Gym Applications" />
 
       <main className="flex-1 lg:ml-64 min-w-0">
-        <div className="sticky top-0 z-20 bg-[#0D0D0D]/90 backdrop-blur-md border-b border-white/5 px-6 h-16 flex items-center gap-3 mt-14 lg:mt-0">
+        <div className="sticky top-0 z-20 bg-[#0D0D0D]  border-b border-[#2A2A2A] px-6 h-16 flex items-center gap-3 mt-14 lg:mt-0">
           <a href="/admin/applications" className="text-[#999999] hover:text-white text-sm transition-colors">← Applications</a>
           <span className="text-[#555]">/</span>
           <span className="text-white font-bold text-sm">Mat Lab Kolkata</span>
           {status !== 'pending' && (
-            <span className={`ml-2 text-xs font-bold px-2.5 py-1 rounded-full ${status === 'approved' ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'}`}>
+            <span className={`ml-2 text-xs font-bold px-2.5 py-1 rounded-sm ${status === 'approved' ? 'bg-[#00D4AA]/10 text-[#00D4AA]' : 'bg-red-500/10 text-red-400'}`}>
               {status.charAt(0).toUpperCase() + status.slice(1)}
             </span>
           )}
@@ -77,9 +77,9 @@ export default function ApplicationDetailPage() {
 
         <div className="px-6 py-6 max-w-3xl space-y-6">
           {/* Gym info */}
-          <div className="bg-[#1A1A1A] border border-white/5 rounded-sm p-6">
-            <div className="h-32 bg-gradient-to-r from-blue-900/30 to-slate-900/30 rounded-sm mb-4 flex items-center justify-center">
-              <span className="text-white/20 text-sm">Cover photo pending</span>
+          <div className="bg-[#1A1A1A] border border-[#2A2A2A] rounded-sm p-6">
+            <div className="h-32 bg-[#111111] border border-[#333333] rounded-sm mb-4 flex items-center justify-center">
+              <span className="font-inter text-[#555555] text-xs tracking-[2px] uppercase">Cover photo pending</span>
             </div>
             <div className="flex items-start gap-4">
               <div className="w-16 h-16 rounded-sm bg-[#FF3B3B]/10 flex items-center justify-center shrink-0">
@@ -96,13 +96,13 @@ export default function ApplicationDetailPage() {
             </p>
             <div className="flex flex-wrap gap-2 mt-4">
               {['BJJ', 'Wrestling'].map(d => (
-                <span key={d} className="text-xs font-medium px-3 py-1 rounded-full bg-white/5 text-white/60">{d}</span>
+                <span key={d} className="font-inter text-[10px] tracking-[2px] uppercase text-[#555555]">{d}</span>
               ))}
             </div>
           </div>
 
           {/* Coaches */}
-          <div className="bg-[#1A1A1A] border border-white/5 rounded-sm p-6">
+          <div className="bg-[#1A1A1A] border border-[#2A2A2A] rounded-sm p-6">
             <h3 className="text-white font-bold mb-4">Coaches ({coaches.length})</h3>
             <div className="space-y-3">
               {coaches.map(c => (
@@ -121,14 +121,14 @@ export default function ApplicationDetailPage() {
           </div>
 
           {/* Checklist */}
-          <div className="bg-[#1A1A1A] border border-white/5 rounded-sm p-6">
+          <div className="bg-[#1A1A1A] border border-[#2A2A2A] rounded-sm p-6">
             <h3 className="text-white font-bold mb-4">Onboarding Checklist</h3>
             <div className="space-y-3">
               {checklist.map(item => (
                 <div key={item.label} className="flex items-center gap-3">
-                  <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0
-                    ${item.done ? 'bg-green-500/20 border border-green-500/30' : 'bg-white/5 border border-white/10'}`}>
-                    {item.done && <Check size={11} className="text-green-400" />}
+                  <div className={`w-5 h-5 rounded-sm flex items-center justify-center shrink-0
+                    ${item.done ? 'bg-[#00D4AA]/10 border border-[#00D4AA]/30' : 'bg-[#1A1A1A] border border-[#333333]'}`}>
+                    {item.done && <Check size={11} className="text-[#00D4AA]" />}
                   </div>
                   <span className={`text-sm ${item.done ? 'text-white' : 'text-[#555]'}`}>{item.label}</span>
                 </div>
@@ -140,12 +140,12 @@ export default function ApplicationDetailPage() {
           {status === 'pending' && (
             <div className="flex gap-3">
               <button onClick={() => setModal('approve')}
-                className="flex-1 flex items-center justify-center gap-2 bg-green-500/10 hover:bg-green-500/20 border border-green-500/20 text-green-400 font-bold py-4 rounded-sm text-sm transition-all">
-                <Check size={16} /> Approve Gym ✅
+                className="flex-1 flex items-center justify-center gap-2 bg-white hover:bg-[#E5E5E5] text-black font-bebas tracking-[2px] py-4 rounded-sm text-sm transition-all">
+                <Check size={16} /> APPROVE GYM
               </button>
               <button onClick={() => setModal('reject')}
-                className="flex-1 flex items-center justify-center gap-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 font-bold py-4 rounded-sm text-sm transition-all">
-                <X size={16} /> Reject with Feedback ❌
+                className="flex-1 flex items-center justify-center gap-2 border border-[#333333] hover:bg-[#1F1F1F] text-[#999999] hover:text-white font-inter py-4 rounded-sm text-sm transition-all">
+                <X size={16} /> Reject
               </button>
             </div>
           )}
@@ -154,14 +154,14 @@ export default function ApplicationDetailPage() {
 
       {modal === 'approve' && (
         <ConfirmModal title="Approve Mat Lab Kolkata?" message="This will create a stream key, notify the owner, and make the gym live on the platform."
-          confirmLabel="Approve Gym ✅" confirmClass="bg-green-600 hover:bg-green-700"
+          confirmLabel="APPROVE GYM" confirmClass="bg-white hover:bg-[#E5E5E5] text-black font-bebas tracking-[2px]"
           onConfirm={() => { setStatus('approved'); setModal(null); setToast('Gym approved and welcome email sent ✓') }}
           onClose={() => setModal(null)} />
       )}
 
       {modal === 'reject' && (
         <ConfirmModal title="Reject this application?" message="Provide a reason — this will be emailed to the gym owner."
-          confirmLabel="Send Rejection" confirmClass="bg-[#FF3B3B] hover:bg-red-700"
+          confirmLabel="SEND REJECTION" confirmClass="bg-white hover:bg-[#E5E5E5] text-black font-bebas tracking-[2px]"
           onConfirm={() => { setStatus('rejected'); setModal(null); setToast('Rejection sent with feedback') }}
           onClose={() => setModal(null)} showTextarea />
       )}

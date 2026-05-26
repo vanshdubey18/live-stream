@@ -38,23 +38,23 @@ export default function ApplicationsPage() {
       <AdminSidebar active="Gym Applications" />
 
       <main className="flex-1 lg:ml-64 min-w-0">
-        <div className="sticky top-0 z-20 bg-[#0D0D0D]/90 backdrop-blur-md border-b border-white/5 px-6 h-16 flex items-center mt-14 lg:mt-0">
+        <div className="sticky top-0 z-20 bg-[#0D0D0D]  border-b border-[#2A2A2A] px-6 h-16 flex items-center mt-14 lg:mt-0">
           <h1 className="text-white font-bold text-lg">Gym Applications</h1>
         </div>
 
         <div className="px-6 py-6 max-w-5xl">
           {/* Tabs */}
-          <div className="flex gap-1 bg-[#1A1A1A] border border-white/5 rounded-sm p-1 mb-6 w-fit">
+          <div className="flex gap-1 bg-[#1A1A1A] border border-[#2A2A2A] rounded-sm p-1 mb-6 w-fit">
             {TABS.map(t => {
               const count = t === 'Pending' ? pendingCount : apps.filter(a => a.status === t.toLowerCase()).length
               return (
                 <button key={t} onClick={() => setTab(t)}
                   className={`flex items-center gap-2 px-4 py-2 rounded-sm text-sm font-semibold transition-all
-                    ${tab === t ? 'bg-white/10 text-white' : 'text-[#999999] hover:text-white'}`}>
+                    ${tab === t ? 'bg-[#222222] text-white' : 'text-[#999999] hover:text-white'}`}>
                   {t}
                   {count > 0 && (
-                    <span className={`text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center
-                      ${t === 'Pending' ? 'bg-[#FF3B3B] text-white' : 'bg-white/10 text-white/60'}`}>
+                    <span className={`text-xs font-bold w-5 h-5 rounded-sm flex items-center justify-center
+                      ${t === 'Pending' ? 'bg-[#FF3B3B] text-white' : 'bg-[#222222] text-[#999999]'}`}>
                       {count}
                     </span>
                   )}
@@ -64,7 +64,7 @@ export default function ApplicationsPage() {
           </div>
 
           {filtered.length === 0 ? (
-            <div className="bg-[#1A1A1A] border border-white/5 rounded-sm px-6 py-16 text-center">
+            <div className="bg-[#1A1A1A] border border-[#2A2A2A] rounded-sm px-6 py-16 text-center">
               <p className="text-[#999999] text-sm">No {tab.toLowerCase()} applications.</p>
             </div>
           ) : (

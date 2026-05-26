@@ -24,8 +24,8 @@ function ConfirmModal({ payout, onConfirm, onClose }: { payout: Payout; onConfir
   const [loading, setLoading] = useState(false)
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-[#1A1A1A] border border-white/10 rounded-sm w-full max-w-sm p-6">
+      <div className="absolute inset-0 bg-black/70 " onClick={onClose} />
+      <div className="relative bg-[#1A1A1A] border border-[#333333] rounded-sm w-full max-w-sm p-6">
         <div className="flex items-start justify-between mb-4">
           <h3 className="text-white font-bold">Confirm Transfer</h3>
           <button onClick={onClose} className="text-[#999999] hover:text-white"><X size={18} /></button>
@@ -33,9 +33,9 @@ function ConfirmModal({ payout, onConfirm, onClose }: { payout: Payout; onConfir
         <p className="text-[#999999] text-sm mb-1">Send payout to <span className="text-white font-medium">{payout.gym}</span>?</p>
         <p className="text-[#FF3B3B] text-2xl font-black mb-4">{payout.gymCut}</p>
         <div className="flex gap-3">
-          <button onClick={onClose} className="flex-1 py-3 border border-white/10 text-white text-sm font-semibold rounded-sm">Cancel</button>
+          <button onClick={onClose} className="flex-1 py-3 border border-[#333333] text-white text-sm font-semibold rounded-sm">Cancel</button>
           <button onClick={() => { setLoading(true); setTimeout(() => { onConfirm(); setLoading(false) }, 700) }} disabled={loading}
-            className="flex-1 py-3 bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white text-sm font-bold rounded-sm flex items-center justify-center gap-2">
+            className="flex-1 py-3 bg-white hover:bg-[#E5E5E5] disabled:opacity-50 text-black text-sm font-bold rounded-sm flex items-center justify-center gap-2">
             {loading ? <Loader2 size={15} className="animate-spin" /> : 'Confirm Transfer'}
           </button>
         </div>
@@ -72,43 +72,43 @@ export default function PayoutsPage() {
       <AdminSidebar active="Payouts" />
 
       <main className="flex-1 lg:ml-64 min-w-0">
-        <div className="sticky top-0 z-20 bg-[#0D0D0D]/90 backdrop-blur-md border-b border-white/5 px-6 h-16 flex items-center justify-between mt-14 lg:mt-0">
+        <div className="sticky top-0 z-20 bg-[#0D0D0D]  border-b border-[#2A2A2A] px-6 h-16 flex items-center justify-between mt-14 lg:mt-0">
           <h1 className="text-white font-bold text-lg">Payouts</h1>
           {tab === 'Pending' && pending.length > 0 && (
             <button onClick={processAll}
-              className="bg-green-600 hover:bg-green-700 text-white text-sm font-bold px-4 py-2 rounded-sm transition-colors">
+              className="bg-white hover:bg-[#E5E5E5] text-black text-sm font-bold px-4 py-2 rounded-sm transition-colors">
               Process All Pending
             </button>
           )}
         </div>
 
         <div className="px-6 py-6 max-w-5xl space-y-4">
-          <div className="flex gap-1 bg-[#1A1A1A] border border-white/5 rounded-sm p-1 w-fit">
+          <div className="flex gap-1 bg-[#1A1A1A] border border-[#2A2A2A] rounded-sm p-1 w-fit">
             {TABS.map(t => (
               <button key={t} onClick={() => setTab(t)}
                 className={`flex items-center gap-2 px-4 py-2 rounded-sm text-sm font-semibold transition-all
-                  ${tab === t ? 'bg-white/10 text-white' : 'text-[#999999] hover:text-white'}`}>
+                  ${tab === t ? 'bg-[#222222] text-white' : 'text-[#999999] hover:text-white'}`}>
                 {t}
-                <span className="text-xs bg-white/10 text-white/60 px-1.5 py-0.5 rounded-full">
+                <span className="text-xs bg-[#222222] text-white/60 px-1.5 py-0.5 rounded-sm">
                   {t === 'Pending' ? pending.length : processed.length}
                 </span>
               </button>
             ))}
           </div>
 
-          <div className="bg-[#1A1A1A] border border-white/5 rounded-sm overflow-hidden">
+          <div className="bg-[#1A1A1A] border border-[#2A2A2A] rounded-sm overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-white/5">
+                  <tr className="border-b border-[#2A2A2A]">
                     {['Gym', 'Period', 'Members', 'Revenue', 'Gym Cut (70%)', 'Platform (30%)', 'Status', ''].map(h => (
                       <th key={h} className="px-4 py-3 text-left text-xs font-bold text-[#999999] uppercase tracking-wider">{h}</th>
                     ))}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/5">
+                <tbody className="divide-y divide-[#1F1F1F]">
                   {filtered.map(p => (
-                    <tr key={p.id} className="hover:bg-white/2 transition-colors">
+                    <tr key={p.id} className="hover:bg-[#1F1F1F] transition-colors">
                       <td className="px-4 py-3.5 text-white font-medium">{p.gym}</td>
                       <td className="px-4 py-3.5 text-[#999999]">{p.period}</td>
                       <td className="px-4 py-3.5 text-white">{p.members}</td>
@@ -117,13 +117,13 @@ export default function PayoutsPage() {
                       <td className="px-4 py-3.5 text-[#FF3B3B] font-bold">{p.platformCut}</td>
                       <td className="px-4 py-3.5">
                         {p.status === 'paid'
-                          ? <span className="flex items-center gap-1.5 text-green-400 text-xs font-semibold"><CheckCircle size={13} /> Paid</span>
-                          : <span className="flex items-center gap-1.5 text-yellow-400 text-xs font-semibold"><Clock size={13} /> Pending</span>}
+                          ? <span className="flex items-center gap-1.5 text-[#00D4AA] text-xs font-semibold"><CheckCircle size={13} /> Paid</span>
+                          : <span className="flex items-center gap-1.5 text-[#FFD60A] text-xs font-semibold"><Clock size={13} /> Pending</span>}
                       </td>
                       <td className="px-4 py-3.5">
                         {p.status === 'pending' && (
                           <button onClick={() => setConfirm(p)}
-                            className="bg-green-500/10 hover:bg-green-500/20 border border-green-500/20 text-green-400 text-xs font-bold px-3 py-1.5 rounded-sm transition-all">
+                            className="bg-[#00D4AA]/10 hover:bg-green-500/20 border border-green-500/20 text-[#00D4AA] text-xs font-bold px-3 py-1.5 rounded-sm transition-all">
                             Process
                           </button>
                         )}

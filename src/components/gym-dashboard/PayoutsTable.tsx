@@ -8,7 +8,7 @@ const PAYOUTS = [
 
 export default function PayoutsTable() {
   return (
-    <div className="bg-[#1A1A1A] border border-white/5 rounded-2xl overflow-hidden">
+    <div className="bg-[#1A1A1A] border border-white/5 rounded-sm overflow-hidden">
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b border-white/5">

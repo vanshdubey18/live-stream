@@ -23,10 +23,10 @@ interface CoachCardProps {
 
 export default function CoachCard({ coach, onEdit, onRemove }: CoachCardProps) {
   return (
-    <div className="bg-[#1A1A1A] border border-white/5 rounded-2xl p-6 hover:border-white/10 transition-all duration-200 flex flex-col gap-4">
+    <div className="bg-[#1A1A1A] border border-white/5 rounded-sm p-6 hover:border-white/10 transition-all duration-200 flex flex-col gap-4">
       {/* Avatar */}
       <div className="flex items-start justify-between">
-        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#FF3B3B]/20 to-[#FF3B3B]/5 flex items-center justify-center">
+        <div className="w-14 h-14 rounded-sm bg-gradient-to-br from-[#FF3B3B]/20 to-[#FF3B3B]/5 flex items-center justify-center">
           <span className="text-[#FF3B3B] text-xl font-black">{coach.name[0]}</span>
         </div>
         <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${disciplineColors[coach.discipline] ?? 'bg-white/5 text-white/60'}`}>
@@ -46,11 +46,11 @@ export default function CoachCard({ coach, onEdit, onRemove }: CoachCardProps) {
 
       <div className="flex gap-2 mt-auto">
         <button onClick={() => onEdit(coach)}
-          className="flex-1 flex items-center justify-center gap-1.5 border border-white/10 hover:border-white/20 hover:bg-white/5 text-white text-xs font-semibold py-2 rounded-xl transition-all">
+          className="flex-1 flex items-center justify-center gap-1.5 border border-white/10 hover:border-white/20 hover:bg-white/5 text-white text-xs font-semibold py-2 rounded-sm transition-all">
           <Pencil size={12} /> Edit
         </button>
         <button onClick={() => onRemove(coach.id)}
-          className="flex-1 flex items-center justify-center gap-1.5 border border-red-500/20 hover:bg-red-500/10 text-red-400 text-xs font-semibold py-2 rounded-xl transition-all">
+          className="flex-1 flex items-center justify-center gap-1.5 border border-red-500/20 hover:bg-red-500/10 text-red-400 text-xs font-semibold py-2 rounded-sm transition-all">
           <Trash2 size={12} /> Remove
         </button>
       </div>

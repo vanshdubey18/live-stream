@@ -4,7 +4,7 @@ export default function GymDashboardLoading() {
       {/* Stats cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="bg-[#111] border border-white/5 rounded-xl p-5">
+          <div key={i} className="bg-[#111] border border-white/5 rounded-sm p-5">
             <div className="h-4 w-24 bg-[#222222] rounded animate-pulse mb-3" />
             <div className="h-8 w-16 bg-[#222222] rounded animate-pulse" />
           </div>
@@ -12,7 +12,7 @@ export default function GymDashboardLoading() {
       </div>
 
       {/* Table skeleton */}
-      <div className="bg-[#111] border border-white/5 rounded-xl overflow-hidden">
+      <div className="bg-[#111] border border-white/5 rounded-sm overflow-hidden">
         {/* Table header */}
         <div className="flex gap-4 px-5 py-3 border-b border-white/5">
           {Array.from({ length: 4 }).map((_, i) => (

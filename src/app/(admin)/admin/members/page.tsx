@@ -39,15 +39,15 @@ export default function MembersPage() {
             <div className="relative flex-1">
               <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#555]" />
               <input value={search} onChange={e => setSearch(e.target.value)}
-                placeholder="Search by name or email..." className="w-full bg-[#1A1A1A] border border-white/5 rounded-xl pl-9 pr-4 py-2.5 text-white text-sm focus:outline-none focus:border-white/20 transition-colors" />
+                placeholder="Search by name or email..." className="w-full bg-[#1A1A1A] border border-white/5 rounded-sm pl-9 pr-4 py-2.5 text-white text-sm focus:outline-none focus:border-white/20 transition-colors" />
             </div>
             <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}
-              className="bg-[#1A1A1A] border border-white/5 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none">
+              className="bg-[#1A1A1A] border border-white/5 rounded-sm px-4 py-2.5 text-white text-sm focus:outline-none">
               {['All', 'Active', 'Cancelled'].map(s => <option key={s}>{s}</option>)}
             </select>
           </div>
 
-          <div className="bg-[#1A1A1A] border border-white/5 rounded-2xl overflow-hidden">
+          <div className="bg-[#1A1A1A] border border-white/5 rounded-sm overflow-hidden">
             <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>

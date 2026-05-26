@@ -25,7 +25,7 @@ export default function ReplayCard({
   daysAgo,
 }: ReplayCardProps) {
   return (
-    <div className="bg-[#1A1A1A] border border-white/5 rounded-2xl overflow-hidden hover:border-white/10 transition-all duration-200 group flex-shrink-0 w-64">
+    <div className="bg-[#1A1A1A] border border-white/5 rounded-sm overflow-hidden hover:border-white/10 transition-all duration-200 group flex-shrink-0 w-64">
       {/* Thumbnail */}
       <div className={`relative h-36 bg-gradient-to-br ${disciplineGradients[discipline] ?? 'from-gray-900/40 to-gray-800/20'} flex items-center justify-center`}>
         <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-[#FF3B3B]/80 transition-all duration-200">
@@ -51,7 +51,7 @@ export default function ReplayCard({
 
         <a
           href="#"
-          className="mt-3 w-full flex items-center justify-center gap-1.5 border border-white/10 hover:border-[#FF3B3B]/40 hover:bg-[#FF3B3B]/5 text-white text-xs font-semibold py-2 rounded-xl transition-all duration-200"
+          className="mt-3 w-full flex items-center justify-center gap-1.5 border border-white/10 hover:border-[#FF3B3B]/40 hover:bg-[#FF3B3B]/5 text-white text-xs font-semibold py-2 rounded-sm transition-all duration-200"
         >
           <Play size={12} className="fill-white" /> Watch Replay
         </a>

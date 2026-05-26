@@ -53,15 +53,15 @@ export default function CreateCouponModal({ onClose, onCreated }: CreateCouponMo
     }, 500)
   }
 
-  const inputCls = 'w-full bg-[#0D0D0D] border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-[#FF3B3B]/50 transition-colors'
-  const labelCls = 'block text-[#999999] text-xs font-medium mb-1.5'
+  const inputCls = 'w-full bg-[#0D0D0D] border border-[#333333] rounded-sm px-4 py-2.5 text-white font-inter text-sm focus:outline-none focus:border-[#555555] transition-colors'
+  const labelCls = 'block font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-1.5'
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-[#1A1A1A] border border-white/10 rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-white/5">
-          <h2 className="text-white font-bold text-lg">Create Coupon</h2>
+      <div className="absolute inset-0 bg-black/70" onClick={onClose} />
+      <div className="relative bg-[#1A1A1A] border border-[#333333] rounded-sm w-full max-w-md max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#333333]">
+          <h2 className="font-bebas text-2xl text-white tracking-[1px]">Create Coupon</h2>
           <button onClick={onClose} className="text-[#999999] hover:text-white transition-colors"><X size={20} /></button>
         </div>
 
@@ -76,10 +76,10 @@ export default function CreateCouponModal({ onClose, onCreated }: CreateCouponMo
             <label className={labelCls}>Type</label>
             <div className="grid grid-cols-2 gap-2">
               {(['percent_off', 'free_days'] as const).map(t => (
-                <label key={t} className={`flex items-center gap-2 px-4 py-3 rounded-xl border cursor-pointer transition-all text-sm
-                  ${form.type === t ? 'border-[#FF3B3B]/40 bg-[#FF3B3B]/5 text-white' : 'border-white/5 text-[#999999] hover:border-white/10'}`}>
+                <label key={t} className={`flex items-center gap-2 px-4 py-3 rounded-sm border cursor-pointer transition-all font-inter text-sm
+                  ${form.type === t ? 'border-[#555555] bg-[#222222] text-white' : 'border-[#333333] text-[#999999] hover:border-[#555555]'}`}>
                   <input type="radio" name="type" value={t} checked={form.type === t} onChange={() => set('type', t)} className="hidden" />
-                  {t === 'percent_off' ? '% Percentage off' : '📅 Free days'}
+                  {t === 'percent_off' ? '% Percentage off' : 'Free days'}
                 </label>
               ))}
             </div>
@@ -105,24 +105,24 @@ export default function CreateCouponModal({ onClose, onCreated }: CreateCouponMo
               <input type="number" className={inputCls} value={form.maxUses} onChange={e => set('maxUses', e.target.value)} />
             </div>
             <div>
-              <label className={labelCls}>Expiry Date <span className="text-[#555]">(optional)</span></label>
+              <label className={labelCls}>Expiry Date <span className="text-[#555555]">(optional)</span></label>
               <input type="date" className={inputCls} value={form.expiresAt} onChange={e => set('expiresAt', e.target.value)} />
             </div>
           </div>
 
           <div>
-            <label className={labelCls}>Notes <span className="text-[#555]">(optional)</span></label>
+            <label className={labelCls}>Notes <span className="text-[#555555]">(optional)</span></label>
             <textarea className={`${inputCls} resize-none h-20`} value={form.notes} onChange={e => set('notes', e.target.value)} />
           </div>
 
           <div className="flex gap-3 pt-1">
             <button type="button" onClick={onClose}
-              className="flex-1 py-3 border border-white/10 hover:border-white/20 text-white text-sm font-semibold rounded-xl transition-all">
+              className="flex-1 py-3 border border-[#333333] hover:border-[#555555] text-[#999999] hover:text-white font-inter text-sm rounded-sm transition-all">
               Cancel
             </button>
             <button type="submit" disabled={loading}
-              className="flex-1 py-3 bg-[#FF3B3B] hover:bg-red-700 disabled:opacity-50 text-white text-sm font-bold rounded-xl transition-all flex items-center justify-center gap-2">
-              {loading ? <Loader2 size={15} className="animate-spin" /> : 'Create Coupon'}
+              className="flex-1 py-3 bg-white hover:bg-[#E5E5E5] disabled:opacity-50 text-black font-bebas tracking-[3px] rounded-sm transition-all flex items-center justify-center gap-2">
+              {loading ? <Loader2 size={15} className="animate-spin" /> : 'CREATE COUPON'}
             </button>
           </div>
         </form>

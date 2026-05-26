@@ -93,7 +93,7 @@ export default function SessionSummary({ data = DEMO_SUMMARY, onTimestampClick, 
   const [saved, setSaved] = useState(false)
 
   return (
-    <div className={`bg-[#1A1A1A] border border-[#333333] rounded-2xl overflow-hidden ${compact ? '' : ''}`}>
+    <div className={`bg-[#1A1A1A] border border-[#333333] rounded-sm overflow-hidden ${compact ? '' : ''}`}>
 
       {/* ── Header ── */}
       <Section delay={0}>
@@ -160,9 +160,9 @@ export default function SessionSummary({ data = DEMO_SUMMARY, onTimestampClick, 
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.28 + i * 0.07 }}
                 onClick={() => onTimestampClick?.(m.timestamp)}
-                className="w-full flex items-center gap-3 group text-left hover:bg-white/[0.03] rounded-xl px-2 py-2 -mx-2 transition-colors"
+                className="w-full flex items-center gap-3 group text-left hover:bg-white/[0.03] rounded-sm px-2 py-2 -mx-2 transition-colors"
               >
-                <div className="w-7 h-7 rounded-lg bg-[#FF3B3B]/10 flex items-center justify-center shrink-0 group-hover:bg-[#FF3B3B]/20 transition-colors">
+                <div className="w-7 h-7 rounded-sm bg-[#FF3B3B]/10 flex items-center justify-center shrink-0 group-hover:bg-[#FF3B3B]/20 transition-colors">
                   <Play size={10} className="text-[#FF3B3B]" />
                 </div>
                 <span className="text-[#FF3B3B] font-mono text-xs font-bold shrink-0">{m.timestamp}</span>
@@ -203,9 +203,9 @@ export default function SessionSummary({ data = DEMO_SUMMARY, onTimestampClick, 
                 initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.48 + i * 0.07 }}
-                className="flex items-center gap-3 bg-[#0D0D0D] hover:bg-[#151515] border border-[#333333] hover:border-[#333333] rounded-xl px-4 py-3 group transition-all"
+                className="flex items-center gap-3 bg-[#0D0D0D] hover:bg-[#151515] border border-[#333333] hover:border-[#333333] rounded-sm px-4 py-3 group transition-all"
               >
-                <div className="w-8 h-8 rounded-lg bg-[#FF3B3B]/10 flex items-center justify-center shrink-0">
+                <div className="w-8 h-8 rounded-sm bg-[#FF3B3B]/10 flex items-center justify-center shrink-0">
                   <Play size={12} className="text-[#FF3B3B]" />
                 </div>
                 <div className="flex-1 min-w-0">
@@ -226,7 +226,7 @@ export default function SessionSummary({ data = DEMO_SUMMARY, onTimestampClick, 
         <div className="px-6 py-5 flex flex-col gap-3">
           <button
             onClick={() => setSaved(v => !v)}
-            className={`flex items-center justify-center gap-2 w-full border rounded-xl py-3 text-sm font-semibold transition-all
+            className={`flex items-center justify-center gap-2 w-full border rounded-sm py-3 text-sm font-semibold transition-all
               ${saved
                 ? 'bg-[#FF3B3B]/10 border-[#FF3B3B]/30 text-[#FF3B3B]'
                 : 'bg-[#0D0D0D] border-[#333333] text-[#999999] hover:border-[#FF3B3B]/20 hover:text-white'}`}
@@ -236,7 +236,7 @@ export default function SessionSummary({ data = DEMO_SUMMARY, onTimestampClick, 
           </button>
           <a
             href="/dashboard"
-            className="flex items-center justify-center gap-2 w-full bg-[#FF3B3B] hover:bg-red-700 text-white font-bold py-3 rounded-xl text-sm transition-colors"
+            className="flex items-center justify-center gap-2 w-full bg-[#FF3B3B] hover:bg-red-700 text-white font-bold py-3 rounded-sm text-sm transition-colors"
           >
             <RotateCcw size={15} />
             Watch replay anytime

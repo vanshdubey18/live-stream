@@ -2,7 +2,7 @@ export default function GymsLoading() {
   return (
     <div className="min-h-screen bg-[#0D0D0D] p-6">
       {/* Search bar skeleton */}
-      <div className="h-11 w-full max-w-lg bg-[#222222] rounded-xl animate-pulse mb-6" />
+      <div className="h-11 w-full max-w-lg bg-[#222222] rounded-sm animate-pulse mb-6" />
 
       {/* Discipline pills */}
       <div className="flex gap-2 flex-wrap mb-8">
@@ -18,7 +18,7 @@ export default function GymsLoading() {
       {/* Gym cards — 3-col grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="bg-[#111] border border-white/5 rounded-xl overflow-hidden">
+          <div key={i} className="bg-[#111] border border-white/5 rounded-sm overflow-hidden">
             <div className="h-44 bg-[#222222] animate-pulse" />
             <div className="p-4">
               <div className="h-5 w-3/4 bg-[#222222] rounded animate-pulse mb-2" />

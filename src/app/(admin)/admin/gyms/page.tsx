@@ -41,16 +41,16 @@ export default function ActiveGymsPage() {
             <div className="relative flex-1">
               <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#555]" />
               <input value={search} onChange={e => setSearch(e.target.value)}
-                placeholder="Search gyms..." className="w-full bg-[#1A1A1A] border border-white/5 rounded-xl pl-9 pr-4 py-2.5 text-white text-sm focus:outline-none focus:border-white/20 transition-colors" />
+                placeholder="Search gyms..." className="w-full bg-[#1A1A1A] border border-white/5 rounded-sm pl-9 pr-4 py-2.5 text-white text-sm focus:outline-none focus:border-white/20 transition-colors" />
             </div>
             <select value={cityFilter} onChange={e => setCityFilter(e.target.value)}
-              className="bg-[#1A1A1A] border border-white/5 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none">
+              className="bg-[#1A1A1A] border border-white/5 rounded-sm px-4 py-2.5 text-white text-sm focus:outline-none">
               {cities.map(c => <option key={c}>{c}</option>)}
             </select>
           </div>
 
           {/* Table */}
-          <div className="bg-[#1A1A1A] border border-white/5 rounded-2xl overflow-hidden">
+          <div className="bg-[#1A1A1A] border border-white/5 rounded-sm overflow-hidden">
             <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
@@ -65,7 +65,7 @@ export default function ActiveGymsPage() {
                     <tr key={g.id} className="hover:bg-white/2 transition-colors cursor-pointer">
                       <td className="px-4 py-3.5">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-lg bg-[#FF3B3B]/10 flex items-center justify-center shrink-0">
+                          <div className="w-8 h-8 rounded-sm bg-[#FF3B3B]/10 flex items-center justify-center shrink-0">
                             <span className="text-[#FF3B3B] text-xs font-black">{g.name[0]}</span>
                           </div>
                           <span className="text-white font-semibold text-sm">{g.name}</span>

@@ -18,20 +18,20 @@ function ConfirmModal({ title, message, confirmLabel, confirmClass, onConfirm, o
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-[#1A1A1A] border border-white/10 rounded-2xl w-full max-w-md p-6">
+      <div className="relative bg-[#1A1A1A] border border-white/10 rounded-sm w-full max-w-md p-6">
         <h3 className="text-white font-bold text-lg mb-2">{title}</h3>
         <p className="text-[#999999] text-sm mb-4">{message}</p>
         {showTextarea && (
-          <textarea className="w-full bg-[#0D0D0D] border border-white/10 rounded-xl px-4 py-3 text-white text-sm resize-none h-24 focus:outline-none focus:border-[#FF3B3B]/50 mb-4"
+          <textarea className="w-full bg-[#0D0D0D] border border-white/10 rounded-sm px-4 py-3 text-white text-sm resize-none h-24 focus:outline-none focus:border-[#FF3B3B]/50 mb-4"
             placeholder="Reason for rejection (will be emailed to gym owner)..."
             value={reason} onChange={e => setReason(e.target.value)} />
         )}
         <div className="flex gap-3">
-          <button onClick={onClose} className="flex-1 py-3 border border-white/10 text-white text-sm font-semibold rounded-xl hover:border-white/20 transition-all">
+          <button onClick={onClose} className="flex-1 py-3 border border-white/10 text-white text-sm font-semibold rounded-sm hover:border-white/20 transition-all">
             Cancel
           </button>
           <button onClick={handleConfirm} disabled={loading}
-            className={`flex-1 py-3 text-white text-sm font-bold rounded-xl transition-all flex items-center justify-center gap-2 ${confirmClass}`}>
+            className={`flex-1 py-3 text-white text-sm font-bold rounded-sm transition-all flex items-center justify-center gap-2 ${confirmClass}`}>
             {loading ? <Loader2 size={15} className="animate-spin" /> : confirmLabel}
           </button>
         </div>
@@ -77,12 +77,12 @@ export default function ApplicationDetailPage() {
 
         <div className="px-6 py-6 max-w-3xl space-y-6">
           {/* Gym info */}
-          <div className="bg-[#1A1A1A] border border-white/5 rounded-2xl p-6">
-            <div className="h-32 bg-gradient-to-r from-blue-900/30 to-slate-900/30 rounded-xl mb-4 flex items-center justify-center">
+          <div className="bg-[#1A1A1A] border border-white/5 rounded-sm p-6">
+            <div className="h-32 bg-gradient-to-r from-blue-900/30 to-slate-900/30 rounded-sm mb-4 flex items-center justify-center">
               <span className="text-white/20 text-sm">Cover photo pending</span>
             </div>
             <div className="flex items-start gap-4">
-              <div className="w-16 h-16 rounded-2xl bg-[#FF3B3B]/10 flex items-center justify-center shrink-0">
+              <div className="w-16 h-16 rounded-sm bg-[#FF3B3B]/10 flex items-center justify-center shrink-0">
                 <span className="text-[#FF3B3B] text-2xl font-black">M</span>
               </div>
               <div>
@@ -102,12 +102,12 @@ export default function ApplicationDetailPage() {
           </div>
 
           {/* Coaches */}
-          <div className="bg-[#1A1A1A] border border-white/5 rounded-2xl p-6">
+          <div className="bg-[#1A1A1A] border border-white/5 rounded-sm p-6">
             <h3 className="text-white font-bold mb-4">Coaches ({coaches.length})</h3>
             <div className="space-y-3">
               {coaches.map(c => (
-                <div key={c.name} className="flex items-start gap-3 bg-[#0D0D0D] rounded-xl p-4">
-                  <div className="w-10 h-10 rounded-xl bg-[#FF3B3B]/10 flex items-center justify-center shrink-0">
+                <div key={c.name} className="flex items-start gap-3 bg-[#0D0D0D] rounded-sm p-4">
+                  <div className="w-10 h-10 rounded-sm bg-[#FF3B3B]/10 flex items-center justify-center shrink-0">
                     <span className="text-[#FF3B3B] font-black text-sm">{c.name[0]}</span>
                   </div>
                   <div>
@@ -121,7 +121,7 @@ export default function ApplicationDetailPage() {
           </div>
 
           {/* Checklist */}
-          <div className="bg-[#1A1A1A] border border-white/5 rounded-2xl p-6">
+          <div className="bg-[#1A1A1A] border border-white/5 rounded-sm p-6">
             <h3 className="text-white font-bold mb-4">Onboarding Checklist</h3>
             <div className="space-y-3">
               {checklist.map(item => (
@@ -140,11 +140,11 @@ export default function ApplicationDetailPage() {
           {status === 'pending' && (
             <div className="flex gap-3">
               <button onClick={() => setModal('approve')}
-                className="flex-1 flex items-center justify-center gap-2 bg-green-500/10 hover:bg-green-500/20 border border-green-500/20 text-green-400 font-bold py-4 rounded-xl text-sm transition-all">
+                className="flex-1 flex items-center justify-center gap-2 bg-green-500/10 hover:bg-green-500/20 border border-green-500/20 text-green-400 font-bold py-4 rounded-sm text-sm transition-all">
                 <Check size={16} /> Approve Gym ✅
               </button>
               <button onClick={() => setModal('reject')}
-                className="flex-1 flex items-center justify-center gap-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 font-bold py-4 rounded-xl text-sm transition-all">
+                className="flex-1 flex items-center justify-center gap-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 font-bold py-4 rounded-sm text-sm transition-all">
                 <X size={16} /> Reject with Feedback ❌
               </button>
             </div>

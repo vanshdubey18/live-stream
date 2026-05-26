@@ -1,7 +1,5 @@
 'use client'
 
-import { MapPin, Clock, Check, X, ExternalLink } from 'lucide-react'
-
 export interface GymApplication {
   id: string
   name: string
@@ -15,72 +13,72 @@ export interface GymApplication {
   status: 'pending' | 'approved' | 'rejected'
 }
 
-const disciplineColors: Record<string, string> = {
-  BJJ: 'bg-blue-500/10 text-blue-400',
-  Boxing: 'bg-yellow-500/10 text-yellow-400',
-  'Muay Thai': 'bg-orange-500/10 text-orange-400',
-  Wrestling: 'bg-green-500/10 text-green-400',
-}
-
 interface ApplicationCardProps {
   app: GymApplication
   onApprove: (id: string) => void
   onReject: (id: string) => void
 }
 
+const statusDot: Record<string, string> = {
+  pending: 'bg-[#FFD60A]',
+  approved: 'bg-[#00D4AA]',
+  rejected: 'bg-[#FF3B3B]',
+}
+
+const statusText: Record<string, string> = {
+  pending: 'text-[#FFD60A]',
+  approved: 'text-[#00D4AA]',
+  rejected: 'text-[#FF3B3B]',
+}
+
 export default function ApplicationCard({ app, onApprove, onReject }: ApplicationCardProps) {
   return (
-    <div className="bg-[#1A1A1A] border border-white/5 rounded-2xl p-6 hover:border-white/10 transition-all">
-      <div className="flex items-start justify-between gap-4 mb-4">
+    <div className="border-b border-[#2A2A2A] py-4 flex flex-col gap-3">
+      <div className="flex items-start justify-between gap-4">
         <div>
-          <h3 className="text-white font-bold text-base">{app.name}</h3>
-          <div className="flex items-center gap-1.5 mt-1 text-[#999999] text-xs">
-            <MapPin size={12} /> {app.location}, {app.city}
-          </div>
+          <h3 className="font-bebas text-xl text-white tracking-[1px]">{app.name}</h3>
+          <p className="font-inter text-sm text-[#999999] mt-0.5">{app.location}, {app.city} · {app.disciplines.join(', ')}</p>
         </div>
-        <div className="flex items-center gap-1.5 text-[#999999] text-xs shrink-0">
-          <Clock size={12} /> {app.submittedAt}
-        </div>
-      </div>
-
-      <div className="flex flex-wrap gap-1.5 mb-4">
-        {app.disciplines.map(d => (
-          <span key={d} className={`text-xs font-medium px-2.5 py-1 rounded-full ${disciplineColors[d] ?? 'bg-white/5 text-white/60'}`}>{d}</span>
-        ))}
-      </div>
-
-      <div className="grid grid-cols-2 gap-3 mb-5">
-        <div className="bg-[#0D0D0D] rounded-xl px-3 py-2.5">
-          <p className="text-[#555] text-xs">Coaches</p>
-          <p className="text-white text-sm font-bold mt-0.5">{app.coachCount}</p>
-        </div>
-        <div className="bg-[#0D0D0D] rounded-xl px-3 py-2.5">
-          <p className="text-[#555] text-xs">Bank Details</p>
-          <p className={`text-sm font-bold mt-0.5 flex items-center gap-1 ${app.bankDetailsComplete ? 'text-green-400' : 'text-yellow-400'}`}>
-            {app.bankDetailsComplete ? <><Check size={12} /> Complete</> : 'Pending'}
-          </p>
+        <div className="flex items-center gap-1.5 shrink-0">
+          <span className={`inline-block w-1.5 h-1.5 rounded-full ${statusDot[app.status]}`} />
+          <span className={`font-inter text-xs uppercase tracking-[2px] ${statusText[app.status]}`}>{app.status}</span>
         </div>
       </div>
 
-      <div className="flex items-center gap-2 mb-5 text-xs text-[#999999]">
-        <span>Applied by:</span>
-        <span className="text-white font-medium">{app.ownerEmail}</span>
+      <div className="flex items-center gap-4 font-inter text-xs text-[#999999]">
+        <span>{app.coachCount} coaches</span>
+        <span>·</span>
+        <span className={app.bankDetailsComplete ? 'text-[#00D4AA]' : 'text-[#FFD60A]'}>
+          Bank {app.bankDetailsComplete ? 'complete' : 'pending'}
+        </span>
+        <span>·</span>
+        <span>{app.ownerEmail}</span>
+        <span>·</span>
+        <span className="text-[#555555]">{app.submittedAt}</span>
       </div>
 
-      <div className="flex gap-2">
-        <a href={`/admin/applications/${app.id}`}
-          className="flex items-center gap-1.5 border border-white/10 hover:border-white/20 text-white text-xs font-semibold px-3 py-2 rounded-xl transition-all">
-          <ExternalLink size={12} /> View Full
-        </a>
-        <button onClick={() => onApprove(app.id)}
-          className="flex-1 flex items-center justify-center gap-1.5 bg-green-500/10 hover:bg-green-500/20 border border-green-500/20 text-green-400 text-xs font-bold py-2 rounded-xl transition-all">
-          <Check size={13} /> Approve
-        </button>
-        <button onClick={() => onReject(app.id)}
-          className="flex-1 flex items-center justify-center gap-1.5 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 text-xs font-bold py-2 rounded-xl transition-all">
-          <X size={13} /> Reject
-        </button>
-      </div>
+      {app.status === 'pending' && (
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => onApprove(app.id)}
+            className="bg-white text-black font-bebas tracking-[3px] text-sm px-5 py-2 rounded-sm hover:bg-[#E5E5E5] transition-colors"
+          >
+            APPROVE
+          </button>
+          <button
+            onClick={() => onReject(app.id)}
+            className="border border-[#333333] text-[#999999] font-inter text-sm px-5 py-2 rounded-sm hover:text-white transition-colors"
+          >
+            Reject
+          </button>
+          <a
+            href={`/admin/applications/${app.id}`}
+            className="border border-[#333333] text-[#999999] font-inter text-sm px-5 py-2 rounded-sm hover:text-white transition-colors"
+          >
+            View Full
+          </a>
+        </div>
+      )}
     </div>
   )
 }

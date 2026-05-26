@@ -10,7 +10,7 @@ export default function DashboardLoading() {
       {/* Stats cards grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="bg-[#111] border border-white/5 rounded-xl p-5">
+          <div key={i} className="bg-[#111] border border-white/5 rounded-sm p-5">
             <div className="h-4 w-24 bg-[#222222] rounded animate-pulse mb-3" />
             <div className="h-8 w-16 bg-[#222222] rounded animate-pulse" />
           </div>
@@ -20,7 +20,7 @@ export default function DashboardLoading() {
       {/* Happening Now */}
       <div className="mb-8">
         <div className="h-5 w-36 bg-[#222222] rounded animate-pulse mb-4" />
-        <div className="h-28 w-full bg-[#222222] rounded-xl animate-pulse" />
+        <div className="h-28 w-full bg-[#222222] rounded-sm animate-pulse" />
       </div>
 
       {/* Recommended — 4 cards in a row */}
@@ -28,7 +28,7 @@ export default function DashboardLoading() {
         <div className="h-5 w-32 bg-[#222222] rounded animate-pulse mb-4" />
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="bg-[#111] border border-white/5 rounded-xl overflow-hidden">
+            <div key={i} className="bg-[#111] border border-white/5 rounded-sm overflow-hidden">
               <div className="h-36 bg-[#222222] animate-pulse" />
               <div className="p-3">
                 <div className="h-4 w-3/4 bg-[#222222] rounded animate-pulse mb-2" />

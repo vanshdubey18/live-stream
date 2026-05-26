@@ -37,17 +37,17 @@ export default function CoachesPage() {
         <div className="sticky top-0 z-20 bg-[#0D0D0D]/90 backdrop-blur-md border-b border-white/5 px-6 h-16 flex items-center justify-between mt-14 lg:mt-0">
           <h1 className="text-white font-bold text-lg">Your Coaches</h1>
           <button onClick={() => setShowModal(true)}
-            className="flex items-center gap-1.5 bg-[#FF3B3B] hover:bg-red-700 text-white text-sm font-bold px-4 py-2 rounded-xl transition-colors">
+            className="flex items-center gap-1.5 bg-[#FF3B3B] hover:bg-red-700 text-white text-sm font-bold px-4 py-2 rounded-sm transition-colors">
             <Plus size={15} /> Add Coach
           </button>
         </div>
 
         <div className="px-6 py-6 max-w-5xl">
           {coaches.length === 0 ? (
-            <div className="bg-[#1A1A1A] border border-white/5 rounded-2xl px-6 py-16 text-center">
+            <div className="bg-[#1A1A1A] border border-white/5 rounded-sm px-6 py-16 text-center">
               <p className="text-[#999999] text-sm mb-4">No coaches yet.</p>
               <button onClick={() => setShowModal(true)}
-                className="bg-[#FF3B3B] hover:bg-red-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition-colors">
+                className="bg-[#FF3B3B] hover:bg-red-700 text-white text-sm font-bold px-5 py-2.5 rounded-sm transition-colors">
                 Add your first coach
               </button>
             </div>

@@ -200,7 +200,7 @@ export default function CommandPalette({ isOpen, onClose }: Props) {
             transition={{ duration: 0.18, ease: 'easeOut' }}
             className="fixed inset-0 z-50 pointer-events-none flex justify-center"
           >
-            <div className="pointer-events-auto mt-20 max-w-2xl w-full mx-4 bg-[#111] border border-white/10 rounded-2xl overflow-hidden shadow-2xl self-start flex flex-col">
+            <div className="pointer-events-auto mt-20 max-w-2xl w-full mx-4 bg-[#111] border border-white/10 rounded-sm overflow-hidden shadow-2xl self-start flex flex-col">
               {/* Search input */}
               <div className="flex items-center gap-3 px-4 py-4 border-b border-white/5">
                 <Search size={18} className="text-[#555] shrink-0" />

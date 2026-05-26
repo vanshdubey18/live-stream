@@ -36,13 +36,13 @@ export default function CouponsPage() {
         <div className="sticky top-0 z-20 bg-[#0D0D0D]/90 backdrop-blur-md border-b border-white/5 px-6 h-16 flex items-center justify-between mt-14 lg:mt-0">
           <h1 className="text-white font-bold text-lg">Coupons</h1>
           <button onClick={() => setShowModal(true)}
-            className="flex items-center gap-1.5 bg-[#FF3B3B] hover:bg-red-700 text-white text-sm font-bold px-4 py-2 rounded-xl transition-colors">
+            className="flex items-center gap-1.5 bg-[#FF3B3B] hover:bg-red-700 text-white text-sm font-bold px-4 py-2 rounded-sm transition-colors">
             <Plus size={15} /> Create Coupon
           </button>
         </div>
 
         <div className="px-6 py-6 max-w-5xl">
-          <div className="bg-[#1A1A1A] border border-white/5 rounded-2xl overflow-hidden">
+          <div className="bg-[#1A1A1A] border border-white/5 rounded-sm overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>

@@ -25,7 +25,7 @@ function ConfirmModal({ payout, onConfirm, onClose }: { payout: Payout; onConfir
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-[#1A1A1A] border border-white/10 rounded-2xl w-full max-w-sm p-6">
+      <div className="relative bg-[#1A1A1A] border border-white/10 rounded-sm w-full max-w-sm p-6">
         <div className="flex items-start justify-between mb-4">
           <h3 className="text-white font-bold">Confirm Transfer</h3>
           <button onClick={onClose} className="text-[#999999] hover:text-white"><X size={18} /></button>
@@ -33,9 +33,9 @@ function ConfirmModal({ payout, onConfirm, onClose }: { payout: Payout; onConfir
         <p className="text-[#999999] text-sm mb-1">Send payout to <span className="text-white font-medium">{payout.gym}</span>?</p>
         <p className="text-[#FF3B3B] text-2xl font-black mb-4">{payout.gymCut}</p>
         <div className="flex gap-3">
-          <button onClick={onClose} className="flex-1 py-3 border border-white/10 text-white text-sm font-semibold rounded-xl">Cancel</button>
+          <button onClick={onClose} className="flex-1 py-3 border border-white/10 text-white text-sm font-semibold rounded-sm">Cancel</button>
           <button onClick={() => { setLoading(true); setTimeout(() => { onConfirm(); setLoading(false) }, 700) }} disabled={loading}
-            className="flex-1 py-3 bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white text-sm font-bold rounded-xl flex items-center justify-center gap-2">
+            className="flex-1 py-3 bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white text-sm font-bold rounded-sm flex items-center justify-center gap-2">
             {loading ? <Loader2 size={15} className="animate-spin" /> : 'Confirm Transfer'}
           </button>
         </div>
@@ -76,17 +76,17 @@ export default function PayoutsPage() {
           <h1 className="text-white font-bold text-lg">Payouts</h1>
           {tab === 'Pending' && pending.length > 0 && (
             <button onClick={processAll}
-              className="bg-green-600 hover:bg-green-700 text-white text-sm font-bold px-4 py-2 rounded-xl transition-colors">
+              className="bg-green-600 hover:bg-green-700 text-white text-sm font-bold px-4 py-2 rounded-sm transition-colors">
               Process All Pending
             </button>
           )}
         </div>
 
         <div className="px-6 py-6 max-w-5xl space-y-4">
-          <div className="flex gap-1 bg-[#1A1A1A] border border-white/5 rounded-xl p-1 w-fit">
+          <div className="flex gap-1 bg-[#1A1A1A] border border-white/5 rounded-sm p-1 w-fit">
             {TABS.map(t => (
               <button key={t} onClick={() => setTab(t)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all
+                className={`flex items-center gap-2 px-4 py-2 rounded-sm text-sm font-semibold transition-all
                   ${tab === t ? 'bg-white/10 text-white' : 'text-[#999999] hover:text-white'}`}>
                 {t}
                 <span className="text-xs bg-white/10 text-white/60 px-1.5 py-0.5 rounded-full">
@@ -96,7 +96,7 @@ export default function PayoutsPage() {
             ))}
           </div>
 
-          <div className="bg-[#1A1A1A] border border-white/5 rounded-2xl overflow-hidden">
+          <div className="bg-[#1A1A1A] border border-white/5 rounded-sm overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
@@ -123,7 +123,7 @@ export default function PayoutsPage() {
                       <td className="px-4 py-3.5">
                         {p.status === 'pending' && (
                           <button onClick={() => setConfirm(p)}
-                            className="bg-green-500/10 hover:bg-green-500/20 border border-green-500/20 text-green-400 text-xs font-bold px-3 py-1.5 rounded-lg transition-all">
+                            className="bg-green-500/10 hover:bg-green-500/20 border border-green-500/20 text-green-400 text-xs font-bold px-3 py-1.5 rounded-sm transition-all">
                             Process
                           </button>
                         )}

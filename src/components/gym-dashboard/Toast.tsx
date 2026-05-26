@@ -15,7 +15,7 @@ export default function Toast({ message, onClose }: ToastProps) {
   }, [onClose])
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3 bg-[#1A1A1A] border border-green-500/30 text-white px-5 py-3.5 rounded-2xl shadow-xl animate-in slide-in-from-bottom-4 duration-300">
+    <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3 bg-[#1A1A1A] border border-green-500/30 text-white px-5 py-3.5 rounded-sm shadow-xl animate-in slide-in-from-bottom-4 duration-300">
       <CheckCircle size={18} className="text-green-400 shrink-0" />
       <span className="text-sm font-medium">{message}</span>
       <button onClick={onClose} className="text-[#999999] hover:text-white ml-1 transition-colors">

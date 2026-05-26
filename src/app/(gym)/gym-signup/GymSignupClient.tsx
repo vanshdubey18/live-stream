@@ -2,20 +2,9 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Check, ChevronRight, Loader2, Building2, User, Dumbbell, MapPin, CheckCircle } from 'lucide-react'
+import { Check, Loader2, Building2, User, CheckCircle } from 'lucide-react'
 
 const DISCIPLINES = ['BJJ', 'Boxing', 'Muay Thai', 'Wrestling', 'MMA', 'Kickboxing', 'Judo', 'Sambo']
-
-const DISCIPLINE_COLORS: Record<string, string> = {
-  BJJ: 'border-blue-500/40 bg-blue-500/10 text-blue-400',
-  Boxing: 'border-yellow-500/40 bg-yellow-500/10 text-yellow-400',
-  'Muay Thai': 'border-orange-500/40 bg-orange-500/10 text-orange-400',
-  Wrestling: 'border-green-500/40 bg-green-500/10 text-green-400',
-  MMA: 'border-[#FF3B3B]/40 bg-[#FF3B3B]/10 text-[#FF3B3B]',
-  Kickboxing: 'border-purple-500/40 bg-purple-500/10 text-purple-400',
-  Judo: 'border-pink-500/40 bg-pink-500/10 text-pink-400',
-  Sambo: 'border-teal-500/40 bg-teal-500/10 text-teal-400',
-}
 
 interface Props {
   isLoggedIn: boolean
@@ -90,31 +79,25 @@ export default function GymSignupClient({ isLoggedIn, prefillName, prefillEmail 
     { n: 3, label: 'Submitted', icon: CheckCircle },
   ]
 
+  const inputCls = 'w-full bg-[#0D0D0D] border border-[#333333] rounded-sm px-4 py-3 text-white placeholder-[#555555] text-sm focus:outline-none focus:border-white transition-colors'
+  const labelCls = 'font-inter text-[11px] text-[#999999] tracking-[4px] uppercase block mb-1.5'
+
   return (
     <div className="min-h-screen bg-[#0D0D0D] flex flex-col items-center justify-center px-4 py-16">
-      {/* Logo */}
-      <a href="/" className="text-3xl font-black tracking-tighter text-[#FF3B3B] mb-10">MATPEAK</a>
+      {/* Wordmark */}
+      <a href="/" className="font-bebas text-2xl tracking-[1px] text-[#FF3B3B] mb-10">MATPEAK</a>
 
       <div className="w-full max-w-lg">
         {/* Step indicator */}
         {step < 3 && (
-          <div className="flex items-center justify-center gap-0 mb-10">
+          <div className="flex items-center justify-center gap-6 mb-10">
             {steps.filter(s => !isLoggedIn || s.n !== 1).map((s, idx, arr) => (
-              <div key={s.n} className="flex items-center">
-                <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold transition-all
-                  ${step === s.n
-                    ? 'bg-[#FF3B3B]/15 border border-[#FF3B3B]/30 text-[#FF3B3B]'
-                    : step > s.n
-                    ? 'text-green-400'
-                    : 'text-[#444]'}`}>
-                  {step > s.n
-                    ? <Check size={13} />
-                    : <s.icon size={13} />}
-                  {s.label}
-                </div>
-                {idx < arr.length - 1 && (
-                  <ChevronRight size={14} className="text-[#333] mx-1" />
-                )}
+              <div key={s.n} className="flex items-center gap-2">
+                <span className={`font-inter text-sm transition-colors ${step === s.n ? 'text-white' : step > s.n ? 'text-[#555555]' : 'text-[#555555]'}`}>
+                  {step > s.n ? <Check size={14} className="inline" /> : s.n}
+                </span>
+                <span className={`font-inter text-sm transition-colors ${step === s.n ? 'text-white' : 'text-[#555555]'}`}>{s.label}</span>
+                {idx < arr.length - 1 && <span className="text-[#333333] ml-6">/</span>}
               </div>
             ))}
           </div>
@@ -122,129 +105,125 @@ export default function GymSignupClient({ isLoggedIn, prefillName, prefillEmail 
 
         {/* ── Step 1: Account ── */}
         {step === 1 && (
-          <form onSubmit={handleStep1} className="bg-[#1A1A1A] border border-white/5 rounded-2xl p-8 space-y-5">
+          <form onSubmit={handleStep1} className="bg-[#1A1A1A] border border-[#333333] rounded-sm p-8 space-y-5">
             <div>
-              <h1 className="text-white text-2xl font-black">Create your account</h1>
-              <p className="text-[#999999] text-sm mt-1">Already have an account? <a href="/login" className="text-[#FF3B3B] hover:underline">Log in</a></p>
+              <h1 className="font-bebas text-2xl text-white tracking-[1px]">CREATE YOUR ACCOUNT</h1>
+              <p className="font-inter text-sm text-[#999999] mt-1">Already have an account? <a href="/login" className="text-white hover:text-[#999999] underline transition-colors">Log in</a></p>
             </div>
 
             <div className="space-y-4">
               <div>
-                <label className="text-[#999999] text-xs font-semibold uppercase tracking-wider block mb-1.5">Full Name</label>
+                <label className={labelCls}>Full Name</label>
                 <input
                   required
                   value={ownerName}
                   onChange={e => setOwnerName(e.target.value)}
                   placeholder="Rahul Sharma"
-                  className="w-full bg-[#0D0D0D] border border-white/10 rounded-xl px-4 py-3 text-white placeholder-[#444] text-sm focus:outline-none focus:border-[#FF3B3B]/50 transition-colors"
+                  className={inputCls}
                 />
               </div>
               <div>
-                <label className="text-[#999999] text-xs font-semibold uppercase tracking-wider block mb-1.5">Email</label>
+                <label className={labelCls}>Email</label>
                 <input
                   required
                   type="email"
                   value={email}
                   onChange={e => setEmail(e.target.value)}
                   placeholder="you@yourgym.com"
-                  className="w-full bg-[#0D0D0D] border border-white/10 rounded-xl px-4 py-3 text-white placeholder-[#444] text-sm focus:outline-none focus:border-[#FF3B3B]/50 transition-colors"
+                  className={inputCls}
                 />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-[#999999] text-xs font-semibold uppercase tracking-wider block mb-1.5">Password</label>
+                  <label className={labelCls}>Password</label>
                   <input
                     required
                     type="password"
                     value={password}
                     onChange={e => setPassword(e.target.value)}
                     placeholder="Min. 8 characters"
-                    className="w-full bg-[#0D0D0D] border border-white/10 rounded-xl px-4 py-3 text-white placeholder-[#444] text-sm focus:outline-none focus:border-[#FF3B3B]/50 transition-colors"
+                    className={inputCls}
                   />
                 </div>
                 <div>
-                  <label className="text-[#999999] text-xs font-semibold uppercase tracking-wider block mb-1.5">Confirm</label>
+                  <label className={labelCls}>Confirm</label>
                   <input
                     required
                     type="password"
                     value={confirmPassword}
                     onChange={e => setConfirmPassword(e.target.value)}
                     placeholder="Repeat password"
-                    className="w-full bg-[#0D0D0D] border border-white/10 rounded-xl px-4 py-3 text-white placeholder-[#444] text-sm focus:outline-none focus:border-[#FF3B3B]/50 transition-colors"
+                    className={inputCls}
                   />
                 </div>
               </div>
             </div>
 
-            {error && <p className="text-[#FF3B3B] text-sm bg-[#FF3B3B]/10 border border-[#FF3B3B]/20 rounded-xl px-4 py-3">{error}</p>}
+            {error && <p className="font-inter text-sm text-[#FF3B3B] border border-[#FF3B3B]/20 rounded-sm px-4 py-3">{error}</p>}
 
             <button type="submit"
-              className="w-full bg-[#FF3B3B] hover:bg-red-700 text-white font-bold py-3.5 rounded-xl text-sm transition-colors flex items-center justify-center gap-2">
-              Continue <ChevronRight size={16} />
+              className="w-full bg-white text-black font-bebas tracking-[3px] hover:bg-[#E5E5E5] py-3.5 rounded-sm text-sm transition-colors">
+              CONTINUE
             </button>
           </form>
         )}
 
         {/* ── Step 2: Gym Details ── */}
         {step === 2 && (
-          <form onSubmit={handleStep2} className="bg-[#1A1A1A] border border-white/5 rounded-2xl p-8 space-y-6">
+          <form onSubmit={handleStep2} className="bg-[#1A1A1A] border border-[#333333] rounded-sm p-8 space-y-6">
             <div>
-              <h1 className="text-white text-2xl font-black">Tell us about your gym</h1>
-              <p className="text-[#999999] text-sm mt-1">This will be reviewed by our team before going live.</p>
+              <h1 className="font-bebas text-2xl text-white tracking-[1px]">TELL US ABOUT YOUR GYM</h1>
+              <p className="font-inter text-sm text-[#999999] mt-1">This will be reviewed by our team before going live.</p>
             </div>
 
             <div className="space-y-4">
               <div>
-                <label className="text-[#999999] text-xs font-semibold uppercase tracking-wider block mb-1.5">Gym Name</label>
+                <label className={labelCls}>Gym Name</label>
                 <input
                   required
                   value={gymName}
                   onChange={e => setGymName(e.target.value)}
                   placeholder="Xtreme MMA Mumbai"
-                  className="w-full bg-[#0D0D0D] border border-white/10 rounded-xl px-4 py-3 text-white placeholder-[#444] text-sm focus:outline-none focus:border-[#FF3B3B]/50 transition-colors"
+                  className={inputCls}
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-[#999999] text-xs font-semibold uppercase tracking-wider block mb-1.5">
-                    <MapPin size={11} className="inline mr-1" />City
-                  </label>
+                  <label className={labelCls}>City</label>
                   <input
                     required
                     value={city}
                     onChange={e => setCity(e.target.value)}
                     placeholder="Mumbai"
-                    className="w-full bg-[#0D0D0D] border border-white/10 rounded-xl px-4 py-3 text-white placeholder-[#444] text-sm focus:outline-none focus:border-[#FF3B3B]/50 transition-colors"
+                    className={inputCls}
                   />
                 </div>
                 <div>
-                  <label className="text-[#999999] text-xs font-semibold uppercase tracking-wider block mb-1.5">Area / Locality</label>
+                  <label className={labelCls}>Area / Locality</label>
                   <input
                     value={location}
                     onChange={e => setLocation(e.target.value)}
                     placeholder="Andheri West"
-                    className="w-full bg-[#0D0D0D] border border-white/10 rounded-xl px-4 py-3 text-white placeholder-[#444] text-sm focus:outline-none focus:border-[#FF3B3B]/50 transition-colors"
+                    className={inputCls}
                   />
                 </div>
               </div>
 
               <div>
-                <label className="text-[#999999] text-xs font-semibold uppercase tracking-wider block mb-1.5">Description</label>
+                <label className={labelCls}>Description</label>
                 <textarea
                   rows={3}
                   value={description}
                   onChange={e => setDescription(e.target.value)}
                   placeholder="Tell members what makes your gym special..."
-                  className="w-full bg-[#0D0D0D] border border-white/10 rounded-xl px-4 py-3 text-white placeholder-[#444] text-sm focus:outline-none focus:border-[#FF3B3B]/50 transition-colors resize-none"
+                  className={`${inputCls} resize-none`}
                 />
               </div>
 
               <div>
-                <label className="text-[#999999] text-xs font-semibold uppercase tracking-wider block mb-2.5">
-                  <Dumbbell size={11} className="inline mr-1" />Disciplines Offered
-                </label>
-                <div className="flex flex-wrap gap-2">
+                <label className={labelCls}>Disciplines Offered</label>
+                <div className="flex flex-wrap gap-2 mt-2">
                   {DISCIPLINES.map(d => {
                     const active = disciplines.includes(d)
                     return (
@@ -252,10 +231,10 @@ export default function GymSignupClient({ isLoggedIn, prefillName, prefillEmail 
                         key={d}
                         type="button"
                         onClick={() => toggleDiscipline(d)}
-                        className={`px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all
+                        className={`px-3.5 py-1.5 rounded-sm text-xs font-inter border transition-all
                           ${active
-                            ? DISCIPLINE_COLORS[d] ?? 'border-white/30 bg-white/10 text-white'
-                            : 'border-white/10 text-[#555] hover:border-white/20 hover:text-[#999999]'}`}>
+                            ? 'border-white bg-[#222222] text-white'
+                            : 'border-[#333333] bg-[#0D0D0D] text-[#555555] hover:border-[#555555] hover:text-[#999999]'}`}>
                         {active && <Check size={10} className="inline mr-1" />}
                         {d}
                       </button>
@@ -263,23 +242,23 @@ export default function GymSignupClient({ isLoggedIn, prefillName, prefillEmail 
                   })}
                 </div>
                 {disciplines.length > 0 && (
-                  <p className="text-[#555] text-xs mt-2">{disciplines.length} selected</p>
+                  <p className="font-inter text-[#555555] text-xs mt-2">{disciplines.length} selected</p>
                 )}
               </div>
             </div>
 
-            {error && <p className="text-[#FF3B3B] text-sm bg-[#FF3B3B]/10 border border-[#FF3B3B]/20 rounded-xl px-4 py-3">{error}</p>}
+            {error && <p className="font-inter text-sm text-[#FF3B3B] border border-[#FF3B3B]/20 rounded-sm px-4 py-3">{error}</p>}
 
             <div className="flex gap-3">
               {!isLoggedIn && (
                 <button type="button" onClick={() => setStep(1)}
-                  className="px-5 py-3.5 rounded-xl border border-white/10 text-[#999999] hover:text-white text-sm font-semibold transition-colors">
+                  className="px-5 py-3.5 rounded-sm border border-[#333333] text-white font-inter text-sm hover:bg-[#222222] transition-colors">
                   Back
                 </button>
               )}
               <button type="submit" disabled={loading}
-                className="flex-1 bg-[#FF3B3B] hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-xl text-sm transition-colors flex items-center justify-center gap-2">
-                {loading ? <><Loader2 size={16} className="animate-spin" /> Submitting…</> : <>Submit Application <ChevronRight size={16} /></>}
+                className="flex-1 bg-white text-black font-bebas tracking-[3px] hover:bg-[#E5E5E5] disabled:opacity-50 disabled:cursor-not-allowed py-3.5 rounded-sm text-sm transition-colors flex items-center justify-center gap-2">
+                {loading ? <><Loader2 size={16} className="animate-spin" /> SUBMITTING…</> : 'SUBMIT APPLICATION'}
               </button>
             </div>
           </form>
@@ -287,36 +266,36 @@ export default function GymSignupClient({ isLoggedIn, prefillName, prefillEmail 
 
         {/* ── Step 3: Success ── */}
         {step === 3 && (
-          <div className="bg-[#1A1A1A] border border-white/5 rounded-2xl p-10 text-center space-y-5">
-            <div className="w-16 h-16 rounded-full bg-green-500/10 border border-green-500/20 flex items-center justify-center mx-auto">
-              <CheckCircle size={32} className="text-green-400" />
+          <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm p-10 text-center space-y-5">
+            <div className="w-12 h-12 border border-[#00D4AA] flex items-center justify-center mx-auto rounded-sm">
+              <CheckCircle size={24} className="text-[#00D4AA]" />
             </div>
             <div>
-              <h1 className="text-white text-2xl font-black">Application submitted!</h1>
-              <p className="text-[#999999] text-sm mt-2 max-w-sm mx-auto">
+              <h1 className="font-bebas text-2xl text-white tracking-[1px]">APPLICATION SUBMITTED</h1>
+              <p className="font-inter text-[#999999] text-sm mt-2 max-w-sm mx-auto">
                 Our team will review your gym within 24–48 hours. You'll get an email once you're approved.
               </p>
             </div>
 
-            <div className="bg-[#0D0D0D] border border-white/5 rounded-xl p-5 text-left space-y-3 text-sm">
+            <div className="bg-[#0D0D0D] border border-[#333333] rounded-sm p-5 text-left space-y-3">
               {[
                 { n: '1', text: 'Application review by MATPEAK team', done: true },
                 { n: '2', text: 'Gym page goes live on platform', done: false },
                 { n: '3', text: 'Start streaming classes to members', done: false },
               ].map(item => (
                 <div key={item.n} className="flex items-center gap-3">
-                  <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-black shrink-0
-                    ${item.done ? 'bg-green-500/15 text-green-400' : 'bg-white/5 text-[#555]'}`}>
+                  <div className={`w-6 h-6 flex items-center justify-center text-xs font-inter shrink-0
+                    ${item.done ? 'text-[#00D4AA]' : 'text-[#555555]'}`}>
                     {item.done ? <Check size={12} /> : item.n}
                   </div>
-                  <span className={item.done ? 'text-white' : 'text-[#555]'}>{item.text}</span>
+                  <span className={`font-inter text-sm ${item.done ? 'text-white' : 'text-[#555555]'}`}>{item.text}</span>
                 </div>
               ))}
             </div>
 
             <button onClick={() => router.push('/gym-dashboard')}
-              className="w-full bg-[#FF3B3B] hover:bg-red-700 text-white font-bold py-3.5 rounded-xl text-sm transition-colors">
-              Go to your dashboard
+              className="w-full bg-white text-black font-bebas tracking-[3px] hover:bg-[#E5E5E5] py-3.5 rounded-sm text-sm transition-colors">
+              GO TO YOUR DASHBOARD
             </button>
           </div>
         )}

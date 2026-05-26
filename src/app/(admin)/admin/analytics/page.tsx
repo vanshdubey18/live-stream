@@ -44,7 +44,7 @@ const axisProps = { axisLine: false, tickLine: false }
 
 function ChartCard({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="bg-[#1A1A1A] border border-white/5 rounded-2xl p-6">
+    <div className="bg-[#1A1A1A] border border-white/5 rounded-sm p-6">
       <h3 className="text-white font-bold mb-5 text-sm">{title}</h3>
       {children}
     </div>

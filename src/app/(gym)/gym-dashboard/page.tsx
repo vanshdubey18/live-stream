@@ -20,7 +20,7 @@ export default async function GymDashboardPage() {
         <div className="text-center">
           <h1 className="text-white text-2xl font-bold mb-3">No gym found</h1>
           <p className="text-[#999999] text-sm mb-6">You don't have a gym linked to your account yet.</p>
-          <a href="/gym-signup" className="bg-[#FF3B3B] hover:bg-red-700 text-white font-bold px-6 py-3 rounded-xl text-sm transition-colors">
+          <a href="/gym-signup" className="bg-[#FF3B3B] hover:bg-red-700 text-white font-bold px-6 py-3 rounded-sm text-sm transition-colors">
             Apply to list your gym
           </a>
         </div>

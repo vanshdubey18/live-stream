@@ -26,26 +26,30 @@ function formatINR(v: number) {
 
 export default function RevenueChart() {
   return (
-    <div className="bg-[#1A1A1A] border border-white/5 rounded-2xl p-6">
+    <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm p-6">
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-white font-bold">Revenue — Last 30 Days</h3>
-        <div className="flex items-center gap-4 text-xs">
-          <span className="flex items-center gap-1.5 text-[#999999]"><span className="w-3 h-0.5 bg-[#FF3B3B] inline-block rounded" /> Total Revenue</span>
-          <span className="flex items-center gap-1.5 text-[#999999]"><span className="w-3 h-0.5 bg-blue-400 inline-block rounded" /> Platform Cut</span>
+        <h3 className="font-bebas text-2xl text-white tracking-[1px]">Revenue — Last 30 Days</h3>
+        <div className="flex items-center gap-4">
+          <span className="flex items-center gap-1.5 font-inter text-xs text-[#999999]">
+            <span className="w-3 h-0.5 bg-[#FF3B3B] inline-block" /> Total Revenue
+          </span>
+          <span className="flex items-center gap-1.5 font-inter text-xs text-[#999999]">
+            <span className="w-3 h-0.5 bg-[#00D4AA] inline-block" /> Platform Cut
+          </span>
         </div>
       </div>
       <ResponsiveContainer width="100%" height={220}>
         <LineChart data={DATA} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
-          <XAxis dataKey="day" tick={{ fill: '#555', fontSize: 11 }} axisLine={false} tickLine={false} interval={2} />
-          <YAxis tickFormatter={formatINR} tick={{ fill: '#555', fontSize: 11 }} axisLine={false} tickLine={false} width={50} />
+          <CartesianGrid strokeDasharray="3 3" stroke="#2A2A2A" />
+          <XAxis dataKey="day" tick={{ fill: '#555555', fontSize: 11 }} axisLine={false} tickLine={false} interval={2} />
+          <YAxis tickFormatter={formatINR} tick={{ fill: '#555555', fontSize: 11 }} axisLine={false} tickLine={false} width={50} />
           <Tooltip
-            contentStyle={{ backgroundColor: '#111', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12, fontSize: 12 }}
+            contentStyle={{ backgroundColor: '#1A1A1A', border: '1px solid #333333', borderRadius: 2, fontSize: 12 }}
             labelStyle={{ color: '#fff', fontWeight: 700, marginBottom: 4 }}
             formatter={(v) => [`₹${(v as number).toLocaleString('en-IN')}`]}
           />
           <Line type="monotone" dataKey="total" stroke="#FF3B3B" strokeWidth={2.5} dot={false} name="Total Revenue" />
-          <Line type="monotone" dataKey="platform" stroke="#60A5FA" strokeWidth={2} dot={false} strokeDasharray="4 2" name="Platform Cut" />
+          <Line type="monotone" dataKey="platform" stroke="#00D4AA" strokeWidth={2} dot={false} strokeDasharray="4 2" name="Platform Cut" />
         </LineChart>
       </ResponsiveContainer>
     </div>

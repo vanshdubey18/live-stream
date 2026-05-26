@@ -49,7 +49,7 @@ export default async function WatchPage({ params }: { params: { id: string } }) 
               You need an active membership at <strong className="text-white">{gymName}</strong> to watch this class.
             </p>
             <Link href="/gyms"
-              className="inline-block bg-[#FF3B3B] hover:bg-red-700 text-white font-bold px-6 py-3 rounded-xl text-sm transition-colors">
+              className="inline-block bg-[#FF3B3B] hover:bg-red-700 text-white font-bold px-6 py-3 rounded-sm text-sm transition-colors">
               Browse Gyms
             </Link>
           </div>

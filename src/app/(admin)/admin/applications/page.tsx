@@ -44,12 +44,12 @@ export default function ApplicationsPage() {
 
         <div className="px-6 py-6 max-w-5xl">
           {/* Tabs */}
-          <div className="flex gap-1 bg-[#1A1A1A] border border-white/5 rounded-xl p-1 mb-6 w-fit">
+          <div className="flex gap-1 bg-[#1A1A1A] border border-white/5 rounded-sm p-1 mb-6 w-fit">
             {TABS.map(t => {
               const count = t === 'Pending' ? pendingCount : apps.filter(a => a.status === t.toLowerCase()).length
               return (
                 <button key={t} onClick={() => setTab(t)}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all
+                  className={`flex items-center gap-2 px-4 py-2 rounded-sm text-sm font-semibold transition-all
                     ${tab === t ? 'bg-white/10 text-white' : 'text-[#999999] hover:text-white'}`}>
                   {t}
                   {count > 0 && (
@@ -64,7 +64,7 @@ export default function ApplicationsPage() {
           </div>
 
           {filtered.length === 0 ? (
-            <div className="bg-[#1A1A1A] border border-white/5 rounded-2xl px-6 py-16 text-center">
+            <div className="bg-[#1A1A1A] border border-white/5 rounded-sm px-6 py-16 text-center">
               <p className="text-[#999999] text-sm">No {tab.toLowerCase()} applications.</p>
             </div>
           ) : (

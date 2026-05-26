@@ -33,7 +33,7 @@ export default function ClassRow({
   isLive = false,
 }: ClassRowProps) {
   return (
-    <div className={`flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all duration-200 group hover:bg-white/3
+    <div className={`flex items-center gap-4 px-4 py-3.5 rounded-sm transition-all duration-200 group hover:bg-white/3
       ${isLive ? 'bg-[#FF3B3B]/5 border border-[#FF3B3B]/20' : 'border border-transparent'}`}>
       {/* Time */}
       <div className="w-16 shrink-0 text-center">
@@ -72,7 +72,7 @@ export default function ClassRow({
       {isLive && (
         <a
           href="#"
-          className="shrink-0 bg-[#FF3B3B] hover:bg-red-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition-colors"
+          className="shrink-0 bg-[#FF3B3B] hover:bg-red-700 text-white text-xs font-bold px-3 py-1.5 rounded-sm transition-colors"
         >
           Watch
         </a>

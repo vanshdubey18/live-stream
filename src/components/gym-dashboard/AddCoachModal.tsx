@@ -29,13 +29,13 @@ export default function AddCoachModal({ onClose, onSaved }: AddCoachModalProps) 
     }, 500)
   }
 
-  const inputCls = 'w-full bg-[#0D0D0D] border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-[#FF3B3B]/50 transition-colors'
+  const inputCls = 'w-full bg-[#0D0D0D] border border-white/10 rounded-sm px-4 py-2.5 text-white text-sm focus:outline-none focus:border-[#FF3B3B]/50 transition-colors'
   const labelCls = 'block text-[#999999] text-xs font-medium mb-1.5'
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-[#1A1A1A] border border-white/10 rounded-2xl w-full max-w-md">
+      <div className="relative bg-[#1A1A1A] border border-white/10 rounded-sm w-full max-w-md">
         <div className="flex items-center justify-between px-6 py-4 border-b border-white/5">
           <h2 className="text-white font-bold text-lg">Add Coach</h2>
           <button onClick={onClose} className="text-[#999999] hover:text-white transition-colors"><X size={20} /></button>
@@ -67,11 +67,11 @@ export default function AddCoachModal({ onClose, onSaved }: AddCoachModalProps) 
           </div>
           <div className="flex gap-3 pt-1">
             <button type="button" onClick={onClose}
-              className="flex-1 py-3 border border-white/10 hover:border-white/20 text-white text-sm font-semibold rounded-xl transition-all">
+              className="flex-1 py-3 border border-white/10 hover:border-white/20 text-white text-sm font-semibold rounded-sm transition-all">
               Cancel
             </button>
             <button type="submit" disabled={loading}
-              className="flex-1 py-3 bg-[#FF3B3B] hover:bg-red-700 disabled:opacity-50 text-white text-sm font-bold rounded-xl transition-all flex items-center justify-center gap-2">
+              className="flex-1 py-3 bg-[#FF3B3B] hover:bg-red-700 disabled:opacity-50 text-white text-sm font-bold rounded-sm transition-all flex items-center justify-center gap-2">
               {loading ? <Loader2 size={15} className="animate-spin" /> : 'Save Coach'}
             </button>
           </div>

@@ -47,7 +47,7 @@ export default function AdminOverviewClient({ stats, gyms, members, payouts }: P
             <p className="text-[#999999] text-xs">Platform-wide stats and management</p>
           </div>
           <a href="/admin/applications"
-            className="flex items-center gap-1.5 bg-[#FF3B3B] hover:bg-red-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition-colors">
+            className="flex items-center gap-1.5 bg-[#FF3B3B] hover:bg-red-700 text-white text-xs font-bold px-4 py-2 rounded-sm transition-colors">
             Review Applications
             {stats.pendingCount > 0 && (
               <span className="bg-white/20 text-white text-xs font-black px-1.5 py-0.5 rounded-md ml-0.5">
@@ -61,7 +61,7 @@ export default function AdminOverviewClient({ stats, gyms, members, payouts }: P
 
           {/* Pending alert */}
           {stats.pendingCount > 0 && (
-            <div className="flex items-center gap-3 bg-yellow-500/5 border border-yellow-500/20 rounded-2xl px-5 py-4">
+            <div className="flex items-center gap-3 bg-yellow-500/5 border border-yellow-500/20 rounded-sm px-5 py-4">
               <AlertTriangle size={18} className="text-yellow-400 shrink-0" />
               <div className="flex-1">
                 <p className="text-yellow-400 font-semibold text-sm">
@@ -114,12 +114,12 @@ export default function AdminOverviewClient({ stats, gyms, members, payouts }: P
 
           {/* Gyms + Members tabs */}
           <section>
-            <div className="flex items-center gap-1 mb-4 bg-white/5 rounded-xl p-1 w-fit">
+            <div className="flex items-center gap-1 mb-4 bg-white/5 rounded-sm p-1 w-fit">
               {(['gyms', 'members'] as const).map(tab => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className={`px-4 py-1.5 rounded-lg text-sm font-semibold transition-all capitalize
+                  className={`px-4 py-1.5 rounded-sm text-sm font-semibold transition-all capitalize
                     ${activeTab === tab ? 'bg-[#FF3B3B] text-white' : 'text-[#999999] hover:text-white'}`}
                 >
                   {tab}
@@ -128,7 +128,7 @@ export default function AdminOverviewClient({ stats, gyms, members, payouts }: P
             </div>
 
             {activeTab === 'gyms' ? (
-              <div className="bg-[#1A1A1A] border border-white/5 rounded-2xl overflow-hidden">
+              <div className="bg-[#1A1A1A] border border-white/5 rounded-sm overflow-hidden">
                 <div className="flex items-center justify-between px-5 py-4 border-b border-white/5">
                   <h3 className="text-white font-bold text-sm">Recent Gyms</h3>
                   <a href="/admin/gyms" className="text-[#999999] hover:text-white text-xs transition-colors flex items-center gap-1">
@@ -167,7 +167,7 @@ export default function AdminOverviewClient({ stats, gyms, members, payouts }: P
                 )}
               </div>
             ) : (
-              <div className="bg-[#1A1A1A] border border-white/5 rounded-2xl overflow-hidden">
+              <div className="bg-[#1A1A1A] border border-white/5 rounded-sm overflow-hidden">
                 <div className="flex items-center justify-between px-5 py-4 border-b border-white/5">
                   <h3 className="text-white font-bold text-sm">Recent Members</h3>
                   <a href="/admin/members" className="text-[#999999] hover:text-white text-xs transition-colors flex items-center gap-1">
@@ -212,7 +212,7 @@ export default function AdminOverviewClient({ stats, gyms, members, payouts }: P
           <div className="grid lg:grid-cols-2 gap-6">
             <ActivityFeed />
 
-            <div className="bg-[#1A1A1A] border border-white/5 rounded-2xl overflow-hidden">
+            <div className="bg-[#1A1A1A] border border-white/5 rounded-sm overflow-hidden">
               <div className="flex items-center justify-between px-5 py-4 border-b border-white/5">
                 <h3 className="text-white font-bold text-sm">Recent Payouts</h3>
                 <a href="/admin/payouts" className="text-[#999999] hover:text-white text-xs transition-colors flex items-center gap-1">

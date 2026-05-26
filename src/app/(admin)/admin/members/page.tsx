@@ -1,27 +1,37 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Search } from 'lucide-react'
 import AdminSidebar from '@/components/layout/AdminSidebar'
 
-const MEMBERS = [
-  { id: '1', name: 'Karan Singh', email: 'karan@email.com', gyms: 2, mrr: '₹3,498', joined: 'Mar 12, 2026', status: 'Active', source: 'Paid' },
-  { id: '2', name: 'Priya Sharma', email: 'priya@email.com', gyms: 1, mrr: '₹1,499', joined: 'Mar 18, 2026', status: 'Active', source: 'Paid' },
-  { id: '3', name: 'Aman Verma', email: 'aman@email.com', gyms: 1, mrr: '₹0', joined: 'Apr 1, 2026', status: 'Active', source: 'Coupon' },
-  { id: '4', name: 'Sneha Iyer', email: 'sneha@email.com', gyms: 1, mrr: '₹999', joined: 'Apr 5, 2026', status: 'Active', source: 'Paid' },
-  { id: '5', name: 'Rohit Das', email: 'rohit@email.com', gyms: 1, mrr: '₹1,999', joined: 'Apr 10, 2026', status: 'Active', source: 'Paid' },
-  { id: '6', name: 'Anjali Nair', email: 'anjali@email.com', gyms: 2, mrr: '₹2,998', joined: 'Apr 15, 2026', status: 'Active', source: 'Paid' },
-  { id: '7', name: 'Dev Kumar', email: 'dev@email.com', gyms: 1, mrr: '₹0', joined: 'Apr 20, 2026', status: 'Cancelled', source: 'Coupon' },
-  { id: '8', name: 'Meera Pillai', email: 'meera@email.com', gyms: 1, mrr: '₹1,999', joined: 'May 1, 2026', status: 'Active', source: 'Paid' },
-]
+interface Member {
+  id: string
+  user_id: string
+  gym_id: string
+  status: string
+  source: string | null
+  free_until: string | null
+  created_at: string
+  gyms: { name: string } | null
+  user_email?: string
+}
 
 export default function MembersPage() {
+  const [members, setMembers] = useState<Member[]>([])
   const [search, setSearch] = useState('')
-  const [statusFilter, setStatusFilter] = useState('All')
+  const [loading, setLoading] = useState(true)
 
-  const filtered = MEMBERS.filter(m =>
-    (statusFilter === 'All' || m.status === statusFilter) &&
-    (m.name.toLowerCase().includes(search.toLowerCase()) || m.email.toLowerCase().includes(search.toLowerCase()))
+  useEffect(() => {
+    fetch('/api/admin/members')
+      .then(r => r.json())
+      .then(d => { if (d.members) setMembers(d.members) })
+      .catch(() => {})
+      .finally(() => setLoading(false))
+  }, [])
+
+  const filtered = members.filter(m =>
+    (m.user_email ?? '').toLowerCase().includes(search.toLowerCase()) ||
+    (m.gyms?.name ?? '').toLowerCase().includes(search.toLowerCase())
   )
 
   return (
@@ -29,77 +39,77 @@ export default function MembersPage() {
       <AdminSidebar active="All Members" />
 
       <main className="flex-1 lg:ml-64 min-w-0">
-        <div className="sticky top-0 z-20 bg-[#0D0D0D]  border-b border-[#2A2A2A] px-6 h-16 flex items-center mt-14 lg:mt-0">
-          <h1 className="text-white font-bold text-lg">All Members</h1>
-          <span className="ml-3 text-xs text-[#999999] bg-[#1A1A1A] px-2 py-1 rounded-sm">{MEMBERS.length} members</span>
+        <div className="sticky top-0 z-20 bg-[#0D0D0D] border-b border-[#333333] px-6 h-16 flex items-center mt-14 lg:mt-0">
+          <div>
+            <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase">Admin</p>
+            <h1 className="font-bebas text-2xl text-white tracking-[1px] leading-tight">ALL MEMBERS</h1>
+          </div>
+          <span className="ml-3 font-inter text-xs text-[#999999] bg-[#1A1A1A] border border-[#333333] px-2 py-1 rounded-sm">{members.length}</span>
         </div>
 
-        <div className="px-6 py-6 max-w-6xl space-y-4">
-          <div className="flex flex-col sm:flex-row gap-3">
-            <div className="relative flex-1">
-              <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#555]" />
-              <input value={search} onChange={e => setSearch(e.target.value)}
-                placeholder="Search by name or email..." className="w-full bg-[#1A1A1A] border border-[#2A2A2A] rounded-sm pl-9 pr-4 py-2.5 text-white text-sm focus:outline-none focus:border-[#333333] transition-colors" />
-            </div>
-            <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}
-              className="bg-[#1A1A1A] border border-[#2A2A2A] rounded-sm px-4 py-2.5 text-white text-sm focus:outline-none">
-              {['All', 'Active', 'Cancelled'].map(s => <option key={s}>{s}</option>)}
-            </select>
+        <div className="px-6 py-6 max-w-5xl space-y-4">
+          <div className="relative">
+            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#555555]" />
+            <input value={search} onChange={e => setSearch(e.target.value)}
+              placeholder="Search by email or gym..."
+              className="w-full bg-[#1A1A1A] border border-[#333333] rounded-sm pl-9 pr-4 py-2.5 text-white font-inter text-sm focus:outline-none focus:border-[#555555] transition-colors" />
           </div>
 
-          <div className="bg-[#1A1A1A] border border-[#2A2A2A] rounded-sm overflow-hidden">
-            <div className="hidden md:block overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-[#2A2A2A]">
-                    {['Name', 'Email', 'Gyms', 'MRR', 'Joined', 'Source', 'Status'].map(h => (
-                      <th key={h} className="px-4 py-3 text-left text-xs font-bold text-[#999999] uppercase tracking-wider">{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[#1F1F1F]">
-                  {filtered.map(m => (
-                    <tr key={m.id} className="hover:bg-[#1F1F1F] transition-colors cursor-pointer">
-                      <td className="px-4 py-3.5">
-                        <div className="flex items-center gap-2.5">
-                          <div className="w-7 h-7 rounded-full bg-[#FF3B3B]/10 flex items-center justify-center shrink-0">
-                            <span className="text-[#FF3B3B] text-xs font-bold">{m.name[0]}</span>
-                          </div>
-                          <span className="text-white font-medium">{m.name}</span>
-                        </div>
-                      </td>
-                      <td className="px-4 py-3.5 text-[#999999]">{m.email}</td>
-                      <td className="px-4 py-3.5 text-white">{m.gyms}</td>
-                      <td className="px-4 py-3.5 text-white font-medium">{m.mrr}</td>
-                      <td className="px-4 py-3.5 text-[#999999] text-xs">{m.joined}</td>
-                      <td className="px-4 py-3.5">
-                        <span className={`text-xs font-medium px-2 py-1 rounded-sm ${m.source === 'Coupon' ? 'bg-[#1A1A1A] text-[#999999]' : 'bg-[#1A1A1A] text-[#999999]'}`}>
-                          {m.source}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3.5">
-                        <span className={`text-xs font-medium px-2 py-1 rounded-sm ${m.status === 'Active' ? 'bg-[#00D4AA]/10 text-[#00D4AA]' : 'bg-[#1A1A1A] text-[#999999]'}`}>
-                          {m.status}
-                        </span>
-                      </td>
+          {loading ? (
+            <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm px-6 py-16 text-center">
+              <p className="font-inter text-[#555555] text-sm">Loading...</p>
+            </div>
+          ) : filtered.length === 0 ? (
+            <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm px-6 py-16 text-center">
+              <p className="font-inter text-[#555555] text-sm">No members yet.</p>
+            </div>
+          ) : (
+            <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm overflow-hidden">
+              <div className="hidden md:block overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-[#333333]">
+                      {['Email', 'Gym', 'Source', 'Free Until', 'Joined', 'Status'].map(h => (
+                        <th key={h} className="px-4 py-3 text-left font-inter text-[11px] text-[#999999] uppercase tracking-wider">{h}</th>
+                      ))}
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody className="divide-y divide-[#1F1F1F]">
+                    {filtered.map(m => (
+                      <tr key={m.id} className="hover:bg-[#1F1F1F] transition-colors">
+                        <td className="px-4 py-3.5 font-inter text-white text-sm">{m.user_email ?? m.user_id.slice(0, 8) + '...'}</td>
+                        <td className="px-4 py-3.5 font-inter text-[#999999] text-sm">{m.gyms?.name ?? '—'}</td>
+                        <td className="px-4 py-3.5 font-inter text-[#999999] text-xs">{m.source ?? 'paid'}</td>
+                        <td className="px-4 py-3.5 font-inter text-[#999999] text-xs">
+                          {m.free_until ? new Date(m.free_until).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '—'}
+                        </td>
+                        <td className="px-4 py-3.5 font-inter text-[#999999] text-xs">
+                          {new Date(m.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                        </td>
+                        <td className="px-4 py-3.5">
+                          <span className={`font-inter text-xs px-2 py-1 rounded-sm ${m.status === 'active' ? 'bg-[#00D4AA]/10 text-[#00D4AA]' : 'bg-[#1A1A1A] text-[#555555]'}`}>
+                            {m.status}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
 
-            <div className="md:hidden divide-y divide-[#1F1F1F]">
-              {filtered.map(m => (
-                <div key={m.id} className="px-4 py-4">
-                  <div className="flex items-center justify-between">
-                    <p className="text-white font-semibold text-sm">{m.name}</p>
-                    <span className={`text-xs font-medium px-2 py-0.5 rounded-sm ${m.status === 'Active' ? 'bg-[#00D4AA]/10 text-[#00D4AA]' : 'bg-[#1A1A1A] text-[#999999]'}`}>{m.status}</span>
+              <div className="md:hidden divide-y divide-[#1F1F1F]">
+                {filtered.map(m => (
+                  <div key={m.id} className="px-4 py-4">
+                    <div className="flex items-center justify-between">
+                      <p className="font-inter text-white text-sm">{m.user_email ?? m.user_id.slice(0, 8) + '...'}</p>
+                      <span className={`font-inter text-xs px-2 py-0.5 rounded-sm ${m.status === 'active' ? 'bg-[#00D4AA]/10 text-[#00D4AA]' : 'bg-[#1A1A1A] text-[#555555]'}`}>{m.status}</span>
+                    </div>
+                    <p className="font-inter text-[#999999] text-xs mt-0.5">{m.gyms?.name ?? '—'} · {m.source ?? 'paid'}</p>
                   </div>
-                  <p className="text-[#999999] text-xs mt-0.5">{m.email} · {m.mrr}/mo · {m.gyms} gym{m.gyms > 1 ? 's' : ''}</p>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </main>
     </div>

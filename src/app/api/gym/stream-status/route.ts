@@ -17,15 +17,19 @@ export async function GET(req: NextRequest) {
   if (error || !gym) return NextResponse.json({ error: 'Gym not found' }, { status: 404 })
 
   if (!gym.mux_live_stream_id) {
-    return NextResponse.json({ status: 'no_stream', has_stream: false })
+    return NextResponse.json({ status: 'idle', has_stream: false })
   }
 
-  const { status, viewer_count } = await getLiveStreamStatus(gym.mux_live_stream_id)
-
-  return NextResponse.json({
-    has_stream: true,
-    status,          // 'idle' | 'active' | 'disconnected'
-    viewer_count,
-    playback_id: gym.mux_playback_id,
-  })
+  try {
+    const { status, viewer_count } = await getLiveStreamStatus(gym.mux_live_stream_id)
+    return NextResponse.json({
+      has_stream: true,
+      status,
+      viewer_count,
+      playback_id: gym.mux_playback_id,
+    })
+  } catch {
+    // Mux unreachable or keys not configured — treat as idle so UI stays usable
+    return NextResponse.json({ has_stream: true, status: 'idle', viewer_count: 0 })
+  }
 }

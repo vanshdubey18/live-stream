@@ -46,6 +46,7 @@ create table public.gyms (
   owner_id             uuid references public.users(id) on delete set null,
   stream_key           text,
   mux_live_stream_id   text,
+  mux_playback_id      text,
   monthly_price_paise  integer not null default 99900,
   status               text not null default 'pending' check (status in ('pending', 'active', 'rejected')),
   razorpay_account_id  text,

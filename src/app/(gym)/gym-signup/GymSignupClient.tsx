@@ -30,6 +30,7 @@ export default function GymSignupClient({ isLoggedIn, prefillName, prefillEmail 
   const [location, setLocation] = useState('')
   const [description, setDescription] = useState('')
   const [disciplines, setDisciplines] = useState<string[]>([])
+  const [monthlyPrice, setMonthlyPrice] = useState('999')
 
   function toggleDiscipline(d: string) {
     setDisciplines(p => p.includes(d) ? p.filter(x => x !== d) : [...p, d])
@@ -50,7 +51,9 @@ export default function GymSignupClient({ isLoggedIn, prefillName, prefillEmail 
     setLoading(true)
 
     try {
-      const payload: any = { gymName, city, location, description, disciplines }
+      const priceNum = parseFloat(monthlyPrice)
+      if (isNaN(priceNum) || priceNum < 1) { setError('Enter a valid monthly price'); setLoading(false); return }
+      const payload: any = { gymName, city, location, description, disciplines, monthlyPricePaise: Math.round(priceNum * 100) }
       if (!isLoggedIn) {
         payload.email = email
         payload.password = password
@@ -219,6 +222,23 @@ export default function GymSignupClient({ isLoggedIn, prefillName, prefillEmail 
                   placeholder="Tell members what makes your gym special..."
                   className={`${inputCls} resize-none`}
                 />
+              </div>
+
+              <div>
+                <label className={labelCls}>Monthly Membership Price (₹)</label>
+                <div className="flex items-center">
+                  <span className="bg-[#0D0D0D] border border-[#333333] border-r-0 rounded-l-sm px-3 py-3 text-[#555555] font-inter text-sm">₹</span>
+                  <input
+                    required
+                    type="number"
+                    min="1"
+                    value={monthlyPrice}
+                    onChange={e => setMonthlyPrice(e.target.value)}
+                    placeholder="999"
+                    className={`${inputCls} rounded-l-none`}
+                  />
+                </div>
+                <p className="font-inter text-[#555555] text-xs mt-1">Platform takes 30%. You keep 70%.</p>
               </div>
 
               <div>

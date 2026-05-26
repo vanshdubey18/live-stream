@@ -208,21 +208,11 @@ function HowItWorks() {
   )
 }
 
-const PLANS = [
-  {
-    name: 'SINGLE GYM',
-    price: '999',
-    desc: 'Full access to one gym\'s live classes and replay library.',
-    features: ['All live classes from 1 gym', 'Full replay library', 'AI session summaries', 'Mobile + desktop'],
-    primary: false,
-  },
-  {
-    name: 'FULL ACCESS',
-    price: '2,499',
-    desc: 'Train across every gym on the platform. No limits.',
-    features: ['All live classes from all gyms', 'Full replay library', 'AI session summaries', 'Mobile + desktop', 'Priority support'],
-    primary: true,
-  },
+const PRICING_FEATURES = [
+  'Full access to live classes & replays',
+  'AI session summaries & technique breakdowns',
+  'Works on mobile and desktop',
+  'Cancel anytime',
 ]
 
 function Pricing() {
@@ -231,39 +221,53 @@ function Pricing() {
       <div className="max-w-[1280px] mx-auto px-6 py-20">
         <div className="mb-16">
           <p className="font-inter text-[11px] text-[#555555] tracking-[4px] uppercase mb-4">Simple pricing</p>
-          <h2 className="font-bebas text-5xl lg:text-6xl text-white tracking-[1px] leading-none">TRAIN MORE.<br />PAY LESS.</h2>
+          <h2 className="font-bebas text-5xl lg:text-6xl text-white tracking-[1px] leading-none">PAY YOUR GYM.<br />TRAIN ONLINE.</h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-[#333333] max-w-2xl">
-          {PLANS.map(({ name, price, desc, features, primary }) => (
-            <motion.div
-              key={name}
-              initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.2, ease: 'easeOut' }}
-              className={`p-8 ${primary ? 'bg-[#1A1A1A]' : 'bg-[#0D0D0D]'}`}
-            >
-              {primary && (
-                <p className="font-inter text-[10px] text-[#00D4AA] tracking-[3px] uppercase mb-5">MOST POPULAR</p>
-              )}
-              <p className="font-inter text-[11px] text-[#555555] tracking-[4px] uppercase mb-5">{name}</p>
-              <div className="flex items-baseline gap-1 mb-2">
-                <span className="font-bebas text-6xl text-white tracking-[1px] leading-none">₹{price}</span>
-                <span className="font-bebas text-xl text-[#555555] tracking-[1px]">/MO</span>
+          <motion.div
+            initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+            className="p-8 bg-[#1A1A1A]"
+          >
+            <p className="font-inter text-[11px] text-[#555555] tracking-[4px] uppercase mb-5">Per Gym Membership</p>
+            <div className="flex items-baseline gap-1 mb-2">
+              <span className="font-bebas text-6xl text-white tracking-[1px] leading-none">GYM SETS PRICE</span>
+            </div>
+            <p className="font-inter text-sm text-[#555555] mb-8 leading-relaxed">
+              Each gym sets their own monthly price. You pay directly for access to that gym's live classes and replays.
+            </p>
+            <div className="border-t border-[#2A2A2A] pt-6 mb-8 space-y-3">
+              {PRICING_FEATURES.map(f => (
+                <div key={f} className="flex items-start gap-3">
+                  <div className="w-1 h-1 bg-[#555555] mt-2 shrink-0" />
+                  <p className="font-inter text-sm text-[#999999]">{f}</p>
+                </div>
+              ))}
+            </div>
+            <a href="/gyms" className="block font-bebas text-sm tracking-[3px] text-center py-4 rounded-sm transition-all duration-150 bg-white text-black hover:bg-[#E5E5E5]">
+              BROWSE GYMS
+            </a>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.2, ease: 'easeOut', delay: 0.05 }}
+            className="p-8 bg-[#0D0D0D] flex flex-col justify-center"
+          >
+            <p className="font-inter text-[11px] text-[#555555] tracking-[4px] uppercase mb-6">How It Works</p>
+            {[
+              { n: '01', text: 'Browse gyms and pick one you like' },
+              { n: '02', text: 'Pay their monthly fee with a coupon code' },
+              { n: '03', text: 'Watch every live class and replay' },
+            ].map(item => (
+              <div key={item.n} className="flex items-start gap-4 mb-6 last:mb-0">
+                <span className="font-bebas text-2xl text-[#333333] leading-none shrink-0">{item.n}</span>
+                <p className="font-inter text-sm text-[#999999] leading-relaxed">{item.text}</p>
               </div>
-              <p className="font-inter text-sm text-[#555555] mb-8 leading-relaxed">{desc}</p>
-              <div className="border-t border-[#2A2A2A] pt-6 mb-8 space-y-3">
-                {features.map(f => (
-                  <div key={f} className="flex items-start gap-3">
-                    <div className="w-1 h-1 rounded-full bg-[#555555] mt-2 shrink-0" />
-                    <p className="font-inter text-sm text-[#999999]">{f}</p>
-                  </div>
-                ))}
-              </div>
-              <a href="/signup" className="block font-bebas text-sm tracking-[3px] text-center py-4 rounded-sm transition-all duration-150 bg-white text-black hover:bg-[#E5E5E5]">
-                START FREE TRIAL
-              </a>
-            </motion.div>
-          ))}
+            ))}
+          </motion.div>
         </div>
       </div>
     </section>

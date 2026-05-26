@@ -46,6 +46,7 @@ create table public.gyms (
   owner_id             uuid references public.users(id) on delete set null,
   stream_key           text,
   mux_live_stream_id   text,
+  monthly_price_paise  integer not null default 99900,
   status               text not null default 'pending' check (status in ('pending', 'active', 'rejected')),
   razorpay_account_id  text,
   created_at           timestamptz not null default now()
@@ -88,8 +89,7 @@ create table public.memberships (
   id                       uuid primary key default uuid_generate_v4(),
   user_id                  uuid not null references public.users(id) on delete cascade,
   gym_id                   uuid not null references public.gyms(id) on delete cascade,
-  plan_type                text not null check (plan_type in ('single', 'dual', 'full_mma')),
-  disciplines              text[] not null default '{}',
+  price_charged_paise      integer,
   status                   text not null default 'active' check (status in ('active', 'cancelled', 'past_due')),
   razorpay_subscription_id text,
   source                   text not null default 'paid' check (source in ('paid', 'coupon')),

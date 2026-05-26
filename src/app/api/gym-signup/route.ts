@@ -13,7 +13,7 @@ function slugify(name: string) {
 
 export async function POST(req: NextRequest) {
   const body = await req.json()
-  const { email, password, gymName, city, location, description, disciplines, ownerName } = body
+  const { email, password, gymName, city, location, description, disciplines, ownerName, monthlyPricePaise } = body
 
   const supabase = createClient()
 
@@ -61,6 +61,7 @@ export async function POST(req: NextRequest) {
       owner_email: userEmail,
       owner_id: userId,
       status: 'pending',
+      monthly_price_paise: monthlyPricePaise ?? 99900,
     })
     .select()
     .single()

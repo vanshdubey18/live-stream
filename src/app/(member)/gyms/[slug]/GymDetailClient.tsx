@@ -217,21 +217,13 @@ export default function GymDetailClient({ gym, coaches, sessions, memberCount, m
             <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm p-8">
               <h3 className="font-bebas text-4xl text-white mb-2">JOIN {gym.name.toUpperCase()}</h3>
               <p className="font-inter text-sm text-[#999999] mb-6">
-                Access live classes and replays from anywhere.
+                Access all live classes and replays from anywhere.
               </p>
-              <div className="flex flex-wrap gap-4 mb-8">
-                <div className="border border-[#333333] rounded-sm p-5 min-w-[140px]">
-                  <p className="font-bebas text-5xl text-white">₹999</p>
-                  <p className="font-inter text-[11px] text-[#999999] tracking-[3px] uppercase mt-1">Single · /mo</p>
-                </div>
-                <div className="border border-[#333333] rounded-sm p-5 min-w-[140px]">
-                  <p className="font-bebas text-5xl text-white">₹1,499</p>
-                  <p className="font-inter text-[11px] text-[#999999] tracking-[3px] uppercase mt-1">Dual · /mo</p>
-                </div>
-                <div className="border border-[#333333] rounded-sm p-5 min-w-[140px]">
-                  <p className="font-bebas text-5xl text-white">₹1,999</p>
-                  <p className="font-inter text-[11px] text-[#999999] tracking-[3px] uppercase mt-1">Full MMA · /mo</p>
-                </div>
+              <div className="flex items-baseline gap-2 mb-8">
+                <span className="font-bebas text-6xl text-white">
+                  ₹{((gym.monthly_price_paise ?? 99900) / 100).toLocaleString('en-IN')}
+                </span>
+                <span className="font-inter text-sm text-[#555555]">/mo</span>
               </div>
               <button
                 onClick={() =>

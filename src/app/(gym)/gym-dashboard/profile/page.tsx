@@ -15,6 +15,7 @@ export default function GymProfilePage() {
     location: 'Andheri West',
     city: 'Mumbai',
     instagram: 'xtremmemamumbai',
+    monthlyPrice: '999',
   })
   const [loading, setLoading] = useState(false)
   const [toast, setToast] = useState('')
@@ -95,6 +96,31 @@ export default function GymProfilePage() {
                 <input className={`${inputCls} rounded-l-none`} value={form.instagram}
                   onChange={e => set('instagram', e.target.value)} />
               </div>
+            </div>
+          </div>
+
+          {/* Pricing */}
+          <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm p-6 space-y-4">
+            <h2 className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase">Pricing</h2>
+            <div>
+              <label className={labelCls}>Monthly Membership Price (₹)</label>
+              <div className="flex items-center">
+                <span className="bg-[#0D0D0D] border border-[#333333] border-r-0 rounded-l-sm px-3 py-3 text-[#555555] font-inter text-sm">₹</span>
+                <input
+                  type="number"
+                  min="1"
+                  className={`${inputCls} rounded-l-none`}
+                  value={form.monthlyPrice}
+                  onChange={e => set('monthlyPrice', e.target.value)}
+                />
+              </div>
+              <p className="font-inter text-[#555555] text-xs mt-1.5">
+                Members pay this each month. Platform takes 30% — you keep{' '}
+                <span className="text-[#00D4AA]">
+                  ₹{Math.round(parseFloat(form.monthlyPrice || '0') * 0.7).toLocaleString('en-IN')}/mo
+                </span>
+                {' '}per member.
+              </p>
             </div>
           </div>
 

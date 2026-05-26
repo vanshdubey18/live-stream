@@ -7,9 +7,9 @@ export async function POST(req: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
 
-  const { gymId, planType, disciplines, couponCode } = await req.json()
+  const { gymId, couponCode } = await req.json()
 
-  if (!gymId || !planType) {
+  if (!gymId) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
   }
 
@@ -66,12 +66,18 @@ export async function POST(req: NextRequest) {
     }
   }
 
+  // Fetch gym price
+  const { data: gym } = await adminClient
+    .from('gyms')
+    .select('monthly_price_paise')
+    .eq('id', gymId)
+    .maybeSingle()
+
   // Create membership
   const { error: membershipErr } = await adminClient.from('memberships').insert({
     user_id: user.id,
     gym_id: gymId,
-    plan_type: planType,
-    disciplines: disciplines ?? [],
+    price_charged_paise: gym?.monthly_price_paise ?? null,
     status: 'active',
     source: couponCode ? 'coupon' : 'paid',
     free_until: freeUntil,
@@ -91,7 +97,7 @@ export async function POST(req: NextRequest) {
         coupon_id: couponId,
         user_id: user.id,
         gym_id: gymId,
-        plan_type: planType,
+        plan_type: 'all',
         free_until: freeUntil,
       }),
     ])

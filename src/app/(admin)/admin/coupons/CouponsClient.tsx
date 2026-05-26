@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Plus, CheckCircle, XCircle } from 'lucide-react'
 import AdminSidebar from '@/components/layout/AdminSidebar'
 import CreateCouponModal from '@/components/admin/CreateCouponModal'
@@ -23,6 +23,13 @@ export default function CouponsClient({ coupons: initial }: { coupons: Coupon[] 
   const [coupons, setCoupons] = useState<Coupon[]>(initial)
   const [showModal, setShowModal] = useState(false)
   const [toast, setToast] = useState('')
+
+  useEffect(() => {
+    fetch('/api/admin/coupons')
+      .then(r => r.json())
+      .then(d => { if (d.coupons) setCoupons(d.coupons) })
+      .catch(() => {})
+  }, [])
 
   function handleCreated(c: Coupon) {
     setCoupons(p => [c, ...p])

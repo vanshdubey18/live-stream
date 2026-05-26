@@ -66,18 +66,10 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // Fetch gym price
-  const { data: gym } = await adminClient
-    .from('gyms')
-    .select('monthly_price_paise')
-    .eq('id', gymId)
-    .maybeSingle()
-
   // Create membership
   const { error: membershipErr } = await adminClient.from('memberships').insert({
     user_id: user.id,
     gym_id: gymId,
-    price_charged_paise: gym?.monthly_price_paise ?? null,
     status: 'active',
     source: couponCode ? 'coupon' : 'paid',
     free_until: freeUntil,

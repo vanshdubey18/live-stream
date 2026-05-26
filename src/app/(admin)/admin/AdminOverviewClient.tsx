@@ -43,14 +43,14 @@ export default function AdminOverviewClient({ stats, gyms, members, payouts }: P
         {/* Top bar */}
         <div className="sticky top-0 z-20 bg-[#0D0D0D]  border-b border-[#333333] px-6 h-16 flex items-center justify-between mt-14 lg:mt-0">
           <div>
-            <h1 className="text-white font-bold text-lg">Admin Overview</h1>
-            <p className="text-[#999999] text-xs">Platform-wide stats and management</p>
+            <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase">Admin</p>
+            <h1 className="font-bebas text-2xl text-white tracking-[1px] leading-tight">OVERVIEW</h1>
           </div>
           <a href="/admin/applications"
-            className="flex items-center gap-1.5 bg-[#FF3B3B] hover:bg-red-700 text-white text-xs font-bold px-4 py-2 rounded-sm transition-colors">
-            Review Applications
+            className="flex items-center gap-1.5 bg-white hover:bg-[#E5E5E5] text-black font-bebas tracking-[2px] text-sm px-4 py-2 rounded-sm transition-colors">
+            REVIEW APPLICATIONS
             {stats.pendingCount > 0 && (
-              <span className="bg-white/20 text-white text-xs font-black px-1.5 py-0.5 rounded-md ml-0.5">
+              <span className="bg-black text-white text-xs font-bold px-1.5 py-0.5 rounded-sm ml-0.5">
                 {stats.pendingCount}
               </span>
             )}
@@ -61,7 +61,7 @@ export default function AdminOverviewClient({ stats, gyms, members, payouts }: P
 
           {/* Pending alert */}
           {stats.pendingCount > 0 && (
-            <div className="flex items-center gap-3 bg-yellow-500/5 border border-yellow-500/20 rounded-sm px-5 py-4">
+            <div className="flex items-center gap-3 bg-[#FFD60A]/5 border border-[#FFD60A]/20 rounded-sm px-5 py-4">
               <AlertTriangle size={18} className="text-[#FFD60A] shrink-0" />
               <div className="flex-1">
                 <p className="text-[#FFD60A] font-semibold text-sm">
@@ -70,7 +70,7 @@ export default function AdminOverviewClient({ stats, gyms, members, payouts }: P
                 <p className="text-[#FFD60A]/60 text-xs mt-0.5">Review and approve or reject pending applications</p>
               </div>
               <a href="/admin/applications"
-                className="flex items-center gap-1.5 text-[#FFD60A] text-xs font-semibold hover:text-yellow-300 transition-colors">
+                className="flex items-center gap-1.5 text-[#FFD60A] text-xs font-semibold hover:text-white transition-colors">
                 Review <ExternalLink size={12} />
               </a>
             </div>

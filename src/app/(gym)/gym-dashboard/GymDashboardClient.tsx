@@ -57,7 +57,7 @@ export default function GymDashboardClient({ gym, ownerName, sessions, coaches, 
 
   const completedCount = sessions.filter(s => s.status === 'ended').length
   const scheduledCount = sessions.filter(s => s.status === 'scheduled').length
-  const totalRevenue = memberCount * 1499
+  const totalRevenue = Math.round(memberCount * (gym.monthly_price_paise ?? 99900) * 0.7 / 100)
 
   function handleScheduled(cls: ScheduledClass) {
     setLocalSessions(p => [cls, ...p])
@@ -316,6 +316,7 @@ export default function GymDashboardClient({ gym, ownerName, sessions, coaches, 
 
       {showModal && (
         <ScheduleClassModal
+          coaches={coaches.map((c: any) => ({ id: c.id, name: c.name }))}
           onClose={() => setShowModal(false)}
           onScheduled={handleScheduled}
         />

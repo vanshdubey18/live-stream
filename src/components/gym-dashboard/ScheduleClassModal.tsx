@@ -3,70 +3,88 @@
 import { useState } from 'react'
 import { X, Loader2 } from 'lucide-react'
 
+interface Coach {
+  id: string
+  name: string
+}
+
 interface ScheduleClassModalProps {
+  coaches: Coach[]
   onClose: () => void
-  onScheduled: (cls: ScheduledClass) => void
+  onScheduled: (cls: any) => void
 }
 
 export interface ScheduledClass {
   id: string
-  date: string
-  time: string
   title: string
   discipline: string
-  coach: string
+  scheduled_at: string
+  duration_minutes: number
   level: string
-  duration: string
-  status: 'Scheduled'
+  status: string
 }
 
-const COACHES = ['Rahul Sharma', 'Arjun Mehta', 'Dev Singh', 'Vikram Patel']
-const DISCIPLINES = ['BJJ', 'Boxing', 'Muay Thai', 'Wrestling']
+const DISCIPLINES = ['BJJ', 'Boxing', 'Muay Thai', 'Wrestling', 'MMA', 'Kickboxing']
 const DURATIONS = ['15', '30', '45', '60', '90']
 const LEVELS = ['Beginner', 'Intermediate', 'Advanced']
 
-export default function ScheduleClassModal({ onClose, onScheduled }: ScheduleClassModalProps) {
+export default function ScheduleClassModal({ coaches, onClose, onScheduled }: ScheduleClassModalProps) {
   const [form, setForm] = useState({
-    title: '', discipline: 'BJJ', coach: COACHES[0],
-    date: '', time: '', duration: '60', level: 'Intermediate', description: '',
+    title: '',
+    discipline: 'BJJ',
+    coachId: coaches[0]?.id ?? '',
+    date: '',
+    time: '',
+    duration: '60',
+    level: 'Intermediate',
   })
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
   function set(field: string, val: string) {
     setForm(p => ({ ...p, [field]: val }))
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
+    setError('')
     setLoading(true)
-    setTimeout(() => {
-      onScheduled({
-        id: Math.random().toString(36).slice(2),
-        date: form.date,
-        time: form.time,
-        title: form.title,
-        discipline: form.discipline,
-        coach: form.coach,
-        level: form.level,
-        duration: `${form.duration} min`,
-        status: 'Scheduled',
+    try {
+      const scheduledAt = new Date(`${form.date}T${form.time}`).toISOString()
+      const res = await fetch('/api/gym/session/schedule', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: form.title,
+          discipline: form.discipline,
+          scheduledAt,
+          durationMinutes: parseInt(form.duration),
+          level: form.level,
+          coachId: form.coachId || null,
+        }),
       })
-      setLoading(false)
+      const data = await res.json()
+      if (!res.ok) { setError(data.error ?? 'Something went wrong'); return }
+      onScheduled(data.session)
       onClose()
-    }, 600)
+    } catch {
+      setError('Network error. Please try again.')
+    } finally {
+      setLoading(false)
+    }
   }
 
-  const inputCls = 'w-full bg-[#0D0D0D] border border-[#333333] rounded-sm px-4 py-2.5 text-white text-sm focus:outline-none focus:border-[#FF3B3B]/50 transition-colors'
-  const labelCls = 'block text-[#999999] text-xs font-medium mb-1.5'
+  const inputCls = 'w-full bg-[#0D0D0D] border border-[#333333] rounded-sm px-4 py-2.5 text-white text-sm focus:outline-none focus:border-white transition-colors'
+  const labelCls = 'block font-inter text-[11px] text-[#999999] tracking-[3px] uppercase mb-1.5'
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/70 " onClick={onClose} />
+      <div className="absolute inset-0 bg-black/70" onClick={onClose} />
       <div className="relative bg-[#1A1A1A] border border-[#333333] rounded-sm w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#2A2A2A]">
           <h2 className="font-bebas text-xl text-white tracking-[1px]">SCHEDULE NEW CLASS</h2>
-          <button onClick={onClose} className="text-[#999999] hover:text-white transition-colors">
-            <X size={20} />
+          <button onClick={onClose} className="text-[#555555] hover:text-white transition-colors">
+            <X size={18} />
           </button>
         </div>
 
@@ -86,8 +104,9 @@ export default function ScheduleClassModal({ onClose, onScheduled }: ScheduleCla
             </div>
             <div>
               <label className={labelCls}>Coach</label>
-              <select className={inputCls} value={form.coach} onChange={e => set('coach', e.target.value)}>
-                {COACHES.map(c => <option key={c}>{c}</option>)}
+              <select className={inputCls} value={form.coachId} onChange={e => set('coachId', e.target.value)}>
+                <option value="">No coach assigned</option>
+                {coaches.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
               </select>
             </div>
           </div>
@@ -107,7 +126,7 @@ export default function ScheduleClassModal({ onClose, onScheduled }: ScheduleCla
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className={labelCls}>Duration (minutes)</label>
+              <label className={labelCls}>Duration (min)</label>
               <select className={inputCls} value={form.duration} onChange={e => set('duration', e.target.value)}>
                 {DURATIONS.map(d => <option key={d}>{d}</option>)}
               </select>
@@ -120,15 +139,15 @@ export default function ScheduleClassModal({ onClose, onScheduled }: ScheduleCla
             </div>
           </div>
 
-          <div>
-            <label className={labelCls}>Description <span className="text-[#555]">(optional)</span></label>
-            <textarea className={`${inputCls} resize-none h-20`} placeholder="What will members learn?"
-              value={form.description} onChange={e => set('description', e.target.value)} />
-          </div>
+          {error && (
+            <p className="font-inter text-sm text-[#FF3B3B] bg-[#FF3B3B]/5 border border-[#FF3B3B]/20 rounded-sm px-4 py-3">
+              {error}
+            </p>
+          )}
 
           <div className="flex gap-3 pt-2">
             <button type="button" onClick={onClose}
-              className="flex-1 py-3 border border-[#333333] hover:border-[#333333] text-white text-sm font-semibold rounded-sm transition-all">
+              className="flex-1 py-3 border border-[#333333] text-white text-sm font-semibold rounded-sm hover:bg-[#222222] transition-all">
               Cancel
             </button>
             <button type="submit" disabled={loading}

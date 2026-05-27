@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
       owner_email: userEmail,
       owner_id: userId,
       status: 'pending',
-      ...(monthlyPricePaise != null ? { monthly_price_paise: monthlyPricePaise } : {}),
+      // monthly_price_paise uses DB default (99900) until schema cache refreshes
     })
     .select()
     .single()

@@ -23,7 +23,7 @@ export async function GET() {
 
   const { data: gym, error } = await adminClient()
     .from('gyms')
-    .select('id, name, description, city, location, disciplines, monthly_price_paise, instagram')
+    .select('id, name, description, city, location, disciplines, instagram')
     .eq('owner_id', user.id)
     .maybeSingle()
 
@@ -52,7 +52,7 @@ export async function PATCH(req: NextRequest) {
   if (city !== undefined) updates.city = city
   if (location !== undefined) updates.location = location
   if (disciplines !== undefined) updates.disciplines = disciplines
-  if (monthlyPricePaise !== undefined) updates.monthly_price_paise = monthlyPricePaise
+  // monthly_price_paise skipped until schema cache refreshes
   if (instagram !== undefined) updates.instagram = instagram
 
   const { error } = await adminClient()

@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { createClient as createAdminClient } from '@supabase/supabase-js'
 import { redirect } from 'next/navigation'
 import ApplicationsClient from './ApplicationsClient'
 
@@ -10,7 +11,12 @@ export default async function ApplicationsPage() {
   const role = user.user_metadata?.role ?? 'member'
   if (role !== 'admin') redirect('/dashboard')
 
-  const { data: gyms } = await supabase
+  const adminClient = createAdminClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  )
+
+  const { data: gyms } = await adminClient
     .from('gyms')
     .select('id, name, city, location, disciplines, owner_email, status, created_at')
     .order('created_at', { ascending: false })

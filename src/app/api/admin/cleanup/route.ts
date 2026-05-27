@@ -42,7 +42,6 @@ export async function GET() {
     disciplines: ['BJJ', 'Wrestling'],
     owner_email: 'test@matpeak.com',
     status: 'active',
-    monthly_price_paise: 0,
   }).select().single()
 
   if (error) return NextResponse.json({ error: error.message, migrations: results }, { status: 500 })

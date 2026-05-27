@@ -18,11 +18,16 @@ export default async function DashboardPage() {
   const memberships = await getMemberGyms(user.id)
   const gymIds = memberships.map((m: any) => m.gyms?.id).filter(Boolean)
 
-  const [upcoming, replays, liveSession] = await Promise.all([
+  const [upcoming, replays, liveSession, allSessions] = await Promise.all([
     getUpcomingSessions(gymIds),
     getRecentReplays(gymIds),
     getLiveSession(gymIds),
+    gymIds.length > 0
+      ? createClient().from('sessions').select('id, status').in('gym_id', gymIds).eq('status', 'ended')
+      : Promise.resolve({ data: [] }),
   ])
+
+  const completedCount = (allSessions as any)?.data?.length ?? 0
 
   // Get next class for each gym
   const gymsWithNext = await Promise.all(
@@ -39,6 +44,7 @@ export default async function DashboardPage() {
       upcoming={upcoming}
       replays={replays}
       liveSession={liveSession}
+      completedCount={completedCount}
     />
   )
 }

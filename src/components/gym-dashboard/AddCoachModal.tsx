@@ -14,19 +14,31 @@ const DISCIPLINES = ['BJJ', 'Boxing', 'Muay Thai', 'Wrestling']
 export default function AddCoachModal({ onClose, onSaved }: AddCoachModalProps) {
   const [form, setForm] = useState({ name: '', discipline: 'BJJ', beltRank: '', bio: '' })
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
   function set(field: string, val: string) {
     setForm(p => ({ ...p, [field]: val }))
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
+    setError('')
     setLoading(true)
-    setTimeout(() => {
-      onSaved({ id: Math.random().toString(36).slice(2), ...form })
-      setLoading(false)
+    try {
+      const res = await fetch('/api/gym/coaches', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      })
+      const data = await res.json()
+      if (!res.ok) { setError(data.error ?? 'Something went wrong'); return }
+      onSaved(data.coach)
       onClose()
-    }, 500)
+    } catch {
+      setError('Network error. Please try again.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   const inputCls = 'w-full bg-[#0D0D0D] border border-[#333333] rounded-sm px-4 py-2.5 text-white text-sm focus:outline-none focus:border-[#FF3B3B]/50 transition-colors'
@@ -65,6 +77,9 @@ export default function AddCoachModal({ onClose, onSaved }: AddCoachModalProps) 
             <textarea className={`${inputCls} resize-none h-24`} placeholder="Brief background..."
               value={form.bio} onChange={e => set('bio', e.target.value)} />
           </div>
+          {error && (
+            <p className="font-inter text-[#FF3B3B] text-sm bg-[#FF3B3B]/5 border border-[#FF3B3B]/20 rounded-sm px-4 py-3">{error}</p>
+          )}
           <div className="flex gap-3 pt-1">
             <button type="button" onClick={onClose}
               className="flex-1 py-3 border border-[#333333] hover:border-[#333333] text-white text-sm font-semibold rounded-sm transition-all">

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Loader2, Upload } from 'lucide-react'
 import GymSidebar from '@/components/layout/GymSidebar'
 import Toast from '@/components/gym-dashboard/Toast'
@@ -9,16 +9,38 @@ const DISCIPLINES = ['BJJ', 'Boxing', 'Muay Thai', 'Wrestling']
 
 export default function GymProfilePage() {
   const [form, setForm] = useState({
-    name: 'Xtreme MMA Mumbai',
-    description: 'Premier MMA gym in Mumbai offering world-class training in BJJ, Boxing, Muay Thai, and Wrestling.',
-    disciplines: ['BJJ', 'Boxing', 'Muay Thai', 'Wrestling'],
-    location: 'Andheri West',
-    city: 'Mumbai',
-    instagram: 'xtremmemamumbai',
-    monthlyPrice: '999',
+    name: '',
+    description: '',
+    disciplines: [] as string[],
+    location: '',
+    city: '',
+    instagram: '',
+    monthlyPrice: '',
   })
   const [loading, setLoading] = useState(false)
+  const [fetching, setFetching] = useState(true)
   const [toast, setToast] = useState('')
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    fetch('/api/gym/profile')
+      .then(r => r.json())
+      .then(d => {
+        if (d.gym) {
+          setForm({
+            name: d.gym.name ?? '',
+            description: d.gym.description ?? '',
+            disciplines: d.gym.disciplines ?? [],
+            location: d.gym.location ?? '',
+            city: d.gym.city ?? '',
+            instagram: d.gym.instagram ?? '',
+            monthlyPrice: d.gym.monthly_price_paise ? String(d.gym.monthly_price_paise / 100) : '',
+          })
+        }
+      })
+      .catch(() => {})
+      .finally(() => setFetching(false))
+  }, [])
 
   function set(field: string, val: string) {
     setForm(p => ({ ...p, [field]: val }))
@@ -33,14 +55,48 @@ export default function GymProfilePage() {
     }))
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
+    setError('')
     setLoading(true)
-    setTimeout(() => { setLoading(false); setToast('Changes saved') }, 700)
+    try {
+      const priceNum = parseFloat(form.monthlyPrice)
+      const res = await fetch('/api/gym/profile', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: form.name,
+          description: form.description,
+          city: form.city,
+          location: form.location,
+          disciplines: form.disciplines,
+          monthlyPricePaise: form.monthlyPrice ? Math.round(priceNum * 100) : undefined,
+          instagram: form.instagram,
+        }),
+      })
+      const data = await res.json()
+      if (!res.ok) { setError(data.error ?? 'Something went wrong'); return }
+      setToast('Changes saved ✓')
+    } catch {
+      setError('Network error. Please try again.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   const inputCls = 'w-full bg-[#0D0D0D] border border-[#333333] rounded-sm px-4 py-3 text-white placeholder-[#555555] text-sm focus:outline-none focus:border-white transition-colors'
   const labelCls = 'font-inter text-[11px] text-[#999999] tracking-[4px] uppercase block mb-1.5'
+
+  if (fetching) {
+    return (
+      <div className="min-h-screen bg-[#0D0D0D] flex">
+        <GymSidebar active="Gym Profile" />
+        <main className="flex-1 lg:ml-64 flex items-center justify-center">
+          <Loader2 size={20} className="animate-spin text-[#555555]" />
+        </main>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-[#0D0D0D] flex">
@@ -48,7 +104,10 @@ export default function GymProfilePage() {
 
       <main className="flex-1 lg:ml-64 min-w-0">
         <div className="sticky top-0 z-20 bg-[#0D0D0D] border-b border-[#333333] px-6 h-16 flex items-center mt-14 lg:mt-0">
-          <h1 className="font-bebas text-2xl text-white tracking-[1px]">GYM PROFILE</h1>
+          <div>
+            <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase">Gym</p>
+            <h1 className="font-bebas text-2xl text-white tracking-[1px] leading-tight">GYM PROFILE</h1>
+          </div>
         </div>
 
         <form onSubmit={handleSubmit} className="px-6 py-6 max-w-2xl space-y-6">
@@ -144,6 +203,10 @@ export default function GymProfilePage() {
               })}
             </div>
           </div>
+
+          {error && (
+            <p className="font-inter text-[#FF3B3B] text-sm bg-[#FF3B3B]/5 border border-[#FF3B3B]/20 rounded-sm px-4 py-3">{error}</p>
+          )}
 
           <button type="submit" disabled={loading}
             className="w-full bg-white text-black font-bebas tracking-[3px] hover:bg-[#E5E5E5] disabled:opacity-50 py-3.5 rounded-sm text-sm transition-colors flex items-center justify-center gap-2">

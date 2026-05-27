@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import MemberSidebar from '@/components/layout/MemberSidebar'
-import ProgressRing from '@/components/ui/ProgressRing'
 import StatCard from '@/components/ui/StatCard'
 import InsightCard from '@/components/ui/InsightCard'
 import { ChevronRight, ArrowRight } from 'lucide-react'
@@ -14,6 +13,7 @@ interface Props {
   upcoming: any[]
   replays: any[]
   liveSession: any | null
+  completedCount: number
 }
 
 const DISCIPLINE_COLOR: Record<string, string> = {
@@ -74,8 +74,6 @@ function HeroPanel({ upcoming, user }: { upcoming: any[]; user: { name: string }
     return d.toDateString() === new Date().toDateString()
   }).length
 
-  const weekCount = 4
-  const weekGoal = 5
   const firstName = user.name?.split(' ')[0] ?? 'Fighter'
 
   return (
@@ -87,32 +85,14 @@ function HeroPanel({ upcoming, user }: { upcoming: any[]; user: { name: string }
               Today&apos;s Training
             </p>
             <div className="font-bebas text-[96px] text-white leading-none tracking-[1px]">
-              {todayCount || upcoming.length || 3}
+              {todayCount || upcoming.length || 0}
             </div>
-            <p className="font-inter text-sm text-[#999999] mt-3">Classes available today</p>
+            <p className="font-inter text-sm text-[#999999] mt-3">
+              {(todayCount || upcoming.length) ? 'Classes available today' : 'No classes scheduled yet'}
+            </p>
             <p className="font-inter text-xs text-[#555555] mt-1 uppercase tracking-[2px]">
               Good to see you, {firstName}
             </p>
-          </div>
-
-          <div className="hidden lg:block w-px bg-[#333333] self-stretch" />
-
-          <div className="flex flex-col items-center gap-4">
-            <ProgressRing
-              value={weekCount}
-              max={weekGoal}
-              size={148}
-              strokeWidth={7}
-              color="#FF3B3B"
-              label={`${weekCount}/${weekGoal}`}
-              sublabel="THIS WEEK"
-            />
-            <div className="text-center">
-              <p className="font-inter text-xs text-[#999999] uppercase tracking-[3px]">Weekly Goal</p>
-              <p className="font-inter text-[11px] text-[#555555] mt-1">
-                {weekGoal - weekCount} more to hit your target
-              </p>
-            </div>
           </div>
         </div>
       </div>
@@ -121,19 +101,16 @@ function HeroPanel({ upcoming, user }: { upcoming: any[]; user: { name: string }
 }
 
 // ─── Stats Row ────────────────────────────────────────────────────────────────
-function StatsRow({ memberships, replays }: { memberships: any[]; replays: any[] }) {
-  const totalHours = replays.reduce((acc: number, r: any) => acc + (r.duration_minutes ?? 0) / 60, 0)
+function StatsRow({ memberships, completedCount }: { memberships: any[]; completedCount: number }) {
   const stats = [
-    { number: `${Math.round(totalHours) || 28}H`, label: 'Trained' },
-    { number: '47', label: 'Techniques' },
-    { number: '8', label: 'Day Streak' },
-    { number: String(memberships.length || 2), label: 'Gyms Joined' },
+    { number: String(memberships.length), label: 'Gyms Joined' },
+    { number: String(completedCount), label: 'Classes Watched' },
   ]
 
   return (
     <section className="border-b border-[#333333]">
       <div className="max-w-[1280px] mx-auto px-6 py-8">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-[#333333]">
+        <div className="grid grid-cols-2 gap-px bg-[#333333]">
           {stats.map(({ number, label }, i) => (
             <motion.div
               key={label}
@@ -313,7 +290,7 @@ function RecentReplays({ replays }: { replays: any[] }) {
 }
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
-export default function DashboardClient({ user, memberships, upcoming, replays, liveSession }: Props) {
+export default function DashboardClient({ user, memberships, upcoming, replays, liveSession, completedCount }: Props) {
   const [, setSearchOpen] = useState(false)
 
   return (
@@ -325,16 +302,18 @@ export default function DashboardClient({ user, memberships, upcoming, replays, 
 
         {liveSession && <LiveBanner session={liveSession} />}
         <HeroPanel upcoming={upcoming} user={user} />
-        <StatsRow memberships={memberships} replays={replays} />
+        <StatsRow memberships={memberships} completedCount={completedCount} />
         <MyGyms memberships={memberships} />
         <UpcomingClasses sessions={upcoming} />
         <RecentReplays replays={replays} />
 
-        <section className="border-b border-[#333333]">
-          <div className="max-w-[1280px] mx-auto px-6 py-8">
-            <InsightCard body="You've watched 8 guard retention classes this month. You're building real depth in this position. Next step — find a class focused on attacking from guard, not just surviving it." />
-          </div>
-        </section>
+        {memberships.length === 0 && (
+          <section className="border-b border-[#333333]">
+            <div className="max-w-[1280px] mx-auto px-6 py-8">
+              <InsightCard body="Welcome to Matpeak. Browse gyms and join one with your invite code to start training." />
+            </div>
+          </section>
+        )}
       </main>
     </div>
   )

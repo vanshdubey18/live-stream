@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createClient as createAdminClient } from '@supabase/supabase-js'
 
@@ -17,24 +17,20 @@ async function assertAdmin() {
   return user
 }
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   const user = await assertAdmin()
   if (!user) return NextResponse.json({ error: 'Not authorized' }, { status: 403 })
 
+  const id = req.nextUrl.searchParams.get('id')
+  if (!id) return NextResponse.json({ error: 'Missing id' }, { status: 400 })
+
   const { data, error } = await adminClient()
-    .from('memberships')
-    .select('id, user_id, gym_id, status, source, free_until, created_at, gyms(name)')
-    .order('created_at', { ascending: false })
+    .from('gyms')
+    .select('id, name, slug, city, location, description, disciplines, owner_email, status, created_at')
+    .eq('id', id)
+    .maybeSingle()
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-
-  // Fetch emails from auth.users for each unique user_id
-  const userIds = [...new Set((data ?? []).map((m: any) => m.user_id))]
-  const { data: authUsers } = await adminClient().auth.admin.listUsers()
-  const emailMap: Record<string, string> = {}
-  ;(authUsers?.users ?? []).forEach((u: any) => { emailMap[u.id] = u.email })
-
-  const members = (data ?? []).map((m: any) => ({ ...m, user_email: emailMap[m.user_id] ?? null }))
-
-  return NextResponse.json({ members })
+  if (!data) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+  return NextResponse.json({ gym: data })
 }

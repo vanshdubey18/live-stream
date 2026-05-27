@@ -39,6 +39,31 @@ export async function GET() {
   return NextResponse.json({ coaches: data ?? [] })
 }
 
+export async function POST(req: NextRequest) {
+  const user = await getGymOwner()
+  if (!user) return NextResponse.json({ error: 'Not authorized' }, { status: 403 })
+
+  const { name, discipline, beltRank, bio } = await req.json()
+  if (!name || !discipline) return NextResponse.json({ error: 'Name and discipline are required' }, { status: 400 })
+
+  const { data: gym } = await adminClient()
+    .from('gyms')
+    .select('id')
+    .eq('owner_id', user.id)
+    .maybeSingle()
+
+  if (!gym) return NextResponse.json({ error: 'Gym not found' }, { status: 404 })
+
+  const { data, error } = await adminClient()
+    .from('coaches')
+    .insert({ gym_id: gym.id, name, discipline, belt_rank: beltRank || null, bio: bio || null })
+    .select()
+    .single()
+
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  return NextResponse.json({ coach: data })
+}
+
 export async function DELETE(req: NextRequest) {
   const user = await getGymOwner()
   if (!user) return NextResponse.json({ error: 'Not authorized' }, { status: 403 })

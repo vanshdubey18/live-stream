@@ -44,12 +44,18 @@ export async function POST(req: NextRequest) {
     userEmail = user.email ?? ''
   }
 
+  // Use admin client for gym insert — regular client has no session after signUp in SSR
+  const adminClient = createAdminClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  )
+
   // Generate unique slug
   const baseSlug = slugify(gymName)
   const slug = `${baseSlug}-${Math.random().toString(36).slice(2, 7)}`
 
   // Insert gym row
-  const { data: gym, error: gymError } = await supabase
+  const { data: gym, error: gymError } = await adminClient
     .from('gyms')
     .insert({
       name: gymName,
@@ -61,18 +67,11 @@ export async function POST(req: NextRequest) {
       owner_email: userEmail,
       owner_id: userId,
       status: 'pending',
-      // monthly_price_paise uses DB default (99900) until schema cache refreshes
     })
     .select()
     .single()
 
   if (gymError) return NextResponse.json({ error: gymError.message }, { status: 400 })
-
-  // Update user role to gym_owner using admin client (bypasses RLS)
-  const adminClient = createAdminClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  )
 
   await adminClient.from('users').update({ role: 'gym_owner' }).eq('id', userId)
   await adminClient.auth.admin.updateUserById(userId, {

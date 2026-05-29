@@ -42,6 +42,7 @@ create table public.gyms (
   disciplines          text[] not null default '{}',
   logo_url             text,
   cover_url            text,
+  instagram            text,
   owner_email          text not null,
   owner_id             uuid references public.users(id) on delete set null,
   stream_key           text,

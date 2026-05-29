@@ -29,7 +29,7 @@ export async function GET() {
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
   // Fetch emails from auth.users for each unique user_id
-  const userIds = [...new Set((data ?? []).map((m: any) => m.user_id))]
+  const userIds = Array.from(new Set((data ?? []).map((m: any) => m.user_id)))
   const { data: authUsers } = await adminClient().auth.admin.listUsers()
   const emailMap: Record<string, string> = {}
   ;(authUsers?.users ?? []).forEach((u: any) => { emailMap[u.id] = u.email })

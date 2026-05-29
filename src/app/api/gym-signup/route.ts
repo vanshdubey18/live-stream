@@ -55,19 +55,23 @@ export async function POST(req: NextRequest) {
   const slug = `${baseSlug}-${Math.random().toString(36).slice(2, 7)}`
 
   // Insert gym row
+  const gymRow: Record<string, any> = {
+    name: gymName,
+    slug,
+    city,
+    location,
+    description,
+    disciplines,
+    owner_email: userEmail,
+    owner_id: userId,
+    status: 'pending',
+  }
+  // Only set price when the owner provided one; otherwise the DB default (99900) applies.
+  if (monthlyPricePaise != null) gymRow.monthly_price_paise = monthlyPricePaise
+
   const { data: gym, error: gymError } = await adminClient
     .from('gyms')
-    .insert({
-      name: gymName,
-      slug,
-      city,
-      location,
-      description,
-      disciplines,
-      owner_email: userEmail,
-      owner_id: userId,
-      status: 'pending',
-    })
+    .insert(gymRow)
     .select()
     .single()
 

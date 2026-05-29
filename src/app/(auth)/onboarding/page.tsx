@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
+import { createClient } from '@/lib/supabase/client'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface Prefs {
@@ -107,7 +108,7 @@ export default function OnboardingPage() {
     })
   }
 
-  function advance() {
+  async function advance() {
     if (!canContinue) return
     if (step < 2) {
       setDirection(1)
@@ -116,7 +117,10 @@ export default function OnboardingPage() {
       if (typeof window !== 'undefined') {
         localStorage.setItem('matpeak_prefs', JSON.stringify(prefs))
       }
-      router.push('/dashboard')
+      const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+      const role = user?.user_metadata?.role ?? 'member'
+      router.push(role === 'gym_owner' ? '/gym-signup' : '/dashboard')
     }
   }
 

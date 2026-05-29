@@ -47,7 +47,7 @@ export default function SignupPage() {
       if (signUpError) throw signUpError
 
       if (data.user) {
-        router.push('/onboarding')
+        router.push(role === 'gym_owner' ? '/gym-signup' : '/onboarding')
       }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Something went wrong.')

@@ -21,9 +21,10 @@ export async function GET() {
   const user = await getGymOwner()
   if (!user) return NextResponse.json({ error: 'Not authorized' }, { status: 403 })
 
+  // Select '*' so a not-yet-cached optional column (instagram / price) can't 500 this.
   const { data: gym, error } = await adminClient()
     .from('gyms')
-    .select('id, name, description, city, location, disciplines, instagram, monthly_price_paise')
+    .select('*')
     .eq('owner_id', user.id)
     .maybeSingle()
 
@@ -55,10 +56,15 @@ export async function PATCH(req: NextRequest) {
   if (monthlyPricePaise !== undefined) updates.monthly_price_paise = monthlyPricePaise
   if (instagram !== undefined) updates.instagram = instagram
 
-  const { error } = await adminClient()
-    .from('gyms')
-    .update(updates)
-    .eq('id', existing.id)
+  let { error } = await adminClient().from('gyms').update(updates).eq('id', existing.id)
+
+  // If the schema cache is missing an optional column, drop it and retry so the
+  // rest of the profile still saves.
+  if (error && /schema cache|monthly_price_paise|instagram/i.test(error.message)) {
+    delete updates.monthly_price_paise
+    delete updates.instagram
+    ;({ error } = await adminClient().from('gyms').update(updates).eq('id', existing.id))
+  }
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json({ success: true })

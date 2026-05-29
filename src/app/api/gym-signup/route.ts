@@ -54,9 +54,10 @@ export async function POST(req: NextRequest) {
   const baseSlug = slugify(gymName)
   const slug = `${baseSlug}-${Math.random().toString(36).slice(2, 7)}`
 
-  // Insert gym row — monthly_price_paise omitted here, uses DB default (99900).
-  // Gym owner can update price from their profile after approval.
-  const gymRow: Record<string, any> = {
+  // Insert gym row. We try to include the owner-set price, but if PostgREST's
+  // schema cache hasn't picked up the column yet we retry without it (the DB
+  // default of 99900 then applies). This makes signup resilient either way.
+  const baseRow: Record<string, any> = {
     name: gymName,
     slug,
     city,
@@ -68,11 +69,25 @@ export async function POST(req: NextRequest) {
     status: 'pending',
   }
 
-  const { data: gym, error: gymError } = await adminClient
+  const rowWithPrice =
+    monthlyPricePaise != null
+      ? { ...baseRow, monthly_price_paise: monthlyPricePaise }
+      : baseRow
+
+  let { data: gym, error: gymError } = await adminClient
     .from('gyms')
-    .insert(gymRow)
+    .insert(rowWithPrice)
     .select()
     .single()
+
+  // Retry without the price column if the cache rejected it.
+  if (gymError && /monthly_price_paise|schema cache/i.test(gymError.message)) {
+    ;({ data: gym, error: gymError } = await adminClient
+      .from('gyms')
+      .insert(baseRow)
+      .select()
+      .single())
+  }
 
   if (gymError) return NextResponse.json({ error: gymError.message }, { status: 400 })
 

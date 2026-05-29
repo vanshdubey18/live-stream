@@ -40,7 +40,7 @@ function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
 }
 
-export default function ApplicationsClient({ gyms: initial, pendingCount: initialPending }: { gyms: Gym[]; pendingCount: number }) {
+export default function ApplicationsClient({ gyms: initial }: { gyms: Gym[]; pendingCount: number }) {
   const [gyms, setGyms] = useState<Gym[]>(initial)
   const [tab, setTab] = useState<Tab>('Pending')
   const [loading, setLoading] = useState<string | null>(null)

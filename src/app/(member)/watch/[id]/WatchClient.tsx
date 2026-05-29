@@ -363,7 +363,15 @@ interface Props {
 
 export default function WatchClient({ session, initialPhase, initialPlaybackId }: Props) {
   const [phase, setPhase] = useState<Phase>(initialPhase)
-  const [playbackId] = useState<string | null>(initialPlaybackId)
+  const [playbackId, setPlaybackId] = useState<string | null>(initialPlaybackId)
+
+  // When the waiting room calls router.refresh() after the gym goes live, the
+  // server component re-renders with new props. useState ignores prop changes,
+  // so sync them here — otherwise the page is stuck on "waiting" forever.
+  useEffect(() => { setPhase(initialPhase) }, [initialPhase])
+  useEffect(() => {
+    if (initialPlaybackId) setPlaybackId(initialPlaybackId)
+  }, [initialPlaybackId])
 
   return (
     <div className="min-h-screen bg-[#0D0D0D] overflow-x-hidden">

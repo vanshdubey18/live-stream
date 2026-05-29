@@ -1,11 +1,10 @@
 import Mux from '@mux/mux-node'
 
-// Create client at request time so env vars are always loaded
+// Create the client at request time so env vars are always loaded and a missing
+// key never crashes the module at import (which would take down the route).
 function getMux() {
   return new Mux()
 }
-
-export default getMux()
 
 export async function createLiveStream() {
   const { video } = getMux()

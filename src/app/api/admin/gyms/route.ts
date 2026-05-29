@@ -23,7 +23,7 @@ export async function GET() {
 
   const { data, error } = await adminClient()
     .from('gyms')
-    .select('id, name, city, disciplines, status, created_at')
+    .select('id, slug, name, city, disciplines, status, created_at')
     .eq('status', 'active')
     .order('created_at', { ascending: false })
 

@@ -1,4 +1,12 @@
 import { createClient } from '@/lib/supabase/server'
+import { createClient as createAdminClient } from '@supabase/supabase-js'
+
+function adminClient() {
+  return createAdminClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  )
+}
 
 // ─── Member queries ───────────────────────────────────────────────────────────
 
@@ -8,8 +16,6 @@ export async function getMemberGyms(userId: string) {
     .from('memberships')
     .select(`
       id,
-      plan_type,
-      disciplines,
       status,
       source,
       free_until,
@@ -188,8 +194,7 @@ export async function getGymCoaches(gymId: string) {
 }
 
 export async function getGymMemberCount(gymId: string) {
-  const supabase = createClient()
-  const { count, error } = await supabase
+  const { count, error } = await adminClient()
     .from('memberships')
     .select('*', { count: 'exact', head: true })
     .eq('gym_id', gymId)

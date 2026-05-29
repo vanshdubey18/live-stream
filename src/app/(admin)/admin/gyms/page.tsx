@@ -6,6 +6,7 @@ import AdminSidebar from '@/components/layout/AdminSidebar'
 
 interface Gym {
   id: string
+  slug: string
   name: string
   city: string
   disciplines: string[]
@@ -95,7 +96,7 @@ export default function ActiveGymsPage() {
                           {new Date(g.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
                         </td>
                         <td className="px-4 py-3.5">
-                          <a href={`/gyms/${g.id}`} className="text-[#555555] hover:text-white transition-colors"><ExternalLink size={14} /></a>
+                          <a href={`/gyms/${g.slug}`} className="text-[#555555] hover:text-white transition-colors"><ExternalLink size={14} /></a>
                         </td>
                       </tr>
                     ))}

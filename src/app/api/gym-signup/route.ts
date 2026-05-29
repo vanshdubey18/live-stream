@@ -54,7 +54,8 @@ export async function POST(req: NextRequest) {
   const baseSlug = slugify(gymName)
   const slug = `${baseSlug}-${Math.random().toString(36).slice(2, 7)}`
 
-  // Insert gym row
+  // Insert gym row — monthly_price_paise omitted here, uses DB default (99900).
+  // Gym owner can update price from their profile after approval.
   const gymRow: Record<string, any> = {
     name: gymName,
     slug,
@@ -66,8 +67,6 @@ export async function POST(req: NextRequest) {
     owner_id: userId,
     status: 'pending',
   }
-  // Only set price when the owner provided one; otherwise the DB default (99900) applies.
-  if (monthlyPricePaise != null) gymRow.monthly_price_paise = monthlyPricePaise
 
   const { data: gym, error: gymError } = await adminClient
     .from('gyms')

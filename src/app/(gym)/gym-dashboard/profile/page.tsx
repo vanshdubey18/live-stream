@@ -5,7 +5,7 @@ import { Loader2, Upload } from 'lucide-react'
 import GymSidebar from '@/components/layout/GymSidebar'
 import Toast from '@/components/gym-dashboard/Toast'
 
-const DISCIPLINES = ['BJJ', 'Boxing', 'Muay Thai', 'Wrestling']
+const DISCIPLINES = ['BJJ', 'Boxing', 'Muay Thai', 'Wrestling', 'MMA', 'Kickboxing', 'Judo', 'Sambo']
 
 export default function GymProfilePage() {
   const [form, setForm] = useState({

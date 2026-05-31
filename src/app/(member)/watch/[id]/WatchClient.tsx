@@ -26,7 +26,6 @@ function WaitingRoom({ session, onGoLive }: { session: SessionInfo; onGoLive: ()
   const scheduledAt = new Date(session.scheduled_at)
   const getRemaining = () => Math.max(0, Math.floor((scheduledAt.getTime() - Date.now()) / 1000))
   const [seconds, setSeconds] = useState(getRemaining)
-  const [watchers, setWatchers] = useState(12)
   const [checklist, setChecklist] = useState([false, false, false])
   const checkItems = ['Find your gear', 'Clear your space', 'Set up your mat']
   const router = useRouter()
@@ -36,12 +35,6 @@ function WaitingRoom({ session, onGoLive }: { session: SessionInfo; onGoLive: ()
     const t = setInterval(() => setSeconds(getRemaining()), 1000)
     return () => clearInterval(t)
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  // Watcher count creep
-  useEffect(() => {
-    const t = setInterval(() => setWatchers(w => w + 1), 20_000)
-    return () => clearInterval(t)
   }, [])
 
   // Poll session status every 10s — auto-transition when gym goes live
@@ -126,9 +119,7 @@ function WaitingRoom({ session, onGoLive }: { session: SessionInfo; onGoLive: ()
             </div>
             <div className="border-t border-[#2A2A2A] pt-4 flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-[#FF3B3B] animate-pulse" />
-              <span className="font-inter text-[#999999] text-xs">
-                <span className="text-white font-medium">{watchers}</span> members getting ready
-              </span>
+              <span className="font-inter text-[#999999] text-xs">Waiting for stream to start</span>
             </div>
           </motion.div>
 
@@ -247,10 +238,12 @@ function LiveViewer({ playbackId, sessionId, session, onEnded }: {
           <h1 className="font-bebas text-[28px] text-white tracking-[1px] leading-tight">{session.title}</h1>
         </div>
 
-        {/* Section 2: viewer count */}
+        {/* Section 2: live indicator */}
         <div className="px-5 py-5 border-b border-[#2A2A2A]">
-          <div className="font-bebas text-[56px] text-[#FF3B3B] leading-none tracking-[1px]">47</div>
-          <div className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mt-1">Watching now</div>
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-[#FF3B3B] animate-pulse" />
+            <span className="font-inter text-[11px] text-[#FF3B3B] tracking-[4px] uppercase">Streaming live</span>
+          </div>
         </div>
 
         {/* Section 3: coach + gym */}

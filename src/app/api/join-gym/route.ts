@@ -73,6 +73,7 @@ export async function POST(req: NextRequest) {
     status: 'active',
     source: couponCode ? 'coupon' : 'paid',
     free_until: freeUntil,
+    plan_type: 'all',
   })
 
   if (membershipErr) return NextResponse.json({ error: membershipErr.message }, { status: 400 })

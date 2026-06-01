@@ -99,9 +99,13 @@ function HeroPanel({ upcoming, user, memberships }: { upcoming: any[]; user: { n
                 {memberships.map((m: any) => (
                   <span
                     key={m.id ?? m.gyms?.id}
-                    className="inline-flex items-center gap-1.5 font-inter text-[11px] text-[#00D4AA] tracking-[3px] uppercase border border-[#00D4AA]/20 bg-[#00D4AA]/5 px-3 py-1.5 rounded-sm"
+                    className="inline-flex items-center gap-2 font-inter text-[11px] text-[#00D4AA] tracking-[3px] uppercase border border-[#00D4AA]/20 bg-[#00D4AA]/5 px-3 py-1.5 rounded-sm"
                   >
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#00D4AA]" />
+                    {m.gyms?.logo_url ? (
+                      <img src={m.gyms.logo_url} alt="" className="w-4 h-4 rounded-sm object-cover shrink-0" />
+                    ) : (
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#00D4AA] shrink-0" />
+                    )}
                     Member of {m.gyms?.name ?? 'your gym'}
                   </span>
                 ))}

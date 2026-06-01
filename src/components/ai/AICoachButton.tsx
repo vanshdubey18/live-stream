@@ -27,6 +27,12 @@ export default function AICoachButton() {
   }, [])
 
   useEffect(() => {
+    const handler = () => { setOpen(true); setPulse(false) }
+    window.addEventListener('open-ai-coach', handler)
+    return () => window.removeEventListener('open-ai-coach', handler)
+  }, [])
+
+  useEffect(() => {
     if (open) bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, open])
 
@@ -64,8 +70,8 @@ export default function AICoachButton() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 16, scale: 0.97 }}
             transition={{ duration: 0.2 }}
-            className="fixed bottom-24 right-6 z-50 w-[340px] bg-[#1A1A1A] border border-[#333333] rounded-sm shadow-2xl flex flex-col overflow-hidden"
-            style={{ maxHeight: 'calc(100vh - 120px)' }}
+            className="fixed top-1/2 -translate-y-1/2 right-14 z-50 w-[340px] bg-[#1A1A1A] border border-[#333333] rounded-sm shadow-2xl flex flex-col overflow-hidden"
+            style={{ maxHeight: 'calc(100vh - 80px)' }}
           >
             {/* Header */}
             <div className="flex items-center justify-between px-4 py-3 border-b border-[#2A2A2A] bg-[#0D0D0D] shrink-0">
@@ -153,14 +159,17 @@ export default function AICoachButton() {
       {/* FAB */}
       <motion.button
         onClick={() => { setOpen(v => !v); setPulse(false) }}
-        className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-[#FF3B3B] rounded-sm flex items-center justify-center shadow-lg hover:bg-[#cc2f2f] transition-colors"
+        className="fixed top-1/2 -translate-y-1/2 right-0 z-50 w-12 h-20 bg-[#FF3B3B] rounded-l-sm flex flex-col items-center justify-center gap-1 shadow-lg hover:bg-[#cc2f2f] transition-colors"
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
       >
         <AnimatePresence mode="wait">
           {open
-            ? <motion.div key="x" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.15 }}><X size={20} className="text-white" /></motion.div>
-            : <motion.div key="spark" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.15 }}><Sparkles size={20} className="text-white" /></motion.div>
+            ? <motion.div key="x" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.15 }}><X size={16} className="text-white" /></motion.div>
+            : <motion.div key="spark" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex flex-col items-center gap-1">
+                <Sparkles size={16} className="text-white" />
+                <span className="font-bebas text-white text-[10px] tracking-[2px] [writing-mode:vertical-rl] rotate-180">AI COACH</span>
+              </motion.div>
           }
         </AnimatePresence>
         {pulse && !open && (

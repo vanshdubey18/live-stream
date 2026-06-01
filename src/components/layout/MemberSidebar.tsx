@@ -14,6 +14,7 @@ import {
   X,
   LogOut,
   Search,
+  Sparkles,
 } from 'lucide-react'
 
 const navItems = [
@@ -91,6 +92,25 @@ export default function MemberSidebar({ active = 'Dashboard', onSearchOpen }: Me
             <kbd className="hidden lg:flex items-center gap-0.5 text-[#444] text-[10px] bg-[#1A1A1A] border border-[#333333] rounded-sm px-1.5 py-0.5 font-mono">
               ⌘K
             </kbd>
+          </button>
+        </div>
+
+        {/* AI Coach CTA */}
+        <div className="px-3 py-3 border-b border-[#333333]">
+          <button
+            onClick={() => window.dispatchEvent(new CustomEvent('open-ai-coach'))}
+            className="w-full flex items-center gap-3 px-3 py-3 rounded-sm bg-[#FF3B3B]/10 border border-[#FF3B3B]/20 hover:bg-[#FF3B3B]/20 transition-colors group"
+          >
+            <div className="w-6 h-6 rounded-sm bg-[#FF3B3B]/20 flex items-center justify-center shrink-0">
+              <Sparkles size={13} className="text-[#FF3B3B]" />
+            </div>
+            <div className="flex-1 text-left">
+              <p className="font-bebas text-sm text-white tracking-[1px] leading-none">AI COACH</p>
+              <p className="font-inter text-[10px] text-[#FF3B3B]/70 mt-0.5">Ask about your classes</p>
+            </div>
+            <span className="font-inter text-[9px] text-[#FF3B3B] tracking-[2px] uppercase border border-[#FF3B3B]/30 px-1.5 py-0.5 rounded-sm shrink-0">
+              Soon
+            </span>
           </button>
         </div>
 

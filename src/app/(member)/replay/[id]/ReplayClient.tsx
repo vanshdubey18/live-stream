@@ -65,9 +65,9 @@ function UpgradeOverlay({ feature }: { feature: string }) {
         className="inline-flex items-center gap-2 bg-[#FF3B3B] text-white font-bebas tracking-[3px] text-sm px-6 py-3 rounded-sm hover:bg-[#cc2f2f] transition-colors"
       >
         <Sparkles size={14} />
-        UNLOCK — ₹299/MO
+        UNLOCK AI COACH
       </a>
-      <p className="font-inter text-[#555555] text-[10px] mt-3">7-day free trial · Cancel anytime</p>
+      <p className="font-inter text-[#555555] text-[10px] mt-3">Coming soon · Join the waitlist</p>
     </div>
   )
 }
@@ -146,7 +146,7 @@ function SummaryTab({ onTimestampClick }: { onTimestampClick: (ts: string) => vo
           href="/dashboard/billing"
           className="block w-full text-center bg-[#FF3B3B]/10 border border-[#FF3B3B]/20 text-[#FF3B3B] font-bebas tracking-[3px] text-xs py-2.5 rounded-sm hover:bg-[#FF3B3B]/20 transition-colors mt-1"
         >
-          UNLOCK AI COACH — ₹299/MO
+          UNLOCK AI COACH
         </a>
       </div>
     </div>

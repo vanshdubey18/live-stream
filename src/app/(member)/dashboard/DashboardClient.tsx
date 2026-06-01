@@ -67,11 +67,118 @@ function LiveBanner({ session }: { session: any }) {
   )
 }
 
+// ─── Streak Ring ──────────────────────────────────────────────────────────────
+function StreakRing({ weekSessions, goal = 4 }: { weekSessions: number; goal?: number }) {
+  const size = 180
+  const strokeWidth = 8
+  const r = (size - strokeWidth * 2) / 2
+  const cx = size / 2
+  const cy = size / 2
+  const circumference = 2 * Math.PI * r
+  const progress = Math.min(weekSessions / goal, 1)
+  const dash = circumference * progress
+  const gap = circumference - dash
+
+  // Day-of-week dots (Mon–Sun), highlight days with upcoming sessions
+  const dayLabels = ['M', 'T', 'W', 'T', 'F', 'S', 'S']
+  const now = new Date()
+  const weekDayStart = new Date(now)
+  weekDayStart.setDate(now.getDate() - ((now.getDay() + 6) % 7)) // Monday
+
+  return (
+    <div className="flex flex-col items-center gap-4 select-none">
+      {/* Ring */}
+      <div className="relative" style={{ width: size, height: size }}>
+        {/* Glow layer */}
+        <svg className="absolute inset-0 blur-[6px] opacity-40" width={size} height={size}>
+          <circle
+            cx={cx} cy={cy} r={r}
+            fill="none"
+            stroke="#FF3B3B"
+            strokeWidth={strokeWidth + 2}
+            strokeDasharray={`${dash} ${gap}`}
+            strokeLinecap="round"
+            transform={`rotate(-90 ${cx} ${cy})`}
+          />
+        </svg>
+        {/* Track ring */}
+        <svg className="absolute inset-0" width={size} height={size}>
+          <circle cx={cx} cy={cy} r={r} fill="none" stroke="#1A1A1A" strokeWidth={strokeWidth} />
+        </svg>
+        {/* Progress ring */}
+        <svg className="absolute inset-0" width={size} height={size}>
+          <defs>
+            <linearGradient id="ring-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#FF3B3B" />
+              <stop offset="100%" stopColor="#FF6B6B" />
+            </linearGradient>
+          </defs>
+          <circle
+            cx={cx} cy={cy} r={r}
+            fill="none"
+            stroke="url(#ring-grad)"
+            strokeWidth={strokeWidth}
+            strokeDasharray={`${dash} ${gap}`}
+            strokeLinecap="round"
+            transform={`rotate(-90 ${cx} ${cy})`}
+            style={{ transition: 'stroke-dasharray 0.6s cubic-bezier(0.4,0,0.2,1)' }}
+          />
+        </svg>
+        {/* Center content */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-0.5">
+          <span className="font-bebas text-[52px] text-white leading-none tracking-[1px]">
+            {weekSessions}
+          </span>
+          <span className="font-inter text-[10px] text-[#555555] uppercase tracking-[3px]">
+            / {goal} this week
+          </span>
+        </div>
+      </div>
+
+      {/* Day dots */}
+      <div className="flex items-center gap-3">
+        {dayLabels.map((label, i) => {
+          const day = new Date(weekDayStart)
+          day.setDate(weekDayStart.getDate() + i)
+          const isPast = day < now && day.toDateString() !== now.toDateString()
+          const isToday = day.toDateString() === now.toDateString()
+          return (
+            <div key={i} className="flex flex-col items-center gap-1.5">
+              <span
+                className={`w-1.5 h-1.5 rounded-full transition-colors ${
+                  isToday ? 'bg-[#FF3B3B]' : isPast ? 'bg-[#333333]' : 'bg-[#222222]'
+                }`}
+              />
+              <span className={`font-inter text-[9px] uppercase tracking-[1px] ${isToday ? 'text-white' : 'text-[#444444]'}`}>
+                {label}
+              </span>
+            </div>
+          )
+        })}
+      </div>
+
+      <p className="font-inter text-[10px] text-[#444444] uppercase tracking-[3px]">Weekly Goal</p>
+    </div>
+  )
+}
+
 // ─── Hero Status Panel ────────────────────────────────────────────────────────
 function HeroPanel({ upcoming, user, memberships }: { upcoming: any[]; user: { name: string }; memberships: any[] }) {
   const todayCount = upcoming.filter(s => {
     const d = new Date(s.scheduled_at)
     return d.toDateString() === new Date().toDateString()
+  }).length
+
+  // Count sessions this week (Mon–Sun)
+  const now = new Date()
+  const weekStart = new Date(now)
+  weekStart.setDate(now.getDate() - ((now.getDay() + 6) % 7))
+  weekStart.setHours(0, 0, 0, 0)
+  const weekEnd = new Date(weekStart)
+  weekEnd.setDate(weekStart.getDate() + 7)
+  const weekCount = upcoming.filter(s => {
+    const d = new Date(s.scheduled_at)
+    return d >= weekStart && d < weekEnd
   }).length
 
   const firstName = user.name?.split(' ')[0] ?? 'Fighter'
@@ -111,6 +218,11 @@ function HeroPanel({ upcoming, user, memberships }: { upcoming: any[]; user: { n
                 ))}
               </div>
             )}
+          </div>
+
+          {/* Streak ring — right side */}
+          <div className="hidden lg:flex flex-col items-center">
+            <StreakRing weekSessions={weekCount} goal={4} />
           </div>
         </div>
       </div>

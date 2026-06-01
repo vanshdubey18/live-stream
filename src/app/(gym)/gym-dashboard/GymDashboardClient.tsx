@@ -64,7 +64,12 @@ export default function GymDashboardClient({ gym, ownerName, sessions, coaches, 
     setToast('Class scheduled ✓')
   }
 
-  function handleDelete(id: string) {
+  async function handleDelete(id: string) {
+    await fetch('/api/gym/session', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id }),
+    })
     setLocalSessions(p => p.filter(c => c.id !== id))
     setToast('Class removed')
   }
@@ -104,12 +109,14 @@ export default function GymDashboardClient({ gym, ownerName, sessions, coaches, 
               <span className={`w-1.5 h-1.5 rounded-sm ${gym.status === 'active' ? 'bg-[#00D4AA]' : 'bg-[#FFD60A]'}`} />
               {gym.status === 'active' ? 'ACTIVE' : 'PENDING'}
             </span>
-            <a
-              href={`/gyms/${gym.slug}`}
-              className="hidden sm:flex items-center gap-1.5 font-inter text-[11px] text-[#555555] hover:text-white tracking-[2px] uppercase transition-colors"
-            >
-              View Page <ExternalLink size={10} />
-            </a>
+            {gym.status === 'active' && (
+              <a
+                href={`/gyms/${gym.slug}`}
+                className="hidden sm:flex items-center gap-1.5 font-inter text-[11px] text-[#555555] hover:text-white tracking-[2px] uppercase transition-colors"
+              >
+                View Page <ExternalLink size={10} />
+              </a>
+            )}
           </div>
         </div>
 
@@ -123,7 +130,7 @@ export default function GymDashboardClient({ gym, ownerName, sessions, coaches, 
               sub="Active memberships"
             />
             <StatsCard
-              label="Revenue (₹)"
+              label="Est. Revenue (₹)"
               value={`₹${totalRevenue.toLocaleString('en-IN')}`}
               sub="Your 70% share (est.)"
             />

@@ -7,7 +7,15 @@ import Link from 'next/link'
 import MuxPlayer from '@mux/mux-player-react'
 import SessionSummary, { DEMO_SUMMARY } from '@/components/ai/SessionSummary'
 
-export default function ReplayClient({ playbackId }: { playbackId?: string }) {
+interface SessionMeta {
+  title: string
+  discipline: string
+  duration_minutes: number
+  coach: string | null
+  gym: string | null
+}
+
+export default function ReplayClient({ playbackId, session }: { playbackId?: string; session?: SessionMeta }) {
   const [playing, setPlaying] = useState(false)
   const [progress, setProgress] = useState(0.28) // 28% into video (mock only)
   const [jumpTo, setJumpTo] = useState<string | null>(null)
@@ -28,7 +36,10 @@ export default function ReplayClient({ playbackId }: { playbackId?: string }) {
     setTimeout(() => setJumpTo(null), 2000)
   }
 
-  const session = DEMO_SUMMARY
+  const displayTitle = session?.title ?? 'Replay'
+  const displayCoach = session?.coach ?? 'Coach'
+  const displayGym = session?.gym ?? ''
+  const displayDuration = session ? `${session.duration_minutes}m` : '—'
 
   return (
     <div className="min-h-screen bg-[#0D0D0D]">
@@ -39,7 +50,7 @@ export default function ReplayClient({ playbackId }: { playbackId?: string }) {
           <ArrowLeft size={14} /> Dashboard
         </Link>
         <div className="h-4 w-px bg-[#333333]" />
-        <h1 className="font-bebas text-[18px] text-white tracking-[1px] truncate">{session.title}</h1>
+        <h1 className="font-bebas text-[18px] text-white tracking-[1px] truncate">{displayTitle}</h1>
         <span className="ml-auto font-inter text-[11px] text-[#999999] tracking-[4px] uppercase">Replay</span>
       </div>
 
@@ -148,13 +159,13 @@ export default function ReplayClient({ playbackId }: { playbackId?: string }) {
           {/* Session meta below player — mobile only shows here */}
           <div className="lg:hidden border-b border-[#2A2A2A] px-5 py-5">
             <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-3">Class Info</p>
-            <h2 className="font-bebas text-[28px] text-white tracking-[1px] mb-1">{session.title}</h2>
-            <p className="font-inter text-[#999999] text-xs">{session.coach} · {session.gym} · {session.duration}</p>
+            <h2 className="font-bebas text-[28px] text-white tracking-[1px] mb-1">{displayTitle}</h2>
+            <p className="font-inter text-[#999999] text-xs">{displayCoach}{displayGym ? ` · ${displayGym}` : ''} · {displayDuration}</p>
           </div>
 
           {/* Mobile: AI summary below video */}
           <div className="lg:hidden px-4 py-6">
-            <ReplaySidebar session={session} onTimestampClick={handleTimestamp} />
+            <ReplaySidebar session={DEMO_SUMMARY} onTimestampClick={handleTimestamp} />
           </div>
         </div>
 
@@ -169,20 +180,20 @@ export default function ReplayClient({ playbackId }: { playbackId?: string }) {
             {/* Section: class info */}
             <div className="px-5 py-5 border-b border-[#2A2A2A]">
               <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-3">Class Info</p>
-              <h2 className="font-bebas text-[28px] text-white tracking-[1px] leading-tight mb-2">{session.title}</h2>
-              <p className="font-inter text-[#999999] text-xs">{session.coach}</p>
-              {session.gym && <p className="font-inter text-[#999999] text-xs">{session.gym}</p>}
+              <h2 className="font-bebas text-[28px] text-white tracking-[1px] leading-tight mb-2">{displayTitle}</h2>
+              <p className="font-inter text-[#999999] text-xs">{displayCoach}</p>
+              {displayGym && <p className="font-inter text-[#999999] text-xs">{displayGym}</p>}
             </div>
 
             {/* Section: duration */}
             <div className="px-5 py-5 border-b border-[#2A2A2A]">
               <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-2">Duration</p>
-              <p className="font-bebas text-[28px] text-white tracking-[1px]">{session.duration}</p>
+              <p className="font-bebas text-[28px] text-white tracking-[1px]">{displayDuration}</p>
             </div>
 
             {/* Section: AI summary */}
             <div className="px-5 py-5 overflow-y-auto">
-              <ReplaySidebar session={session} onTimestampClick={handleTimestamp} />
+              <ReplaySidebar session={DEMO_SUMMARY} onTimestampClick={handleTimestamp} />
             </div>
           </div>
         </motion.div>

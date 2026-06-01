@@ -31,7 +31,7 @@ export default async function WatchPage({ params }: { params: { id: string } }) 
   if (role !== 'admin') {
     const { data: membership } = await supabase
       .from('memberships')
-      .select('id')
+      .select('id, free_until')
       .eq('user_id', user.id)
       .eq('gym_id', session.gym_id)
       .eq('status', 'active')
@@ -40,6 +40,7 @@ export default async function WatchPage({ params }: { params: { id: string } }) 
     if (!membership) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const gymName = (session.gyms as any)?.name ?? 'this gym'
+
       return (
         <div className="min-h-screen bg-[#0D0D0D] flex items-center justify-center px-4">
           <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm p-10 max-w-md w-full text-center space-y-4">
@@ -52,6 +53,19 @@ export default async function WatchPage({ params }: { params: { id: string } }) 
               className="inline-block bg-white hover:bg-[#E5E5E5] text-black font-bebas tracking-[3px] px-6 py-3 rounded-sm text-sm transition-colors">
               BROWSE GYMS
             </Link>
+          </div>
+        </div>
+      )
+    }
+
+    if (membership.free_until && new Date(membership.free_until) < new Date()) {
+      return (
+        <div className="min-h-screen bg-[#0D0D0D] flex items-center justify-center px-4">
+          <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm p-10 max-w-md w-full text-center space-y-4">
+            <p className="font-inter text-[11px] text-[#555555] tracking-[4px] uppercase">Access Expired</p>
+            <h1 className="font-bebas text-3xl text-white tracking-[1px]">TRIAL ENDED</h1>
+            <p className="font-inter text-[#999999] text-sm">Your free trial has expired. Renew your membership to keep watching.</p>
+            <a href="/gyms" className="inline-block bg-white hover:bg-[#E5E5E5] text-black font-bebas tracking-[3px] px-6 py-3 rounded-sm text-sm transition-colors">RENEW MEMBERSHIP</a>
           </div>
         </div>
       )

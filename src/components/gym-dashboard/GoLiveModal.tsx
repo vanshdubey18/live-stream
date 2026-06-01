@@ -129,7 +129,7 @@ export default function GoLiveModal({
               >
                 <p className="font-inter text-[#555555] text-sm leading-relaxed">
                   Make sure your camera and microphone are ready, then click <span className="text-white">Go Live</span>.
-                  Members will be notified immediately.
+                  Members will see your stream when they open the app.
                 </p>
 
                 {error && <p className="font-inter text-[#FF3B3B] text-xs">{error}</p>}

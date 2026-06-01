@@ -41,11 +41,22 @@ export async function POST(req: NextRequest) {
       .maybeSingle()
 
     if (gym) {
-      await admin
+      // Only activate the single next scheduled session (closest to now)
+      const { data: nextSession } = await admin
         .from('sessions')
-        .update({ status: 'live', ...(playbackId ? { mux_playback_id: playbackId } : {}) })
+        .select('id')
         .eq('gym_id', gym.id)
         .eq('status', 'scheduled')
+        .order('scheduled_at', { ascending: true })
+        .limit(1)
+        .maybeSingle()
+
+      if (nextSession) {
+        await admin
+          .from('sessions')
+          .update({ status: 'live', ...(playbackId ? { mux_playback_id: playbackId } : {}) })
+          .eq('id', nextSession.id)
+      }
     }
   }
 
@@ -87,7 +98,7 @@ export async function POST(req: NextRequest) {
           .select('id')
           .eq('gym_id', gym.id)
           .eq('status', 'ended')
-          .order('created_at', { ascending: false })
+          .order('scheduled_at', { ascending: false })
           .limit(1)
           .maybeSingle()
 

@@ -293,7 +293,7 @@ export default function GymSignupClient({ isLoggedIn, prefillName, prefillEmail 
             <div>
               <h1 className="font-bebas text-2xl text-white tracking-[1px]">APPLICATION SUBMITTED</h1>
               <p className="font-inter text-[#999999] text-sm mt-2 max-w-sm mx-auto">
-                Our team will review your gym within 24–48 hours. You'll get an email once you're approved.
+                Our team will review your gym within 24–48 hours. Log back in to check your approval status.
               </p>
             </div>
 

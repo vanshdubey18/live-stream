@@ -29,6 +29,16 @@ export async function POST(req: NextRequest) {
 
   if (existing) return NextResponse.json({ error: 'Already a member of this gym' }, { status: 400 })
 
+  const { data: gym } = await adminClient
+    .from('gyms')
+    .select('status')
+    .eq('id', gymId)
+    .maybeSingle()
+
+  if (!gym || gym.status !== 'active') {
+    return NextResponse.json({ error: 'This gym is not currently active' }, { status: 400 })
+  }
+
   let freeUntil: string | null = null
   let couponId: string | null = null
 
@@ -79,7 +89,7 @@ export async function POST(req: NextRequest) {
   if (membershipErr) return NextResponse.json({ error: membershipErr.message }, { status: 400 })
 
   // Increment coupon usage and record redemption
-  if (couponId && freeUntil) {
+  if (couponId) {
     const { data: currentCoupon } = await adminClient
       .from('coupons').select('times_used').eq('id', couponId).single()
     await Promise.all([

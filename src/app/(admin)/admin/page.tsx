@@ -1,6 +1,14 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { createClient as createAdminClient } from '@supabase/supabase-js'
 import AdminOverviewClient from './AdminOverviewClient'
+
+function adminClient() {
+  return createAdminClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  )
+}
 
 export default async function AdminOverviewPage() {
   const supabase = createClient()
@@ -21,14 +29,14 @@ export default async function AdminOverviewPage() {
     { data: payouts },
     { data: sessions },
   ] = await Promise.all([
-    supabase.from('memberships').select('*', { count: 'exact', head: true }).eq('status', 'active'),
-    supabase.from('gyms').select('*', { count: 'exact', head: true }).eq('status', 'active'),
-    supabase.from('gyms').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
-    supabase.from('gyms').select('id, name, city, status, created_at').order('created_at', { ascending: false }),
-    supabase.from('users').select('id, email, name, role, created_at').order('created_at', { ascending: false }),
-    supabase.from('coupons').select('*').order('created_at', { ascending: false }),
-    supabase.from('payouts').select('*, gyms(name)').order('period_start', { ascending: false }),
-    supabase.from('sessions').select('id, status').eq('status', 'live'),
+    adminClient().from('memberships').select('*', { count: 'exact', head: true }).eq('status', 'active'),
+    adminClient().from('gyms').select('*', { count: 'exact', head: true }).eq('status', 'active'),
+    adminClient().from('gyms').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
+    adminClient().from('gyms').select('id, name, city, status, created_at').order('created_at', { ascending: false }),
+    adminClient().from('users').select('id, email, name, role, created_at').order('created_at', { ascending: false }),
+    adminClient().from('coupons').select('*').order('created_at', { ascending: false }),
+    adminClient().from('payouts').select('*, gyms(name)').order('period_start', { ascending: false }),
+    adminClient().from('sessions').select('id, status').eq('status', 'live'),
   ])
 
   return (

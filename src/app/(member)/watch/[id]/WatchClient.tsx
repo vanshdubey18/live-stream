@@ -144,16 +144,6 @@ function WaitingRoom({ session, onGoLive }: { session: SessionInfo; onGoLive: ()
               ))}
             </div>
 
-            {/* Dev shortcut */}
-            <div className="mt-auto pt-4 border-t border-[#2A2A2A]">
-              <button
-                onClick={onGoLive}
-                className="w-full bg-[#FF3B3B] hover:bg-red-700 text-white font-inter font-bold py-2.5 rounded-sm text-xs tracking-[2px] uppercase transition-colors"
-              >
-                Skip to stream
-              </button>
-              <p className="text-center text-[#444] font-inter text-xs mt-2">Dev shortcut</p>
-            </div>
           </motion.div>
         </div>
       </div>

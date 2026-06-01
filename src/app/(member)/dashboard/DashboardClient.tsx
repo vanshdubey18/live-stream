@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 import MemberSidebar from '@/components/layout/MemberSidebar'
 import StatCard from '@/components/ui/StatCard'
 import InsightCard from '@/components/ui/InsightCard'
-import { ChevronRight, ArrowRight } from 'lucide-react'
+import { ChevronRight, ArrowRight, BookOpen, Sparkles, Layers, MessageCircle, Lock } from 'lucide-react'
 
 interface Props {
   user: { name: string; email: string }
@@ -307,6 +307,59 @@ function RecentReplays({ replays }: { replays: any[] }) {
   )
 }
 
+// ─── AI Coach Section ─────────────────────────────────────────────────────────
+function AICoachSection() {
+  const features = [
+    { icon: <BookOpen size={14} />, label: 'Summary + timestamps', sub: 'Key moments from every class, jumpable', free: true },
+    { icon: <Sparkles size={14} />, label: 'Quiz every class', sub: 'Test yourself after each session', free: false },
+    { icon: <Layers size={14} />, label: 'Flashcards', sub: 'Technique cards with spaced repetition', free: false },
+    { icon: <MessageCircle size={14} />, label: 'Ask your coach', sub: 'Chat grounded in your actual classes', free: false },
+  ]
+
+  return (
+    <section className="border-b border-[#333333]">
+      <div className="max-w-[1280px] mx-auto px-6 py-8">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <p className="font-inter text-[11px] text-[#999999] uppercase tracking-[4px] mb-1">Powered by AI</p>
+            <h2 className="font-bebas text-2xl text-white tracking-[1px]">AI COACH</h2>
+          </div>
+          <span className="font-inter text-[10px] text-[#FF3B3B] tracking-[3px] uppercase border border-[#FF3B3B]/20 bg-[#FF3B3B]/5 px-3 py-1.5 rounded-sm">
+            Coming Soon
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-[#333333]">
+          {features.map((f, i) => (
+            <motion.div
+              key={f.label}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.2, delay: i * 0.05 }}
+              className={`bg-[#1A1A1A] p-5 flex flex-col gap-3 ${!f.free ? 'opacity-60' : ''}`}
+            >
+              <div className="flex items-center justify-between">
+                <span className={f.free ? 'text-[#00D4AA]' : 'text-[#555555]'}>{f.icon}</span>
+                {f.free
+                  ? <span className="font-inter text-[10px] text-[#00D4AA] tracking-[2px] uppercase">Free</span>
+                  : <Lock size={10} className="text-[#FF3B3B]" />}
+              </div>
+              <div>
+                <p className="font-bebas text-lg text-white tracking-[1px] leading-tight">{f.label}</p>
+                <p className="font-inter text-xs text-[#555555] mt-0.5">{f.sub}</p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        <p className="font-inter text-[#555555] text-xs mt-4">
+          After every class, AI Coach analyses the transcript and generates your personal study tools. Available on all replays.
+        </p>
+      </div>
+    </section>
+  )
+}
+
 // ─── Page ─────────────────────────────────────────────────────────────────────
 export default function DashboardClient({ user, memberships, upcoming, replays, liveSession, completedCount }: Props) {
   const [, setSearchOpen] = useState(false)
@@ -324,6 +377,7 @@ export default function DashboardClient({ user, memberships, upcoming, replays, 
         <MyGyms memberships={memberships} />
         <UpcomingClasses sessions={upcoming} />
         <RecentReplays replays={replays} />
+        <AICoachSection />
 
         {memberships.length === 0 && (
           <section className="border-b border-[#333333]">

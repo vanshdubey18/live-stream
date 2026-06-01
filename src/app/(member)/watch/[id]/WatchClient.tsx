@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowLeft, CheckCircle2, Circle } from 'lucide-react'
+import { ArrowLeft, CheckCircle2, Circle, Lock, Sparkles, BookOpen, Layers, MessageCircle } from 'lucide-react'
 import Link from 'next/link'
 import MuxPlayer from '@mux/mux-player-react'
 import SessionSummary, { DEMO_SUMMARY } from '@/components/ai/SessionSummary'
@@ -252,11 +252,35 @@ function LiveViewer({ playbackId, sessionId, session, onEnded }: {
         </div>
 
         {/* Section 4: elapsed time */}
-        <div className="px-5 py-5">
+        <div className="px-5 py-5 border-b border-[#2A2A2A]">
           <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-2">Elapsed</p>
           <div className="font-bebas text-[40px] text-white tracking-[1px] tabular-nums leading-none">
             {pad(Math.floor(elapsed / 3600) > 0 ? Math.floor(elapsed / 3600) : Math.floor(elapsed / 60))}:{pad(Math.floor(elapsed / 3600) > 0 ? Math.floor((elapsed % 3600) / 60) : elapsed % 60)}
           </div>
+        </div>
+
+        {/* Section 5: AI Coach teaser */}
+        <div className="px-5 py-5 flex-1">
+          <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-4">AI Coach</p>
+          <div className="space-y-2 mb-5">
+            {[
+              { icon: <BookOpen size={12} />, label: 'Summary + timestamps', free: true },
+              { icon: <Sparkles size={12} />, label: 'Quiz this class', free: false },
+              { icon: <Layers size={12} />, label: 'Flashcards', free: false },
+              { icon: <MessageCircle size={12} />, label: 'Ask your coach', free: false },
+            ].map(item => (
+              <div key={item.label} className={`flex items-center gap-3 px-3 py-2 rounded-sm ${item.free ? 'opacity-100' : 'opacity-40'}`}>
+                <span className={item.free ? 'text-[#00D4AA]' : 'text-[#555555]'}>{item.icon}</span>
+                <span className="font-inter text-sm text-white flex-1">{item.label}</span>
+                {item.free
+                  ? <span className="font-inter text-[10px] text-[#00D4AA] tracking-[2px] uppercase">Free</span>
+                  : <Lock size={10} className="text-[#FF3B3B]" />}
+              </div>
+            ))}
+          </div>
+          <p className="font-inter text-[#555555] text-xs leading-relaxed">
+            AI Coach analyses this class after it ends. Summary + timestamps are free. Quiz, flashcards and chat unlock with AI Coach.
+          </p>
         </div>
       </div>
     </motion.div>

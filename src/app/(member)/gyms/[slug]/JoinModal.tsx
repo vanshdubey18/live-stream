@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { X, Loader2, Ticket, CreditCard } from 'lucide-react'
+import { X, Loader2, Ticket, CreditCard, ChevronDown, ChevronUp } from 'lucide-react'
 
 interface Props {
   gym: any
@@ -15,29 +15,25 @@ function formatPrice(paise: number) {
 
 export default function JoinModal({ gym, onClose, onJoined }: Props) {
   const [coupon, setCoupon] = useState('')
+  const [showCoupon, setShowCoupon] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [step, setStep] = useState<'join' | 'success'>('join')
 
   const price = gym.monthly_price_paise ?? 99900
 
-  async function handleJoin() {
+  async function handleCouponJoin() {
     setError('')
-
     if (!coupon.trim()) {
-      setError('A coupon code is required to join during beta. Get one from our team.')
+      setError('Enter a coupon code.')
       return
     }
-
     setLoading(true)
     try {
       const res = await fetch('/api/join-gym', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          gymId: gym.id,
-          couponCode: coupon.trim().toUpperCase(),
-        }),
+        body: JSON.stringify({ gymId: gym.id, couponCode: coupon.trim().toUpperCase() }),
       })
       const data = await res.json()
       if (!res.ok) { setError(data.error ?? 'Something went wrong'); return }
@@ -82,13 +78,13 @@ export default function JoinModal({ gym, onClose, onJoined }: Props) {
               </button>
             </div>
 
-            <div className="p-6 space-y-6">
+            <div className="p-6 space-y-4">
 
               {/* Price display */}
-              <div className="bg-[#0D0D0D] border border-[#333333] rounded-sm p-6 flex items-baseline justify-between">
+              <div className="bg-[#0D0D0D] border border-[#333333] rounded-sm p-5 flex items-baseline justify-between">
                 <div>
                   <p className="font-inter text-[11px] text-[#555555] tracking-[4px] uppercase mb-1">Monthly fee</p>
-                  <p className="font-inter text-xs text-[#999999]">Full access to all live classes &amp; replays</p>
+                  <p className="font-inter text-xs text-[#999999]">Live classes &amp; replays</p>
                 </div>
                 <div className="text-right shrink-0 ml-6">
                   <span className="font-bebas text-5xl text-white">{formatPrice(price)}</span>
@@ -96,42 +92,55 @@ export default function JoinModal({ gym, onClose, onJoined }: Props) {
                 </div>
               </div>
 
-              {/* Coupon code */}
-              <div>
-                <label className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase block mb-2">
-                  <Ticket size={10} className="inline mr-1.5" />Coupon Code
-                </label>
-                <input
-                  value={coupon}
-                  onChange={e => setCoupon(e.target.value)}
-                  placeholder="Enter your coupon code"
-                  className="w-full bg-[#0D0D0D] border border-[#333333] rounded-sm px-4 py-3 text-white placeholder-[#444444] font-inter text-sm focus:outline-none focus:border-[#555555] transition-colors uppercase"
-                />
-              </div>
-
-              {/* Payment notice */}
-              <div className="flex items-center gap-3 bg-[#0D0D0D] border border-[#333333] rounded-sm px-4 py-3">
-                <CreditCard size={14} className="text-[#555555] shrink-0" />
-                <p className="font-inter text-[#555555] text-xs">
-                  Online payments coming soon. Use a coupon code to join during beta.
-                </p>
-              </div>
-
-              {error && (
-                <p className="font-inter text-sm text-[#FF3B3B] bg-[#FF3B3B]/5 border border-[#FF3B3B]/20 rounded-sm px-4 py-3">
-                  {error}
-                </p>
-              )}
-
+              {/* Pay online — coming soon */}
               <button
-                onClick={handleJoin}
-                disabled={loading}
-                className="w-full bg-white text-black font-bebas tracking-[3px] py-3.5 rounded-sm hover:bg-[#E5E5E5] disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 text-sm"
+                disabled
+                className="w-full flex items-center justify-between bg-[#0D0D0D] border border-[#333333] rounded-sm px-5 py-4 opacity-50 cursor-not-allowed"
               >
-                {loading
-                  ? <><Loader2 size={15} className="animate-spin" /> JOINING…</>
-                  : 'JOIN WITH COUPON'}
+                <div className="flex items-center gap-3">
+                  <CreditCard size={16} className="text-[#555555]" />
+                  <span className="font-inter text-sm text-white">Pay Online</span>
+                </div>
+                <span className="font-inter text-[10px] text-[#555555] tracking-[3px] uppercase border border-[#333333] px-2 py-1 rounded-sm">
+                  Coming Soon
+                </span>
               </button>
+
+              {/* Coupon toggle */}
+              <div className="border border-[#333333] rounded-sm overflow-hidden">
+                <button
+                  onClick={() => setShowCoupon(v => !v)}
+                  className="w-full flex items-center justify-between px-5 py-4 hover:bg-[#222222] transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <Ticket size={16} className="text-[#999999]" />
+                    <span className="font-inter text-sm text-white">Have a coupon code?</span>
+                  </div>
+                  {showCoupon ? <ChevronUp size={16} className="text-[#555555]" /> : <ChevronDown size={16} className="text-[#555555]" />}
+                </button>
+
+                {showCoupon && (
+                  <div className="px-5 pb-5 pt-1 space-y-3 border-t border-[#2A2A2A]">
+                    <input
+                      value={coupon}
+                      onChange={e => setCoupon(e.target.value)}
+                      onKeyDown={e => e.key === 'Enter' && handleCouponJoin()}
+                      placeholder="Enter coupon code"
+                      className="w-full bg-[#0D0D0D] border border-[#333333] rounded-sm px-4 py-3 text-white placeholder-[#444444] font-inter text-sm focus:outline-none focus:border-[#555555] transition-colors uppercase"
+                    />
+                    {error && (
+                      <p className="font-inter text-sm text-[#FF3B3B]">{error}</p>
+                    )}
+                    <button
+                      onClick={handleCouponJoin}
+                      disabled={loading}
+                      className="w-full bg-white text-black font-bebas tracking-[3px] py-3 rounded-sm hover:bg-[#E5E5E5] disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 text-sm"
+                    >
+                      {loading ? <><Loader2 size={15} className="animate-spin" /> APPLYING…</> : 'APPLY &amp; JOIN'}
+                    </button>
+                  </div>
+                )}
+              </div>
 
             </div>
           </>

@@ -23,11 +23,17 @@ export default async function DashboardPage() {
     getRecentReplays(gymIds),
     getLiveSession(gymIds),
     gymIds.length > 0
-      ? createClient().from('sessions').select('id, status').in('gym_id', gymIds).eq('status', 'ended')
+      ? createClient().from('sessions').select('id, status, duration_minutes, scheduled_at').in('gym_id', gymIds).eq('status', 'ended')
       : Promise.resolve({ data: [] }),
   ])
 
-  const completedCount = (allSessions as any)?.data?.length ?? 0
+  const completedSessions = (allSessions as any)?.data ?? []
+  const completedCount = completedSessions.length
+  const totalHours = Math.round(completedSessions.reduce((acc: number, s: any) => acc + (s.duration_minutes ?? 60), 0) / 60)
+
+  const now = new Date()
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1)
+  const monthCount = completedSessions.filter((s: any) => new Date(s.scheduled_at) >= monthStart).length
 
   // Get next class for each gym
   const gymsWithNext = await Promise.all(
@@ -45,6 +51,8 @@ export default async function DashboardPage() {
       replays={replays}
       liveSession={liveSession}
       completedCount={completedCount}
+      totalHours={totalHours}
+      monthCount={monthCount}
     />
   )
 }

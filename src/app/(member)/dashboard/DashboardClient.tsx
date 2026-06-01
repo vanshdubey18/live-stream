@@ -14,6 +14,8 @@ interface Props {
   replays: any[]
   liveSession: any | null
   completedCount: number
+  totalHours: number
+  monthCount: number
 }
 
 const DISCIPLINE_COLOR: Record<string, string> = {
@@ -231,16 +233,18 @@ function HeroPanel({ upcoming, user, memberships }: { upcoming: any[]; user: { n
 }
 
 // ─── Stats Row ────────────────────────────────────────────────────────────────
-function StatsRow({ memberships, completedCount }: { memberships: any[]; completedCount: number }) {
+function StatsRow({ memberships, completedCount, totalHours, monthCount }: { memberships: any[]; completedCount: number; totalHours: number; monthCount: number }) {
   const stats = [
     { number: String(memberships.length), label: 'Gyms Joined' },
     { number: String(completedCount), label: 'Replays Available' },
+    { number: `${totalHours}h`, label: 'Hours Trained' },
+    { number: String(monthCount), label: 'This Month' },
   ]
 
   return (
     <section className="border-b border-[#333333]">
       <div className="max-w-[1280px] mx-auto px-6 py-8">
-        <div className="grid grid-cols-2 gap-px bg-[#333333]">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-[#333333]">
           {stats.map(({ number, label }, i) => (
             <motion.div
               key={label}
@@ -473,7 +477,7 @@ function AICoachSection() {
 }
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
-export default function DashboardClient({ user, memberships, upcoming, replays, liveSession, completedCount }: Props) {
+export default function DashboardClient({ user, memberships, upcoming, replays, liveSession, completedCount, totalHours, monthCount }: Props) {
   const [, setSearchOpen] = useState(false)
 
   return (
@@ -485,7 +489,7 @@ export default function DashboardClient({ user, memberships, upcoming, replays, 
 
         {liveSession && <LiveBanner session={liveSession} />}
         <HeroPanel upcoming={upcoming} user={user} memberships={memberships} />
-        <StatsRow memberships={memberships} completedCount={completedCount} />
+        <StatsRow memberships={memberships} completedCount={completedCount} totalHours={totalHours} monthCount={monthCount} />
         <MyGyms memberships={memberships} />
         <UpcomingClasses sessions={upcoming} />
         <RecentReplays replays={replays} />

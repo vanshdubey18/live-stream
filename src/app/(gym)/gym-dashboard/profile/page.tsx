@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Loader2, Upload } from 'lucide-react'
 import GymSidebar from '@/components/layout/GymSidebar'
 import Toast from '@/components/gym-dashboard/Toast'
@@ -21,6 +21,9 @@ export default function GymProfilePage() {
   const [fetching, setFetching] = useState(true)
   const [toast, setToast] = useState('')
   const [error, setError] = useState('')
+  const [logoUrl, setLogoUrl] = useState('')
+  const [logoUploading, setLogoUploading] = useState(false)
+  const logoInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     fetch('/api/gym/profile')
@@ -36,6 +39,7 @@ export default function GymProfilePage() {
             instagram: d.gym.instagram ?? '',
             monthlyPrice: d.gym.monthly_price_paise ? String(d.gym.monthly_price_paise / 100) : '',
           })
+          if (d.gym.logo_url) setLogoUrl(d.gym.logo_url)
         }
       })
       .catch(() => {})
@@ -53,6 +57,25 @@ export default function GymProfilePage() {
         ? p.disciplines.filter(x => x !== d)
         : [...p.disciplines, d],
     }))
+  }
+
+  async function handleLogoUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setLogoUploading(true)
+    try {
+      const fd = new FormData()
+      fd.append('file', file)
+      const res = await fetch('/api/gym/logo', { method: 'POST', body: fd })
+      const data = await res.json()
+      if (!res.ok) { setError(data.error ?? 'Upload failed'); return }
+      setLogoUrl(data.url)
+      setToast('Logo updated ✓')
+    } catch {
+      setError('Upload failed. Please try again.')
+    } finally {
+      setLogoUploading(false)
+    }
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -112,18 +135,30 @@ export default function GymProfilePage() {
 
         <form onSubmit={handleSubmit} className="px-6 py-6 max-w-2xl space-y-6">
 
-          {/* Logo & Cover */}
+          {/* Logo */}
           <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm p-6 space-y-4">
-            <h2 className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase">Media</h2>
-            {[{ label: 'Logo', sub: 'Square image, min 200×200px' }, { label: 'Cover Photo', sub: 'Landscape, min 1200×400px' }].map(item => (
-              <div key={item.label}>
-                <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-2">{item.label}</p>
-                <div className="border border-dashed border-[#333333] hover:border-[#555555] rounded-sm px-6 py-8 flex flex-col items-center gap-2 cursor-pointer transition-colors bg-[#0D0D0D]">
-                  <Upload size={20} className="text-[#555555]" />
-                  <p className="font-inter text-[#555555] text-xs">Click to upload · {item.sub}</p>
+            <h2 className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase">Logo</h2>
+            <div className="flex items-center gap-5">
+              {logoUrl ? (
+                <img src={logoUrl} alt="Gym logo" className="w-16 h-16 rounded-sm object-cover border border-[#333333] shrink-0" />
+              ) : (
+                <div className="w-16 h-16 rounded-sm bg-[#0D0D0D] border border-[#333333] flex items-center justify-center shrink-0">
+                  <Upload size={18} className="text-[#555555]" />
                 </div>
+              )}
+              <div className="flex-1">
+                <input ref={logoInputRef} type="file" accept="image/*" className="hidden" onChange={handleLogoUpload} />
+                <button
+                  type="button"
+                  onClick={() => logoInputRef.current?.click()}
+                  disabled={logoUploading}
+                  className="px-4 py-2 border border-[#333333] rounded-sm font-inter text-sm text-white hover:border-[#555555] transition-colors disabled:opacity-50 flex items-center gap-2"
+                >
+                  {logoUploading ? <><Loader2 size={14} className="animate-spin" /> Uploading…</> : logoUrl ? 'Change Logo' : 'Upload Logo'}
+                </button>
+                <p className="font-inter text-[#555555] text-xs mt-1.5">Square image · JPG, PNG or WebP</p>
               </div>
-            ))}
+            </div>
           </div>
 
           {/* Basic Info */}

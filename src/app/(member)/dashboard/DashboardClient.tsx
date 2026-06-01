@@ -122,7 +122,7 @@ function HeroPanel({ upcoming, user, memberships }: { upcoming: any[]; user: { n
 function StatsRow({ memberships, completedCount }: { memberships: any[]; completedCount: number }) {
   const stats = [
     { number: String(memberships.length), label: 'Gyms Joined' },
-    { number: String(completedCount), label: 'Classes Watched' },
+    { number: String(completedCount), label: 'Replays Available' },
   ]
 
   return (

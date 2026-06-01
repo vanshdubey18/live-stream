@@ -48,16 +48,23 @@ export default function ScheduleClassModal({ coaches, onClose, onScheduled }: Sc
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError('')
+
+    const scheduledAt = new Date(`${form.date}T${form.time}`)
+    if (scheduledAt <= new Date()) {
+      setError('Scheduled time must be in the future.')
+      setLoading(false)
+      return
+    }
+
     setLoading(true)
     try {
-      const scheduledAt = new Date(`${form.date}T${form.time}`).toISOString()
       const res = await fetch('/api/gym/session/schedule', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title: form.title,
           discipline: form.discipline,
-          scheduledAt,
+          scheduledAt: scheduledAt.toISOString(),
           durationMinutes: parseInt(form.duration),
           level: form.level,
           coachId: form.coachId || null,
@@ -115,6 +122,7 @@ export default function ScheduleClassModal({ coaches, onClose, onScheduled }: Sc
             <div>
               <label className={labelCls}>Date</label>
               <input type="date" className={inputCls} value={form.date}
+                min={new Date().toISOString().split('T')[0]}
                 onChange={e => set('date', e.target.value)} required />
             </div>
             <div>

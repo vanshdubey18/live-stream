@@ -117,7 +117,7 @@ export async function getAllActiveGyms() {
   const supabase = createClient()
   const { data, error } = await supabase
     .from('gyms')
-    .select('id, slug, name, city, location, disciplines, logo_url, description')
+    .select('id, slug, name, city, location, disciplines, logo_url, description, sessions(status)')
     .eq('status', 'active')
     .order('created_at', { ascending: false })
   if (error) { console.error('getAllActiveGyms:', error); return [] }

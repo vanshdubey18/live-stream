@@ -17,7 +17,7 @@ interface SessionMeta {
 
 export default function ReplayClient({ playbackId, session }: { playbackId?: string; session?: SessionMeta }) {
   const [playing, setPlaying] = useState(false)
-  const [progress, setProgress] = useState(0.28) // 28% into video (mock only)
+  const [progress, setProgress] = useState(0)
   const [jumpTo, setJumpTo] = useState<string | null>(null)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const playerRef = useRef<any>(null)
@@ -28,7 +28,7 @@ export default function ReplayClient({ playbackId, session }: { playbackId?: str
     if (playbackId && playerRef.current) {
       playerRef.current.currentTime = seekSeconds
     } else {
-      const totalSeconds = 58 * 60
+      const totalSeconds = (session?.duration_minutes ?? 60) * 60
       setProgress(seekSeconds / totalSeconds)
     }
     setJumpTo(ts)
@@ -128,7 +128,7 @@ export default function ReplayClient({ playbackId, session }: { playbackId?: str
                         <Volume2 size={14} />
                       </button>
                       <span className="font-inter text-[#999999] text-xs tabular-nums">
-                        {String(Math.floor(progress * 58)).padStart(2, '0')}:{String(Math.floor((progress * 58 * 60) % 60)).padStart(2, '0')} / 58:00
+                        {(() => { const dur = session?.duration_minutes ?? 60; const cur = progress * dur; return `${String(Math.floor(cur)).padStart(2,'0')}:${String(Math.floor((cur*60)%60)).padStart(2,'0')} / ${String(dur).padStart(2,'0')}:00` })()}
                       </span>
                     </div>
                     <div className="flex items-center gap-2">

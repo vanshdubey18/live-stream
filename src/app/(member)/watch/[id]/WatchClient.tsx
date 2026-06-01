@@ -159,6 +159,12 @@ function LiveViewer({ playbackId, sessionId, session, onEnded }: {
   onEnded: () => void
 }) {
   const router = useRouter()
+  const [elapsed, setElapsed] = useState(0)
+
+  useEffect(() => {
+    const t = setInterval(() => setElapsed(s => s + 1), 1000)
+    return () => clearInterval(t)
+  }, [])
 
   // Poll every 15s — if session flips to 'ended', transition to post-phase
   useEffect(() => {
@@ -248,7 +254,9 @@ function LiveViewer({ playbackId, sessionId, session, onEnded }: {
         {/* Section 4: elapsed time */}
         <div className="px-5 py-5">
           <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-2">Elapsed</p>
-          <div className="font-bebas text-[40px] text-white tracking-[1px] tabular-nums leading-none">00:00</div>
+          <div className="font-bebas text-[40px] text-white tracking-[1px] tabular-nums leading-none">
+            {pad(Math.floor(elapsed / 3600) > 0 ? Math.floor(elapsed / 3600) : Math.floor(elapsed / 60))}:{pad(Math.floor(elapsed / 3600) > 0 ? Math.floor((elapsed % 3600) / 60) : elapsed % 60)}
+          </div>
         </div>
       </div>
     </motion.div>

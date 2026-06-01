@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
       code: code.toUpperCase().trim(),
       type,
       value: Number(value),
-      plan_type: 'all',
+      plan_type: 'full_mma',
       max_uses: Number(maxUses ?? 100),
       times_used: 0,
       expires_at: expiresAt || null,

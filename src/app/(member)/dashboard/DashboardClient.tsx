@@ -68,7 +68,7 @@ function LiveBanner({ session }: { session: any }) {
 }
 
 // ─── Hero Status Panel ────────────────────────────────────────────────────────
-function HeroPanel({ upcoming, user }: { upcoming: any[]; user: { name: string } }) {
+function HeroPanel({ upcoming, user, memberships }: { upcoming: any[]; user: { name: string }; memberships: any[] }) {
   const todayCount = upcoming.filter(s => {
     const d = new Date(s.scheduled_at)
     return d.toDateString() === new Date().toDateString()
@@ -93,6 +93,20 @@ function HeroPanel({ upcoming, user }: { upcoming: any[]; user: { name: string }
             <p className="font-inter text-xs text-[#555555] mt-1 uppercase tracking-[2px]">
               Good to see you, {firstName}
             </p>
+
+            {memberships.length > 0 && (
+              <div className="flex flex-wrap gap-2 mt-5">
+                {memberships.map((m: any) => (
+                  <span
+                    key={m.id ?? m.gyms?.id}
+                    className="inline-flex items-center gap-1.5 font-inter text-[11px] text-[#00D4AA] tracking-[3px] uppercase border border-[#00D4AA]/20 bg-[#00D4AA]/5 px-3 py-1.5 rounded-sm"
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#00D4AA]" />
+                    Member of {m.gyms?.name ?? 'your gym'}
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -301,7 +315,7 @@ export default function DashboardClient({ user, memberships, upcoming, replays, 
         <div className="h-14 lg:hidden" />
 
         {liveSession && <LiveBanner session={liveSession} />}
-        <HeroPanel upcoming={upcoming} user={user} />
+        <HeroPanel upcoming={upcoming} user={user} memberships={memberships} />
         <StatsRow memberships={memberships} completedCount={completedCount} />
         <MyGyms memberships={memberships} />
         <UpcomingClasses sessions={upcoming} />

@@ -436,10 +436,7 @@ function AICoachSection() {
     <section className="border-b border-[#333333]">
       <div className="max-w-[1280px] mx-auto px-6 py-8">
         <div className="flex items-center justify-between mb-6">
-          <div>
-            <p className="font-inter text-[11px] text-[#999999] uppercase tracking-[4px] mb-1">Powered by AI</p>
-            <h2 className="font-bebas text-2xl text-white tracking-[1px]">AI COACH</h2>
-          </div>
+          <h2 className="font-bebas text-2xl text-white tracking-[1px]">AI COACH</h2>
           <span className="font-inter text-[10px] text-[#FF3B3B] tracking-[3px] uppercase border border-[#FF3B3B]/20 bg-[#FF3B3B]/5 px-3 py-1.5 rounded-sm">
             Coming Soon
           </span>

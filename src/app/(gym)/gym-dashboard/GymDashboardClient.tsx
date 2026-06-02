@@ -1,14 +1,19 @@
 'use client'
 
 import { useState } from 'react'
-import { ExternalLink, Plus, CheckCircle, Clock } from 'lucide-react'
+import { ExternalLink, Plus, CheckCircle, Clock, Radio, AlertTriangle, UserPlus, ArrowRight, Trash2 } from 'lucide-react'
 import GymSidebar from '@/components/layout/GymSidebar'
 import StatsCard from '@/components/gym-dashboard/StatsCard'
 import StreamSetupCard from '@/components/gym-dashboard/StreamSetupCard'
 import ScheduleClassModal, { type ScheduledClass } from '@/components/gym-dashboard/ScheduleClassModal'
 import GoLiveModal from '@/components/gym-dashboard/GoLiveModal'
 import Toast from '@/components/gym-dashboard/Toast'
-import { Trash2 } from 'lucide-react'
+
+interface MemberStats {
+  active: number
+  expiringSoon: number
+  newThisWeek: number
+}
 
 interface Props {
   gym: any
@@ -16,6 +21,7 @@ interface Props {
   sessions: any[]
   coaches: any[]
   memberCount: number
+  memberStats: MemberStats
   payouts: any[]
 }
 
@@ -49,15 +55,160 @@ function StatusBadge({ status }: { status: string }) {
   )
 }
 
-export default function GymDashboardClient({ gym, ownerName, sessions, coaches, memberCount, payouts }: Props) {
+function formatRelTime(iso: string) {
+  const diff = new Date(iso).getTime() - Date.now()
+  const mins = Math.round(diff / 60000)
+  if (mins < 0) return 'now'
+  if (mins < 60) return `in ${mins}m`
+  const hrs = Math.round(mins / 60)
+  if (hrs < 24) return `in ${hrs}h`
+  return `in ${Math.round(hrs / 24)}d`
+}
+
+// ─── Action Items ──────────────────────────────────────────────────────────────
+// The "what needs my attention today" row — the first thing the owner sees.
+function ActionItems({
+  liveSession, nextSession, expiringSoon, newThisWeek, setupNeeds, onGoLive,
+}: {
+  liveSession: any | null
+  nextSession: any | null
+  expiringSoon: number
+  newThisWeek: number
+  setupNeeds: string[]
+  onGoLive: (id: string) => void
+}) {
+  type Item = {
+    key: string
+    tone: 'live' | 'warn' | 'info' | 'setup'
+    icon: React.ReactNode
+    title: string
+    sub: string
+    cta?: { label: string; onClick?: () => void; href?: string }
+  }
+  const items: Item[] = []
+
+  if (liveSession) {
+    items.push({
+      key: 'live', tone: 'live', icon: <Radio size={15} />,
+      title: `${liveSession.title} is live`,
+      sub: 'Your class is streaming right now',
+      cta: { label: 'Manage', onClick: () => onGoLive(liveSession.id) },
+    })
+  } else if (nextSession) {
+    items.push({
+      key: 'next', tone: 'info', icon: <Clock size={15} />,
+      title: `${nextSession.title} starts ${formatRelTime(nextSession.scheduled_at)}`,
+      sub: 'Get ready to go live',
+      cta: { label: 'Go Live', onClick: () => onGoLive(nextSession.id) },
+    })
+  }
+
+  if (expiringSoon > 0) {
+    items.push({
+      key: 'expiring', tone: 'warn', icon: <AlertTriangle size={15} />,
+      title: `${expiringSoon} member${expiringSoon > 1 ? 's' : ''} expiring this week`,
+      sub: 'Reach out before their membership lapses',
+    })
+  }
+
+  if (newThisWeek > 0) {
+    items.push({
+      key: 'new', tone: 'info', icon: <UserPlus size={15} />,
+      title: `${newThisWeek} new member${newThisWeek > 1 ? 's' : ''} this week`,
+      sub: 'Welcome them to your gym',
+    })
+  }
+
+  for (const need of setupNeeds) {
+    items.push({
+      key: `setup-${need}`, tone: 'setup', icon: <AlertTriangle size={15} />,
+      title: need === 'logo' ? 'Add your gym logo' : need === 'coaches' ? 'Add your first coach' : 'Schedule your first class',
+      sub: 'Finish setting up your gym',
+      cta: {
+        label: 'Set up',
+        href: need === 'logo' ? '/gym-dashboard/profile' : need === 'coaches' ? '/gym-dashboard/coaches' : undefined,
+      },
+    })
+  }
+
+  if (items.length === 0) {
+    items.push({
+      key: 'all-clear', tone: 'info', icon: <CheckCircle size={15} />,
+      title: 'All caught up',
+      sub: 'No actions need your attention right now',
+    })
+  }
+
+  const toneStyles: Record<Item['tone'], { dot: string; icon: string; border: string }> = {
+    live: { dot: 'bg-[#FF3B3B]', icon: 'text-[#FF3B3B]', border: 'border-[#FF3B3B]/30' },
+    warn: { dot: 'bg-[#FFD60A]', icon: 'text-[#FFD60A]', border: 'border-[#FFD60A]/20' },
+    info: { dot: 'bg-[#00D4AA]', icon: 'text-[#00D4AA]', border: 'border-[#333333]' },
+    setup: { dot: 'bg-[#FFD60A]', icon: 'text-[#FFD60A]', border: 'border-[#333333]' },
+  }
+
+  return (
+    <section>
+      <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-4">Needs Your Attention</p>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        {items.map(item => {
+          const s = toneStyles[item.tone]
+          return (
+            <div
+              key={item.key}
+              className={`bg-[#1A1A1A] border ${s.border} rounded-sm px-4 py-4 flex items-center gap-3 ${item.tone === 'live' ? 'live-pulse-border' : ''}`}
+            >
+              <span className={`shrink-0 ${s.icon}`}>{item.icon}</span>
+              <div className="flex-1 min-w-0">
+                <p className="font-inter text-white text-sm font-medium truncate">{item.title}</p>
+                <p className="font-inter text-[#777777] text-xs mt-0.5 truncate">{item.sub}</p>
+              </div>
+              {item.cta && (item.cta.href ? (
+                <a
+                  href={item.cta.href}
+                  className="shrink-0 flex items-center gap-1 font-bebas tracking-[2px] text-sm text-black bg-white hover:bg-[#E5E5E5] px-3 py-1.5 rounded-sm transition-colors"
+                >
+                  {item.cta.label} <ArrowRight size={12} />
+                </a>
+              ) : item.cta.onClick ? (
+                <button
+                  onClick={item.cta.onClick}
+                  className={`shrink-0 font-bebas tracking-[2px] text-sm px-3 py-1.5 rounded-sm transition-colors ${
+                    item.tone === 'live'
+                      ? 'bg-[#FF3B3B] text-white hover:bg-[#cc2f2f]'
+                      : 'bg-white text-black hover:bg-[#E5E5E5]'
+                  }`}
+                >
+                  {item.cta.label}
+                </button>
+              ) : null)}
+            </div>
+          )
+        })}
+      </div>
+    </section>
+  )
+}
+
+export default function GymDashboardClient({ gym, ownerName, sessions, coaches, memberCount, memberStats, payouts }: Props) {
   const [localSessions, setLocalSessions] = useState<any[]>(sessions)
   const [showModal, setShowModal] = useState(false)
   const [goLiveSession, setGoLiveSession] = useState<{ id: string; title: string } | null>(null)
   const [toast, setToast] = useState('')
 
-  const completedCount = sessions.filter(s => s.status === 'ended').length
-  const scheduledCount = sessions.filter(s => s.status === 'scheduled').length
+  const completedCount = localSessions.filter(s => s.status === 'ended').length
+  const scheduledCount = localSessions.filter(s => s.status === 'scheduled').length
   const totalRevenue = Math.round(memberCount * (gym.monthly_price_paise ?? 99900) * 0.7 / 100)
+
+  // Action-item inputs
+  const liveSession = localSessions.find(s => s.status === 'live') ?? null
+  const nextSession = localSessions
+    .filter(s => s.status === 'scheduled' && s.scheduled_at && new Date(s.scheduled_at).getTime() > Date.now())
+    .sort((a, b) => new Date(a.scheduled_at).getTime() - new Date(b.scheduled_at).getTime())[0] ?? null
+
+  const setupNeeds: string[] = []
+  if (!gym.logo_url) setupNeeds.push('logo')
+  if (coaches.length === 0) setupNeeds.push('coaches')
+  if (localSessions.length === 0) setupNeeds.push('sessions')
 
   function handleScheduled(cls: ScheduledClass) {
     setLocalSessions(p => [cls, ...p])
@@ -122,12 +273,22 @@ export default function GymDashboardClient({ gym, ownerName, sessions, coaches, 
 
         <div className="px-6 py-8 space-y-8 max-w-5xl">
 
+          {/* Action items — first thing the owner sees */}
+          <ActionItems
+            liveSession={liveSession}
+            nextSession={nextSession}
+            expiringSoon={memberStats.expiringSoon}
+            newThisWeek={memberStats.newThisWeek}
+            setupNeeds={setupNeeds}
+            onGoLive={handleGoLive}
+          />
+
           {/* Stats row */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <StatsCard
               label="Members"
               value={String(memberCount)}
-              sub="Active memberships"
+              sub={memberStats.newThisWeek > 0 ? `+${memberStats.newThisWeek} this week` : 'Active memberships'}
             />
             <StatsCard
               label="Est. Revenue (₹)"
@@ -135,14 +296,14 @@ export default function GymDashboardClient({ gym, ownerName, sessions, coaches, 
               sub="Your 70% share (est.)"
             />
             <StatsCard
+              label="Expiring Soon"
+              value={String(memberStats.expiringSoon)}
+              sub={memberStats.expiringSoon > 0 ? 'Within 7 days — remind them' : 'None this week'}
+            />
+            <StatsCard
               label="Sessions"
               value={String(localSessions.length)}
               sub={`${completedCount} ended · ${scheduledCount} scheduled`}
-            />
-            <StatsCard
-              label="Coaches"
-              value={String(coaches.length)}
-              sub="On your roster"
             />
           </div>
 

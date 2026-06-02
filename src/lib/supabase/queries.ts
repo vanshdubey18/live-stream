@@ -203,3 +203,31 @@ export async function getGymMemberCount(gymId: string) {
   if (error) return 0
   return count ?? 0
 }
+
+// Membership stats for the owner dashboard action items: total active, expiring
+// within 7 days, and joined within the last 7 days.
+export async function getGymMembershipStats(gymId: string) {
+  const { data, error } = await adminClient()
+    .from('memberships')
+    .select('id, free_until, current_period_end, created_at')
+    .eq('gym_id', gymId)
+    .eq('status', 'active')
+
+  if (error || !data) return { active: 0, expiringSoon: 0, newThisWeek: 0 }
+
+  const now = Date.now()
+  const week = 7 * 24 * 60 * 60 * 1000
+
+  let expiringSoon = 0
+  let newThisWeek = 0
+  for (const m of data) {
+    const end = m.current_period_end ?? m.free_until
+    if (end) {
+      const t = new Date(end).getTime()
+      if (t >= now && t <= now + week) expiringSoon++
+    }
+    if (m.created_at && new Date(m.created_at).getTime() >= now - week) newThisWeek++
+  }
+
+  return { active: data.length, expiringSoon, newThisWeek }
+}

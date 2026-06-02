@@ -22,7 +22,7 @@ interface SessionInfo {
 }
 
 // ─── Waiting room (session is scheduled) ─────────────────────────────────────
-function WaitingRoom({ session, onGoLive }: { session: SessionInfo; onGoLive: () => void }) {
+function WaitingRoom({ session }: { session: SessionInfo }) {
   const scheduledAt = new Date(session.scheduled_at)
   const getRemaining = () => Math.max(0, Math.floor((scheduledAt.getTime() - Date.now()) / 1000))
   const [seconds, setSeconds] = useState(getRemaining)
@@ -392,7 +392,7 @@ export default function WatchClient({ session, initialPhase, initialPlaybackId }
     <div className="min-h-screen bg-[#0D0D0D] overflow-x-hidden">
       <AnimatePresence mode="wait">
         {phase === 'waiting' && (
-          <WaitingRoom key="waiting" session={session} onGoLive={() => setPhase('live')} />
+          <WaitingRoom key="waiting" session={session} />
         )}
         {phase === 'live' && (
           <LiveViewer key="live" playbackId={playbackId} sessionId={session.id} session={session} onEnded={() => setPhase('post')} />

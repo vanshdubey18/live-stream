@@ -5,6 +5,7 @@ import {
   getGymSessions,
   getGymCoaches,
   getGymMemberCount,
+  getGymMembershipStats,
 } from '@/lib/supabase/queries'
 import GymDashboardClient from './GymDashboardClient'
 
@@ -29,10 +30,11 @@ export default async function GymDashboardPage() {
     )
   }
 
-  const [sessions, coaches, memberCount] = await Promise.all([
+  const [sessions, coaches, memberCount, memberStats] = await Promise.all([
     getGymSessions(gym.id),
     getGymCoaches(gym.id),
     getGymMemberCount(gym.id),
+    getGymMembershipStats(gym.id),
   ])
 
   // Fetch payouts for this gym
@@ -51,6 +53,7 @@ export default async function GymDashboardPage() {
       sessions={sessions ?? []}
       coaches={coaches ?? []}
       memberCount={memberCount}
+      memberStats={memberStats}
       payouts={payouts ?? []}
     />
   )

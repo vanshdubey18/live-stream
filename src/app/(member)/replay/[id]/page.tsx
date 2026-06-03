@@ -29,7 +29,7 @@ export default async function ReplayPage({ params }: { params: { id: string } })
   if (role !== 'admin') {
     const { data: membership } = await supabase
       .from('memberships')
-      .select('id, free_until')
+      .select('id, free_until, current_period_end')
       .eq('user_id', user.id)
       .eq('gym_id', session.gym_id)
       .eq('status', 'active')
@@ -37,8 +37,15 @@ export default async function ReplayPage({ params }: { params: { id: string } })
 
     if (!membership) redirect('/gyms')
 
-    if (membership.free_until && new Date(membership.free_until) < new Date()) {
-      redirect('/dashboard')
+    const now = new Date()
+    const expiryDate = membership.current_period_end
+      ? new Date(membership.current_period_end)
+      : membership.free_until
+        ? new Date(membership.free_until)
+        : null
+
+    if (expiryDate && expiryDate < now) {
+      redirect('/gyms')
     }
   }
 

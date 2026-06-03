@@ -20,7 +20,7 @@ export default async function SchedulePage() {
           .in('gym_id', gymIds)
           .in('status', ['scheduled', 'live'])
           .order('scheduled_at', { ascending: true })
-        return data ?? []
+        return (data ?? []) as any[]
       })()
     : []
 

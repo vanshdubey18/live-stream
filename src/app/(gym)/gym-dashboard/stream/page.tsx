@@ -1,6 +1,21 @@
 import { redirect } from 'next/navigation'
+import { createClient } from '@/lib/supabase/server'
+import { getGymByOwnerId } from '@/lib/supabase/queries'
+import StreamSetupPageClient from './StreamSetupPageClient'
 
-// Stream setup lives on the main gym dashboard
-export default function StreamPage() {
-  redirect('/gym-dashboard')
+export default async function StreamSetupPage() {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
+
+  const gym = await getGymByOwnerId(user.id)
+  if (!gym) redirect('/gym-dashboard')
+
+  return (
+    <StreamSetupPageClient
+      gymId={gym.id}
+      streamKey={gym.stream_key ?? null}
+      hasStream={!!gym.mux_live_stream_id}
+    />
+  )
 }

@@ -5,11 +5,12 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import {
   LayoutDashboard, Radio, CalendarDays, Users,
-  DollarSign, BarChart2, Settings, LogOut, Menu, X,
+  DollarSign, BarChart2, Settings, LogOut, Menu, X, UserCheck,
 } from 'lucide-react'
 
 const navItems = [
   { label: 'Overview', href: '/gym-dashboard', icon: LayoutDashboard },
+  { label: 'Members', href: '/gym-dashboard/members', icon: UserCheck },
   { label: 'Stream Setup', href: '/gym-dashboard/stream', icon: Radio },
   { label: 'Schedule Classes', href: '/gym-dashboard/schedule', icon: CalendarDays },
   { label: 'Coaches', href: '/gym-dashboard/coaches', icon: Users },

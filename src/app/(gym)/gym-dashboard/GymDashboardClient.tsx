@@ -289,6 +289,7 @@ export default function GymDashboardClient({ gym, ownerName, sessions, coaches, 
               label="Members"
               value={String(memberCount)}
               sub={memberStats.newThisWeek > 0 ? `+${memberStats.newThisWeek} this week` : 'Active memberships'}
+              href="/gym-dashboard/members"
             />
             <StatsCard
               label="Est. Revenue (₹)"

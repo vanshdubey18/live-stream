@@ -1,16 +1,33 @@
-import MemberSidebar from '@/components/layout/MemberSidebar'
-import ComingSoon from '@/components/ui/ComingSoon'
+import { redirect } from 'next/navigation'
+import { createClient } from '@/lib/supabase/server'
+import { getMemberGyms } from '@/lib/supabase/queries'
+import MemberScheduleClient from './MemberScheduleClient'
 
-export default function SchedulePage() {
+export default async function SchedulePage() {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
+
+  const memberships = await getMemberGyms(user.id)
+  const gymIds = memberships.map((m: any) => m.gyms?.id).filter(Boolean)
+
+  // Fetch more sessions for the schedule view — no limit cap needed here
+  const sessions = gymIds.length > 0
+    ? await (async () => {
+        const { data } = await createClient()
+          .from('sessions')
+          .select('id, title, discipline, scheduled_at, duration_minutes, level, status, coaches(name), gyms(name)')
+          .in('gym_id', gymIds)
+          .in('status', ['scheduled', 'live'])
+          .order('scheduled_at', { ascending: true })
+        return data ?? []
+      })()
+    : []
+
   return (
-    <div className="min-h-screen bg-[#0D0D0D] flex">
-      <MemberSidebar active="Schedule" />
-      <ComingSoon
-        title="Your Schedule"
-        description="View upcoming classes from your gyms, set reminders, and plan your training week."
-        backHref="/dashboard"
-        backLabel="Back to dashboard"
-      />
-    </div>
+    <MemberScheduleClient
+      sessions={sessions}
+      hasGyms={memberships.length > 0}
+    />
   )
 }

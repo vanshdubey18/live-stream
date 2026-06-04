@@ -1,27 +1,112 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import { useState } from 'react'
 import MemberSidebar from '@/components/layout/MemberSidebar'
 import { Lock, Check, Award } from 'lucide-react'
 
-// Preview of the upcoming belt-progression curriculum feature.
-// Static teaser data — no backend yet.
-const BELTS = [
-  { name: 'White Belt', color: '#E5E5E5', state: 'done', label: 'Completed' },
-  { name: 'Blue Belt', color: '#3B82F6', state: 'active', label: 'In progress' },
-  { name: 'Purple Belt', color: '#8B5CF6', state: 'locked', label: 'Locked' },
-  { name: 'Brown Belt', color: '#92400E', state: 'locked', label: 'Locked' },
-  { name: 'Black Belt', color: '#111111', state: 'locked', label: 'Locked' },
-]
+// Each discipline has its own ranking system
+const DISCIPLINES: Record<string, {
+  label: string
+  rankLabel: string
+  ranks: { name: string; color: string }[]
+  sampleModules: { title: string; classes: number; done: number }[]
+}> = {
+  BJJ: {
+    label: 'Brazilian Jiu-Jitsu',
+    rankLabel: 'Belt',
+    ranks: [
+      { name: 'White',  color: '#E5E5E5' },
+      { name: 'Blue',   color: '#3B82F6' },
+      { name: 'Purple', color: '#8B5CF6' },
+      { name: 'Brown',  color: '#92400E' },
+      { name: 'Black',  color: '#111111' },
+    ],
+    sampleModules: [
+      { title: 'Closed Guard Fundamentals', classes: 6, done: 6 },
+      { title: 'Escapes & Survival',        classes: 8, done: 5 },
+      { title: 'Takedowns for BJJ',         classes: 5, done: 2 },
+      { title: 'Submissions from Mount',    classes: 7, done: 0 },
+    ],
+  },
+  'Muay Thai': {
+    label: 'Muay Thai',
+    rankLabel: 'Armband',
+    ranks: [
+      { name: 'White',  color: '#E5E5E5' },
+      { name: 'Yellow', color: '#FFD60A' },
+      { name: 'Orange', color: '#FF9500' },
+      { name: 'Green',  color: '#00D4AA' },
+      { name: 'Blue',   color: '#3B82F6' },
+      { name: 'Red',    color: '#FF3B3B' },
+    ],
+    sampleModules: [
+      { title: 'Stance & Footwork',       classes: 4, done: 4 },
+      { title: 'Jab, Cross, Hook, Elbow', classes: 6, done: 3 },
+      { title: 'Teep & Push Kick',        classes: 5, done: 1 },
+      { title: 'Clinch & Knee Work',      classes: 6, done: 0 },
+    ],
+  },
+  Boxing: {
+    label: 'Boxing',
+    rankLabel: 'Level',
+    ranks: [
+      { name: 'Beginner',     color: '#E5E5E5' },
+      { name: 'Novice',       color: '#FFD60A' },
+      { name: 'Intermediate', color: '#FF9500' },
+      { name: 'Advanced',     color: '#FF3B3B' },
+      { name: 'Pro',          color: '#FFD700' },
+    ],
+    sampleModules: [
+      { title: 'Guard & Head Movement', classes: 5, done: 5 },
+      { title: 'Basic Combinations',    classes: 6, done: 2 },
+      { title: 'Footwork Patterns',     classes: 4, done: 1 },
+      { title: 'Body Work & Counter',   classes: 5, done: 0 },
+    ],
+  },
+  Wrestling: {
+    label: 'Wrestling',
+    rankLabel: 'Level',
+    ranks: [
+      { name: 'Beginner',     color: '#E5E5E5' },
+      { name: 'Novice',       color: '#FFD60A' },
+      { name: 'Intermediate', color: '#FF9500' },
+      { name: 'Advanced',     color: '#FF3B3B' },
+      { name: 'Competitor',   color: '#6B7FFF' },
+    ],
+    sampleModules: [
+      { title: 'Level Changes & Shots', classes: 5, done: 3 },
+      { title: 'Takedown Defense',      classes: 6, done: 1 },
+      { title: 'Mat Returns',           classes: 4, done: 0 },
+      { title: 'Top Control & Turns',   classes: 5, done: 0 },
+    ],
+  },
+  MMA: {
+    label: 'MMA',
+    rankLabel: 'Level',
+    ranks: [
+      { name: 'Beginner',     color: '#E5E5E5' },
+      { name: 'Amateur',      color: '#FFD60A' },
+      { name: 'Intermediate', color: '#FF9500' },
+      { name: 'Advanced',     color: '#FF3B3B' },
+      { name: 'Pro',          color: '#FFD700' },
+    ],
+    sampleModules: [
+      { title: 'Striking Fundamentals', classes: 6, done: 4 },
+      { title: 'Takedowns & Clinch',    classes: 6, done: 2 },
+      { title: 'Ground & Pound',        classes: 5, done: 0 },
+      { title: 'Submission Defense',    classes: 5, done: 0 },
+    ],
+  },
+}
 
-const SAMPLE_MODULES = [
-  { title: 'Closed Guard Fundamentals', classes: 6, done: 6 },
-  { title: 'Escapes & Survival', classes: 8, done: 5 },
-  { title: 'Takedowns for BJJ', classes: 5, done: 2 },
-  { title: 'Submissions from Mount', classes: 7, done: 0 },
-]
+const ACTIVE_RANK_INDEX = 1 // second rank = "in progress" for preview
 
 export default function ProgressionPage() {
+  const disciplineKeys = Object.keys(DISCIPLINES)
+  const [selected, setSelected] = useState('BJJ')
+  const disc = DISCIPLINES[selected]
+
   return (
     <div className="min-h-screen bg-black flex">
       <MemberSidebar active="Progression" />
@@ -37,76 +122,108 @@ export default function ProgressionPage() {
               Coming Soon
             </span>
           </div>
-          <h1 className="font-bebas text-4xl text-white tracking-[1px]">Belt Progression</h1>
+          <h1 className="font-bebas text-4xl text-white tracking-[1px]">Rank Progression</h1>
           <p className="font-inter text-sm text-[#555555] mt-2 max-w-lg">
-            Follow a structured path to your next belt. Your coach assigns modules, you complete classes, and you track every step toward your next promotion — all in one place.
+            Every discipline has its own path. Your coach assigns modules, you complete classes, and you track every step toward your next rank — no matter what you train.
           </p>
         </div>
 
         <div className="max-w-3xl mx-auto px-6 py-10 space-y-10">
 
-          {/* Belt path */}
+          {/* Discipline selector */}
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
+            transition={{ duration: 0.3 }}
           >
-            <p className="font-bebas text-xl text-white tracking-[1px] mb-5">Your Belt Path</p>
-            <div className="flex items-center gap-2 overflow-x-auto pb-2">
-              {BELTS.map((belt, i) => (
-                <div key={belt.name} className="flex items-center gap-2 shrink-0">
-                  <div className="flex flex-col items-center gap-2 w-28">
-                    <div
-                      className={`w-full h-12 rounded-sm border flex items-center justify-center relative ${
-                        belt.state === 'locked' ? 'border-[#222222] bg-[#0D0D0D]' : 'border-[#333333]'
-                      }`}
-                      style={{
-                        backgroundColor: belt.state === 'locked' ? undefined : `${belt.color}15`,
-                      }}
-                    >
-                      <div className="w-8 h-1.5 rounded-full" style={{ backgroundColor: belt.color, opacity: belt.state === 'locked' ? 0.25 : 1 }} />
-                      {belt.state === 'done' && (
-                        <div className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-[#00D4AA] flex items-center justify-center">
-                          <Check size={11} className="text-black" />
-                        </div>
-                      )}
-                      {belt.state === 'locked' && (
-                        <div className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-[#1A1A1A] border border-[#333333] flex items-center justify-center">
-                          <Lock size={9} className="text-[#555555]" />
-                        </div>
-                      )}
-                    </div>
-                    <p className={`font-inter text-[11px] text-center ${belt.state === 'locked' ? 'text-[#444444]' : 'text-white'}`}>
-                      {belt.name}
-                    </p>
-                    <span className={`font-inter text-[9px] uppercase tracking-[1px] ${
-                      belt.state === 'done' ? 'text-[#00D4AA]' : belt.state === 'active' ? 'text-[#FF3B3B]' : 'text-[#444444]'
-                    }`}>
-                      {belt.label}
-                    </span>
-                  </div>
-                  {i < BELTS.length - 1 && (
-                    <div className="w-6 h-px bg-[#333333] shrink-0 -mt-9" />
-                  )}
-                </div>
+            <p className="font-inter text-[11px] text-[#555555] uppercase tracking-[3px] mb-3">Select Discipline</p>
+            <div className="flex flex-wrap gap-2">
+              {disciplineKeys.map(d => (
+                <button
+                  key={d}
+                  onClick={() => setSelected(d)}
+                  className={`font-bebas tracking-[2px] text-sm px-4 py-2 rounded-sm border transition-all ${
+                    selected === d
+                      ? 'bg-white text-black border-white'
+                      : 'border-[#333333] text-[#555555] hover:text-white hover:border-[#555555]'
+                  }`}
+                >
+                  {d}
+                </button>
               ))}
             </div>
           </motion.div>
 
-          {/* Current belt modules preview */}
+          {/* Rank path */}
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
+            key={selected}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.1 }}
+            transition={{ duration: 0.3 }}
+          >
+            <p className="font-bebas text-xl text-white tracking-[1px] mb-5">
+              {disc.label} — {disc.rankLabel} Path
+            </p>
+            <div className="flex items-center gap-2 overflow-x-auto pb-2">
+              {disc.ranks.map((rank, i) => {
+                const state = i < ACTIVE_RANK_INDEX ? 'done' : i === ACTIVE_RANK_INDEX ? 'active' : 'locked'
+                return (
+                  <div key={rank.name} className="flex items-center gap-2 shrink-0">
+                    <div className="flex flex-col items-center gap-2 w-24">
+                      <div
+                        className={`w-full h-12 rounded-sm border flex items-center justify-center relative ${
+                          state === 'locked' ? 'border-[#222222] bg-[#0D0D0D]' : 'border-[#333333]'
+                        }`}
+                        style={{ backgroundColor: state !== 'locked' ? `${rank.color}15` : undefined }}
+                      >
+                        <div
+                          className="w-8 h-1.5 rounded-full"
+                          style={{ backgroundColor: rank.color, opacity: state === 'locked' ? 0.2 : 1 }}
+                        />
+                        {state === 'done' && (
+                          <div className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-[#00D4AA] flex items-center justify-center">
+                            <Check size={11} className="text-black" />
+                          </div>
+                        )}
+                        {state === 'locked' && (
+                          <div className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-[#1A1A1A] border border-[#333333] flex items-center justify-center">
+                            <Lock size={9} className="text-[#555555]" />
+                          </div>
+                        )}
+                      </div>
+                      <p className={`font-inter text-[11px] text-center leading-tight ${state === 'locked' ? 'text-[#333333]' : 'text-white'}`}>
+                        {rank.name}
+                      </p>
+                      <span className={`font-inter text-[9px] uppercase tracking-[1px] ${
+                        state === 'done' ? 'text-[#00D4AA]' : state === 'active' ? 'text-[#FF3B3B]' : 'text-[#333333]'
+                      }`}>
+                        {state === 'done' ? 'Done' : state === 'active' ? 'Current' : 'Locked'}
+                      </span>
+                    </div>
+                    {i < disc.ranks.length - 1 && (
+                      <div className="w-4 h-px bg-[#222222] shrink-0 -mt-9" />
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+          </motion.div>
+
+          {/* Current rank modules */}
+          <motion.div
+            key={`${selected}-modules`}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.08 }}
           >
             <div className="flex items-center gap-2 mb-5">
-              <div className="w-6 h-1.5 rounded-full bg-[#3B82F6]" />
-              <p className="font-bebas text-xl text-white tracking-[1px]">Blue Belt — Required Modules</p>
+              <div className="w-6 h-1.5 rounded-full" style={{ backgroundColor: disc.ranks[ACTIVE_RANK_INDEX].color }} />
+              <p className="font-bebas text-xl text-white tracking-[1px]">
+                {disc.ranks[ACTIVE_RANK_INDEX].name} {disc.rankLabel} — Required Modules
+              </p>
             </div>
-
-            <div className="space-y-2 relative">
-              {/* Blur overlay teaser */}
-              {SAMPLE_MODULES.map((m) => {
+            <div className="space-y-2">
+              {disc.sampleModules.map((m) => {
                 const pct = Math.round((m.done / m.classes) * 100)
                 return (
                   <div key={m.title} className="flex items-center gap-4 px-5 py-4 border border-[#222222] bg-[#0D0D0D] rounded-sm">
@@ -126,11 +243,11 @@ export default function ProgressionPage() {
             </div>
           </motion.div>
 
-          {/* Coming soon notice */}
+          {/* Preview notice */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.4, delay: 0.2 }}
+            transition={{ duration: 0.4, delay: 0.15 }}
             className="border border-[#FF3B3B]/20 bg-[#FF3B3B]/5 rounded-sm px-6 py-6 flex items-start gap-4"
           >
             <div className="w-10 h-10 rounded-sm bg-[#FF3B3B]/10 border border-[#FF3B3B]/20 flex items-center justify-center shrink-0">
@@ -139,7 +256,7 @@ export default function ProgressionPage() {
             <div>
               <p className="font-bebas text-lg text-white tracking-[1px]">This is a preview</p>
               <p className="font-inter text-sm text-[#999999] mt-1 leading-relaxed">
-                Belt progression is being built. Soon your coach will assign structured modules tied to real classes and replays, and you'll track your path to every promotion. The data above is just an example.
+                Rank progression is being built. Your coach will assign modules suited to your discipline — belts for BJJ, armbands for Muay Thai, levels for Boxing and Wrestling. All data above is an example.
               </p>
             </div>
           </motion.div>

@@ -16,6 +16,7 @@ import {
   Search,
   Sparkles,
   Award,
+  Trophy,
 } from 'lucide-react'
 
 const navItems = [
@@ -24,6 +25,7 @@ const navItems = [
   { label: 'Schedule', href: '/dashboard/schedule', icon: Calendar },
   { label: 'Replays', href: '/dashboard/replays', icon: PlaySquare },
   { label: 'Progression', href: '/dashboard/progression', icon: Award, soon: true },
+  { label: 'Achievements', href: '/dashboard/achievements', icon: Trophy, soon: true },
   { label: 'Billing', href: '/dashboard/billing', icon: CreditCard },
   { label: 'Account', href: '/dashboard/account', icon: User },
 ]

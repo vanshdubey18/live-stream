@@ -10,6 +10,7 @@ import Toast from '@/components/gym-dashboard/Toast'
 export default function CoachesPage() {
   const [coaches, setCoaches] = useState<Coach[]>([])
   const [showModal, setShowModal] = useState(false)
+  const [editCoach, setEditCoach] = useState<Coach | null>(null)
   const [toast, setToast] = useState('')
 
   useEffect(() => {
@@ -20,8 +21,27 @@ export default function CoachesPage() {
   }, [])
 
   function handleSaved(coach: Coach) {
-    setCoaches(p => [...p, coach])
-    setToast('Coach added ✓')
+    setCoaches(p => {
+      const idx = p.findIndex(c => c.id === coach.id)
+      if (idx >= 0) {
+        const next = [...p]
+        next[idx] = coach
+        return next
+      }
+      return [...p, coach]
+    })
+    setToast(editCoach ? 'Coach updated ✓' : 'Coach added ✓')
+    setEditCoach(null)
+  }
+
+  function handleEdit(coach: Coach) {
+    setEditCoach(coach)
+    setShowModal(true)
+  }
+
+  function handleCloseModal() {
+    setShowModal(false)
+    setEditCoach(null)
   }
 
   async function handleRemove(id: string) {
@@ -68,7 +88,7 @@ export default function CoachesPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {coaches.map(coach => (
                 <CoachCard key={coach.id} coach={coach}
-                  onEdit={() => setToast('Edit coming soon')}
+                  onEdit={handleEdit}
                   onRemove={handleRemove} />
               ))}
             </div>
@@ -76,7 +96,13 @@ export default function CoachesPage() {
         </div>
       </main>
 
-      {showModal && <AddCoachModal onClose={() => setShowModal(false)} onSaved={handleSaved} />}
+      {showModal && (
+        <AddCoachModal
+          onClose={handleCloseModal}
+          onSaved={handleSaved}
+          coach={editCoach}
+        />
+      )}
       {toast && <Toast message={toast} onClose={() => setToast('')} />}
     </div>
   )

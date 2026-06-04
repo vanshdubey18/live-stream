@@ -2,38 +2,9 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import GymSidebar from '@/components/layout/GymSidebar'
-import { Copy, Check, Loader2, Radio, Wifi, WifiOff, ChevronDown, ChevronUp, ExternalLink } from 'lucide-react'
+import { Copy, Check, Loader2, Radio, Wifi, WifiOff } from 'lucide-react'
 
 const RTMP_SERVER = 'rtmp://live.mux.com/app'
-
-const OBS_STEPS = [
-  {
-    n: 1,
-    title: 'Open OBS Studio',
-    body: 'Download OBS from obsproject.com if you haven\'t already. It\'s free and works on Windows, Mac, and Linux.',
-    link: { label: 'Download OBS', href: 'https://obsproject.com' },
-  },
-  {
-    n: 2,
-    title: 'Go to Settings → Stream',
-    body: 'In OBS, click Settings in the bottom-right. Go to the Stream tab. Set Service to "Custom…".',
-  },
-  {
-    n: 3,
-    title: 'Paste your credentials',
-    body: 'Copy the Server URL and Stream Key from the box above. Paste them into the Server and Stream Key fields in OBS.',
-  },
-  {
-    n: 4,
-    title: 'Set up your scene',
-    body: 'Add a Video Capture Device source (your camera) and an Audio Input Capture source (your mic). Arrange them on the canvas.',
-  },
-  {
-    n: 5,
-    title: 'Click Start Streaming in OBS',
-    body: 'Once you click Start Streaming, your stream will go live. Then click GO LIVE on your scheduled class in Matpeak to notify your members.',
-  },
-]
 
 interface Props {
   gymId: string
@@ -49,8 +20,6 @@ export default function StreamSetupPageClient({ gymId, streamKey: initialKey, ha
   const [provisioning, setProvisioning] = useState(!initialHasStream)
   const [copied, setCopied] = useState<'url' | 'key' | null>(null)
   const [showKey, setShowKey] = useState(false)
-  const [obsOpen, setObsOpen] = useState(false)
-  const [mobileOpen, setMobileOpen] = useState(false)
 
   function copy(text: string, which: 'url' | 'key') {
     navigator.clipboard.writeText(text)
@@ -125,13 +94,13 @@ export default function StreamSetupPageClient({ gymId, streamKey: initialKey, ha
           </div>
         </div>
 
-        <div className="px-6 py-8 max-w-3xl space-y-6">
+        <div className="px-6 py-8 max-w-xl space-y-4">
 
           {/* Stream credentials card */}
           <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm overflow-hidden">
             <div className="px-6 py-5 border-b border-[#222222]">
-              <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-1">Your Stream Credentials</p>
-              <p className="font-inter text-sm text-[#555555]">Paste these into OBS Studio or any RTMP streaming app.</p>
+              <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-1">Stream Credentials</p>
+              <p className="font-inter text-sm text-[#555555]">Paste these into OBS, Larix, or any RTMP app to go live.</p>
             </div>
 
             <div className="px-6 py-5 space-y-4">
@@ -185,131 +154,9 @@ export default function StreamSetupPageClient({ gymId, streamKey: initialKey, ha
             </div>
           </div>
 
-          {/* Stream status info */}
-          <div className={`rounded-sm border px-5 py-4 flex items-start gap-3 ${
-            isLive ? 'border-[#FF3B3B]/30 bg-[#FF3B3B]/5' :
-            status === 'disconnected' ? 'border-[#FFD60A]/20 bg-[#FFD60A]/5' :
-            'border-[#333333] bg-[#1A1A1A]'
-          }`}>
-            <div className="mt-0.5">
-              {isLive ? <Radio size={16} className="text-[#FF3B3B]" /> :
-               status === 'disconnected' ? <WifiOff size={16} className="text-[#FFD60A]" /> :
-               <Wifi size={16} className="text-[#555555]" />}
-            </div>
-            <div>
-              <p className={`font-bebas tracking-[1px] text-lg ${isLive ? 'text-[#FF3B3B]' : status === 'disconnected' ? 'text-[#FFD60A]' : 'text-[#555555]'}`}>
-                {isLive ? 'Stream is Live' : status === 'disconnected' ? 'Stream Disconnected' : isLoading ? 'Checking stream…' : 'Stream is Offline'}
-              </p>
-              <p className="font-inter text-xs text-[#555555] mt-0.5">
-                {isLive ? 'OBS is connected and broadcasting. Go to Schedule Classes to manage your live session.' :
-                 status === 'disconnected' ? 'OBS disconnected unexpectedly. Check your internet and restart streaming.' :
-                 isLoading ? 'Connecting to Mux…' :
-                 'OBS is not connected. Start streaming in OBS to go live.'}
-              </p>
-            </div>
-          </div>
-
-          {/* OBS guide */}
-          <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm overflow-hidden">
-            <button
-              onClick={() => setObsOpen(v => !v)}
-              className="w-full flex items-center justify-between px-6 py-4 hover:bg-[#222222] transition-colors"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-6 h-6 rounded-sm bg-[#6B4FBB]/20 border border-[#6B4FBB]/30 flex items-center justify-center">
-                  <Radio size={12} className="text-[#9B7FEB]" />
-                </div>
-                <div className="text-left">
-                  <p className="font-bebas text-white tracking-[1px]">OBS Studio Setup Guide</p>
-                  <p className="font-inter text-[11px] text-[#555555]">Step-by-step for Windows, Mac & Linux</p>
-                </div>
-              </div>
-              {obsOpen ? <ChevronUp size={16} className="text-[#555555]" /> : <ChevronDown size={16} className="text-[#555555]" />}
-            </button>
-
-            {obsOpen && (
-              <div className="border-t border-[#222222] px-6 py-5 space-y-5">
-                {OBS_STEPS.map(step => (
-                  <div key={step.n} className="flex gap-4">
-                    <div className="w-6 h-6 rounded-sm bg-[#333333] flex items-center justify-center shrink-0 mt-0.5">
-                      <span className="font-bebas text-sm text-white">{step.n}</span>
-                    </div>
-                    <div>
-                      <p className="font-inter text-sm text-white font-medium mb-1">{step.title}</p>
-                      <p className="font-inter text-sm text-[#777777] leading-relaxed">{step.body}</p>
-                      {step.link && (
-                        <a
-                          href={step.link.href}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 font-inter text-xs text-[#FF3B3B] hover:text-white mt-2 transition-colors"
-                        >
-                          {step.link.label} <ExternalLink size={10} />
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Mobile streaming guide */}
-          <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm overflow-hidden">
-            <button
-              onClick={() => setMobileOpen(v => !v)}
-              className="w-full flex items-center justify-between px-6 py-4 hover:bg-[#222222] transition-colors"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-6 h-6 rounded-sm bg-[#00D4AA]/10 border border-[#00D4AA]/20 flex items-center justify-center">
-                  <Radio size={12} className="text-[#00D4AA]" />
-                </div>
-                <div className="text-left">
-                  <p className="font-bebas text-white tracking-[1px]">Stream from Your Phone</p>
-                  <p className="font-inter text-[11px] text-[#555555]">Using Larix Broadcaster (iOS & Android)</p>
-                </div>
-              </div>
-              {mobileOpen ? <ChevronUp size={16} className="text-[#555555]" /> : <ChevronDown size={16} className="text-[#555555]" />}
-            </button>
-
-            {mobileOpen && (
-              <div className="border-t border-[#222222] px-6 py-5 space-y-5">
-                {[
-                  { n: 1, title: 'Download Larix Broadcaster', body: 'Free app available on iOS and Android. Search "Larix Broadcaster" in the App Store or Play Store.' },
-                  { n: 2, title: 'Open Settings → Connections → Add', body: 'Tap the gear icon → Connections → the + button to add a new stream connection.' },
-                  { n: 3, title: 'Set the URL', body: `Paste your full stream URL: ${RTMP_SERVER}/${streamKey ?? '<your-stream-key>'}` },
-                  { n: 4, title: 'Tap the record button to go live', body: 'Point your phone at the class and tap the red record button. Your stream will connect within a few seconds.' },
-                ].map(step => (
-                  <div key={step.n} className="flex gap-4">
-                    <div className="w-6 h-6 rounded-sm bg-[#333333] flex items-center justify-center shrink-0 mt-0.5">
-                      <span className="font-bebas text-sm text-white">{step.n}</span>
-                    </div>
-                    <div>
-                      <p className="font-inter text-sm text-white font-medium mb-1">{step.title}</p>
-                      <p className="font-inter text-sm text-[#777777] leading-relaxed">{step.body}</p>
-                    </div>
-                  </div>
-                ))}
-                <div className="bg-[#0D0D0D] border border-[#333333] rounded-sm px-4 py-3">
-                  <p className="font-inter text-[11px] text-[#555555] mb-2 uppercase tracking-[2px]">Full stream URL for Larix</p>
-                  <p className="font-mono text-xs text-[#999999] break-all">
-                    {RTMP_SERVER}/{streamKey ?? '••••••••••••••••••••••'}
-                  </p>
-                  {streamKey && (
-                    <button
-                      onClick={() => copy(`${RTMP_SERVER}/${streamKey}`, 'key')}
-                      className="mt-2 flex items-center gap-1.5 font-inter text-xs text-[#555555] hover:text-white transition-colors"
-                    >
-                      {copied === 'key' ? <><Check size={11} className="text-[#00D4AA]" /> Copied</> : <><Copy size={11} /> Copy full URL</>}
-                    </button>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-
-          <p className="font-inter text-[11px] text-[#444444]">
-            Stream status refreshes automatically every 30 seconds.
+          {/* Simple hint */}
+          <p className="font-inter text-sm text-[#555555] px-1">
+            Open any streaming app (OBS, Larix, etc.), paste the Server URL and Stream Key, and hit Go Live.
           </p>
 
         </div>

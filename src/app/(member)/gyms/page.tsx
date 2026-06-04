@@ -1,6 +1,17 @@
+import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { getAllActiveGyms } from '@/lib/supabase/queries'
 import BrowseGymsClient from './BrowseGymsClient'
+
+export const metadata: Metadata = {
+  title: 'Browse Gyms — Matpeak',
+  description: 'Find martial arts gyms streaming live classes online. BJJ, Boxing, Muay Thai, Wrestling and MMA — watch from anywhere.',
+  openGraph: {
+    title: 'Browse Gyms — Matpeak',
+    description: 'Find martial arts gyms streaming live classes online. BJJ, Boxing, Muay Thai, Wrestling and MMA — watch from anywhere.',
+    type: 'website',
+  },
+}
 
 export default async function BrowseGymsPage() {
   const supabase = createClient()

@@ -147,23 +147,24 @@ export default function GymDetailClient({ gym, coaches, sessions, memberCount, m
         {coaches.length > 0 && (
           <section>
             <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-4">Coaches</p>
-            <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm divide-y divide-[#2A2A2A]">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {coaches.map((c: any) => (
-                <div key={c.id} className="flex items-center gap-4 px-5 py-4 hover:bg-[#222222] transition-colors">
-                  <div className="w-8 h-8 rounded-sm bg-[#2A2A2A] flex items-center justify-center shrink-0">
-                    <span className="font-bebas text-white text-sm">{c.name[0]}</span>
+                <div key={c.id} className="flex items-center gap-4 px-5 py-4 bg-[#1A1A1A] border border-[#2A2A2A] rounded-sm hover:border-[#333333] transition-colors">
+                  <div className="w-12 h-12 rounded-sm bg-[#2A2A2A] border border-[#333333] flex items-center justify-center shrink-0 overflow-hidden">
+                    {c.avatar_url
+                      ? <img src={c.avatar_url} alt={c.name} className="w-full h-full object-cover" />
+                      : <span className="font-bebas text-white text-xl">{c.name[0]}</span>
+                    }
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-bebas text-lg text-white leading-tight">{c.name}</p>
-                    <p className="font-inter text-sm text-[#999999]">
+                    <p className="font-inter text-xs text-[#999999]">
                       {c.discipline}{c.belt_rank ? ` · ${c.belt_rank}` : ''}
                     </p>
+                    {c.bio && (
+                      <p className="font-inter text-xs text-[#555555] mt-1 line-clamp-1">{c.bio}</p>
+                    )}
                   </div>
-                  {c.bio && (
-                    <p className="font-inter text-xs text-[#555555] max-w-xs line-clamp-1 hidden sm:block">
-                      {c.bio}
-                    </p>
-                  )}
                 </div>
               ))}
             </div>

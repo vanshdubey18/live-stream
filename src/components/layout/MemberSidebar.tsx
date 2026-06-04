@@ -15,6 +15,7 @@ import {
   LogOut,
   Search,
   Sparkles,
+  Award,
 } from 'lucide-react'
 
 const navItems = [
@@ -22,6 +23,7 @@ const navItems = [
   { label: 'Browse Gyms', href: '/gyms', icon: Building2 },
   { label: 'Schedule', href: '/dashboard/schedule', icon: Calendar },
   { label: 'Replays', href: '/dashboard/replays', icon: PlaySquare },
+  { label: 'Progression', href: '/dashboard/progression', icon: Award, soon: true },
   { label: 'Billing', href: '/dashboard/billing', icon: CreditCard },
   { label: 'Account', href: '/dashboard/account', icon: User },
 ]
@@ -116,7 +118,7 @@ export default function MemberSidebar({ active = 'Dashboard', onSearchOpen }: Me
 
         {/* Nav */}
         <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
-          {navItems.map(({ label, href, icon: Icon }) => {
+          {navItems.map(({ label, href, icon: Icon, soon }) => {
             const isActive = active === label
             return (
               <a
@@ -130,7 +132,12 @@ export default function MemberSidebar({ active = 'Dashboard', onSearchOpen }: Me
                   }`}
               >
                 <Icon size={18} className={isActive ? 'text-[#FF3B3B]' : ''} />
-                {label}
+                <span className="flex-1">{label}</span>
+                {soon && (
+                  <span className="font-inter text-[9px] text-[#FF3B3B] tracking-[2px] uppercase border border-[#FF3B3B]/30 px-1.5 py-0.5 rounded-sm shrink-0">
+                    Soon
+                  </span>
+                )}
               </a>
             )
           })}

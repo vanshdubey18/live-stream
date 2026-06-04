@@ -124,7 +124,7 @@ export default function ProgressionPage() {
           </div>
           <h1 className="font-bebas text-4xl text-white tracking-[1px]">Rank Progression</h1>
           <p className="font-inter text-sm text-[#555555] mt-2 max-w-lg">
-            Every discipline has its own path. Your coach assigns modules, you complete classes, and you track every step toward your next rank — no matter what you train.
+            Train BJJ and Muay Thai? You get a separate track for each. Every discipline has its own ranking system — your progress in one never affects the other.
           </p>
         </div>
 
@@ -136,7 +136,10 @@ export default function ProgressionPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
           >
-            <p className="font-inter text-[11px] text-[#555555] uppercase tracking-[3px] mb-3">Select Discipline</p>
+            <div className="flex items-baseline gap-3 mb-3">
+              <p className="font-inter text-[11px] text-[#555555] uppercase tracking-[3px]">Your Disciplines</p>
+              <p className="font-inter text-[11px] text-[#444444]">Each one has its own separate track</p>
+            </div>
             <div className="flex flex-wrap gap-2">
               {disciplineKeys.map(d => (
                 <button

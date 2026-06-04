@@ -259,7 +259,7 @@ export default function ProgressionPage() {
             <div>
               <p className="font-bebas text-lg text-white tracking-[1px]">This is a preview</p>
               <p className="font-inter text-sm text-[#999999] mt-1 leading-relaxed">
-                Rank progression is being built. Your coach will assign modules suited to your discipline — belts for BJJ, armbands for Muay Thai, levels for Boxing and Wrestling. All data above is an example.
+                Rank progression is being built. Your coach will assign modules, track your study, and when they decide you're ready — based on real in-person evaluation — they promote you on the platform. <span className="text-white">Matpeak never grants ranks. Only your coach does.</span>
               </p>
             </div>
           </motion.div>

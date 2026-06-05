@@ -5,6 +5,7 @@ import GymSidebar from '@/components/layout/GymSidebar'
 import ScheduleClassModal, { type ScheduledClass } from '@/components/gym-dashboard/ScheduleClassModal'
 import GoLiveModal from '@/components/gym-dashboard/GoLiveModal'
 import Toast from '@/components/gym-dashboard/Toast'
+import EmptyState from '@/components/ui/EmptyState'
 import { Plus, Radio, Trash2, Clock, CheckCircle } from 'lucide-react'
 
 interface Coach { id: string; name: string }
@@ -125,16 +126,22 @@ export default function ScheduleClient({ gym, sessions, coaches }: Props) {
 
           {/* Stats strip */}
           <div className="grid grid-cols-3 gap-px bg-[#333333] rounded-sm overflow-hidden">
-            {[
-              { label: 'Scheduled', value: scheduledCount, color: 'text-white' },
-              { label: 'Live Now', value: liveCount, color: 'text-[#FF3B3B]' },
-              { label: 'Completed', value: endedCount, color: 'text-[#555555]' },
-            ].map(({ label, value, color }) => (
-              <div key={label} className="bg-[#1A1A1A] px-5 py-4">
-                <p className="font-inter text-[11px] text-[#999999] tracking-[3px] uppercase mb-1">{label}</p>
-                <p className={`font-bebas text-3xl tracking-[1px] ${color}`}>{value}</p>
+            {/* First stat — Scheduled — gets the red left-bar accent */}
+            <div className="relative">
+              <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-[#FF3B3B] z-10" />
+              <div className="bg-[#1A1A1A] px-5 py-4">
+                <p className="font-inter text-[11px] text-[#999999] tracking-[3px] uppercase mb-1">Scheduled</p>
+                <p className="font-bebas text-3xl tracking-[1px] text-white">{scheduledCount}</p>
               </div>
-            ))}
+            </div>
+            <div className="bg-[#1A1A1A] px-5 py-4">
+              <p className="font-inter text-[11px] text-[#999999] tracking-[3px] uppercase mb-1">Live Now</p>
+              <p className="font-bebas text-3xl tracking-[1px] text-[#FF3B3B]">{liveCount}</p>
+            </div>
+            <div className="bg-[#1A1A1A] px-5 py-4">
+              <p className="font-inter text-[11px] text-[#999999] tracking-[3px] uppercase mb-1">Completed</p>
+              <p className="font-bebas text-3xl tracking-[1px] text-[#555555]">{endedCount}</p>
+            </div>
           </div>
 
           {/* Filter */}
@@ -154,17 +161,14 @@ export default function ScheduleClient({ gym, sessions, coaches }: Props) {
 
           {/* Calendar list */}
           {days.length === 0 ? (
-            <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm px-6 py-14 text-center">
-              <p className="font-inter text-[#555555] text-sm mb-5">
-                {filter === 'upcoming' ? 'No upcoming classes scheduled.' : 'No classes yet.'}
-              </p>
+            <EmptyState ghost="SCHEDULE" message={filter === 'upcoming' ? 'No upcoming classes scheduled.' : 'No classes yet.'}>
               <button
                 onClick={() => setShowModal(true)}
                 className="bg-white hover:bg-[#E5E5E5] text-black font-bebas tracking-[3px] text-sm px-6 py-2.5 rounded-sm transition-colors"
               >
                 Schedule First Class
               </button>
-            </div>
+            </EmptyState>
           ) : (
             <div className="space-y-8">
               {days.map(day => (

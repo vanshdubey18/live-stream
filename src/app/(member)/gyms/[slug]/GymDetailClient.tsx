@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { ChevronLeft } from 'lucide-react'
 import JoinModal from './JoinModal'
+import EmptyState from '@/components/ui/EmptyState'
 
 function formatTime(iso: string) {
   const d = new Date(iso)
@@ -59,7 +60,10 @@ export default function GymDetailClient({ gym, coaches, sessions, memberCount, m
             </p>
           )}
 
-          <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-2">Gym Profile</p>
+          <div className="flex items-center gap-3 mb-2">
+            <div className="w-5 h-px bg-[#FF3B3B]" />
+            <p className="font-inter text-[11px] text-[#FF3B3B] tracking-[4px] uppercase">Gym Profile</p>
+          </div>
           <h1 className="font-bebas text-6xl lg:text-7xl text-white leading-none">{gym.name}</h1>
 
           {gym.city && (
@@ -125,7 +129,7 @@ export default function GymDetailClient({ gym, coaches, sessions, memberCount, m
 
         {/* Live session banner */}
         {liveSessions.length > 0 && (
-          <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm px-6 py-4 flex items-center justify-between gap-4">
+          <div className="bg-[#1A1A1A] border border-[#FF3B3B]/40 rounded-sm px-6 py-4 flex items-center justify-between gap-4 shadow-[0_0_0_1px_rgba(255,59,59,0.1),0_0_20px_rgba(255,59,59,0.06)]">
             <div>
               <p className="font-inter text-xs text-[#FF3B3B] tracking-[3px] uppercase mb-1">● Live Now</p>
               <p className="font-bebas text-xl text-white">{liveSessions[0].title}</p>
@@ -146,7 +150,10 @@ export default function GymDetailClient({ gym, coaches, sessions, memberCount, m
         {/* Coaches */}
         {coaches.length > 0 && (
           <section>
-            <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-4">Coaches</p>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-5 h-px bg-[#FF3B3B]" />
+              <p className="font-inter text-[11px] text-[#FF3B3B] tracking-[4px] uppercase">Coaches</p>
+            </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {coaches.map((c: any) => (
                 <div key={c.id} className="flex items-center gap-4 px-5 py-4 bg-[#1A1A1A] border border-[#2A2A2A] rounded-sm hover:border-[#333333] transition-colors">
@@ -173,11 +180,12 @@ export default function GymDetailClient({ gym, coaches, sessions, memberCount, m
 
         {/* Upcoming Schedule */}
         <section>
-          <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-4">Upcoming Schedule</p>
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-5 h-px bg-[#FF3B3B]" />
+            <p className="font-inter text-[11px] text-[#FF3B3B] tracking-[4px] uppercase">Upcoming Schedule</p>
+          </div>
           {upcomingSessions.length === 0 ? (
-            <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm px-6 py-10 text-center">
-              <p className="font-inter text-[#555555] text-sm">No upcoming classes scheduled yet.</p>
-            </div>
+            <EmptyState ghost="SCHEDULE" message="No upcoming classes scheduled yet." />
           ) : (
             <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm overflow-hidden">
               {/* Table header */}
@@ -214,7 +222,10 @@ export default function GymDetailClient({ gym, coaches, sessions, memberCount, m
         {/* Pricing / Join CTA if not joined */}
         {!joined && (
           <section>
-            <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-4">Membership</p>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-5 h-px bg-[#FF3B3B]" />
+              <p className="font-inter text-[11px] text-[#FF3B3B] tracking-[4px] uppercase">Membership</p>
+            </div>
             <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm p-8">
               <h3 className="font-bebas text-4xl text-white mb-2">JOIN {gym.name.toUpperCase()}</h3>
               <p className="font-inter text-sm text-[#999999] mb-6">

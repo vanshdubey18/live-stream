@@ -214,7 +214,7 @@ function HeroPanel({ upcoming, user, memberships }: { upcoming: any[]; user: { n
                     {m.gyms?.logo_url ? (
                       <img src={m.gyms.logo_url} alt="" className="w-4 h-4 rounded-sm object-cover shrink-0" />
                     ) : (
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#00D4AA] shrink-0" />
+                      <span className="w-1.5 h-1.5 rounded-sm bg-[#00D4AA] shrink-0" />
                     )}
                     Member of {m.gyms?.name ?? 'your gym'}
                   </span>
@@ -470,10 +470,10 @@ function AICoachSection() {
               className={`bg-[#1A1A1A] p-5 flex flex-col gap-3 ${!f.free ? 'opacity-60' : ''}`}
             >
               <div className="flex items-center justify-between">
-                <span className={f.free ? 'text-[#00D4AA]' : 'text-[#555555]'}>{f.icon}</span>
+                <span className={f.free ? 'text-[#FF3B3B]' : 'text-[#555555]'}>{f.icon}</span>
                 {f.free
-                  ? <span className="font-inter text-[10px] text-[#00D4AA] tracking-[2px] uppercase">Free</span>
-                  : <Lock size={10} className="text-[#FF3B3B]" />}
+                  ? <span className="font-inter text-[10px] text-[#FF3B3B] tracking-[2px] uppercase">Free</span>
+                  : <Lock size={10} className="text-[#555555]" />}
               </div>
               <div>
                 <p className="font-bebas text-lg text-white tracking-[1px] leading-tight">{f.label}</p>

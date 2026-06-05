@@ -52,7 +52,7 @@ const DISCIPLINE_COLORS: Record<string, string> = {
   BJJ: 'bg-[#1A1A1A] text-[#999999]',
   Boxing: 'bg-[#FFD60A]/10 text-[#FFD60A]',
   'Muay Thai': 'bg-[#1A1A1A] text-[#999999]',
-  Wrestling: 'bg-[#00D4AA]/10 text-[#00D4AA]',
+  Wrestling: 'bg-[#1A1A1A] text-[#999999]',
   MMA: 'bg-[#FF3B3B]/10 text-[#FF3B3B]',
 }
 
@@ -181,7 +181,7 @@ export default function SessionSummary({ data = DEMO_SUMMARY, onTimestampClick, 
         <div className="px-6 py-5">
           <SectionHeader icon={<Lightbulb size={12} />} label="Coach's Key Point" />
           <blockquote className="relative pl-4">
-            <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-[#FF3B3B]/50 rounded-full" />
+            <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-[#FF3B3B]" />
             <p className="text-white text-sm leading-relaxed font-medium italic">
               &ldquo;{data.quote}&rdquo;
             </p>

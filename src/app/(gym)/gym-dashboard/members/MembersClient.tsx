@@ -133,8 +133,9 @@ export default function MembersClient({ members: initial }: Props) {
 
           {/* Table */}
           {filtered.length === 0 ? (
-            <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm px-6 py-12 text-center">
-              <p className="font-inter text-[#555555] text-sm">
+            <div className="relative bg-[#1A1A1A] border border-[#333333] rounded-sm px-6 py-12 text-center overflow-hidden">
+              <span className="absolute inset-0 flex items-center justify-center font-bebas text-[120px] text-white/[0.03] leading-none select-none pointer-events-none">SQUAD</span>
+              <p className="relative font-inter text-[#555555] text-sm">
                 {members.length === 0 ? 'No members yet. Share your gym page to get started.' : 'No members match this filter.'}
               </p>
             </div>

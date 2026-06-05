@@ -85,7 +85,7 @@ export default function AdminOverviewClient({ stats, gyms, members, payouts }: P
                 label="Total Members"
                 value={String(stats.memberCount)}
                 sub="Active memberships"
-                icon={<Users size={16} className="text-[#00D4AA]" />}
+                icon={<Users size={16} className="text-[#999999]" />}
                 trend="up"
               />
             </div>

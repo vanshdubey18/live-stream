@@ -142,7 +142,7 @@ function ActionItems({
   const toneStyles: Record<Item['tone'], { dot: string; icon: string; border: string }> = {
     live: { dot: 'bg-[#FF3B3B]', icon: 'text-[#FF3B3B]', border: 'border-[#FF3B3B]/30' },
     warn: { dot: 'bg-[#FFD60A]', icon: 'text-[#FFD60A]', border: 'border-[#FFD60A]/20' },
-    info: { dot: 'bg-[#00D4AA]', icon: 'text-[#00D4AA]', border: 'border-[#333333]' },
+    info: { dot: 'bg-[#555555]', icon: 'text-[#999999]', border: 'border-[#333333]' },
     setup: { dot: 'bg-[#FFD60A]', icon: 'text-[#FFD60A]', border: 'border-[#333333]' },
   }
 

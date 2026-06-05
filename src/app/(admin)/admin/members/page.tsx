@@ -60,8 +60,9 @@ export default function MembersPage() {
               <p className="font-inter text-[#555555] text-sm">Loading...</p>
             </div>
           ) : filtered.length === 0 ? (
-            <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm px-6 py-16 text-center">
-              <p className="font-inter text-[#555555] text-sm">No members yet.</p>
+            <div className="relative bg-[#1A1A1A] border border-[#333333] rounded-sm px-6 py-16 text-center overflow-hidden">
+              <span className="absolute inset-0 flex items-center justify-center font-bebas text-[120px] text-white/[0.03] leading-none select-none pointer-events-none">MEMBERS</span>
+              <p className="relative font-inter text-[#555555] text-sm">No members yet.</p>
             </div>
           ) : (
             <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm overflow-hidden">

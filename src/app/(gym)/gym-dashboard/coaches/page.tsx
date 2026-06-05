@@ -77,10 +77,11 @@ export default function CoachesPage() {
 
         <div className="px-6 py-6 max-w-5xl">
           {coaches.length === 0 ? (
-            <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm px-6 py-16 text-center">
-              <p className="font-inter text-[#555555] text-sm mb-4">No coaches yet.</p>
+            <div className="relative bg-[#1A1A1A] border border-[#333333] rounded-sm px-6 py-16 text-center overflow-hidden">
+              <span className="absolute inset-0 flex items-center justify-center font-bebas text-[120px] text-white/[0.03] leading-none select-none pointer-events-none">COACH</span>
+              <p className="relative font-inter text-[#555555] text-sm mb-4">No coaches yet.</p>
               <button onClick={() => setShowModal(true)}
-                className="bg-white hover:bg-[#E5E5E5] text-black font-bebas tracking-[2px] text-sm px-5 py-2.5 rounded-sm transition-colors">
+                className="relative bg-white hover:bg-[#E5E5E5] text-black font-bebas tracking-[2px] text-sm px-5 py-2.5 rounded-sm transition-colors">
                 ADD YOUR FIRST COACH
               </button>
             </div>

@@ -18,16 +18,10 @@ export default function AICoachButton() {
   const [open, setOpen] = useState(false)
   const [input, setInput] = useState('')
   const [messages, setMessages] = useState(DEMO_MESSAGES)
-  const [pulse, setPulse] = useState(true)
   const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const t = setTimeout(() => setPulse(false), 4000)
-    return () => clearTimeout(t)
-  }, [])
-
-  useEffect(() => {
-    const handler = () => { setOpen(true); setPulse(false) }
+    const handler = () => { setOpen(true) }
     window.addEventListener('open-ai-coach', handler)
     return () => window.removeEventListener('open-ai-coach', handler)
   }, [])
@@ -172,9 +166,6 @@ export default function AICoachButton() {
               </motion.div>
           }
         </AnimatePresence>
-        {pulse && !open && (
-          <span className="absolute inset-0 rounded-sm bg-[#FF3B3B] animate-ping opacity-40" />
-        )}
       </motion.button>
     </>
   )

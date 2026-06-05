@@ -128,9 +128,9 @@ function Hero() {
               <div className="absolute inset-0 bg-[#FF3B3B]/8 mix-blend-multiply z-10" />
 
               <img
-                src="https://images.unsplash.com/photo-1571019613914-85f342c6a11e?w=900&q=85&fit=crop&crop=top"
-                alt="MMA athlete training"
-                className="w-full h-full object-cover object-top grayscale contrast-125"
+                src="https://images.pexels.com/photos/10006587/pexels-photo-10006587.jpeg?auto=compress&cs=tinysrgb&w=900&h=1200&fit=crop"
+                alt="MMA athlete"
+                className="w-full h-full object-cover object-top contrast-110"
               />
 
               {/* Discipline tag */}

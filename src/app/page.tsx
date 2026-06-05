@@ -74,18 +74,18 @@ function Hero() {
           src="https://images.pexels.com/photos/10006587/pexels-photo-10006587.jpeg?auto=compress&cs=tinysrgb&w=1600&h=1200&fit=crop"
           alt=""
           aria-hidden="true"
-          className="w-full h-full object-cover object-center grayscale contrast-125"
+          className="w-full h-full object-cover object-center grayscale contrast-110 brightness-110"
         />
-        {/* Base dim so text always readable */}
-        <div className="absolute inset-0 bg-black/55" />
-        {/* Strong left-side gradient — text zone stays dark, right bleeds through */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/60 to-black/10" />
+        {/* Subtle base dim — keep photo readable */}
+        <div className="absolute inset-0 bg-black/30" />
+        {/* Left gradient — text zone dark, athlete visible on right */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/30 to-transparent" />
         {/* Bottom fade into stat bar */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0D0D0D] via-transparent to-transparent" style={{ top: '60%' }} />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0D0D0D] via-[#0D0D0D]/20 to-transparent" style={{ top: '65%' }} />
         {/* Top fade into navbar */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0D0D0D]/60 via-transparent to-transparent" style={{ bottom: '85%' }} />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0D0D0D]/50 via-transparent to-transparent" style={{ bottom: '88%' }} />
         {/* Warm red tint — brand feel */}
-        <div className="absolute inset-0 bg-[#FF3B3B]/6 mix-blend-overlay" />
+        <div className="absolute inset-0 bg-[#FF3B3B]/5 mix-blend-overlay" />
       </div>
 
       {/* Content */}

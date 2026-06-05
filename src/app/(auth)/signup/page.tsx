@@ -57,17 +57,22 @@ export default function SignupPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#0D0D0D] flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-sm">
+    <main className="min-h-screen bg-[#0D0D0D] flex items-center justify-center px-4 py-12 relative overflow-hidden">
+      <span className="absolute inset-0 flex items-center justify-center font-bebas text-[clamp(160px,25vw,280px)] text-white/[0.025] leading-none select-none pointer-events-none tracking-[2px]">
+        TRAIN
+      </span>
+      <div className="w-full max-w-sm relative z-10">
 
         {/* Wordmark */}
         <div className="text-center mb-8">
-          <a href="/" className="font-bebas text-3xl tracking-[3px] text-[#FF3B3B]">
-            JOIN MATPEAK
+          <div className="flex items-center justify-center gap-3 mb-3">
+            <div className="w-8 h-px bg-[#FF3B3B]" />
+            <p className="font-inter text-[11px] text-[#FF3B3B] tracking-[4px] uppercase">Start Your Training</p>
+            <div className="w-8 h-px bg-[#FF3B3B]" />
+          </div>
+          <a href="/" className="font-bebas text-4xl tracking-[3px] text-white">
+            MATPEAK
           </a>
-          <p className="font-inter text-xs text-[#999999] tracking-[4px] uppercase mt-2">
-            START YOUR TRAINING
-          </p>
         </div>
 
         {/* Card */}

@@ -74,12 +74,12 @@ function Hero() {
           src="https://images.pexels.com/photos/10006587/pexels-photo-10006587.jpeg?auto=compress&cs=tinysrgb&w=1600&h=1200&fit=crop"
           alt=""
           aria-hidden="true"
-          className="w-full h-full object-cover object-center grayscale contrast-125 brightness-125"
+          className="w-full h-full object-cover object-center grayscale contrast-110 brightness-110"
         />
-        {/* Thin base dim — just enough to stop blown highlights */}
-        <div className="absolute inset-0 bg-black/10" />
-        {/* Left gradient — heavy on text zone, clears quickly so athlete reads */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/92 via-black/15 to-transparent" />
+        {/* Subtle base dim — keep photo readable */}
+        <div className="absolute inset-0 bg-black/30" />
+        {/* Left gradient — text zone dark, athlete visible on right */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/30 to-transparent" />
         {/* Bottom fade into stat bar */}
         <div className="absolute inset-0 bg-gradient-to-t from-[#0D0D0D] via-[#0D0D0D]/20 to-transparent" style={{ top: '65%' }} />
         {/* Top fade into navbar */}

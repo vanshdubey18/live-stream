@@ -39,7 +39,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'This gym is not currently active' }, { status: 400 })
   }
 
-  let freeUntil: string | null = null
   let couponId: string | null = null
 
   if (couponCode) {
@@ -63,26 +62,15 @@ export async function POST(req: NextRequest) {
     }
 
     couponId = coupon.id
-
-    if (coupon.type === 'free_days') {
-      const until = new Date()
-      until.setDate(until.getDate() + coupon.value)
-      freeUntil = until.toISOString()
-    } else if (coupon.type === 'percent_off' && coupon.value === 100) {
-      // 100% off = 30 days free
-      const until = new Date()
-      until.setDate(until.getDate() + 30)
-      freeUntil = until.toISOString()
-    }
   }
 
-  // Create membership
+  // Create permanent membership — no free_until, gym removes the member if needed
   const { error: membershipErr } = await adminClient.from('memberships').insert({
     user_id: user.id,
     gym_id: gymId,
     status: 'active',
     source: couponCode ? 'coupon' : 'paid',
-    free_until: freeUntil,
+    free_until: null,
     plan_type: 'full_mma',
   })
 
@@ -101,7 +89,7 @@ export async function POST(req: NextRequest) {
         user_id: user.id,
         gym_id: gymId,
         plan_type: 'full_mma',
-        free_until: freeUntil,
+        free_until: null,
       }),
     ])
   }

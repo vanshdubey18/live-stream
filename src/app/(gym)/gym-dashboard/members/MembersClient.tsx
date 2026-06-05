@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import GymSidebar from '@/components/layout/GymSidebar'
-import { Search, UserCheck, UserX, Clock } from 'lucide-react'
+import { Search, UserCheck, UserX, Trash2 } from 'lucide-react'
 
 interface Member {
   id: string
@@ -26,44 +26,40 @@ function formatDate(iso: string | null) {
   return new Date(iso).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
 }
 
-function expiryDate(m: Member) {
-  return m.current_period_end ?? m.free_until
-}
-
-function isExpiringSoon(m: Member) {
-  const end = expiryDate(m)
-  if (!end) return false
-  const t = new Date(end).getTime()
-  const now = Date.now()
-  return t >= now && t <= now + 7 * 24 * 60 * 60 * 1000
-}
-
-function isExpired(m: Member) {
-  const end = expiryDate(m)
-  if (!end) return false
-  return new Date(end).getTime() < Date.now()
-}
-
-export default function MembersClient({ members }: Props) {
+export default function MembersClient({ members: initial }: Props) {
+  const [members, setMembers] = useState(initial)
   const [search, setSearch] = useState('')
-  const [filter, setFilter] = useState<'all' | 'active' | 'expiring' | 'expired'>('all')
+  const [filter, setFilter] = useState<'all' | 'active' | 'removed'>('all')
+  const [removing, setRemoving] = useState<string | null>(null)
+  const [confirmId, setConfirmId] = useState<string | null>(null)
 
   const filtered = members.filter(m => {
     const name = m.profile?.full_name ?? ''
     const email = m.profile?.email ?? ''
     const q = search.toLowerCase()
     if (q && !name.toLowerCase().includes(q) && !email.toLowerCase().includes(q)) return false
-    if (filter === 'active') return m.status === 'active' && !isExpiringSoon(m) && !isExpired(m)
-    if (filter === 'expiring') return isExpiringSoon(m)
-    if (filter === 'expired') return isExpired(m) || m.status !== 'active'
+    if (filter === 'active') return m.status === 'active'
+    if (filter === 'removed') return m.status !== 'active'
     return true
   })
 
   const counts = {
     all: members.length,
-    active: members.filter(m => m.status === 'active' && !isExpiringSoon(m) && !isExpired(m)).length,
-    expiring: members.filter(isExpiringSoon).length,
-    expired: members.filter(m => isExpired(m) || m.status !== 'active').length,
+    active: members.filter(m => m.status === 'active').length,
+    removed: members.filter(m => m.status !== 'active').length,
+  }
+
+  async function handleRemove(id: string) {
+    setRemoving(id)
+    try {
+      const res = await fetch(`/api/gym/members/${id}`, { method: 'DELETE' })
+      if (res.ok) {
+        setMembers(prev => prev.map(m => m.id === id ? { ...m, status: 'cancelled' } : m))
+      }
+    } finally {
+      setRemoving(null)
+      setConfirmId(null)
+    }
   }
 
   return (
@@ -77,7 +73,7 @@ export default function MembersClient({ members }: Props) {
             <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase">Gym Dashboard</p>
             <h1 className="font-bebas text-xl text-white tracking-[1px] leading-tight">Members</h1>
           </div>
-          <span className="font-bebas text-2xl text-white tracking-[1px]">{members.length}</span>
+          <span className="font-bebas text-2xl text-white tracking-[1px]">{counts.active}</span>
         </div>
 
         <div className="px-6 py-8 max-w-5xl space-y-6">
@@ -94,7 +90,7 @@ export default function MembersClient({ members }: Props) {
               />
             </div>
             <div className="flex gap-1">
-              {(['all', 'active', 'expiring', 'expired'] as const).map(f => (
+              {(['all', 'active', 'removed'] as const).map(f => (
                 <button
                   key={f}
                   onClick={() => setFilter(f)}
@@ -124,8 +120,8 @@ export default function MembersClient({ members }: Props) {
                 <table className="w-full">
                   <thead>
                     <tr className="border-b border-[#333333]">
-                      {['Member', 'Plan', 'Source', 'Joined', 'Expires', 'Status'].map(h => (
-                        <th key={h} className="px-5 py-3 text-left font-inter text-[11px] text-[#999999] tracking-[4px] uppercase">{h}</th>
+                      {['Member', 'Source', 'Joined', 'Status', ''].map((h, i) => (
+                        <th key={i} className="px-5 py-3 text-left font-inter text-[11px] text-[#999999] tracking-[4px] uppercase">{h}</th>
                       ))}
                     </tr>
                   </thead>
@@ -133,27 +129,49 @@ export default function MembersClient({ members }: Props) {
                     {filtered.map((m, i) => {
                       const name = m.profile?.full_name || m.profile?.email || 'Unknown'
                       const email = m.profile?.email ?? ''
-                      const expiring = isExpiringSoon(m)
-                      const expired = isExpired(m) || m.status !== 'active'
+                      const active = m.status === 'active'
                       return (
                         <tr key={m.id} className={`hover:bg-[#222222] transition-colors ${i < filtered.length - 1 ? 'border-b border-[#222222]' : ''}`}>
                           <td className="px-5 py-4">
                             <p className="font-inter text-white text-sm font-medium">{name}</p>
                             {email && name !== email && <p className="font-inter text-[#555555] text-xs mt-0.5">{email}</p>}
                           </td>
-                          <td className="px-5 py-4 font-inter text-[11px] text-[#999999] tracking-[2px] uppercase">{m.plan_type ?? '—'}</td>
                           <td className="px-5 py-4 font-inter text-[11px] text-[#555555] uppercase tracking-[2px]">{m.source ?? '—'}</td>
                           <td className="px-5 py-4 font-inter text-sm text-[#999999]">{formatDate(m.created_at)}</td>
-                          <td className={`px-5 py-4 font-inter text-sm ${expiring ? 'text-[#FFD60A]' : expired ? 'text-[#FF3B3B]' : 'text-[#999999]'}`}>
-                            {formatDate(expiryDate(m))}
-                          </td>
                           <td className="px-5 py-4">
-                            {expired ? (
-                              <span className="flex items-center gap-1.5 font-inter text-xs text-[#FF3B3B]"><UserX size={11} /> Expired</span>
-                            ) : expiring ? (
-                              <span className="flex items-center gap-1.5 font-inter text-xs text-[#FFD60A]"><Clock size={11} /> Expiring</span>
-                            ) : (
+                            {active ? (
                               <span className="flex items-center gap-1.5 font-inter text-xs text-[#00D4AA]"><UserCheck size={11} /> Active</span>
+                            ) : (
+                              <span className="flex items-center gap-1.5 font-inter text-xs text-[#FF3B3B]"><UserX size={11} /> Removed</span>
+                            )}
+                          </td>
+                          <td className="px-5 py-4 text-right">
+                            {active && (
+                              confirmId === m.id ? (
+                                <div className="flex items-center gap-2 justify-end">
+                                  <span className="font-inter text-xs text-[#999999]">Remove?</span>
+                                  <button
+                                    onClick={() => handleRemove(m.id)}
+                                    disabled={removing === m.id}
+                                    className="font-inter text-xs text-[#FF3B3B] hover:text-white transition-colors disabled:opacity-50"
+                                  >
+                                    {removing === m.id ? 'Removing…' : 'Yes'}
+                                  </button>
+                                  <button
+                                    onClick={() => setConfirmId(null)}
+                                    className="font-inter text-xs text-[#555555] hover:text-white transition-colors"
+                                  >
+                                    Cancel
+                                  </button>
+                                </div>
+                              ) : (
+                                <button
+                                  onClick={() => setConfirmId(m.id)}
+                                  className="flex items-center gap-1.5 font-inter text-xs text-[#555555] hover:text-[#FF3B3B] transition-colors ml-auto"
+                                >
+                                  <Trash2 size={11} /> Remove
+                                </button>
+                              )
                             )}
                           </td>
                         </tr>
@@ -168,8 +186,7 @@ export default function MembersClient({ members }: Props) {
                 {filtered.map(m => {
                   const name = m.profile?.full_name || m.profile?.email || 'Unknown'
                   const email = m.profile?.email ?? ''
-                  const expiring = isExpiringSoon(m)
-                  const expired = isExpired(m) || m.status !== 'active'
+                  const active = m.status === 'active'
                   return (
                     <div key={m.id} className="px-4 py-4 flex items-center justify-between gap-3">
                       <div className="min-w-0">
@@ -177,11 +194,24 @@ export default function MembersClient({ members }: Props) {
                         {email && name !== email && <p className="font-inter text-[#555555] text-xs truncate">{email}</p>}
                         <p className="font-inter text-[#555555] text-xs mt-0.5">Joined {formatDate(m.created_at)}</p>
                       </div>
-                      <div className="shrink-0 text-right">
-                        <p className={`font-inter text-xs ${expiring ? 'text-[#FFD60A]' : expired ? 'text-[#FF3B3B]' : 'text-[#00D4AA]'}`}>
-                          {expired ? 'Expired' : expiring ? 'Expiring' : 'Active'}
+                      <div className="shrink-0 text-right flex flex-col items-end gap-2">
+                        <p className={`font-inter text-xs ${active ? 'text-[#00D4AA]' : 'text-[#FF3B3B]'}`}>
+                          {active ? 'Active' : 'Removed'}
                         </p>
-                        <p className="font-inter text-[#555555] text-xs mt-0.5">{formatDate(expiryDate(m))}</p>
+                        {active && (
+                          confirmId === m.id ? (
+                            <div className="flex gap-2">
+                              <button onClick={() => handleRemove(m.id)} disabled={removing === m.id} className="font-inter text-[10px] text-[#FF3B3B]">
+                                {removing === m.id ? '…' : 'Yes'}
+                              </button>
+                              <button onClick={() => setConfirmId(null)} className="font-inter text-[10px] text-[#555555]">No</button>
+                            </div>
+                          ) : (
+                            <button onClick={() => setConfirmId(m.id)} className="font-inter text-[10px] text-[#555555] hover:text-[#FF3B3B] transition-colors">
+                              Remove
+                            </button>
+                          )
+                        )}
                       </div>
                     </div>
                   )

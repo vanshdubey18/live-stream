@@ -190,9 +190,10 @@ function HeroPanel({ upcoming, user, memberships }: { upcoming: any[]; user: { n
       <div className="max-w-[1280px] mx-auto px-6 py-12">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-12">
           <div className="flex-1">
-            <p className="font-inter text-[11px] text-[#999999] uppercase tracking-[4px] mb-4">
-              Today&apos;s Training
-            </p>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-5 h-px bg-[#FF3B3B]" />
+              <p className="font-inter text-[11px] text-[#FF3B3B] uppercase tracking-[4px]">Today&apos;s Training</p>
+            </div>
             <div className="font-bebas text-[96px] text-white leading-none tracking-[1px]">
               {todayCount || upcoming.length || 0}
             </div>
@@ -251,7 +252,9 @@ function StatsRow({ memberships, completedCount, totalHours, monthCount }: { mem
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.2, ease: 'easeOut', delay: i * 0.04 }}
+              className={i === 0 ? 'relative' : undefined}
             >
+              {i === 0 && <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-[#FF3B3B] z-10" />}
               <StatCard number={number} label={label} />
             </motion.div>
           ))}
@@ -268,7 +271,10 @@ function MyGyms({ memberships }: { memberships: any[] }) {
   return (
     <section className="border-b border-[#333333]">
       <div className="max-w-[1280px] mx-auto px-6 py-8">
-        <p className="font-inter text-[11px] text-[#999999] uppercase tracking-[4px] mb-6">My Gyms</p>
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-5 h-px bg-[#FF3B3B]" />
+          <p className="font-inter text-[11px] text-[#FF3B3B] uppercase tracking-[4px]">My Gyms</p>
+        </div>
         <div className="divide-y divide-[#333333]">
           {memberships.map((m: any) => {
             const gym = m.gyms ?? {}
@@ -326,14 +332,20 @@ function UpcomingClasses({ sessions }: { sessions: any[] }) {
     <section className="border-b border-[#333333]">
       <div className="max-w-[1280px] mx-auto px-6 py-8">
         <div className="flex items-center justify-between mb-6">
-          <p className="font-inter text-[11px] text-[#999999] uppercase tracking-[4px]">Upcoming Classes</p>
+          <div className="flex items-center gap-3">
+            <div className="w-5 h-px bg-[#FF3B3B]" />
+            <p className="font-inter text-[11px] text-[#FF3B3B] uppercase tracking-[4px]">Upcoming Classes</p>
+          </div>
           <a href="/dashboard/schedule" className="font-inter text-xs text-[#555555] hover:text-white transition-colors flex items-center gap-1">
             View all <ChevronRight size={12} />
           </a>
         </div>
 
         {items.length === 0 ? (
-          <p className="font-inter text-sm text-[#555555]">No upcoming classes. Join a gym to get started.</p>
+          <div className="relative bg-[#1A1A1A] border border-[#333333] rounded-sm px-6 py-10 text-center overflow-hidden">
+            <span className="absolute inset-0 flex items-center justify-center font-bebas text-[120px] text-white/[0.03] leading-none select-none pointer-events-none">LIVE</span>
+            <p className="relative font-inter text-sm text-[#555555]">No upcoming classes. Join a gym to get started.</p>
+          </div>
         ) : (
           <div className="divide-y divide-[#333333]">
             {items.map((s: any, i: number) => {
@@ -383,7 +395,10 @@ function RecentReplays({ replays }: { replays: any[] }) {
     <section className="border-b border-[#333333]">
       <div className="max-w-[1280px] mx-auto px-6 py-8">
         <div className="flex items-center justify-between mb-6">
-          <p className="font-inter text-[11px] text-[#999999] uppercase tracking-[4px]">Replay Library</p>
+          <div className="flex items-center gap-3">
+            <div className="w-5 h-px bg-[#FF3B3B]" />
+            <p className="font-inter text-[11px] text-[#FF3B3B] uppercase tracking-[4px]">Replay Library</p>
+          </div>
           <a href="/dashboard/replays" className="font-inter text-xs text-[#555555] hover:text-white transition-colors flex items-center gap-1">
             View all <ChevronRight size={12} />
           </a>
@@ -436,7 +451,10 @@ function AICoachSection() {
     <section className="border-b border-[#333333]">
       <div className="max-w-[1280px] mx-auto px-6 py-8">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="font-bebas text-2xl text-white tracking-[1px]">AI COACH</h2>
+          <div className="flex items-center gap-3">
+            <div className="w-5 h-px bg-[#FF3B3B]" />
+            <h2 className="font-bebas text-2xl text-white tracking-[1px]">AI COACH</h2>
+          </div>
           <span className="font-inter text-[10px] text-[#FF3B3B] tracking-[3px] uppercase border border-[#FF3B3B]/20 bg-[#FF3B3B]/5 px-3 py-1.5 rounded-sm">
             Coming Soon
           </span>

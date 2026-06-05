@@ -148,7 +148,10 @@ function ActionItems({
 
   return (
     <section>
-      <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-4">Needs Your Attention</p>
+      <div className="flex items-center gap-3 mb-4">
+        <div className="w-5 h-px bg-[#FF3B3B]" />
+        <p className="font-inter text-[11px] text-[#FF3B3B] tracking-[4px] uppercase">Needs Your Attention</p>
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {items.map(item => {
           const s = toneStyles[item.tone]
@@ -285,11 +288,14 @@ export default function GymDashboardClient({ gym, ownerName, sessions, coaches, 
 
           {/* Stats row */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <StatsCard
-              label="Members"
-              value={String(memberCount)}
-              sub={memberStats.newThisWeek > 0 ? `+${memberStats.newThisWeek} this week` : 'Active memberships'}
-            />
+            <div className="relative">
+              <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-[#FF3B3B] z-10" />
+              <StatsCard
+                label="Members"
+                value={String(memberCount)}
+                sub={memberStats.newThisWeek > 0 ? `+${memberStats.newThisWeek} this week` : 'Active memberships'}
+              />
+            </div>
             <StatsCard
               label="Est. Revenue (₹)"
               value={`₹${totalRevenue.toLocaleString('en-IN')}`}
@@ -313,7 +319,10 @@ export default function GymDashboardClient({ gym, ownerName, sessions, coaches, 
           {/* Sessions */}
           <section>
             <div className="flex items-center justify-between mb-4">
-              <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase">Sessions</p>
+              <div className="flex items-center gap-3">
+                <div className="w-5 h-px bg-[#FF3B3B]" />
+                <p className="font-inter text-[11px] text-[#FF3B3B] tracking-[4px] uppercase">Sessions</p>
+              </div>
               <button
                 onClick={() => setShowModal(true)}
                 className="flex items-center gap-2 bg-white hover:bg-[#E5E5E5] text-black font-bebas tracking-[3px] text-sm px-5 py-2 rounded-sm transition-colors"
@@ -323,11 +332,12 @@ export default function GymDashboardClient({ gym, ownerName, sessions, coaches, 
             </div>
 
             {localSessions.length === 0 ? (
-              <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm px-6 py-12 text-center">
-                <p className="font-inter text-[#555555] text-sm mb-5">No sessions scheduled yet.</p>
+              <div className="relative bg-[#1A1A1A] border border-[#333333] rounded-sm px-6 py-12 text-center overflow-hidden">
+                <span className="absolute inset-0 flex items-center justify-center font-bebas text-[120px] text-white/[0.03] leading-none select-none pointer-events-none">LIVE</span>
+                <p className="relative font-inter text-[#555555] text-sm mb-5">No sessions scheduled yet.</p>
                 <button
                   onClick={() => setShowModal(true)}
-                  className="bg-white hover:bg-[#E5E5E5] text-black font-bebas tracking-[3px] text-sm px-6 py-2.5 rounded-sm transition-colors"
+                  className="relative bg-white hover:bg-[#E5E5E5] text-black font-bebas tracking-[3px] text-sm px-6 py-2.5 rounded-sm transition-colors"
                 >
                   Schedule First Class
                 </button>
@@ -433,10 +443,14 @@ export default function GymDashboardClient({ gym, ownerName, sessions, coaches, 
 
           {/* Payouts */}
           <section>
-            <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-4">Recent Payouts</p>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-5 h-px bg-[#FF3B3B]" />
+              <p className="font-inter text-[11px] text-[#FF3B3B] tracking-[4px] uppercase">Recent Payouts</p>
+            </div>
             {payouts.length === 0 ? (
-              <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm px-6 py-8 text-center">
-                <p className="font-inter text-[#555555] text-sm">No payouts yet.</p>
+              <div className="relative bg-[#1A1A1A] border border-[#333333] rounded-sm px-6 py-8 text-center overflow-hidden">
+                <span className="absolute inset-0 flex items-center justify-center font-bebas text-[120px] text-white/[0.03] leading-none select-none pointer-events-none">EARN</span>
+                <p className="relative font-inter text-[#555555] text-sm">No payouts yet.</p>
               </div>
             ) : (
               <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm overflow-hidden">

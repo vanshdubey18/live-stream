@@ -78,13 +78,16 @@ export default function AdminOverviewClient({ stats, gyms, members, payouts }: P
 
           {/* Stats */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <AdminStatsCard
-              label="Total Members"
-              value={String(stats.memberCount)}
-              sub="Active memberships"
-              icon={<Users size={16} className="text-[#00D4AA]" />}
-              trend="up"
-            />
+            <div className="relative">
+              <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-[#FF3B3B] z-10" />
+              <AdminStatsCard
+                label="Total Members"
+                value={String(stats.memberCount)}
+                sub="Active memberships"
+                icon={<Users size={16} className="text-[#00D4AA]" />}
+                trend="up"
+              />
+            </div>
             <AdminStatsCard
               label="Active Gyms"
               value={String(stats.gymCount)}
@@ -130,7 +133,7 @@ export default function AdminOverviewClient({ stats, gyms, members, payouts }: P
             {activeTab === 'gyms' ? (
               <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm overflow-hidden">
                 <div className="flex items-center justify-between px-5 py-4 border-b border-[#333333]">
-                  <h3 className="text-white font-bold text-sm">Recent Gyms</h3>
+                  <div className="flex items-center gap-3"><div className="w-5 h-px bg-[#FF3B3B]" /><h3 className="font-inter text-[11px] text-[#FF3B3B] tracking-[4px] uppercase">Recent Gyms</h3></div>
                   <a href="/admin/gyms" className="text-[#999999] hover:text-white text-xs transition-colors flex items-center gap-1">
                     View all <ExternalLink size={11} />
                   </a>
@@ -169,7 +172,7 @@ export default function AdminOverviewClient({ stats, gyms, members, payouts }: P
             ) : (
               <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm overflow-hidden">
                 <div className="flex items-center justify-between px-5 py-4 border-b border-[#333333]">
-                  <h3 className="text-white font-bold text-sm">Recent Members</h3>
+                  <div className="flex items-center gap-3"><div className="w-5 h-px bg-[#FF3B3B]" /><h3 className="font-inter text-[11px] text-[#FF3B3B] tracking-[4px] uppercase">Recent Members</h3></div>
                   <a href="/admin/members" className="text-[#999999] hover:text-white text-xs transition-colors flex items-center gap-1">
                     View all <ExternalLink size={11} />
                   </a>
@@ -214,7 +217,7 @@ export default function AdminOverviewClient({ stats, gyms, members, payouts }: P
 
             <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm overflow-hidden">
               <div className="flex items-center justify-between px-5 py-4 border-b border-[#333333]">
-                <h3 className="text-white font-bold text-sm">Recent Payouts</h3>
+                <div className="flex items-center gap-3"><div className="w-5 h-px bg-[#FF3B3B]" /><h3 className="font-inter text-[11px] text-[#FF3B3B] tracking-[4px] uppercase">Recent Payouts</h3></div>
                 <a href="/admin/payouts" className="text-[#999999] hover:text-white text-xs transition-colors flex items-center gap-1">
                   View all <ExternalLink size={11} />
                 </a>

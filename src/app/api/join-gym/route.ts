@@ -40,6 +40,7 @@ export async function POST(req: NextRequest) {
   }
 
   let couponId: string | null = null
+  let freeUntil: string | null = null
 
   if (couponCode) {
     const { data: coupon, error: couponErr } = await adminClient
@@ -62,15 +63,27 @@ export async function POST(req: NextRequest) {
     }
 
     couponId = coupon.id
+
+    // Set content-access window from coupon — membership itself stays permanent
+    if (coupon.type === 'free_days') {
+      const until = new Date()
+      until.setDate(until.getDate() + coupon.value)
+      freeUntil = until.toISOString()
+    } else if (coupon.type === 'percent_off' && coupon.value === 100) {
+      const until = new Date()
+      until.setDate(until.getDate() + 30)
+      freeUntil = until.toISOString()
+    }
   }
 
-  // Create permanent membership — no free_until, gym removes the member if needed
+  // Membership is permanent (status stays 'active' until gym removes member).
+  // free_until only gates content access — it doesn't affect membership itself.
   const { error: membershipErr } = await adminClient.from('memberships').insert({
     user_id: user.id,
     gym_id: gymId,
     status: 'active',
     source: couponCode ? 'coupon' : 'paid',
-    free_until: null,
+    free_until: freeUntil,
     plan_type: 'full_mma',
   })
 
@@ -89,7 +102,7 @@ export async function POST(req: NextRequest) {
         user_id: user.id,
         gym_id: gymId,
         plan_type: 'full_mma',
-        free_until: null,
+        free_until: freeUntil,
       }),
     ])
   }

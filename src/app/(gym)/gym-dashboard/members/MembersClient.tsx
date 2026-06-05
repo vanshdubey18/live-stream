@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import GymSidebar from '@/components/layout/GymSidebar'
-import { Search, UserCheck, UserX, Trash2 } from 'lucide-react'
+import { Search, UserCheck, UserX, Clock, Trash2 } from 'lucide-react'
 
 interface Member {
   id: string
@@ -22,32 +22,46 @@ interface Props {
 }
 
 function formatDate(iso: string | null) {
-  if (!iso) return '—'
+  if (!iso) return null
   return new Date(iso).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
 }
+
+function getExpiry(m: Member): Date | null {
+  const end = m.current_period_end ?? m.free_until
+  return end ? new Date(end) : null
+}
+
+function accessExpired(m: Member) {
+  const exp = getExpiry(m)
+  return !!exp && exp < new Date()
+}
+
+type FilterKey = 'all' | 'active' | 'expired' | 'removed'
 
 export default function MembersClient({ members: initial }: Props) {
   const [members, setMembers] = useState(initial)
   const [search, setSearch] = useState('')
-  const [filter, setFilter] = useState<'all' | 'active' | 'removed'>('all')
+  const [filter, setFilter] = useState<FilterKey>('all')
   const [removing, setRemoving] = useState<string | null>(null)
   const [confirmId, setConfirmId] = useState<string | null>(null)
+
+  const counts = {
+    all: members.length,
+    active: members.filter(m => m.status === 'active' && !accessExpired(m)).length,
+    expired: members.filter(m => m.status === 'active' && accessExpired(m)).length,
+    removed: members.filter(m => m.status !== 'active').length,
+  }
 
   const filtered = members.filter(m => {
     const name = m.profile?.full_name ?? ''
     const email = m.profile?.email ?? ''
     const q = search.toLowerCase()
     if (q && !name.toLowerCase().includes(q) && !email.toLowerCase().includes(q)) return false
-    if (filter === 'active') return m.status === 'active'
+    if (filter === 'active') return m.status === 'active' && !accessExpired(m)
+    if (filter === 'expired') return m.status === 'active' && accessExpired(m)
     if (filter === 'removed') return m.status !== 'active'
     return true
   })
-
-  const counts = {
-    all: members.length,
-    active: members.filter(m => m.status === 'active').length,
-    removed: members.filter(m => m.status !== 'active').length,
-  }
 
   async function handleRemove(id: string) {
     setRemoving(id)
@@ -67,16 +81,29 @@ export default function MembersClient({ members: initial }: Props) {
       <GymSidebar active="Members" />
 
       <main className="flex-1 lg:ml-64 min-w-0">
-        {/* Top bar */}
         <div className="sticky top-0 z-20 bg-[#0D0D0D] border-b border-[#222222] px-6 h-16 flex items-center justify-between mt-14 lg:mt-0">
           <div>
             <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase">Gym Dashboard</p>
             <h1 className="font-bebas text-xl text-white tracking-[1px] leading-tight">Members</h1>
           </div>
-          <span className="font-bebas text-2xl text-white tracking-[1px]">{counts.active}</span>
+          <span className="font-bebas text-2xl text-white tracking-[1px]">{members.length}</span>
         </div>
 
         <div className="px-6 py-8 max-w-5xl space-y-6">
+
+          {/* Summary strip */}
+          <div className="grid grid-cols-3 divide-x divide-[#222222] border border-[#222222] rounded-sm bg-[#0D0D0D]">
+            {[
+              { value: counts.active, label: 'Active Access', color: 'text-[#00D4AA]' },
+              { value: counts.expired, label: 'Access Expired', color: 'text-[#FFD60A]' },
+              { value: counts.removed, label: 'Removed', color: 'text-[#555555]' },
+            ].map(({ value, label, color }) => (
+              <div key={label} className="px-5 py-4 text-center">
+                <p className={`font-bebas text-3xl tracking-[1px] ${color}`}>{value}</p>
+                <p className="font-inter text-[10px] text-[#555555] uppercase tracking-[2px] mt-0.5">{label}</p>
+              </div>
+            ))}
+          </div>
 
           {/* Search + filter */}
           <div className="flex flex-col sm:flex-row gap-3">
@@ -90,14 +117,12 @@ export default function MembersClient({ members: initial }: Props) {
               />
             </div>
             <div className="flex gap-1">
-              {(['all', 'active', 'removed'] as const).map(f => (
+              {(['all', 'active', 'expired', 'removed'] as const).map(f => (
                 <button
                   key={f}
                   onClick={() => setFilter(f)}
                   className={`px-3 py-2 font-inter text-xs rounded-sm capitalize transition-colors ${
-                    filter === f
-                      ? 'bg-white text-black'
-                      : 'bg-[#1A1A1A] border border-[#333333] text-[#555555] hover:text-white'
+                    filter === f ? 'bg-white text-black' : 'bg-[#1A1A1A] border border-[#333333] text-[#555555] hover:text-white'
                   }`}
                 >
                   {f} {counts[f] > 0 && <span className="opacity-60">({counts[f]})</span>}
@@ -106,7 +131,7 @@ export default function MembersClient({ members: initial }: Props) {
             </div>
           </div>
 
-          {/* Members table */}
+          {/* Table */}
           {filtered.length === 0 ? (
             <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm px-6 py-12 text-center">
               <p className="font-inter text-[#555555] text-sm">
@@ -120,7 +145,7 @@ export default function MembersClient({ members: initial }: Props) {
                 <table className="w-full">
                   <thead>
                     <tr className="border-b border-[#333333]">
-                      {['Member', 'Source', 'Joined', 'Status', ''].map((h, i) => (
+                      {['Member', 'Source', 'Joined', 'Expires', 'Access', ''].map((h, i) => (
                         <th key={i} className="px-5 py-3 text-left font-inter text-[11px] text-[#999999] tracking-[4px] uppercase">{h}</th>
                       ))}
                     </tr>
@@ -129,7 +154,10 @@ export default function MembersClient({ members: initial }: Props) {
                     {filtered.map((m, i) => {
                       const name = m.profile?.full_name || m.profile?.email || 'Unknown'
                       const email = m.profile?.email ?? ''
-                      const active = m.status === 'active'
+                      const expired = accessExpired(m)
+                      const removed = m.status !== 'active'
+                      const expiry = getExpiry(m)
+
                       return (
                         <tr key={m.id} className={`hover:bg-[#222222] transition-colors ${i < filtered.length - 1 ? 'border-b border-[#222222]' : ''}`}>
                           <td className="px-5 py-4">
@@ -137,16 +165,21 @@ export default function MembersClient({ members: initial }: Props) {
                             {email && name !== email && <p className="font-inter text-[#555555] text-xs mt-0.5">{email}</p>}
                           </td>
                           <td className="px-5 py-4 font-inter text-[11px] text-[#555555] uppercase tracking-[2px]">{m.source ?? '—'}</td>
-                          <td className="px-5 py-4 font-inter text-sm text-[#999999]">{formatDate(m.created_at)}</td>
+                          <td className="px-5 py-4 font-inter text-sm text-[#999999]">{formatDate(m.created_at) ?? '—'}</td>
+                          <td className={`px-5 py-4 font-inter text-sm ${expired ? 'text-[#FFD60A]' : 'text-[#555555]'}`}>
+                            {expiry ? formatDate(expiry.toISOString()) : <span className="text-[#333333]">Permanent</span>}
+                          </td>
                           <td className="px-5 py-4">
-                            {active ? (
-                              <span className="flex items-center gap-1.5 font-inter text-xs text-[#00D4AA]"><UserCheck size={11} /> Active</span>
-                            ) : (
+                            {removed ? (
                               <span className="flex items-center gap-1.5 font-inter text-xs text-[#FF3B3B]"><UserX size={11} /> Removed</span>
+                            ) : expired ? (
+                              <span className="flex items-center gap-1.5 font-inter text-xs text-[#FFD60A]"><Clock size={11} /> Access Expired</span>
+                            ) : (
+                              <span className="flex items-center gap-1.5 font-inter text-xs text-[#00D4AA]"><UserCheck size={11} /> Active</span>
                             )}
                           </td>
                           <td className="px-5 py-4 text-right">
-                            {active && (
+                            {!removed && (
                               confirmId === m.id ? (
                                 <div className="flex items-center gap-2 justify-end">
                                   <span className="font-inter text-xs text-[#999999]">Remove?</span>
@@ -155,12 +188,9 @@ export default function MembersClient({ members: initial }: Props) {
                                     disabled={removing === m.id}
                                     className="font-inter text-xs text-[#FF3B3B] hover:text-white transition-colors disabled:opacity-50"
                                   >
-                                    {removing === m.id ? 'Removing…' : 'Yes'}
+                                    {removing === m.id ? '…' : 'Yes'}
                                   </button>
-                                  <button
-                                    onClick={() => setConfirmId(null)}
-                                    className="font-inter text-xs text-[#555555] hover:text-white transition-colors"
-                                  >
+                                  <button onClick={() => setConfirmId(null)} className="font-inter text-xs text-[#555555] hover:text-white transition-colors">
                                     Cancel
                                   </button>
                                 </div>
@@ -186,19 +216,24 @@ export default function MembersClient({ members: initial }: Props) {
                 {filtered.map(m => {
                   const name = m.profile?.full_name || m.profile?.email || 'Unknown'
                   const email = m.profile?.email ?? ''
-                  const active = m.status === 'active'
+                  const expired = accessExpired(m)
+                  const removed = m.status !== 'active'
+                  const expiry = getExpiry(m)
+
                   return (
                     <div key={m.id} className="px-4 py-4 flex items-center justify-between gap-3">
                       <div className="min-w-0">
                         <p className="font-inter text-white text-sm font-medium truncate">{name}</p>
                         {email && name !== email && <p className="font-inter text-[#555555] text-xs truncate">{email}</p>}
-                        <p className="font-inter text-[#555555] text-xs mt-0.5">Joined {formatDate(m.created_at)}</p>
-                      </div>
-                      <div className="shrink-0 text-right flex flex-col items-end gap-2">
-                        <p className={`font-inter text-xs ${active ? 'text-[#00D4AA]' : 'text-[#FF3B3B]'}`}>
-                          {active ? 'Active' : 'Removed'}
+                        <p className="font-inter text-[#555555] text-xs mt-0.5">
+                          {expiry ? `Expires ${formatDate(expiry.toISOString())}` : 'Permanent access'}
                         </p>
-                        {active && (
+                      </div>
+                      <div className="shrink-0 text-right flex flex-col items-end gap-1.5">
+                        <p className={`font-inter text-xs ${removed ? 'text-[#FF3B3B]' : expired ? 'text-[#FFD60A]' : 'text-[#00D4AA]'}`}>
+                          {removed ? 'Removed' : expired ? 'Access Expired' : 'Active'}
+                        </p>
+                        {!removed && (
                           confirmId === m.id ? (
                             <div className="flex gap-2">
                               <button onClick={() => handleRemove(m.id)} disabled={removing === m.id} className="font-inter text-[10px] text-[#FF3B3B]">

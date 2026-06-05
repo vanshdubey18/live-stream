@@ -90,7 +90,11 @@ export default function BrowseGymsClient({ gyms, joinedGymIds }: Props) {
                   <a
                     key={g.id}
                     href={`/gyms/${g.slug}`}
-                    className="bg-[#1A1A1A] border border-[#333333] rounded-sm p-5 hover:bg-[#222222] hover:border-[#FF3B3B]/40 transition-colors flex flex-col gap-4 group"
+                    className={`bg-[#1A1A1A] rounded-sm p-5 transition-all flex flex-col gap-4 group ${
+                      isLive
+                        ? 'border border-[#FF3B3B]/50 shadow-[0_0_0_1px_rgba(255,59,59,0.1),0_0_28px_rgba(255,59,59,0.08)] hover:border-[#FF3B3B]/70'
+                        : 'border border-[#333333] hover:bg-[#222222] hover:border-[#FF3B3B]/40'
+                    }`}
                   >
                     {/* Top row: live badge + joined */}
                     <div className="flex items-center justify-between min-h-[20px]">

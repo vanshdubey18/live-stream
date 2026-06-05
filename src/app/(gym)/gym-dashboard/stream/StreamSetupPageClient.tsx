@@ -113,9 +113,13 @@ export default function StreamSetupPageClient({ gymId, streamKey: initialKey, ha
                   </div>
                   <button
                     onClick={() => copy(RTMP_SERVER, 'url')}
-                    className="shrink-0 flex items-center gap-1.5 border border-[#333333] text-[#555555] hover:text-white hover:border-[#555555] font-inter text-xs px-3 py-2.5 rounded-sm transition-all"
+                    className={`shrink-0 flex items-center gap-1.5 border font-inter text-xs px-3 py-2.5 rounded-sm transition-all ${
+                      copied === 'url'
+                        ? 'border-[#00D4AA]/40 bg-[#00D4AA]/5 text-[#00D4AA]'
+                        : 'border-[#333333] text-[#555555] hover:text-white hover:border-[#555555]'
+                    }`}
                   >
-                    {copied === 'url' ? <><Check size={12} className="text-[#00D4AA]" /> Copied</> : <><Copy size={12} /> Copy</>}
+                    {copied === 'url' ? <><Check size={12} /> COPIED</> : <><Copy size={12} /> Copy</>}
                   </button>
                 </div>
               </div>
@@ -141,9 +145,13 @@ export default function StreamSetupPageClient({ gymId, streamKey: initialKey, ha
                     </button>
                     <button
                       onClick={() => copy(streamKey, 'key')}
-                      className="shrink-0 flex items-center gap-1.5 border border-[#333333] text-[#555555] hover:text-white hover:border-[#555555] font-inter text-xs px-3 py-2.5 rounded-sm transition-all"
+                      className={`shrink-0 flex items-center gap-1.5 border font-inter text-xs px-3 py-2.5 rounded-sm transition-all ${
+                        copied === 'key'
+                          ? 'border-[#00D4AA]/40 bg-[#00D4AA]/5 text-[#00D4AA]'
+                          : 'border-[#333333] text-[#555555] hover:text-white hover:border-[#555555]'
+                      }`}
                     >
-                      {copied === 'key' ? <><Check size={12} className="text-[#00D4AA]" /> Copied</> : <><Copy size={12} /> Copy</>}
+                      {copied === 'key' ? <><Check size={12} /> COPIED</> : <><Copy size={12} /> Copy</>}
                     </button>
                   </div>
                 )}

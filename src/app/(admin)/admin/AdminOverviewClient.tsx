@@ -152,7 +152,7 @@ export default function AdminOverviewClient({ stats, gyms, members, payouts }: P
                     </thead>
                     <tbody className="divide-y divide-[#1F1F1F]">
                       {recentGyms.map((g: any) => (
-                        <tr key={g.id} className="hover:bg-[#1F1F1F] transition-colors">
+                        <tr key={g.id} className="even:bg-[#111111] hover:bg-[#1F1F1F] transition-colors">
                           <td className="px-4 py-3.5 font-inter text-white text-sm font-medium">{g.name}</td>
                           <td className="px-4 py-3.5 text-[#999999]">{g.city}</td>
                           <td className="px-4 py-3.5">
@@ -191,7 +191,7 @@ export default function AdminOverviewClient({ stats, gyms, members, payouts }: P
                     </thead>
                     <tbody className="divide-y divide-[#1F1F1F]">
                       {recentMembers.map((m: any) => (
-                        <tr key={m.id} className="hover:bg-[#1F1F1F] transition-colors">
+                        <tr key={m.id} className="even:bg-[#111111] hover:bg-[#1F1F1F] transition-colors">
                           <td className="px-4 py-3.5 font-inter text-white text-sm font-medium">{m.name ?? '—'}</td>
                           <td className="px-4 py-3.5 text-[#999999]">{m.email}</td>
                           <td className="px-4 py-3.5">

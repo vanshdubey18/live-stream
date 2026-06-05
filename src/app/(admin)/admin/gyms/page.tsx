@@ -74,7 +74,7 @@ export default function ActiveGymsPage() {
                   </thead>
                   <tbody className="divide-y divide-[#1F1F1F]">
                     {filtered.map(g => (
-                      <tr key={g.id} className="hover:bg-[#1F1F1F] transition-colors">
+                      <tr key={g.id} className="even:bg-[#111111] hover:bg-[#1F1F1F] transition-colors">
                         <td className="px-4 py-3.5">
                           <div className="flex items-center gap-3">
                             <div className="w-8 h-8 rounded-sm bg-[#FF3B3B]/10 flex items-center justify-center shrink-0">

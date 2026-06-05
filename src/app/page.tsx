@@ -344,7 +344,7 @@ function CTABanner() {
             <p className="font-inter text-[11px] text-[#FF3B3B] tracking-[4px] uppercase">Ready?</p>
           </div>
           <h2 className="font-bebas text-white leading-[0.88] tracking-[1px] mb-10 border-l-2 border-[#FF3B3B] pl-6" style={{ fontSize: 'clamp(48px, 7vw, 80px)' }}>
-            THE MAT DOESN&apos;T CARE<br />WHERE YOU&apos;RE FROM.
+            TRAIN WITH THE BEST.<br />FROM ANYWHERE.
           </h2>
           <a href="/signup" className="inline-flex items-center gap-2 font-bebas text-sm tracking-[3px] bg-white text-black px-10 py-4 rounded-sm hover:bg-[#E5E5E5] transition-all duration-150">
             JOIN MATPEAK <ArrowRight size={14} />

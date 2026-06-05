@@ -496,7 +496,7 @@ export default function DashboardClient({ user, memberships, upcoming, replays, 
   const [, setSearchOpen] = useState(false)
 
   return (
-    <div className="min-h-screen bg-black flex">
+    <div className="min-h-screen bg-[#0D0D0D] flex">
       <MemberSidebar active="Dashboard" onSearchOpen={() => setSearchOpen(true)} />
 
       <main className="flex-1 lg:ml-64 min-w-0">

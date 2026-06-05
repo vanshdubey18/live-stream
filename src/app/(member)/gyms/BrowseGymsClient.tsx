@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Search } from 'lucide-react'
 import MemberSidebar from '@/components/layout/MemberSidebar'
+import EmptyState from '@/components/ui/EmptyState'
 
 const ALL_DISCIPLINES = ['BJJ', 'Boxing', 'Muay Thai', 'Wrestling', 'MMA', 'Kickboxing', 'Judo', 'Sambo']
 
@@ -77,9 +78,7 @@ export default function BrowseGymsClient({ gyms, joinedGymIds }: Props) {
 
           {/* Results */}
           {filtered.length === 0 ? (
-            <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm px-6 py-16 text-center">
-              <p className="font-inter text-[#999999] text-sm">No gyms match your search.</p>
-            </div>
+            <EmptyState ghost="TRAIN" message="No gyms match your search." />
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {filtered.map(g => {
@@ -91,7 +90,7 @@ export default function BrowseGymsClient({ gyms, joinedGymIds }: Props) {
                   <a
                     key={g.id}
                     href={`/gyms/${g.slug}`}
-                    className="bg-[#1A1A1A] border border-[#333333] rounded-sm p-5 hover:bg-[#222222] transition-colors flex flex-col gap-4 group"
+                    className="bg-[#1A1A1A] border border-[#333333] rounded-sm p-5 hover:bg-[#222222] hover:border-[#FF3B3B]/40 transition-colors flex flex-col gap-4 group"
                   >
                     {/* Top row: live badge + joined */}
                     <div className="flex items-center justify-between min-h-[20px]">

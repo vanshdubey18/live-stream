@@ -162,7 +162,7 @@ function PrePhase({ onGoLive }: { onGoLive: () => void }) {
             <div className="mt-auto pt-4 border-t border-[#2A2A2A]">
               <button
                 onClick={onGoLive}
-                className="w-full bg-[#FF3B3B] hover:bg-red-700 text-white font-inter font-bold py-2.5 rounded-sm text-xs tracking-[2px] uppercase transition-colors"
+                className="w-full bg-[#FF3B3B] hover:bg-[#cc2f2f] text-white font-bebas py-2.5 rounded-sm text-sm tracking-[3px] uppercase transition-colors"
               >
                 Go Live
               </button>

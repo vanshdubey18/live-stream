@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Users, Building2, Radio, AlertTriangle, TrendingUp, ExternalLink } from 'lucide-react'
 import AdminSidebar from '@/components/layout/AdminSidebar'
 import AdminStatsCard from '@/components/admin/AdminStatsCard'
+import EmptyState from '@/components/ui/EmptyState'
 import RevenueChart from '@/components/admin/RevenueChart'
 import ActivityFeed from '@/components/admin/ActivityFeed'
 
@@ -139,20 +140,20 @@ export default function AdminOverviewClient({ stats, gyms, members, payouts }: P
                   </a>
                 </div>
                 {recentGyms.length === 0 ? (
-                  <div className="px-5 py-10 text-center text-[#999999] text-sm">No gyms yet.</div>
+                  <EmptyState ghost="GYMS" message="No gyms yet." size="sm" />
                 ) : (
-                  <table className="w-full text-sm">
+                  <div className="overflow-x-auto"><table className="w-full text-sm min-w-[480px]">
                     <thead>
                       <tr className="border-b border-[#333333]">
                         {['Name', 'City', 'Status', 'Joined'].map(h => (
-                          <th key={h} className="px-4 py-3 text-left text-xs font-bold text-[#999999] uppercase tracking-wider">{h}</th>
+                          <th key={h} className="px-4 py-3 text-left font-inter text-[11px] text-[#999999] tracking-[2px] uppercase">{h}</th>
                         ))}
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-[#1F1F1F]">
                       {recentGyms.map((g: any) => (
                         <tr key={g.id} className="hover:bg-[#1F1F1F] transition-colors">
-                          <td className="px-4 py-3.5 text-white font-semibold">{g.name}</td>
+                          <td className="px-4 py-3.5 font-inter text-white text-sm font-medium">{g.name}</td>
                           <td className="px-4 py-3.5 text-[#999999]">{g.city}</td>
                           <td className="px-4 py-3.5">
                             <span className={`text-xs font-semibold px-2.5 py-1 rounded-sm
@@ -166,7 +167,7 @@ export default function AdminOverviewClient({ stats, gyms, members, payouts }: P
                         </tr>
                       ))}
                     </tbody>
-                  </table>
+                  </table></div>
                 )}
               </div>
             ) : (
@@ -178,20 +179,20 @@ export default function AdminOverviewClient({ stats, gyms, members, payouts }: P
                   </a>
                 </div>
                 {recentMembers.length === 0 ? (
-                  <div className="px-5 py-10 text-center text-[#999999] text-sm">No members yet.</div>
+                  <EmptyState ghost="MEMBERS" message="No members yet." size="sm" />
                 ) : (
-                  <table className="w-full text-sm">
+                  <div className="overflow-x-auto"><table className="w-full text-sm min-w-[480px]">
                     <thead>
                       <tr className="border-b border-[#333333]">
                         {['Name', 'Email', 'Role', 'Joined'].map(h => (
-                          <th key={h} className="px-4 py-3 text-left text-xs font-bold text-[#999999] uppercase tracking-wider">{h}</th>
+                          <th key={h} className="px-4 py-3 text-left font-inter text-[11px] text-[#999999] tracking-[2px] uppercase">{h}</th>
                         ))}
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-[#1F1F1F]">
                       {recentMembers.map((m: any) => (
                         <tr key={m.id} className="hover:bg-[#1F1F1F] transition-colors">
-                          <td className="px-4 py-3.5 text-white font-semibold">{m.name ?? '—'}</td>
+                          <td className="px-4 py-3.5 font-inter text-white text-sm font-medium">{m.name ?? '—'}</td>
                           <td className="px-4 py-3.5 text-[#999999]">{m.email}</td>
                           <td className="px-4 py-3.5">
                             <span className={`text-xs font-medium px-2 py-0.5 rounded-sm
@@ -205,7 +206,7 @@ export default function AdminOverviewClient({ stats, gyms, members, payouts }: P
                         </tr>
                       ))}
                     </tbody>
-                  </table>
+                  </table></div>
                 )}
               </div>
             )}
@@ -223,20 +224,20 @@ export default function AdminOverviewClient({ stats, gyms, members, payouts }: P
                 </a>
               </div>
               {payouts.length === 0 ? (
-                <div className="px-5 py-10 text-center text-[#999999] text-sm">No payouts yet.</div>
+                <EmptyState ghost="EARN" message="No payouts yet." size="sm" />
               ) : (
                 <div className="divide-y divide-[#1F1F1F]">
                   {payouts.slice(0, 6).map((p: any) => (
                     <div key={p.id} className="flex items-center justify-between px-5 py-3.5">
                       <div>
-                        <p className="text-white text-sm font-semibold">{p.gyms?.name ?? 'Unknown Gym'}</p>
-                        <p className="text-[#555] text-xs mt-0.5">
+                        <p className="font-inter text-white text-sm font-medium">{p.gyms?.name ?? 'Unknown Gym'}</p>
+                        <p className="font-inter text-[#555555] text-xs mt-0.5">
                           {new Date(p.period_start).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' })}
                         </p>
                       </div>
                       <div className="text-right">
-                        <p className="text-white font-bold text-sm">₹{(p.amount_paise / 100).toLocaleString('en-IN')}</p>
-                        <p className={`text-xs font-semibold mt-0.5 ${p.status === 'paid' ? 'text-[#00D4AA]' : 'text-[#FFD60A]'}`}>
+                        <p className="font-bebas text-white text-xl tracking-[1px] leading-none">₹{(p.amount_paise / 100).toLocaleString('en-IN')}</p>
+                        <p className={`font-inter text-xs uppercase tracking-[1px] mt-1 ${p.status === 'paid' ? 'text-[#00D4AA]' : 'text-[#FFD60A]'}`}>
                           {p.status}
                         </p>
                       </div>

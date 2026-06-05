@@ -29,7 +29,7 @@ export default function AchievementsPage() {
   const unlocked = MILESTONES.filter(m => m.unlocked).length
 
   return (
-    <div className="min-h-screen bg-black flex">
+    <div className="min-h-screen bg-[#0D0D0D] flex">
       <MemberSidebar active="Achievements" />
 
       <main className="flex-1 lg:ml-64 min-w-0">

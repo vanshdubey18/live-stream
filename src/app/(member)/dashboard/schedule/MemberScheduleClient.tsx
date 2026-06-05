@@ -58,7 +58,7 @@ export default function MemberScheduleClient({ sessions, hasGyms }: Props) {
   const days = Array.from(grouped.keys())
 
   return (
-    <div className="min-h-screen bg-black flex">
+    <div className="min-h-screen bg-[#0D0D0D] flex">
       <MemberSidebar active="Schedule" />
 
       <main className="flex-1 lg:ml-64 min-w-0">

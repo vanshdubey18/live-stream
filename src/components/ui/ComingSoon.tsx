@@ -27,7 +27,7 @@ export default function ComingSoon({
         <div className="w-14 h-14 rounded-sm bg-[#111] border border-[#333333] flex items-center justify-center mx-auto">
           <Construction size={24} className="text-[#FF3B3B]" />
         </div>
-        <h1 className="text-white font-bold text-xl">{title}</h1>
+        <h1 className="font-bebas text-2xl text-white tracking-[1px]">{title}</h1>
         <p className="text-[#999999] text-sm leading-relaxed">{description}</p>
         {backHref && (
           <a

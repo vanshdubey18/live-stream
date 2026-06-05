@@ -108,7 +108,7 @@ export default function ProgressionPage() {
   const disc = DISCIPLINES[selected]
 
   return (
-    <div className="min-h-screen bg-black flex">
+    <div className="min-h-screen bg-[#0D0D0D] flex">
       <MemberSidebar active="Progression" />
 
       <main className="flex-1 lg:ml-64 min-w-0">

@@ -67,89 +67,97 @@ function Navbar() {
 function Hero() {
   return (
     <section className="relative min-h-screen bg-[#0D0D0D] flex flex-col justify-between pt-16 overflow-hidden">
-      <div className="flex-1 flex items-center">
-        <div className="max-w-[1280px] mx-auto px-6 w-full py-16 lg:py-24">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-6 items-center">
 
-            {/* Left — text */}
-            <div>
-              <motion.p
-                initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.2, ease: 'easeOut' }}
-                className="font-inter text-[11px] text-[#555555] tracking-[4px] uppercase mb-8"
-              >
-                Combat Sports &bull; Live Training
-              </motion.p>
-              <motion.h1
-                initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.25, ease: 'easeOut', delay: 0.05 }}
-                className="font-bebas uppercase leading-[0.88] tracking-[1px]"
-                style={{ fontSize: 'clamp(56px, 8vw, 104px)' }}
-              >
-                <span className="block text-white">WORLD-CLASS</span>
-                <span className="block text-white">TRAINING.</span>
-                <span className="block text-[#FF3B3B]">WHEREVER YOU ARE.</span>
-              </motion.h1>
-              <motion.p
-                initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.25, ease: 'easeOut', delay: 0.1 }}
-                className="font-inter text-[#999999] text-lg mt-10 max-w-[420px] leading-relaxed"
-              >
-                Stream live classes from real MMA gyms.<br />
-                BJJ. Boxing. Muay Thai. Wrestling.<br />
-                Train from anywhere in the world.
-              </motion.p>
-              <motion.div
-                initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.25, ease: 'easeOut', delay: 0.15 }}
-                className="flex flex-wrap items-center gap-3 mt-10"
-              >
-                <a href="/signup" className="font-bebas text-sm tracking-[3px] bg-white text-black px-8 py-4 rounded-sm hover:bg-[#E5E5E5] transition-all duration-150 flex items-center gap-2">
-                  START TRAINING <ArrowRight size={14} />
-                </a>
-                <a href="/gyms" className="font-inter text-sm text-[#999999] border border-[#333333] px-8 py-[14px] rounded-sm hover:text-white hover:border-[#555555] transition-all duration-150">
-                  Browse Gyms
-                </a>
-              </motion.div>
-            </div>
+      {/* Full-bleed athlete photo */}
+      <div className="absolute inset-0">
+        <img
+          src="https://images.pexels.com/photos/10006587/pexels-photo-10006587.jpeg?auto=compress&cs=tinysrgb&w=1600&h=1200&fit=crop"
+          alt=""
+          aria-hidden="true"
+          className="w-full h-full object-cover object-center grayscale contrast-125"
+        />
+        {/* Base dim so text always readable */}
+        <div className="absolute inset-0 bg-black/55" />
+        {/* Strong left-side gradient — text zone stays dark, right bleeds through */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/60 to-black/10" />
+        {/* Bottom fade into stat bar */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0D0D0D] via-transparent to-transparent" style={{ top: '60%' }} />
+        {/* Top fade into navbar */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0D0D0D]/60 via-transparent to-transparent" style={{ bottom: '85%' }} />
+        {/* Warm red tint — brand feel */}
+        <div className="absolute inset-0 bg-[#FF3B3B]/6 mix-blend-overlay" />
+      </div>
 
-            {/* Right — athlete photo */}
+      {/* Content */}
+      <div className="relative z-10 flex-1 flex items-center">
+        <div className="max-w-[1280px] mx-auto px-6 w-full py-24 lg:py-36">
+          <div className="max-w-[620px]">
+
             <motion.div
-              initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.4, ease: 'easeOut', delay: 0.1 }}
-              className="relative h-[480px] lg:h-[600px] rounded-sm overflow-hidden"
+              initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
+              className="flex items-center gap-3 mb-8"
             >
-              {/* Gradient overlays for dramatic bleed */}
-              <div className="absolute inset-0 bg-gradient-to-r from-[#0D0D0D] via-transparent to-transparent z-10 w-1/3" />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0D0D0D] via-transparent to-transparent z-10 h-1/4 top-auto" />
-              <div className="absolute inset-0 bg-gradient-to-b from-[#0D0D0D] via-transparent to-transparent z-10 h-1/6" />
+              <div className="w-6 h-px bg-[#FF3B3B]" />
+              <p className="font-inter text-[11px] text-[#FF3B3B] tracking-[4px] uppercase">
+                Combat Sports &bull; Live Training
+              </p>
+            </motion.div>
 
-              {/* Red accent overlay */}
-              <div className="absolute inset-0 bg-[#FF3B3B]/8 mix-blend-multiply z-10" />
+            <motion.h1
+              initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, ease: 'easeOut', delay: 0.05 }}
+              className="font-bebas uppercase leading-[0.88] tracking-[1px]"
+              style={{ fontSize: 'clamp(68px, 9vw, 120px)' }}
+            >
+              <span className="block text-white">WORLD-CLASS</span>
+              <span className="block text-white">TRAINING.</span>
+              <span className="block text-[#FF3B3B]">WHEREVER YOU ARE.</span>
+            </motion.h1>
 
-              <img
-                src="https://images.pexels.com/photos/10006587/pexels-photo-10006587.jpeg?auto=compress&cs=tinysrgb&w=900&h=1200&fit=crop"
-                alt="MMA athlete"
-                className="w-full h-full object-cover object-top contrast-110"
-              />
+            <motion.p
+              initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.25, ease: 'easeOut', delay: 0.12 }}
+              className="font-inter text-[#AAAAAA] text-base mt-8 max-w-[400px] leading-relaxed"
+            >
+              Stream live classes from real MMA gyms.<br />
+              BJJ. Boxing. Muay Thai. Wrestling.<br />
+              Train from anywhere in the world.
+            </motion.p>
 
-              {/* Discipline tag */}
-              <div className="absolute bottom-6 right-6 z-20">
-                <span className="font-inter text-[9px] text-[#FF3B3B] tracking-[3px] uppercase border border-[#FF3B3B]/30 bg-[#0D0D0D]/80 px-2.5 py-1.5 rounded-sm backdrop-blur-sm">
-                  Train at the source
-                </span>
-              </div>
+            <motion.div
+              initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.25, ease: 'easeOut', delay: 0.18 }}
+              className="flex flex-wrap items-center gap-3 mt-10"
+            >
+              <a href="/signup" className="font-bebas text-sm tracking-[3px] bg-white text-black px-8 py-4 rounded-sm hover:bg-[#E5E5E5] transition-all duration-150 flex items-center gap-2">
+                START TRAINING <ArrowRight size={14} />
+              </a>
+              <a href="/gyms" className="font-inter text-sm text-[#AAAAAA] border border-white/20 px-8 py-[14px] rounded-sm hover:text-white hover:border-white/40 transition-all duration-150">
+                Browse Gyms
+              </a>
             </motion.div>
 
           </div>
         </div>
       </div>
 
+      {/* "Train at the source" pill — bottom left, above stat bar */}
+      <motion.div
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+        transition={{ duration: 0.3, delay: 0.25 }}
+        className="relative z-10 max-w-[1280px] mx-auto px-6 pb-6"
+      >
+        <span className="font-inter text-[9px] text-[#FF3B3B] tracking-[3px] uppercase border border-[#FF3B3B]/30 bg-black/40 px-2.5 py-1.5 rounded-sm backdrop-blur-sm">
+          Train at the source
+        </span>
+      </motion.div>
+
       {/* Stat bar */}
       <motion.div
         initial={{ opacity: 0 }} animate={{ opacity: 1 }}
         transition={{ duration: 0.25, delay: 0.2, ease: 'easeOut' }}
-        className="border-t border-[#333333]"
+        className="relative z-10 border-t border-[#333333]"
       >
         <div className="max-w-[1280px] mx-auto px-6">
           <div className="grid grid-cols-3 divide-x divide-[#333333]">

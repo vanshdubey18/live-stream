@@ -152,7 +152,7 @@ export default function AICoachButton() {
 
       {/* FAB */}
       <motion.button
-        onClick={() => { setOpen(v => !v); setPulse(false) }}
+        onClick={() => setOpen(v => !v)}
         className="fixed top-1/2 -translate-y-1/2 right-0 z-50 w-12 h-20 bg-[#FF3B3B] rounded-l-sm flex flex-col items-center justify-center gap-1 shadow-lg hover:bg-[#cc2f2f] transition-colors"
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}

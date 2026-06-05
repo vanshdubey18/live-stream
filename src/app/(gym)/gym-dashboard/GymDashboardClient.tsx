@@ -454,7 +454,8 @@ export default function GymDashboardClient({ gym, ownerName, sessions, coaches, 
               </div>
             ) : (
               <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm overflow-hidden">
-                <table className="w-full">
+                {/* Desktop table */}
+                <table className="hidden sm:table w-full">
                   <thead>
                     <tr className="border-b border-[#333333]">
                       {['Period', 'Amount (70%)', 'Status'].map(h => (
@@ -489,6 +490,22 @@ export default function GymDashboardClient({ gym, ownerName, sessions, coaches, 
                     ))}
                   </tbody>
                 </table>
+                {/* Mobile cards */}
+                <div className="sm:hidden divide-y divide-[#222222]">
+                  {payouts.map((p: any) => (
+                    <div key={p.id} className="px-5 py-4 flex items-center justify-between gap-3">
+                      <div>
+                        <p className="font-inter text-white text-sm">
+                          {new Date(p.period_start).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' })}
+                        </p>
+                        <p className={`font-inter text-xs mt-1 ${p.status === 'paid' ? 'text-[#00D4AA]' : 'text-[#FFD60A]'}`}>
+                          {p.status === 'paid' ? 'PAID' : 'PENDING'}
+                        </p>
+                      </div>
+                      <p className="font-bebas text-white text-xl tracking-[1px]">{formatPaise(p.amount_paise)}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
           </section>

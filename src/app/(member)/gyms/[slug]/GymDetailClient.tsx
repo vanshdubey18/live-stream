@@ -188,8 +188,8 @@ export default function GymDetailClient({ gym, coaches, sessions, memberCount, m
             <EmptyState ghost="SCHEDULE" message="No upcoming classes scheduled yet." />
           ) : (
             <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm overflow-hidden">
-              {/* Table header */}
-              <div className="grid grid-cols-[1fr_1fr_auto_auto] gap-4 px-5 py-3 border-b border-[#2A2A2A]">
+              {/* Desktop table header */}
+              <div className="hidden sm:grid grid-cols-[1fr_1fr_auto_auto] gap-4 px-5 py-3 border-b border-[#2A2A2A]">
                 <span className="font-inter text-[10px] text-[#555555] uppercase tracking-[3px]">Time</span>
                 <span className="font-inter text-[10px] text-[#555555] uppercase tracking-[3px]">Class</span>
                 <span className="font-inter text-[10px] text-[#555555] uppercase tracking-[3px]">Coach</span>
@@ -197,21 +197,41 @@ export default function GymDetailClient({ gym, coaches, sessions, memberCount, m
               </div>
               <div className="divide-y divide-[#2A2A2A]">
                 {upcomingSessions.map((s: any) => (
-                  <div key={s.id} className="grid grid-cols-[1fr_1fr_auto_auto] gap-4 px-5 py-3.5 hover:bg-[#222222] transition-colors items-center">
-                    <div>
-                      {s.status === 'live' && (
-                        <span className="font-inter text-[10px] text-[#FF3B3B] tracking-[2px] block mb-0.5">● LIVE</span>
-                      )}
-                      <p className="font-inter text-xs text-[#999999]">{formatTime(s.scheduled_at)}</p>
+                  <div key={s.id} className="px-5 py-3.5 hover:bg-[#222222] transition-colors">
+                    {/* Mobile layout */}
+                    <div className="sm:hidden flex items-start justify-between gap-3">
+                      <div className="flex-1 min-w-0">
+                        {s.status === 'live' && (
+                          <span className="font-inter text-[10px] text-[#FF3B3B] tracking-[2px] block mb-1">● LIVE</span>
+                        )}
+                        <p className="font-inter text-sm text-white font-medium truncate">{s.title}</p>
+                        {s.discipline && (
+                          <p className="font-inter text-xs text-[#555555] uppercase tracking-[1px] mt-0.5">{s.discipline}</p>
+                        )}
+                        <p className="font-inter text-xs text-[#999999] mt-1">{s.coaches?.name ?? '—'}</p>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <p className="font-inter text-xs text-[#999999]">{formatTime(s.scheduled_at)}</p>
+                        <p className="font-inter text-xs text-[#555555] mt-1">{s.level ?? '—'}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-inter text-sm text-white">{s.title}</p>
-                      {s.discipline && (
-                        <p className="font-inter text-xs text-[#555555] uppercase tracking-[1px] mt-0.5">{s.discipline}</p>
-                      )}
+                    {/* Desktop layout */}
+                    <div className="hidden sm:grid grid-cols-[1fr_1fr_auto_auto] gap-4 items-center">
+                      <div>
+                        {s.status === 'live' && (
+                          <span className="font-inter text-[10px] text-[#FF3B3B] tracking-[2px] block mb-0.5">● LIVE</span>
+                        )}
+                        <p className="font-inter text-xs text-[#999999]">{formatTime(s.scheduled_at)}</p>
+                      </div>
+                      <div>
+                        <p className="font-inter text-sm text-white">{s.title}</p>
+                        {s.discipline && (
+                          <p className="font-inter text-xs text-[#555555] uppercase tracking-[1px] mt-0.5">{s.discipline}</p>
+                        )}
+                      </div>
+                      <p className="font-inter text-sm text-[#999999]">{s.coaches?.name ?? '—'}</p>
+                      <p className="font-inter text-xs text-[#555555]">{s.level ?? '—'}</p>
                     </div>
-                    <p className="font-inter text-sm text-[#999999]">{s.coaches?.name ?? '—'}</p>
-                    <p className="font-inter text-xs text-[#555555]">{s.level ?? '—'}</p>
                   </div>
                 ))}
               </div>

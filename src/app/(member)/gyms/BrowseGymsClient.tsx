@@ -57,14 +57,14 @@ export default function BrowseGymsClient({ gyms, joinedGymIds }: Props) {
           </div>
 
           {/* Discipline filter tabs */}
-          <div className="flex flex-wrap gap-0">
+          <div className="flex overflow-x-auto gap-0 pb-1 scrollbar-none -mx-6 px-6 sm:mx-0 sm:px-0 sm:flex-wrap">
             {['All', ...ALL_DISCIPLINES].map(d => {
               const isActive = d === 'All' ? !activeDiscipline : activeDiscipline === d
               return (
                 <button
                   key={d}
                   onClick={() => setActiveDiscipline(d === 'All' ? '' : (d === activeDiscipline ? '' : d))}
-                  className={`mr-6 pb-2 font-inter text-sm transition-colors border-b-2 ${
+                  className={`shrink-0 mr-5 sm:mr-6 pb-2 font-inter text-sm transition-colors border-b-2 ${
                     isActive
                       ? 'text-white border-[#FF3B3B]'
                       : 'text-[#555555] border-transparent hover:text-[#888888]'

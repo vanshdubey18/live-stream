@@ -164,13 +164,13 @@ function Hero() {
             {[
               { value: 2400, suffix: '+', label: 'HOURS STREAMED' },
               { value: 47, suffix: '', label: 'COACHES' },
-              { value: 4, suffix: '', label: 'DISCIPLINES' },
+              { value: 8, suffix: '', label: 'DISCIPLINES' },
             ].map(({ value, suffix, label }) => (
-              <div key={label} className="px-6 lg:px-10 py-8 first:pl-0">
-                <div className="font-bebas text-5xl lg:text-6xl text-white tracking-[1px] leading-none">
+              <div key={label} className="px-4 sm:px-6 lg:px-10 py-6 lg:py-8 first:pl-0">
+                <div className="font-bebas text-4xl sm:text-5xl lg:text-6xl text-white tracking-[1px] leading-none">
                   <StatCounter end={value} suffix={suffix} />
                 </div>
-                <p className="font-inter text-[11px] text-[#555555] tracking-[4px] uppercase mt-2">{label}</p>
+                <p className="font-inter text-[10px] sm:text-[11px] text-[#555555] tracking-[3px] sm:tracking-[4px] uppercase mt-2">{label}</p>
               </div>
             ))}
           </div>

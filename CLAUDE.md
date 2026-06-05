@@ -87,6 +87,38 @@ Rule: **one dominant accent (red) with sharp, sparing use.** Teal/amber are stat
 
 ---
 
+## Anti-Slop Fingerprint Check (the tells that scream "AI made this")
+
+Before shipping a screen, scan for these default fingerprints. Each is a habit the model falls into unprompted — if you see one, it's almost certainly slop, not a decision:
+
+- ❌ **Teal sprinkled as a general accent.** Teal (`#00D4AA`) is **status-only** (active/success). If teal is doing decoration or drawing the eye on a non-status element, it's wrong — red is the only decorative accent.
+- ❌ **Decorative accent bars.** The red left-bar (motif #2) is **semantic: one per screen, on the primary stat only.** Never add it to every card "for style." A bar that doesn't mean "this is THE number" is decoration — delete it.
+- ❌ **Container soup.** Card wrapping a card wrapping a padded pill. **Cap nesting at 2 levels.** If you're adding a third border/background layer, flatten instead.
+- ❌ **Blinking-dot reflex.** A pulsing live-dot only belongs on a genuinely-live state (motif #5). Don't animate dots on idle/scheduled/static items.
+- ❌ **Three-column feature grid** as the default hero layout. We use full-bleed photography (motif #4) and asymmetric stat strips — not the generic 3-up icon-card row.
+- ❌ **Evenly-distributed greys with no focal point.** Every screen needs ONE anchor (the red left-bar stat, or a Bebas hero number). If everything is the same weight, nothing reads.
+- ❌ **Mixed icon families.** Lucide only (already the project default). Don't import a second icon set.
+- ❌ **Generated/placeholder imagery that ignores the palette.** Any photo must be grayscale + contrast + the warm red `mix-blend-overlay` so it sits inside the brand, never a raw stock color image.
+
+## Anchor Discipline (the MATPEAK system must "hold")
+
+MATPEAK is a **locked aesthetic anchor** — athletic-editorial / industrial. Every screen is checked against fixed tokens, not vibes. If output drifts outside these ranges, *the anchor didn't hold* — fix it, don't ship it:
+
+| Token | Locked value(s) | Drift = slop |
+|---|---|---|
+| Surfaces | `#0D0D0D` → `#1A1A1A` → `#222222` only | Any other grey/off-black |
+| Decorative accent | `#FF3B3B` **only** | Teal/amber used decoratively |
+| Display type | Bebas Neue, uppercase, `tracking-[1px]`+ | `font-bold`, any other display face |
+| Body type | Inter | Inter used as *display* type |
+| Radius | `rounded-sm` (2px) | `rounded-lg`/`xl`/`full` on cards |
+| Focal point | exactly **one** anchor per screen | zero anchors, or three competing ones |
+
+Rule of thumb: a new screen should be **indistinguishable in DNA** from `src/app/page.tsx` and the member/gym dashboards. If a reviewer can tell which screen was built last because it looks different, the anchor slipped. Match the reference, don't reinvent.
+
+> The official `frontend-design` skill (installed at `.claude/skills/`) says "pick a bold direction per build." For MATPEAK that direction is **already chosen and locked above** — apply the skill's *principles* (distinctive type, dominant-accent palettes, atmospheric backgrounds, one orchestrated load animation) **inside** this anchor. Never invent a new aesthetic per screen.
+
+---
+
 ## Two-Layer Membership Model (domain rule — don't break)
 - **Membership** is permanent: `status='active'` stays until a gym explicitly removes a member. Expired members STILL show as "Member of X" on dashboard + gym page.
 - **Content access** is time-gated by `free_until` / `current_period_end`. When expired → show an **"ACCESS LOCKED"** screen (not "no membership", not a redirect to /gyms). Helper pattern: `accessExpired(m)` = end date in the past.

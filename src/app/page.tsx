@@ -181,10 +181,14 @@ function Hero() {
 }
 
 const DISCIPLINES = [
-  { name: 'BJJ', full: 'Brazilian Jiu-Jitsu', desc: 'Ground control, submissions, guard play. The chess match of combat sports.', count: '12 gyms' },
-  { name: 'BOXING', full: 'Boxing', desc: 'Footwork, combinations, head movement. The sweet science.', count: '8 gyms' },
-  { name: 'MUAY THAI', full: 'Muay Thai', desc: 'Eight limbs. Elbows, knees, clinch. The art of eight weapons.', count: '9 gyms' },
-  { name: 'WRESTLING', full: 'Wrestling', desc: 'Takedowns, scrambles, top pressure. The foundation of MMA.', count: '5 gyms' },
+  { name: 'BJJ',        full: 'Brazilian Jiu-Jitsu', desc: 'Ground control, submissions, guard play. The chess match of combat sports.',         count: '12 gyms' },
+  { name: 'BOXING',     full: 'Boxing',              desc: 'Footwork, combinations, head movement. The sweet science.',                           count: '8 gyms'  },
+  { name: 'MUAY THAI',  full: 'Muay Thai',           desc: 'Eight limbs. Elbows, knees, clinch. The art of eight weapons.',                       count: '9 gyms'  },
+  { name: 'WRESTLING',  full: 'Wrestling',           desc: 'Takedowns, scrambles, top pressure. The foundation of MMA.',                         count: '5 gyms'  },
+  { name: 'MMA',        full: 'Mixed Martial Arts',  desc: 'Stand-up, clinch, ground. The complete combat sport.',                               count: '7 gyms'  },
+  { name: 'KICKBOXING', full: 'Kickboxing',          desc: 'Punches and kicks in combination. Power, speed, and distance management.',           count: '4 gyms'  },
+  { name: 'JUDO',       full: 'Judo',                desc: 'Throws, trips, and pins. Explosive off-balance and control.',                        count: '3 gyms'  },
+  { name: 'SAMBO',      full: 'Sambo',               desc: 'Russian combat system — throws, leg locks, and ground work combined.',               count: '2 gyms'  },
 ]
 
 function Disciplines() {
@@ -196,7 +200,7 @@ function Disciplines() {
             <div className="w-6 h-px bg-[#FF3B3B]" />
             <p className="font-inter text-[11px] text-[#FF3B3B] tracking-[4px] uppercase">What we stream</p>
           </div>
-          <h2 className="font-bebas text-5xl lg:text-6xl text-white tracking-[1px] leading-none">FOUR DISCIPLINES.<br />ONE PLATFORM.</h2>
+          <h2 className="font-bebas text-5xl lg:text-6xl text-white tracking-[1px] leading-none">EVERY DISCIPLINE.<br />ONE PLATFORM.</h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-[#333333]">
           {DISCIPLINES.map(({ name, full, desc, count }, i) => (

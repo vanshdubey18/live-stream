@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { Loader2, Upload } from 'lucide-react'
 import GymSidebar from '@/components/layout/GymSidebar'
 import Toast from '@/components/gym-dashboard/Toast'
@@ -23,7 +23,7 @@ export default function GymProfilePage() {
   const [error, setError] = useState('')
   const [logoUrl, setLogoUrl] = useState('')
   const [logoUploading, setLogoUploading] = useState(false)
-  const logoInputRef = useRef<HTMLInputElement>(null)
+
 
   useEffect(() => {
     fetch('/api/gym/profile')
@@ -147,15 +147,10 @@ export default function GymProfilePage() {
                 </div>
               )}
               <div className="flex-1">
-                <input ref={logoInputRef} type="file" accept="image/*" className="hidden" onChange={handleLogoUpload} />
-                <button
-                  type="button"
-                  onClick={() => logoInputRef.current?.click()}
-                  disabled={logoUploading}
-                  className="px-4 py-2 border border-[#333333] rounded-sm font-inter text-sm text-white hover:border-[#555555] transition-colors disabled:opacity-50 flex items-center gap-2"
-                >
+                <label className={`inline-flex items-center gap-2 px-4 py-2 border border-[#333333] rounded-sm font-inter text-sm text-white hover:border-[#555555] transition-colors cursor-pointer ${logoUploading ? 'opacity-50 pointer-events-none' : ''}`}>
                   {logoUploading ? <><Loader2 size={14} className="animate-spin" /> Uploading…</> : logoUrl ? 'Change Logo' : 'Upload Logo'}
-                </button>
+                  <input type="file" accept="image/*" className="hidden" onChange={handleLogoUpload} disabled={logoUploading} />
+                </label>
                 <p className="font-inter text-[#555555] text-xs mt-1.5">Square image · JPG, PNG or WebP</p>
               </div>
             </div>

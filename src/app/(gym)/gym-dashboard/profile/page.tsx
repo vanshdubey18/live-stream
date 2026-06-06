@@ -68,6 +68,7 @@ export default function GymProfilePage() {
       fd.append('file', file)
       const res = await fetch('/api/gym/logo', { method: 'POST', body: fd })
       const data = await res.json()
+      console.log('[logo upload]', res.status, data)
       if (!res.ok) { setError(data.error ?? 'Upload failed'); return }
       setLogoUrl(data.url)
       setToast('Logo updated ✓')

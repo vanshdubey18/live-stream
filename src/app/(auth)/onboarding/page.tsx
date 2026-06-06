@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
@@ -82,6 +82,8 @@ function SelectCard({
 // ─── Page ─────────────────────────────────────────────────────────────────────
 export default function OnboardingPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const redirectTo = searchParams.get('redirectTo') ?? ''
   const [step, setStep] = useState(0)
   const [direction, setDirection] = useState(1)
   const [prefs, setPrefs] = useState<Prefs>({ disciplines: [], level: '', goal: '' })
@@ -120,7 +122,7 @@ export default function OnboardingPage() {
       const supabase = createClient()
       const { data: { user } } = await supabase.auth.getUser()
       const role = user?.user_metadata?.role ?? 'member'
-      router.push(role === 'gym_owner' ? '/gym-signup' : '/dashboard')
+      router.push(role === 'gym_owner' ? '/gym-signup' : (redirectTo || '/dashboard'))
     }
   }
 

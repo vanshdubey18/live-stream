@@ -1,12 +1,14 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
 
 export default function SignupPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const redirectTo = searchParams.get('redirectTo') ?? ''
   const supabase = createClient()
 
   const [form, setForm] = useState({
@@ -47,7 +49,8 @@ export default function SignupPage() {
       if (signUpError) throw signUpError
 
       if (data.user) {
-        router.push(role === 'gym_owner' ? '/gym-signup' : '/onboarding')
+        const next = redirectTo ? `/onboarding?redirectTo=${encodeURIComponent(redirectTo)}` : '/onboarding'
+        router.push(role === 'gym_owner' ? '/gym-signup' : next)
       }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Something went wrong.')

@@ -15,7 +15,7 @@ function formatPrice(paise: number) {
 
 export default function JoinModal({ gym, onClose, onJoined }: Props) {
   const [coupon, setCoupon] = useState('')
-  const [showCoupon, setShowCoupon] = useState(false)
+  const [showCoupon, setShowCoupon] = useState(true)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [step, setStep] = useState<'join' | 'success'>('join')

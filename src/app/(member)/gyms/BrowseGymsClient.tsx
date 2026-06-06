@@ -113,13 +113,22 @@ export default function BrowseGymsClient({ gyms, joinedGymIds }: Props) {
                     </div>
 
                     {/* Gym name */}
-                    <div>
-                      <h3 className="font-bebas text-2xl text-white leading-tight">{g.name}</h3>
-                      {g.city && (
-                        <p className="font-inter text-sm text-[#999999] mt-1">
-                          {g.city}{g.location ? `, ${g.location}` : ''}
-                        </p>
+                    <div className="flex items-center gap-3">
+                      {g.logo_url ? (
+                        <img src={g.logo_url} alt={g.name} className="w-10 h-10 rounded-sm object-cover border border-[#333333] shrink-0" />
+                      ) : (
+                        <div className="w-10 h-10 rounded-sm bg-[#0D0D0D] border border-[#333333] flex items-center justify-center shrink-0">
+                          <span className="font-bebas text-lg text-[#555555]">{g.name[0]}</span>
+                        </div>
                       )}
+                      <div>
+                        <h3 className="font-bebas text-2xl text-white leading-tight">{g.name}</h3>
+                        {g.city && (
+                          <p className="font-inter text-sm text-[#999999] mt-0.5">
+                            {g.city}{g.location ? `, ${g.location}` : ''}
+                          </p>
+                        )}
+                      </div>
                     </div>
 
                     {/* Disciplines as dot-separated text */}

@@ -64,7 +64,12 @@ export default function GymDetailClient({ gym, coaches, sessions, memberCount, m
             <div className="w-5 h-px bg-[#FF3B3B]" />
             <p className="font-inter text-[11px] text-[#FF3B3B] tracking-[4px] uppercase">Gym Profile</p>
           </div>
-          <h1 className="font-bebas text-6xl lg:text-7xl text-white leading-none">{gym.name}</h1>
+          <div className="flex items-center gap-4 mt-2">
+            {gym.logo_url && (
+              <img src={gym.logo_url} alt={gym.name} className="w-16 h-16 rounded-sm object-cover border border-[#333333] shrink-0" />
+            )}
+            <h1 className="font-bebas text-6xl lg:text-7xl text-white leading-none">{gym.name}</h1>
+          </div>
 
           {gym.city && (
             <p className="font-inter text-sm text-[#999999] mt-3">

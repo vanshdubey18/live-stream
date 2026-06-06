@@ -13,9 +13,6 @@ export async function POST(req: NextRequest) {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
-  if ((user.user_metadata?.role ?? 'member') !== 'gym_owner') {
-    return NextResponse.json({ error: 'Not authorized' }, { status: 403 })
-  }
 
   const { data: gym } = await adminClient()
     .from('gyms')
@@ -23,7 +20,7 @@ export async function POST(req: NextRequest) {
     .eq('owner_id', user.id)
     .maybeSingle()
 
-  if (!gym) return NextResponse.json({ error: 'Gym not found' }, { status: 404 })
+  if (!gym) return NextResponse.json({ error: 'Not authorized' }, { status: 403 })
 
   const formData = await req.formData()
   const file = formData.get('file') as File | null

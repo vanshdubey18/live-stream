@@ -1,11 +1,12 @@
 'use client'
 
+import { Suspense } from 'react'
 import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
 
-export default function SignupPage() {
+function SignupInner() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const redirectTo = searchParams.get('redirectTo') ?? ''
@@ -203,3 +204,5 @@ export default function SignupPage() {
     </main>
   )
 }
+
+export default function SignupPage() { return <Suspense><SignupInner /></Suspense> }

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
@@ -80,7 +80,7 @@ function SelectCard({
 }
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
-export default function OnboardingPage() {
+function OnboardingInner() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const redirectTo = searchParams.get('redirectTo') ?? ''
@@ -347,3 +347,5 @@ function StepThree({ prefs, setPrefs }: { prefs: Prefs; setPrefs: React.Dispatch
     </div>
   )
 }
+
+export default function OnboardingPage() { return <Suspense><OnboardingInner /></Suspense> }

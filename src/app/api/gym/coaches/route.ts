@@ -40,9 +40,6 @@ export async function GET() {
   const user = await getGymOwner()
   if (!user) return NextResponse.json({ error: 'Not authorized' }, { status: 403 })
 
-  // Ensure coach-avatars bucket exists (no-op if already created)
-  await adminClient().storage.createBucket('coach-avatars', { public: true }).catch(() => {})
-
   const { data: gym } = await adminClient()
     .from('gyms')
     .select('id')

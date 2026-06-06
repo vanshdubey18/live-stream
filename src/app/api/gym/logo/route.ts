@@ -39,6 +39,8 @@ export async function POST(req: NextRequest) {
   const buffer = Buffer.from(bytes)
   const path = `logos/${gym.id}.${ext}`
 
+  await adminClient().storage.createBucket('gym-assets', { public: true }).catch(() => {})
+
   const { error: uploadErr } = await adminClient()
     .storage
     .from('gym-assets')

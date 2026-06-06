@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
   if (!file) return NextResponse.json({ error: 'No file provided' }, { status: 400 })
 
   const ext = file.name.split('.').pop()?.toLowerCase() ?? 'jpg'
-  const allowedExts = ['jpg', 'jpeg', 'png', 'webp', 'gif']
+  const allowedExts = ['jpg', 'jpeg', 'jfif', 'png', 'webp', 'gif']
   if (!allowedExts.includes(ext)) {
     return NextResponse.json({ error: 'Only JPG, PNG, WebP or GIF allowed' }, { status: 400 })
   }

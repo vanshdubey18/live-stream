@@ -23,6 +23,7 @@ export default function GymProfilePage() {
   const [error, setError] = useState('')
   const [logoUrl, setLogoUrl] = useState('')
   const [logoUploading, setLogoUploading] = useState(false)
+  const [logoError, setLogoError] = useState('')
 
 
   useEffect(() => {
@@ -62,18 +63,18 @@ export default function GymProfilePage() {
   async function handleLogoUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
+    setLogoError('')
     setLogoUploading(true)
     try {
       const fd = new FormData()
       fd.append('file', file)
       const res = await fetch('/api/gym/logo', { method: 'POST', body: fd })
       const data = await res.json()
-      console.log('[logo upload]', res.status, data)
-      if (!res.ok) { setError(data.error ?? 'Upload failed'); return }
+      if (!res.ok) { setLogoError(data.error ?? 'Upload failed'); return }
       setLogoUrl(data.url)
       setToast('Logo updated ✓')
     } catch {
-      setError('Upload failed. Please try again.')
+      setLogoError('Upload failed. Please try again.')
     } finally {
       setLogoUploading(false)
     }
@@ -153,6 +154,7 @@ export default function GymProfilePage() {
                   <input type="file" accept="image/*" className="hidden" onChange={handleLogoUpload} disabled={logoUploading} />
                 </label>
                 <p className="font-inter text-[#555555] text-xs mt-1.5">Square image · JPG, PNG or WebP</p>
+                {logoError && <p className="font-inter text-[#FF3B3B] text-xs mt-1.5">{logoError}</p>}
               </div>
             </div>
           </div>

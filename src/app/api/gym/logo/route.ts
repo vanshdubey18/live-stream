@@ -14,13 +14,25 @@ export async function POST(req: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
 
-  const { data: gym } = await adminClient()
+  // Check role in public.users (always in sync — updated by gym-signup)
+  const { data: dbUser } = await adminClient()
+    .from('users')
+    .select('role')
+    .eq('id', user.id)
+    .maybeSingle()
+
+  if (dbUser?.role !== 'gym_owner') {
+    return NextResponse.json({ error: 'Not authorized' }, { status: 403 })
+  }
+
+  const { data: gym, error: gymErr } = await adminClient()
     .from('gyms')
     .select('id')
     .eq('owner_id', user.id)
     .maybeSingle()
 
-  if (!gym) return NextResponse.json({ error: 'Not authorized' }, { status: 403 })
+  if (gymErr) return NextResponse.json({ error: gymErr.message }, { status: 500 })
+  if (!gym) return NextResponse.json({ error: 'Gym not found' }, { status: 404 })
 
   const formData = await req.formData()
   const file = formData.get('file') as File | null

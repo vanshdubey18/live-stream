@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { createClient } from '@/lib/supabase/client'
 import { Check, Loader2, Building2, User, CheckCircle } from 'lucide-react'
 
 const DISCIPLINES = ['BJJ', 'Boxing', 'Muay Thai', 'Wrestling', 'MMA', 'Kickboxing', 'Judo', 'Sambo']
@@ -68,6 +69,13 @@ export default function GymSignupClient({ isLoggedIn, prefillName, prefillEmail 
       const data = await res.json()
 
       if (!res.ok) { setError(data.error ?? 'Something went wrong'); return }
+
+      // Sign in client-side so the browser gets a session cookie
+      if (!isLoggedIn) {
+        const supabase = createClient()
+        await supabase.auth.signInWithPassword({ email, password })
+      }
+
       setStep(3)
     } catch {
       setError('Network error. Please try again.')

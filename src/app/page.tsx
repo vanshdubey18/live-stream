@@ -315,7 +315,7 @@ function Pricing() {
             <p className="font-inter text-[11px] text-[#FF3B3B] tracking-[4px] uppercase mb-6">How It Works</p>
             {[
               { n: '01', text: 'Browse gyms and pick one you like' },
-              { n: '02', text: 'Pay their monthly fee with a coupon code' },
+              { n: '02', text: 'Pay their monthly membership fee securely online' },
               { n: '03', text: 'Watch every live class and replay' },
             ].map(item => (
               <div key={item.n} className="flex items-start gap-4 mb-6 last:mb-0">

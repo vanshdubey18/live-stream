@@ -86,7 +86,7 @@ export async function POST(req: NextRequest) {
     free_until: freeUntil,
   })
 
-  if (membershipErr) return NextResponse.json({ error: membershipErr.message }, { status: 400 })
+  if (membershipErr) return NextResponse.json({ error: membershipErr.message ?? 'Failed to create membership' }, { status: 400 })
 
   // Increment coupon usage and record redemption
   if (couponId) {

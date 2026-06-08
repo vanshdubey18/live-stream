@@ -13,16 +13,25 @@ export async function POST(req: NextRequest) {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
-  if ((user.user_metadata?.role ?? 'member') !== 'gym_owner') {
+
+  // Check role in public.users (always in sync — updated by gym-signup)
+  const { data: dbUser } = await adminClient()
+    .from('users')
+    .select('role')
+    .eq('id', user.id)
+    .maybeSingle()
+
+  if (dbUser?.role !== 'gym_owner') {
     return NextResponse.json({ error: 'Not authorized' }, { status: 403 })
   }
 
-  const { data: gym } = await adminClient()
+  const { data: gym, error: gymErr } = await adminClient()
     .from('gyms')
     .select('id')
     .eq('owner_id', user.id)
     .maybeSingle()
 
+  if (gymErr) return NextResponse.json({ error: gymErr.message }, { status: 500 })
   if (!gym) return NextResponse.json({ error: 'Gym not found' }, { status: 404 })
 
   const formData = await req.formData()
@@ -38,6 +47,8 @@ export async function POST(req: NextRequest) {
   const bytes = await file.arrayBuffer()
   const buffer = Buffer.from(bytes)
   const path = `logos/${gym.id}.${ext}`
+
+  await adminClient().storage.createBucket('gym-assets', { public: true }).catch(() => {})
 
   const { error: uploadErr } = await adminClient()
     .storage

@@ -13,7 +13,8 @@ async function getGymOwner() {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return null
-  if ((user.user_metadata?.role ?? 'member') !== 'gym_owner') return null
+  const { data: dbUser } = await adminClient().from('users').select('role').eq('id', user.id).maybeSingle()
+  if (dbUser?.role !== 'gym_owner') return null
   return user
 }
 

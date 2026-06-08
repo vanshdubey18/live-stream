@@ -13,7 +13,8 @@ async function getGymOwner() {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return null
-  if ((user.user_metadata?.role ?? 'member') !== 'gym_owner') return null
+  const { data: dbUser } = await adminClient().from('users').select('role').eq('id', user.id).maybeSingle()
+  if (dbUser?.role !== 'gym_owner') return null
   return user
 }
 
@@ -39,9 +40,6 @@ async function uploadPhoto(file: File, coachId: string): Promise<string | null> 
 export async function GET() {
   const user = await getGymOwner()
   if (!user) return NextResponse.json({ error: 'Not authorized' }, { status: 403 })
-
-  // Ensure coach-avatars bucket exists (no-op if already created)
-  await adminClient().storage.createBucket('coach-avatars', { public: true }).catch(() => {})
 
   const { data: gym } = await adminClient()
     .from('gyms')

@@ -129,7 +129,7 @@ export async function getGymBySlug(slug: string) {
   const { data, error } = await supabase
     .from('gyms')
     // Explicit allowlist — stream_key / mux_live_stream_id / mux_playback_id are intentionally excluded
-    .select('id, name, slug, description, city, location, logo_url, disciplines, monthly_price_paise, status, owner_id, instagram, website, created_at')
+    .select('id, name, slug, description, city, location, logo_url, cover_url, disciplines, monthly_price_paise, status, owner_id, instagram, created_at')
     .eq('slug', slug)
     .eq('status', 'active')
     .maybeSingle()

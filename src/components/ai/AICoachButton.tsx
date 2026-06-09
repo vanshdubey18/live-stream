@@ -39,7 +39,7 @@ export default function AICoachButton() {
     setTimeout(() => {
       setMessages(p => [...p, {
         role: 'ai',
-        text: '🔒 AI Coach is coming soon. Once live, I\'ll answer this using transcripts from your actual classes — with timestamps.',
+        text: 'Full AI responses are being rolled out. Once active, I\'ll answer using transcripts from your actual classes — with exact timestamps.',
       }])
     }, 800)
   }
@@ -49,7 +49,7 @@ export default function AICoachButton() {
     setTimeout(() => {
       setMessages(p => [...p, {
         role: 'ai',
-        text: '🔒 AI Coach is coming soon. Once live, I\'ll answer this using transcripts from your actual classes — with timestamps.',
+        text: 'Full AI responses are being rolled out. Once active, I\'ll answer using transcripts from your actual classes — with exact timestamps.',
       }])
     }, 800)
   }
@@ -78,14 +78,9 @@ export default function AICoachButton() {
                   <p className="font-inter text-[10px] text-[#555555]">Knows every class you attended</p>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                <span className="font-inter text-[10px] text-[#FF3B3B] tracking-[2px] uppercase border border-[#FF3B3B]/20 bg-[#FF3B3B]/5 px-2 py-0.5 rounded-sm">
-                  Coming Soon
-                </span>
-                <button onClick={() => setOpen(false)} className="text-[#555555] hover:text-white transition-colors">
-                  <X size={16} />
-                </button>
-              </div>
+              <button onClick={() => setOpen(false)} className="text-[#555555] hover:text-white transition-colors">
+                <X size={16} />
+              </button>
             </div>
 
             {/* Messages */}

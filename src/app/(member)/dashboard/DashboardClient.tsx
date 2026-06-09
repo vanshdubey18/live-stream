@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import MemberSidebar from '@/components/layout/MemberSidebar'
-import StatCard from '@/components/ui/StatCard'
 import InsightCard from '@/components/ui/InsightCard'
 import { ChevronRight, ArrowRight, BookOpen, Sparkles, Layers, MessageCircle, Lock } from 'lucide-react'
 
@@ -236,26 +235,29 @@ function HeroPanel({ upcoming, user, memberships }: { upcoming: any[]; user: { n
 // ─── Stats Row ────────────────────────────────────────────────────────────────
 function StatsRow({ memberships, completedCount, totalHours, monthCount }: { memberships: any[]; completedCount: number; totalHours: number; monthCount: number }) {
   const stats = [
-    { number: String(memberships.length), label: 'Gyms Joined' },
-    { number: String(completedCount), label: 'Replays Available' },
+    { number: String(memberships.length), label: 'Gyms Joined', accent: true },
+    { number: String(completedCount), label: 'Replays' },
     { number: `${totalHours}h`, label: 'Hours Trained' },
     { number: String(monthCount), label: 'This Month' },
   ]
 
   return (
     <section className="border-b border-[#333333]">
-      <div className="max-w-[1280px] mx-auto px-6 py-8">
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-[#333333]">
-          {stats.map(({ number, label }, i) => (
+      <div className="max-w-[1280px] mx-auto px-6">
+        <div className="grid grid-cols-2 sm:grid-cols-4 divide-x divide-y sm:divide-y-0 divide-[#333333]">
+          {stats.map(({ number, label, accent }, i) => (
             <motion.div
               key={label}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.2, ease: 'easeOut', delay: i * 0.04 }}
-              className={i === 0 ? 'relative' : undefined}
+              transition={{ duration: 0.2, ease: 'easeOut', delay: i * 0.05 }}
+              className="relative px-6 py-7 first:pl-0"
             >
-              {i === 0 && <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-[#FF3B3B] z-10" />}
-              <StatCard number={number} label={label} />
+              {accent && <div className="absolute left-0 top-4 bottom-4 w-0.5 bg-[#FF3B3B]" />}
+              <div className="font-bebas text-5xl sm:text-6xl text-white leading-none tracking-[1px]">
+                {number}
+              </div>
+              <p className="font-inter text-[10px] text-[#555555] uppercase tracking-[3px] mt-2">{label}</p>
             </motion.div>
           ))}
         </div>

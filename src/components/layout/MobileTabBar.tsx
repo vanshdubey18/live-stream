@@ -7,8 +7,9 @@ const NAV_TABS = [
   { label: 'Home', href: '/dashboard', icon: LayoutDashboard },
   { label: 'Schedule', href: '/dashboard/schedule', icon: Calendar },
   { label: 'Replays', href: '/dashboard/replays', icon: PlaySquare },
-  { label: 'Account', href: '/dashboard/account', icon: User },
 ]
+
+const ACCOUNT_TAB = { label: 'Account', href: '/dashboard/account', icon: User }
 
 export default function MobileTabBar() {
   const pathname = usePathname()
@@ -50,6 +51,17 @@ export default function MobileTabBar() {
           AI Coach
         </span>
       </button>
+
+      {/* Account — always last */}
+      <a
+        href={ACCOUNT_TAB.href}
+        className="flex-1 flex flex-col items-center justify-center gap-1 h-16 min-w-0 transition-colors"
+      >
+        <ACCOUNT_TAB.icon size={20} className={pathname === ACCOUNT_TAB.href ? 'text-[#FF3B3B]' : 'text-[#555555]'} />
+        <span className={`font-inter text-[10px] tracking-[1px] uppercase ${pathname === ACCOUNT_TAB.href ? 'text-white' : 'text-[#555555]'}`}>
+          {ACCOUNT_TAB.label}
+        </span>
+      </a>
     </nav>
   )
 }

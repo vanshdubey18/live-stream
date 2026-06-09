@@ -39,7 +39,7 @@ export default function GymSidebar({ active = 'Overview' }: GymSidebarProps) {
         <div className="lg:hidden fixed inset-0 z-30 bg-black/80" onClick={() => setOpen(false)} />
       )}
 
-      <aside className={`fixed top-0 left-0 h-full z-40 w-64 bg-[#0D0D0D] border-r border-[#333333] flex flex-col transition-transform duration-300 ${open ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
+      <aside className={`fixed top-0 left-0 h-full z-40 w-[75vw] max-w-[280px] lg:w-64 bg-[#0D0D0D] border-r border-[#333333] flex flex-col transition-transform duration-300 ${open ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
         <div className="h-16 flex items-center justify-between px-6 border-b border-[#333333]">
           <span className="font-bebas tracking-[2px] text-xl text-[#FF3B3B]">MATPEAK</span>
           <span className="font-inter text-[10px] text-[#555555] bg-[#1A1A1A] border border-[#333333] px-2 py-0.5 rounded-sm">GYM</span>

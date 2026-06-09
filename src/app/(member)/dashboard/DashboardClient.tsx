@@ -187,14 +187,14 @@ function HeroPanel({ upcoming, user, memberships }: { upcoming: any[]; user: { n
 
   return (
     <section className="border-b border-[#333333]">
-      <div className="max-w-[1280px] mx-auto px-6 py-12">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-12">
+      <div className="max-w-[1280px] mx-auto px-4 sm:px-6 py-8 lg:py-12">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 lg:gap-12">
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-5 h-px bg-[#FF3B3B]" />
               <p className="font-inter text-[11px] text-[#FF3B3B] uppercase tracking-[4px]">Today&apos;s Training</p>
             </div>
-            <div className="font-bebas text-[96px] text-white leading-none tracking-[1px]">
+            <div className="font-bebas text-[56px] sm:text-[80px] lg:text-[96px] text-white leading-none tracking-[1px]">
               {todayCount || upcoming.length || 0}
             </div>
             <p className="font-inter text-sm text-[#999999] mt-3">
@@ -245,7 +245,7 @@ function StatsRow({ memberships, completedCount, totalHours, monthCount }: { mem
   return (
     <section className="border-b border-[#333333]">
       <div className="max-w-[1280px] mx-auto px-6 py-8">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-[#333333]">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-[#333333]">
           {stats.map(({ number, label }, i) => (
             <motion.div
               key={label}

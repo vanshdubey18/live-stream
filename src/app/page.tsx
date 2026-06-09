@@ -130,10 +130,10 @@ function Hero() {
               transition={{ duration: 0.25, ease: 'easeOut', delay: 0.18 }}
               className="flex flex-wrap items-center gap-3 mt-10"
             >
-              <a href="/signup" className="font-bebas text-sm tracking-[3px] bg-white text-black px-8 py-4 rounded-sm hover:bg-[#E5E5E5] transition-all duration-150 flex items-center gap-2">
+              <a href="/signup" className="font-bebas text-sm tracking-[3px] bg-white text-black px-5 sm:px-8 py-3.5 sm:py-4 rounded-sm hover:bg-[#E5E5E5] transition-all duration-150 flex items-center gap-2">
                 START TRAINING <ArrowRight size={14} />
               </a>
-              <a href="/gyms" className="font-inter text-sm text-[#AAAAAA] border border-white/20 px-8 py-[14px] rounded-sm hover:text-white hover:border-white/40 transition-all duration-150">
+              <a href="/gyms" className="font-inter text-sm text-[#AAAAAA] border border-white/20 px-5 sm:px-8 py-3.5 sm:py-[14px] rounded-sm hover:text-white hover:border-white/40 transition-all duration-150">
                 Browse Gyms
               </a>
             </motion.div>

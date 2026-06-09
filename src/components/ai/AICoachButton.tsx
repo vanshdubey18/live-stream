@@ -64,7 +64,7 @@ export default function AICoachButton() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 16, scale: 0.97 }}
             transition={{ duration: 0.2 }}
-            className="fixed top-1/2 -translate-y-1/2 right-14 z-50 w-[340px] bg-[#1A1A1A] border border-[#333333] rounded-sm shadow-2xl flex flex-col overflow-hidden"
+            className="fixed inset-x-2 bottom-20 top-16 lg:inset-auto lg:top-1/2 lg:-translate-y-1/2 lg:right-14 lg:w-[340px] z-50 bg-[#1A1A1A] border border-[#333333] rounded-sm shadow-2xl flex flex-col overflow-hidden"
             style={{ maxHeight: 'calc(100vh - 80px)' }}
           >
             {/* Header */}
@@ -150,10 +150,10 @@ export default function AICoachButton() {
         )}
       </AnimatePresence>
 
-      {/* FAB */}
+      {/* FAB — desktop only; mobile uses the bottom tab bar */}
       <motion.button
         onClick={() => setOpen(v => !v)}
-        className="fixed top-1/2 -translate-y-1/2 right-0 z-50 w-12 h-20 bg-[#FF3B3B] rounded-l-sm flex flex-col items-center justify-center gap-1 shadow-lg hover:bg-[#cc2f2f] transition-colors"
+        className="hidden lg:flex fixed top-1/2 -translate-y-1/2 right-0 z-50 w-12 h-20 bg-[#FF3B3B] rounded-l-sm flex-col items-center justify-center gap-1 shadow-lg hover:bg-[#cc2f2f] transition-colors"
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
       >

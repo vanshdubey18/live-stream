@@ -1,26 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
-import { createClient as createAdminClient } from '@supabase/supabase-js'
+import { assertAdmin, adminClient, UNAUTHORIZED } from '@/lib/supabase/admin'
 
-function adminClient() {
-  return createAdminClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  )
-}
-
-async function assertAdmin() {
-  const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return null
-  if ((user.user_metadata?.role ?? 'member') !== 'admin') return null
-  return user
-}
-
-// GET — list all coupons
 export async function GET() {
   const user = await assertAdmin()
-  if (!user) return NextResponse.json({ error: 'Not authorized' }, { status: 403 })
+  if (!user) return UNAUTHORIZED()
 
   const { data, error } = await adminClient()
     .from('coupons')
@@ -31,10 +14,9 @@ export async function GET() {
   return NextResponse.json({ coupons: data })
 }
 
-// POST — create a coupon
 export async function POST(req: NextRequest) {
   const user = await assertAdmin()
-  if (!user) return NextResponse.json({ error: 'Not authorized' }, { status: 403 })
+  if (!user) return UNAUTHORIZED()
 
   const { code, type, value, maxUses, expiresAt, notes } = await req.json()
   if (!code || !type || value == null) {
@@ -67,10 +49,9 @@ export async function POST(req: NextRequest) {
   return NextResponse.json({ coupon: data })
 }
 
-// PATCH — toggle is_active
 export async function PATCH(req: NextRequest) {
   const user = await assertAdmin()
-  if (!user) return NextResponse.json({ error: 'Not authorized' }, { status: 403 })
+  if (!user) return UNAUTHORIZED()
 
   const { id, isActive } = await req.json()
   if (!id) return NextResponse.json({ error: 'Missing id' }, { status: 400 })

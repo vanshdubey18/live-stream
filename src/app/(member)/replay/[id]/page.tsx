@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import { createClient as createAdminClient } from '@supabase/supabase-js'
+import { adminClient, getDbRole } from '@/lib/supabase/admin'
 import Link from 'next/link'
 import ReplayClient from './ReplayClient'
 
@@ -9,12 +9,7 @@ export default async function ReplayPage({ params }: { params: { id: string } })
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect(`/login?redirectTo=/replay/${params.id}`)
 
-  const adminClient = createAdminClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  )
-
-  const { data: session } = await adminClient
+  const { data: session } = await adminClient()
     .from('sessions')
     .select('id, title, discipline, duration_minutes, mux_playback_id, gym_id, coaches(name), gyms(name)')
     .eq('id', params.id)
@@ -25,8 +20,8 @@ export default async function ReplayPage({ params }: { params: { id: string } })
     redirect('/dashboard')
   }
 
-  // Check membership
-  const role = user.user_metadata?.role ?? 'member'
+  // Check membership — admin (verified against DB) can always watch
+  const role = await getDbRole(user.id)
   if (role !== 'admin') {
     const { data: membership } = await supabase
       .from('memberships')

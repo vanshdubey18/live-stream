@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { getDbRole } from '@/lib/supabase/admin'
 import Link from 'next/link'
 import WatchClient from './WatchClient'
 
@@ -28,8 +29,8 @@ export default async function WatchPage({ params }: { params: { id: string } }) 
     )
   }
 
-  // Check membership — admin can always watch
-  const role = user.user_metadata?.role ?? 'member'
+  // Check membership — admin (verified against DB) can always watch
+  const role = await getDbRole(user.id)
   if (role !== 'admin') {
     const { data: membership } = await supabase
       .from('memberships')

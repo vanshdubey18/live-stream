@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { getDbRole } from '@/lib/supabase/admin'
 import { NextResponse } from 'next/server'
 
 export async function GET(request: Request) {
@@ -10,7 +11,7 @@ export async function GET(request: Request) {
     const { data, error } = await supabase.auth.exchangeCodeForSession(code)
 
     if (!error && data.user) {
-      const role = data.user.user_metadata?.role ?? 'member'
+      const role = await getDbRole(data.user.id) ?? 'member'
       if (role === 'admin') return NextResponse.redirect(`${origin}/admin`)
       if (role === 'gym_owner') return NextResponse.redirect(`${origin}/gym-dashboard`)
       return NextResponse.redirect(`${origin}/dashboard`)

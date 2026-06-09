@@ -1,25 +1,9 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
-import { createClient as createAdminClient } from '@supabase/supabase-js'
-
-function adminClient() {
-  return createAdminClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  )
-}
-
-async function assertAdmin() {
-  const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return null
-  if ((user.user_metadata?.role ?? 'member') !== 'admin') return null
-  return user
-}
+import { assertAdmin, adminClient, UNAUTHORIZED } from '@/lib/supabase/admin'
 
 export async function GET() {
   const user = await assertAdmin()
-  if (!user) return NextResponse.json({ error: 'Not authorized' }, { status: 403 })
+  if (!user) return UNAUTHORIZED()
 
   const { data, error } = await adminClient()
     .from('gyms')

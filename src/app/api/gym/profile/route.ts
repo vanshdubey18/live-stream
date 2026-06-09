@@ -1,26 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
-import { createClient as createAdminClient } from '@supabase/supabase-js'
-
-function adminClient() {
-  return createAdminClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  )
-}
-
-async function getGymOwner() {
-  const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return null
-  const { data: dbUser } = await adminClient().from('users').select('role').eq('id', user.id).maybeSingle()
-  if (dbUser?.role !== 'gym_owner') return null
-  return user
-}
+import { assertGymOwner, adminClient, UNAUTHORIZED } from '@/lib/supabase/admin'
 
 export async function GET() {
-  const user = await getGymOwner()
-  if (!user) return NextResponse.json({ error: 'Not authorized' }, { status: 403 })
+  const user = await assertGymOwner()
+  if (!user) return UNAUTHORIZED()
 
   // Select '*' so a not-yet-cached optional column (instagram / price) can't 500 this.
   const { data: gym, error } = await adminClient()
@@ -35,8 +18,8 @@ export async function GET() {
 }
 
 export async function PATCH(req: NextRequest) {
-  const user = await getGymOwner()
-  if (!user) return NextResponse.json({ error: 'Not authorized' }, { status: 403 })
+  const user = await assertGymOwner()
+  if (!user) return UNAUTHORIZED()
 
   const { name, description, city, location, disciplines, monthlyPricePaise, instagram } = await req.json()
 

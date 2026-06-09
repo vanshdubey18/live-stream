@@ -1,24 +1,16 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import { createClient as createAdminClient } from '@supabase/supabase-js'
+import { adminClient, getDbRole } from '@/lib/supabase/admin'
 import AdminOverviewClient from './AdminOverviewClient'
-
-function adminClient() {
-  return createAdminClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  )
-}
 
 export default async function AdminOverviewPage() {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  const role = user.user_metadata?.role ?? 'member'
+  const role = await getDbRole(user.id)
   if (role !== 'admin') redirect('/dashboard')
 
-  // Fetch all platform stats in parallel
   const [
     { count: memberCount },
     { count: gymCount },

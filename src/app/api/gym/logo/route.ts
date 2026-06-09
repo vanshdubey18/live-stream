@@ -1,36 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
-import { createClient as createAdminClient } from '@supabase/supabase-js'
-
-function adminClient() {
-  return createAdminClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  )
-}
+import { assertGymOwner, adminClient, UNAUTHORIZED } from '@/lib/supabase/admin'
 
 export async function POST(req: NextRequest) {
-  const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
-
-  // Check role in public.users (always in sync — updated by gym-signup)
-  const { data: dbUser } = await adminClient()
-    .from('users')
-    .select('role')
-    .eq('id', user.id)
-    .maybeSingle()
-
-  if (dbUser?.role !== 'gym_owner') {
-    return NextResponse.json({ error: 'Not authorized' }, { status: 403 })
-  }
+  const user = await assertGymOwner()
+  if (!user) return UNAUTHORIZED()
 
   const { data: gym, error: gymErr } = await adminClient()
-    .from('gyms')
-    .select('id')
-    .eq('owner_id', user.id)
-    .maybeSingle()
-
+    .from('gyms').select('id').eq('owner_id', user.id).maybeSingle()
   if (gymErr) return NextResponse.json({ error: gymErr.message }, { status: 500 })
   if (!gym) return NextResponse.json({ error: 'Gym not found' }, { status: 404 })
 
@@ -51,17 +27,11 @@ export async function POST(req: NextRequest) {
   await adminClient().storage.createBucket('gym-assets', { public: true }).catch(() => {})
 
   const { error: uploadErr } = await adminClient()
-    .storage
-    .from('gym-assets')
+    .storage.from('gym-assets')
     .upload(path, buffer, { contentType: file.type, upsert: true })
-
   if (uploadErr) return NextResponse.json({ error: uploadErr.message }, { status: 500 })
 
-  const { data: { publicUrl } } = adminClient()
-    .storage
-    .from('gym-assets')
-    .getPublicUrl(path)
-
+  const { data: { publicUrl } } = adminClient().storage.from('gym-assets').getPublicUrl(path)
   await adminClient().from('gyms').update({ logo_url: publicUrl }).eq('id', gym.id)
 
   return NextResponse.json({ url: publicUrl })

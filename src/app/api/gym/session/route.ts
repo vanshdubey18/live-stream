@@ -1,22 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
-import { createClient as createAdminClient } from '@supabase/supabase-js'
-
-function adminClient() {
-  return createAdminClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  )
-}
+import { assertGymOwner, adminClient, UNAUTHORIZED } from '@/lib/supabase/admin'
 
 export async function DELETE(req: NextRequest) {
-  const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
-
-  if ((user.user_metadata?.role ?? 'member') !== 'gym_owner') {
-    return NextResponse.json({ error: 'Not authorized' }, { status: 403 })
-  }
+  const user = await assertGymOwner()
+  if (!user) return UNAUTHORIZED()
 
   const { id } = await req.json()
   if (!id) return NextResponse.json({ error: 'Missing session id' }, { status: 400 })

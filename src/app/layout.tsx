@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Bebas_Neue, Inter } from 'next/font/google'
 import './globals.css'
 import PageTransition from '@/components/layout/PageTransition'
@@ -16,6 +16,13 @@ const inter = Inter({
   variable: '--font-inter',
   display: 'swap',
 })
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+  themeColor: '#0D0D0D',
+}
 
 export const metadata: Metadata = {
   title: 'MATPEAK — Train with the best',

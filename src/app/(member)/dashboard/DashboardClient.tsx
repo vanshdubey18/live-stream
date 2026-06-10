@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import MemberSidebar from '@/components/layout/MemberSidebar'
-import StatCard from '@/components/ui/StatCard'
 import InsightCard from '@/components/ui/InsightCard'
 import { ChevronRight, ArrowRight, BookOpen, Sparkles, Layers, MessageCircle, Lock } from 'lucide-react'
 
@@ -223,8 +222,8 @@ function HeroPanel({ upcoming, user, memberships }: { upcoming: any[]; user: { n
             )}
           </div>
 
-          {/* Streak ring — right side */}
-          <div className="hidden lg:flex flex-col items-center">
+          {/* Streak ring — desktop: right side, mobile: below text */}
+          <div className="flex justify-center lg:justify-end">
             <StreakRing weekSessions={weekCount} goal={4} />
           </div>
         </div>
@@ -234,31 +233,185 @@ function HeroPanel({ upcoming, user, memberships }: { upcoming: any[]; user: { n
 }
 
 // ─── Stats Row ────────────────────────────────────────────────────────────────
-function StatsRow({ memberships, completedCount, totalHours, monthCount }: { memberships: any[]; completedCount: number; totalHours: number; monthCount: number }) {
-  const stats = [
-    { number: String(memberships.length), label: 'Gyms Joined' },
-    { number: String(completedCount), label: 'Replays Available' },
-    { number: `${totalHours}h`, label: 'Hours Trained' },
-    { number: String(monthCount), label: 'This Month' },
-  ]
+const DISCIPLINE_BAR_COLOR: Record<string, string> = {
+  BJJ: '#FF3B3B',
+  Boxing: '#FFFFFF',
+  'Muay Thai': '#999999',
+  Wrestling: '#666666',
+  MMA: '#444444',
+  Kickboxing: '#555555',
+  Judo: '#333333',
+  Sambo: '#2A2A2A',
+}
+
+function StatsRow({ completedCount, totalHours, monthCount, upcoming, replays }: {
+  memberships?: any[]
+  completedCount: number
+  totalHours: number
+  monthCount: number
+  upcoming: any[]
+  replays: any[]
+}) {
+  const weekGoal = 4
+  const now = new Date()
+  const weekStart = new Date(now)
+  weekStart.setDate(now.getDate() - ((now.getDay() + 6) % 7))
+  weekStart.setHours(0, 0, 0, 0)
+  const weekEnd = new Date(weekStart.getTime() + 7 * 24 * 60 * 60 * 1000)
+
+  const weekCount = upcoming.filter(s => {
+    const d = new Date(s.scheduled_at)
+    return d >= weekStart && d < weekEnd
+  }).length
+  const weekProgress = Math.min(weekCount / weekGoal, 1)
+
+  // 7-day bar chart — combine upcoming + replays
+  const allSessions = [...upcoming, ...replays]
+  const dayLabels = ['M', 'T', 'W', 'T', 'F', 'S', 'S']
+  const dayCounts = dayLabels.map((_, i) => {
+    const dayStart = new Date(weekStart)
+    dayStart.setDate(weekStart.getDate() + i)
+    const dayEnd = new Date(dayStart)
+    dayEnd.setDate(dayStart.getDate() + 1)
+    return allSessions.filter(s => {
+      const d = new Date(s.scheduled_at ?? s.created_at)
+      return d >= dayStart && d < dayEnd
+    }).length
+  })
+  const maxDayCount = Math.max(...dayCounts, 1)
+  const todayIdx = (now.getDay() + 6) % 7
+
+  // Discipline breakdown
+  const discCounts: Record<string, number> = {}
+  allSessions.forEach(s => {
+    const d = s.discipline ?? 'Other'
+    discCounts[d] = (discCounts[d] ?? 0) + 1
+  })
+  const totalDisc = Object.values(discCounts).reduce((a, b) => a + b, 0) || 1
+  const topDisc = Object.entries(discCounts).sort(([, a], [, b]) => b - a).slice(0, 5)
 
   return (
     <section className="border-b border-[#333333]">
-      <div className="max-w-[1280px] mx-auto px-6 py-8">
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-[#333333]">
-          {stats.map(({ number, label }, i) => (
+      <div className="max-w-[1280px] mx-auto px-6 py-6 space-y-6">
+
+        {/* ── Top: weekly goal + supporting stats ── */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 divide-x divide-y sm:divide-y-0 divide-[#333333]">
+          {/* Weekly sessions — anchor stat */}
+          <motion.div
+            initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+            className="relative pr-6 pb-6 sm:pb-0"
+          >
+            <div className="absolute left-0 top-2 bottom-2 w-0.5 bg-[#FF3B3B]" />
+            <div className="pl-4">
+              <p className="font-inter text-[10px] text-[#555555] uppercase tracking-[3px] mb-2">This Week</p>
+              <div className="flex items-baseline gap-1">
+                <span className="font-bebas text-5xl sm:text-6xl text-white leading-none tracking-[1px]">{weekCount}</span>
+                <span className="font-bebas text-2xl text-[#333333] leading-none tracking-[1px]">/ {weekGoal}</span>
+              </div>
+              {/* Progress bar */}
+              <div className="mt-3 h-0.5 bg-[#222222] rounded-full overflow-hidden">
+                <motion.div
+                  className="h-full bg-[#FF3B3B]"
+                  initial={{ width: 0 }}
+                  animate={{ width: `${weekProgress * 100}%` }}
+                  transition={{ duration: 0.6, ease: 'easeOut', delay: 0.2 }}
+                />
+              </div>
+              <p className="font-inter text-[10px] text-[#555555] mt-1.5 tracking-[2px] uppercase">
+                {weekCount >= weekGoal ? 'Goal reached' : `${weekGoal - weekCount} to go`}
+              </p>
+            </div>
+          </motion.div>
+
+          {/* Supporting stats */}
+          {[
+            { number: `${totalHours}h`, label: 'Hours Trained' },
+            { number: String(completedCount), label: 'Replays' },
+            { number: String(monthCount), label: 'This Month' },
+          ].map(({ number, label }, i) => (
             <motion.div
               key={label}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.2, ease: 'easeOut', delay: i * 0.04 }}
-              className={i === 0 ? 'relative' : undefined}
+              initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.2, ease: 'easeOut', delay: (i + 1) * 0.05 }}
+              className="px-6 py-0 flex flex-col justify-center"
             >
-              {i === 0 && <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-[#FF3B3B] z-10" />}
-              <StatCard number={number} label={label} />
+              <div className="font-bebas text-4xl sm:text-5xl text-white leading-none tracking-[1px]">{number}</div>
+              <p className="font-inter text-[10px] text-[#555555] uppercase tracking-[3px] mt-1.5">{label}</p>
             </motion.div>
           ))}
         </div>
+
+        {/* ── Bottom: 7-day bars + discipline breakdown ── */}
+        <motion.div
+          initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.2, ease: 'easeOut', delay: 0.25 }}
+          className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 border-t border-[#1A1A1A]"
+        >
+          {/* 7-day activity bars */}
+          <div>
+            <p className="font-inter text-[10px] text-[#555555] uppercase tracking-[3px] mb-3">Week Activity</p>
+            <div className="flex items-end gap-1.5 h-10">
+              {dayCounts.map((count, i) => {
+                const isToday = i === todayIdx
+                const heightPct = count > 0 ? Math.max((count / maxDayCount) * 100, 20) : 8
+                return (
+                  <div key={i} className="flex-1 flex flex-col items-center gap-1.5">
+                    <motion.div
+                      className={`w-full rounded-sm ${isToday ? 'bg-[#FF3B3B]' : count > 0 ? 'bg-[#555555]' : 'bg-[#1A1A1A]'}`}
+                      style={{ height: `${heightPct}%` }}
+                      initial={{ scaleY: 0 }}
+                      animate={{ scaleY: 1 }}
+                      transition={{ duration: 0.3, ease: 'easeOut', delay: 0.3 + i * 0.04 }}
+                    />
+                  </div>
+                )
+              })}
+            </div>
+            <div className="flex gap-1.5 mt-1.5">
+              {dayLabels.map((label, i) => (
+                <div key={i} className="flex-1 flex justify-center">
+                  <span className={`font-inter text-[9px] uppercase tracking-[1px] ${i === todayIdx ? 'text-[#FF3B3B]' : 'text-[#333333]'}`}>
+                    {label}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Discipline breakdown */}
+          <div>
+            <p className="font-inter text-[10px] text-[#555555] uppercase tracking-[3px] mb-3">Discipline Split</p>
+            {totalDisc > 1 ? (
+              <>
+                {/* Segmented bar */}
+                <div className="flex h-1.5 rounded-sm overflow-hidden gap-px mb-3">
+                  {topDisc.map(([disc, count]) => (
+                    <motion.div
+                      key={disc}
+                      style={{ backgroundColor: DISCIPLINE_BAR_COLOR[disc] ?? '#444', width: `${(count / totalDisc) * 100}%` }}
+                      initial={{ scaleX: 0 }}
+                      animate={{ scaleX: 1 }}
+                      transition={{ duration: 0.5, ease: 'easeOut', delay: 0.35 }}
+                    />
+                  ))}
+                </div>
+                <div className="flex flex-wrap gap-x-4 gap-y-1.5">
+                  {topDisc.map(([disc, count]) => (
+                    <div key={disc} className="flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-sm shrink-0" style={{ backgroundColor: DISCIPLINE_BAR_COLOR[disc] ?? '#444' }} />
+                      <span className="font-inter text-[10px] text-[#555555] uppercase tracking-[1px]">{disc}</span>
+                      <span className="font-inter text-[10px] text-[#333333]">{Math.round((count / totalDisc) * 100)}%</span>
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : (
+              <p className="font-inter text-xs text-[#333333]">Train more to see your split</p>
+            )}
+          </div>
+        </motion.div>
+
       </div>
     </section>
   )
@@ -504,7 +657,7 @@ export default function DashboardClient({ user, memberships, upcoming, replays, 
 
         {liveSession && <LiveBanner session={liveSession} />}
         <HeroPanel upcoming={upcoming} user={user} memberships={memberships} />
-        <StatsRow memberships={memberships} completedCount={completedCount} totalHours={totalHours} monthCount={monthCount} />
+        <StatsRow memberships={memberships} completedCount={completedCount} totalHours={totalHours} monthCount={monthCount} upcoming={upcoming} replays={replays} />
         <MyGyms memberships={memberships} />
         <UpcomingClasses sessions={upcoming} />
         <RecentReplays replays={replays} />

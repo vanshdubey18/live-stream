@@ -73,7 +73,7 @@ function UpgradeOverlay({ feature }: { feature: string }) {
 }
 
 // ─── Summary tab (FREE) ───────────────────────────────────────────────────────
-function SummaryTab({ onTimestampClick }: { onTimestampClick: (ts: string) => void }) {
+function SummaryTab({ onTimestampClick, seekable = true }: { onTimestampClick: (ts: string) => void; seekable?: boolean }) {
   return (
     <div className="space-y-6 px-5 py-5">
 
@@ -91,8 +91,9 @@ function SummaryTab({ onTimestampClick }: { onTimestampClick: (ts: string) => vo
           {DEMO_TECHNIQUES.map(t => (
             <button
               key={t.name}
-              onClick={() => onTimestampClick(t.timestamp)}
-              className="w-full flex items-center justify-between group px-3 py-2.5 rounded-sm hover:bg-[#222222] transition-colors"
+              onClick={() => seekable && onTimestampClick(t.timestamp)}
+              disabled={!seekable}
+              className="w-full flex items-center justify-between group px-3 py-2.5 rounded-sm enabled:hover:bg-[#222222] disabled:cursor-default transition-colors"
             >
               <span className="font-inter text-sm text-white group-hover:text-[#FF3B3B] transition-colors text-left">{t.name}</span>
               <span className="font-mono text-[11px] text-[#FF3B3B] bg-[#FF3B3B]/10 px-2 py-0.5 rounded-sm shrink-0 ml-2 flex items-center gap-1">
@@ -111,8 +112,9 @@ function SummaryTab({ onTimestampClick }: { onTimestampClick: (ts: string) => vo
           {DEMO_MOMENTS.map(m => (
             <button
               key={m.timestamp}
-              onClick={() => onTimestampClick(m.timestamp)}
-              className="w-full flex items-center gap-3 group px-3 py-2.5 rounded-sm hover:bg-[#222222] transition-colors text-left"
+              onClick={() => seekable && onTimestampClick(m.timestamp)}
+              disabled={!seekable}
+              className="w-full flex items-center gap-3 group px-3 py-2.5 rounded-sm enabled:hover:bg-[#222222] disabled:cursor-default transition-colors text-left"
             >
               <span className="font-mono text-[11px] text-[#FF3B3B] shrink-0 w-10">{m.timestamp}</span>
               <span className="font-inter text-sm text-[#999999] group-hover:text-white transition-colors flex-1">{m.label}</span>
@@ -245,7 +247,7 @@ function AskCoachTab() {
 }
 
 // ─── Main tabbed sidebar ──────────────────────────────────────────────────────
-function AISidebar({ onTimestampClick }: { onTimestampClick: (ts: string) => void }) {
+function AISidebar({ onTimestampClick, seekable = true }: { onTimestampClick: (ts: string) => void; seekable?: boolean }) {
   const [activeTab, setActiveTab] = useState<Tab>('summary')
 
   const tabs: { id: Tab; label: string; icon: React.ReactNode; locked: boolean }[] = [
@@ -289,7 +291,7 @@ function AISidebar({ onTimestampClick }: { onTimestampClick: (ts: string) => voi
             exit={{ opacity: 0 }}
             transition={{ duration: 0.15 }}
           >
-            {activeTab === 'summary' && <SummaryTab onTimestampClick={onTimestampClick} />}
+            {activeTab === 'summary' && <SummaryTab onTimestampClick={onTimestampClick} seekable={seekable} />}
             {activeTab === 'quiz' && <QuizTab />}
             {activeTab === 'flashcards' && <FlashcardsTab />}
             {activeTab === 'ask' && <AskCoachTab />}
@@ -428,7 +430,7 @@ export default function ReplayClient({ playbackId, session }: { playbackId?: str
 
           {/* Mobile AI sidebar */}
           <div className="lg:hidden border-t border-[#333333]">
-            <AISidebar onTimestampClick={handleTimestamp} />
+            <AISidebar onTimestampClick={handleTimestamp} seekable={Boolean(playbackId)} />
           </div>
         </div>
 
@@ -447,7 +449,7 @@ export default function ReplayClient({ playbackId, session }: { playbackId?: str
 
           {/* Tabbed AI panel */}
           <div className="flex-1 flex flex-col overflow-hidden">
-            <AISidebar onTimestampClick={handleTimestamp} />
+            <AISidebar onTimestampClick={handleTimestamp} seekable={Boolean(playbackId)} />
           </div>
         </motion.div>
 

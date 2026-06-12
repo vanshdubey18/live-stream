@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createClient as createAdminClient } from '@supabase/supabase-js'
+import { claimCouponUse } from '@/lib/supabase/admin'
 
 export async function POST(req: NextRequest) {
   const supabase = createClient()
@@ -46,7 +47,7 @@ export async function POST(req: NextRequest) {
     const { data: coupon, error: couponErr } = await adminClient
       .from('coupons')
       .select('*')
-      .eq('code', couponCode)
+      .eq('code', couponCode.trim().toUpperCase())
       .eq('is_active', true)
       .maybeSingle()
 
@@ -91,12 +92,8 @@ export async function POST(req: NextRequest) {
 
   // Increment coupon usage and record redemption
   if (couponId) {
-    const { data: currentCoupon } = await adminClient
-      .from('coupons').select('times_used').eq('id', couponId).single()
     await Promise.all([
-      adminClient.from('coupons')
-        .update({ times_used: (currentCoupon?.times_used ?? 0) + 1 })
-        .eq('id', couponId),
+      claimCouponUse(couponId),
       adminClient.from('coupon_redemptions').insert({
         coupon_id: couponId,
         user_id: user.id,

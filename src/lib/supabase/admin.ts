@@ -41,3 +41,29 @@ export async function assertGymOwner() {
 
 export const UNAUTHORIZED = () =>
   NextResponse.json({ error: 'Not authorized' }, { status: 403 })
+
+/**
+ * Atomically claim one use of a coupon (optimistic lock on times_used so
+ * concurrent redemptions can't bypass max_uses). Returns false if the
+ * usage limit is hit.
+ */
+export async function claimCouponUse(couponId: string): Promise<boolean> {
+  const client = adminClient()
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const { data: c } = await client
+      .from('coupons')
+      .select('times_used, max_uses')
+      .eq('id', couponId)
+      .single()
+    if (!c) return false
+    if (c.max_uses > 0 && c.times_used >= c.max_uses) return false
+    const { data: updated } = await client
+      .from('coupons')
+      .update({ times_used: c.times_used + 1 })
+      .eq('id', couponId)
+      .eq('times_used', c.times_used)
+      .select('id')
+    if (updated && updated.length > 0) return true
+  }
+  return false
+}

@@ -225,28 +225,25 @@ export async function getGymMemberCount(gymId: string) {
 }
 
 export async function getGymMembers(gymId: string) {
-  const client = adminClient()
-
-  const [{ data: memberships, error }, { data: authUsers }] = await Promise.all([
-    client
-      .from('memberships')
-      .select('id, plan_type, status, free_until, current_period_end, created_at, source, user_id')
-      .eq('gym_id', gymId)
-      .order('created_at', { ascending: false }),
-    client.auth.admin.listUsers({ perPage: 1000 }),
-  ])
+  const { data: memberships, error } = await adminClient()
+    .from('memberships')
+    .select(`
+      id, plan_type, status, free_until, current_period_end, created_at, source, user_id,
+      users ( email, name )
+    `)
+    .eq('gym_id', gymId)
+    .order('created_at', { ascending: false })
 
   if (error) { console.error('getGymMembers:', error); return [] }
 
-  const userMap: Record<string, { email: string; full_name: string | null }> = {}
-  for (const u of authUsers?.users ?? []) {
-    userMap[u.id] = { email: u.email ?? '', full_name: u.user_metadata?.full_name ?? null }
-  }
-
-  return (memberships ?? []).map(m => ({
-    ...m,
-    profile: userMap[m.user_id] ?? { email: '', full_name: null },
-  }))
+  return (memberships ?? []).map(m => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const u = m.users as any
+    return {
+      ...m,
+      profile: { email: u?.email ?? '', full_name: u?.name ?? null },
+    }
+  })
 }
 
 // Membership stats for the owner dashboard action items: total active, expiring

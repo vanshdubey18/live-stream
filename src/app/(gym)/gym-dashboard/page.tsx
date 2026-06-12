@@ -30,6 +30,48 @@ export default async function GymDashboardPage() {
     )
   }
 
+  if (gym.status !== 'active') {
+    const rejected = gym.status === 'rejected'
+    return (
+      <div className="min-h-screen bg-[#0D0D0D] flex items-center justify-center px-4">
+        <div className="relative bg-[#1A1A1A] border border-[#333333] rounded-sm p-10 max-w-lg w-full text-center overflow-hidden">
+          <span className="absolute inset-0 flex items-center justify-center font-bebas text-[120px] text-white/[0.03] leading-none select-none pointer-events-none">
+            {rejected ? 'CLOSED' : 'PENDING'}
+          </span>
+          <div className="relative space-y-5">
+            <div>
+              <p className="font-inter text-[11px] text-[#FFD60A] tracking-[4px] uppercase mb-3">
+                {rejected ? 'Application Closed' : 'Under Review'}
+              </p>
+              <h1 className="font-bebas text-4xl text-white tracking-[1px]">
+                {rejected ? 'APPLICATION NOT APPROVED' : 'PENDING REVIEW'}
+              </h1>
+            </div>
+            <p className="font-inter text-[#999999] text-sm leading-relaxed max-w-sm mx-auto">
+              {rejected
+                ? `${gym.name}'s application was not approved this time. Reach out to support if you believe this was a mistake.`
+                : `${gym.name} is being reviewed by our team. You'll get access to streaming, scheduling, and member tools as soon as it's approved — usually within 1–2 business days.`}
+            </p>
+            {!rejected && (
+              <div className="text-left max-w-xs mx-auto space-y-3 pt-2">
+                {[
+                  { label: 'Application submitted', done: true },
+                  { label: 'Team review', done: false },
+                  { label: 'Gym goes live', done: false },
+                ].map((step) => (
+                  <div key={step.label} className="flex items-center gap-3">
+                    <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${step.done ? 'bg-[#00D4AA]' : 'bg-[#333333]'}`} />
+                    <p className={`font-inter text-sm ${step.done ? 'text-white' : 'text-[#555555]'}`}>{step.label}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   const [sessions, coaches, memberCount, memberStats] = await Promise.all([
     getGymSessions(gym.id),
     getGymCoaches(gym.id),

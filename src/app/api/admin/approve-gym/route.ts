@@ -1,14 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
 import { createClient as createAdminClient } from '@supabase/supabase-js'
+import { assertAdmin } from '@/lib/supabase/admin'
 
 export async function POST(req: NextRequest) {
-  const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
-
-  const role = user.user_metadata?.role ?? 'member'
-  if (role !== 'admin') return NextResponse.json({ error: 'Not authorized' }, { status: 403 })
+  const user = await assertAdmin()
+  if (!user) return NextResponse.json({ error: 'Not authorized' }, { status: 403 })
 
   const { gymId, action } = await req.json()
   if (!gymId || !action) return NextResponse.json({ error: 'Missing gymId or action' }, { status: 400 })

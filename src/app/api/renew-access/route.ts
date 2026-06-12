@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createClient as createAdminClient } from '@supabase/supabase-js'
+import { claimCouponUse } from '@/lib/supabase/admin'
 
 export async function POST(req: NextRequest) {
   const supabase = createClient()
@@ -50,9 +51,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'No membership found for this gym' }, { status: 404 })
   }
 
-  // Compute new free_until: extend from today (or existing expiry if still in future)
+  // Compute new free_until: extend from today
   let newFreeUntil: string | null = null
-  const now = new Date()
 
   if (coupon.type === 'free_days') {
     const base = new Date()
@@ -66,6 +66,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'This coupon type cannot be used for renewal' }, { status: 400 })
   }
 
+  // Claim a use BEFORE granting, so concurrent renewals can't bypass max_uses
+  const claimed = await claimCouponUse(coupon.id)
+  if (!claimed) {
+    return NextResponse.json({ error: 'This coupon has reached its usage limit' }, { status: 400 })
+  }
+
   // Update membership free_until
   const { error: updateErr } = await adminClient
     .from('memberships')
@@ -76,21 +82,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Failed to renew access' }, { status: 500 })
   }
 
-  // Record redemption and increment usage
-  const { data: currentCoupon } = await adminClient
-    .from('coupons').select('times_used').eq('id', coupon.id).single()
-
-  await Promise.all([
-    adminClient.from('coupons')
-      .update({ times_used: (currentCoupon?.times_used ?? 0) + 1 })
-      .eq('id', coupon.id),
-    adminClient.from('coupon_redemptions').insert({
-      coupon_id: coupon.id,
-      user_id: user.id,
-      gym_id: gymId,
-      free_until: newFreeUntil,
-    }),
-  ])
+  await adminClient.from('coupon_redemptions').insert({
+    coupon_id: coupon.id,
+    user_id: user.id,
+    gym_id: gymId,
+    free_until: newFreeUntil,
+  })
 
   const days = coupon.type === 'free_days' ? coupon.value : 30
   return NextResponse.json({ success: true, days, newFreeUntil })

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createClient as createAdminClient } from '@supabase/supabase-js'
+import { getDbRole } from '@/lib/supabase/admin'
 
 function adminClient() {
   return createAdminClient(
@@ -14,7 +15,7 @@ export async function DELETE(req: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
 
-  if ((user.user_metadata?.role ?? 'member') !== 'gym_owner') {
+  if ((await getDbRole(user.id)) !== 'gym_owner') {
     return NextResponse.json({ error: 'Not authorized' }, { status: 403 })
   }
 

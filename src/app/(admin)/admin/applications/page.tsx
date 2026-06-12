@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { createClient as createAdminClient } from '@supabase/supabase-js'
+import { getDbRole } from '@/lib/supabase/admin'
 import { redirect } from 'next/navigation'
 import ApplicationsClient from './ApplicationsClient'
 
@@ -8,7 +9,7 @@ export default async function ApplicationsPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  const role = user.user_metadata?.role ?? 'member'
+  const role = await getDbRole(user.id)
   if (role !== 'admin') redirect('/dashboard')
 
   const adminClient = createAdminClient(

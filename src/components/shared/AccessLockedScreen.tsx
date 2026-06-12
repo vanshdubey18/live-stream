@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Loader2, Lock } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 
 interface AccessLockedScreenProps {
   gymId: string
@@ -29,7 +29,7 @@ export default function AccessLockedScreen({ gymId, expiryDate }: AccessLockedSc
         body: JSON.stringify({ gymId, couponCode: code.trim().toUpperCase() }),
       })
       const data = await res.json()
-      if (!res.ok) throw new Error(data.error ?? 'Failed to apply code')
+      if (!res.ok || !data.success) throw new Error(data.error ?? 'Failed to apply code')
       setSuccess(`Access extended by ${data.days} days. Unlocking…`)
       setTimeout(() => router.refresh(), 1500)
     } catch (err: unknown) {

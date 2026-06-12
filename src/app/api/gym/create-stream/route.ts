@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createClient as createAdminClient } from '@supabase/supabase-js'
+import { getDbRole } from '@/lib/supabase/admin'
 import { createLiveStream } from '@/lib/mux'
 
 export async function POST(_req: NextRequest) {
@@ -8,7 +9,7 @@ export async function POST(_req: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
 
-  const role = user.user_metadata?.role ?? 'member'
+  const role = await getDbRole(user.id)
   if (role !== 'gym_owner' && role !== 'admin') {
     return NextResponse.json({ error: 'Not authorized' }, { status: 403 })
   }
@@ -16,12 +17,16 @@ export async function POST(_req: NextRequest) {
   // Get the gym owned by this user
   const { data: gym, error: gymErr } = await supabase
     .from('gyms')
-    .select('id, mux_live_stream_id')
+    .select('id, status, mux_live_stream_id')
     .eq('owner_id', user.id)
     .maybeSingle()
 
   if (gymErr || !gym) {
     return NextResponse.json({ error: 'No gym found for this account' }, { status: 404 })
+  }
+
+  if (gym.status !== 'active') {
+    return NextResponse.json({ error: 'Your gym is pending approval' }, { status: 403 })
   }
 
   // If a stream already exists, return the existing credentials

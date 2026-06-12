@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { createClient as createAdminClient } from '@supabase/supabase-js'
+import { getDbRole } from '@/lib/supabase/admin'
 import AdminOverviewClient from './AdminOverviewClient'
 
 function adminClient() {
@@ -15,7 +16,7 @@ export default async function AdminOverviewPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  const role = user.user_metadata?.role ?? 'member'
+  const role = await getDbRole(user.id)
   if (role !== 'admin') redirect('/dashboard')
 
   // Fetch all platform stats in parallel

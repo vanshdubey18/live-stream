@@ -78,6 +78,26 @@ export async function getRecentReplays(gymIds: string[]) {
   return data ?? []
 }
 
+export async function getReplayLibrary(gymIds: string[]) {
+  if (gymIds.length === 0) return []
+  const supabase = createClient()
+  const { data, error } = await supabase
+    .from('sessions')
+    .select(`
+      id, title, discipline, duration_minutes, mux_playback_id, scheduled_at,
+      gym_id, level,
+      coaches ( name ),
+      gyms ( id, name )
+    `)
+    .in('gym_id', gymIds)
+    .eq('status', 'ended')
+    .order('scheduled_at', { ascending: false })
+    .limit(50)
+
+  if (error) { console.error('getReplayLibrary:', error); return [] }
+  return data ?? []
+}
+
 export async function getLiveSession(gymIds: string[]) {
   if (gymIds.length === 0) return null
   const supabase = createClient()

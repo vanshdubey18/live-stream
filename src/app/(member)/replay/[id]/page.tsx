@@ -1,8 +1,9 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { createClient as createAdminClient } from '@supabase/supabase-js'
-import Link from 'next/link'
+import { getDbRole } from '@/lib/supabase/admin'
 import ReplayClient from './ReplayClient'
+import AccessLockedScreen from '@/components/shared/AccessLockedScreen'
 
 export default async function ReplayPage({ params }: { params: { id: string } }) {
   const supabase = createClient()
@@ -26,7 +27,7 @@ export default async function ReplayPage({ params }: { params: { id: string } })
   }
 
   // Check membership
-  const role = user.user_metadata?.role ?? 'member'
+  const role = await getDbRole(user.id)
   if (role !== 'admin') {
     const { data: membership } = await supabase
       .from('memberships')
@@ -46,19 +47,7 @@ export default async function ReplayPage({ params }: { params: { id: string } })
         : null
 
     if (expiryDate && expiryDate < now) {
-      return (
-        <div className="min-h-screen bg-[#0D0D0D] flex items-center justify-center px-4">
-          <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm p-10 max-w-md w-full text-center space-y-4">
-            <p className="font-inter text-[11px] text-[#555555] tracking-[4px] uppercase">Access Expired</p>
-            <h1 className="font-bebas text-3xl text-white tracking-[1px]">ACCESS LOCKED</h1>
-            <p className="font-inter text-[#999999] text-sm leading-relaxed">
-              Your access period ended on {expiryDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}.
-              You&apos;re still a member of this gym — contact your coach to renew access.
-            </p>
-            <Link href="/dashboard" className="inline-block border border-[#333333] hover:border-[#555555] text-white font-bebas tracking-[3px] px-6 py-3 rounded-sm text-sm transition-colors">GO TO DASHBOARD</Link>
-          </div>
-        </div>
-      )
+      return <AccessLockedScreen gymId={session.gym_id} expiryDate={expiryDate.toISOString()} />
     }
   }
 

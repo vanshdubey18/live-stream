@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Mux from '@mux/mux-node'
 import { createClient } from '@supabase/supabase-js'
+import { processSession } from '@/lib/ai/process-session'
 
 export const runtime = 'nodejs'
 
@@ -161,6 +162,11 @@ export async function POST(req: NextRequest) {
           .eq('id', sessionId)
 
         console.log(`[mux-webhook] Replay ready for session ${sessionId}: ${assetPlaybackId}`)
+
+        // Fire-and-forget AI processing — transcribe + extract techniques
+        processSession(sessionId).catch(err =>
+          console.error('[mux-webhook] processSession error:', err)
+        )
       }
     }
   }

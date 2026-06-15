@@ -17,7 +17,7 @@ export default async function ReplayPage({ params }: { params: { id: string } })
 
   const { data: session } = await adminClient
     .from('sessions')
-    .select('id, title, discipline, duration_minutes, mux_playback_id, gym_id, coaches(name), gyms(name)')
+    .select('id, title, discipline, duration_minutes, mux_playback_id, gym_id, ai_summary, ai_techniques, ai_key_moments, coaches(name), gyms(name)')
     .eq('id', params.id)
     .eq('status', 'ended')
     .maybeSingle()
@@ -51,6 +51,9 @@ export default async function ReplayPage({ params }: { params: { id: string } })
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const aiKeyMoments = session.ai_key_moments as any
+
   return (
     <ReplayClient
       playbackId={session.mux_playback_id ?? undefined}
@@ -61,6 +64,12 @@ export default async function ReplayPage({ params }: { params: { id: string } })
         coach: (session.coaches as any)?.name ?? null,
         gym: (session.gyms as any)?.name ?? null,
       }}
+      aiData={session.ai_summary ? {
+        summary: session.ai_summary,
+        techniques: aiKeyMoments?.techniques ?? (session.ai_techniques ?? []).map((name: string) => ({ name, timestamp: null })),
+        moments: aiKeyMoments?.moments ?? [],
+        coachQuote: aiKeyMoments?.coachQuote ?? '',
+      } : null}
     />
   )
 }

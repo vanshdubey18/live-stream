@@ -14,6 +14,13 @@ interface SessionMeta {
   gym: string | null
 }
 
+export interface AIData {
+  summary: string
+  techniques: { name: string; timestamp: string | null }[]
+  moments: { timestamp: string; label: string }[]
+  coachQuote: string
+}
+
 // Demo data for free summary tab
 const DEMO_TECHNIQUES = [
   { name: 'Hip escape entry', timestamp: '08:14' },
@@ -73,62 +80,87 @@ function UpgradeOverlay({ feature }: { feature: string }) {
 }
 
 // ─── Summary tab (FREE) ───────────────────────────────────────────────────────
-function SummaryTab({ onTimestampClick, seekable = true }: { onTimestampClick: (ts: string) => void; seekable?: boolean }) {
+function SummaryTab({
+  onTimestampClick,
+  seekable = true,
+  aiData,
+}: {
+  onTimestampClick: (ts: string) => void
+  seekable?: boolean
+  aiData?: AIData | null
+}) {
+  const techniques = aiData ? aiData.techniques : DEMO_TECHNIQUES.map(t => ({ name: t.name, timestamp: t.timestamp }))
+  const moments = aiData ? aiData.moments : DEMO_MOMENTS
+  const quote = aiData ? aiData.coachQuote : DEMO_QUOTE
+
   return (
     <div className="space-y-6 px-5 py-5">
 
-      {/* Free badge */}
+      {/* Badge */}
       <div className="flex items-center gap-2">
-        <span className="font-inter text-[10px] text-[#00D4AA] tracking-[3px] uppercase border border-[#00D4AA]/20 bg-[#00D4AA]/5 px-2 py-1 rounded-sm">
-          ✓ Free with membership
-        </span>
+        {aiData ? (
+          <span className="font-inter text-[10px] text-[#FF3B3B] tracking-[3px] uppercase border border-[#FF3B3B]/20 bg-[#FF3B3B]/5 px-2 py-1 rounded-sm flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#FF3B3B]" />
+            AI Analysis · This Class
+          </span>
+        ) : (
+          <span className="font-inter text-[10px] text-[#00D4AA] tracking-[3px] uppercase border border-[#00D4AA]/20 bg-[#00D4AA]/5 px-2 py-1 rounded-sm">
+            ✓ Free with membership
+          </span>
+        )}
       </div>
 
       {/* Techniques */}
       <div>
         <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-3">Techniques Covered</p>
         <div className="space-y-1">
-          {DEMO_TECHNIQUES.map(t => (
+          {techniques.map(t => (
             <button
               key={t.name}
-              onClick={() => seekable && onTimestampClick(t.timestamp)}
-              disabled={!seekable}
+              onClick={() => t.timestamp && seekable && onTimestampClick(t.timestamp)}
+              disabled={!seekable || !t.timestamp}
               className="w-full flex items-center justify-between group px-3 py-2.5 rounded-sm enabled:hover:bg-[#222222] disabled:cursor-default transition-colors"
             >
-              <span className="font-inter text-sm text-white group-hover:text-[#FF3B3B] transition-colors text-left">{t.name}</span>
-              <span className="font-mono text-[11px] text-[#FF3B3B] bg-[#FF3B3B]/10 px-2 py-0.5 rounded-sm shrink-0 ml-2 flex items-center gap-1">
-                <Play size={8} />
-                {t.timestamp}
-              </span>
+              <span className="font-inter text-sm text-white group-enabled:group-hover:text-[#FF3B3B] transition-colors text-left">{t.name}</span>
+              {t.timestamp && (
+                <span className="font-mono text-[11px] text-[#FF3B3B] bg-[#FF3B3B]/10 px-2 py-0.5 rounded-sm shrink-0 ml-2 flex items-center gap-1">
+                  <Play size={8} />
+                  {t.timestamp}
+                </span>
+              )}
             </button>
           ))}
         </div>
       </div>
 
       {/* Key moments */}
-      <div>
-        <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-3">Key Moments</p>
-        <div className="space-y-1">
-          {DEMO_MOMENTS.map(m => (
-            <button
-              key={m.timestamp}
-              onClick={() => seekable && onTimestampClick(m.timestamp)}
-              disabled={!seekable}
-              className="w-full flex items-center gap-3 group px-3 py-2.5 rounded-sm enabled:hover:bg-[#222222] disabled:cursor-default transition-colors text-left"
-            >
-              <span className="font-mono text-[11px] text-[#FF3B3B] shrink-0 w-10">{m.timestamp}</span>
-              <span className="font-inter text-sm text-[#999999] group-hover:text-white transition-colors flex-1">{m.label}</span>
-              <ChevronRight size={12} className="text-[#444] group-hover:text-[#FF3B3B] shrink-0 transition-colors" />
-            </button>
-          ))}
+      {moments.length > 0 && (
+        <div>
+          <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-3">Key Moments</p>
+          <div className="space-y-1">
+            {moments.map(m => (
+              <button
+                key={m.timestamp}
+                onClick={() => seekable && onTimestampClick(m.timestamp)}
+                disabled={!seekable}
+                className="w-full flex items-center gap-3 group px-3 py-2.5 rounded-sm enabled:hover:bg-[#222222] disabled:cursor-default transition-colors text-left"
+              >
+                <span className="font-mono text-[11px] text-[#FF3B3B] shrink-0 w-10">{m.timestamp}</span>
+                <span className="font-inter text-sm text-[#999999] group-hover:text-white transition-colors flex-1">{m.label}</span>
+                <ChevronRight size={12} className="text-[#444] group-hover:text-[#FF3B3B] shrink-0 transition-colors" />
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Coach quote */}
-      <div className="border-l-2 border-[#FF3B3B]/40 pl-4">
-        <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-2">Coach's Key Point</p>
-        <p className="font-inter text-sm text-white italic leading-relaxed">"{DEMO_QUOTE}"</p>
-      </div>
+      {quote && (
+        <div className="border-l-2 border-[#FF3B3B]/40 pl-4">
+          <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-2">Coach&apos;s Key Point</p>
+          <p className="font-inter text-sm text-white italic leading-relaxed">&ldquo;{quote}&rdquo;</p>
+        </div>
+      )}
 
       {/* Upsell teaser */}
       <div className="bg-[#0D0D0D] border border-[#333333] rounded-sm p-4 space-y-3">
@@ -247,7 +279,15 @@ function AskCoachTab() {
 }
 
 // ─── Main tabbed sidebar ──────────────────────────────────────────────────────
-function AISidebar({ onTimestampClick, seekable = true }: { onTimestampClick: (ts: string) => void; seekable?: boolean }) {
+function AISidebar({
+  onTimestampClick,
+  seekable = true,
+  aiData,
+}: {
+  onTimestampClick: (ts: string) => void
+  seekable?: boolean
+  aiData?: AIData | null
+}) {
   const [activeTab, setActiveTab] = useState<Tab>('summary')
 
   const tabs: { id: Tab; label: string; icon: React.ReactNode; locked: boolean }[] = [
@@ -291,7 +331,7 @@ function AISidebar({ onTimestampClick, seekable = true }: { onTimestampClick: (t
             exit={{ opacity: 0 }}
             transition={{ duration: 0.15 }}
           >
-            {activeTab === 'summary' && <SummaryTab onTimestampClick={onTimestampClick} seekable={seekable} />}
+            {activeTab === 'summary' && <SummaryTab onTimestampClick={onTimestampClick} seekable={seekable} aiData={aiData} />}
             {activeTab === 'quiz' && <QuizTab />}
             {activeTab === 'flashcards' && <FlashcardsTab />}
             {activeTab === 'ask' && <AskCoachTab />}
@@ -303,7 +343,15 @@ function AISidebar({ onTimestampClick, seekable = true }: { onTimestampClick: (t
 }
 
 // ─── Main component ───────────────────────────────────────────────────────────
-export default function ReplayClient({ playbackId, session }: { playbackId?: string; session?: SessionMeta }) {
+export default function ReplayClient({
+  playbackId,
+  session,
+  aiData,
+}: {
+  playbackId?: string
+  session?: SessionMeta
+  aiData?: AIData | null
+}) {
   const [playing, setPlaying] = useState(false)
   const [progress, setProgress] = useState(0)
   const [jumpTo, setJumpTo] = useState<string | null>(null)
@@ -430,7 +478,7 @@ export default function ReplayClient({ playbackId, session }: { playbackId?: str
 
           {/* Mobile AI sidebar */}
           <div className="lg:hidden border-t border-[#333333]">
-            <AISidebar onTimestampClick={handleTimestamp} seekable={Boolean(playbackId)} />
+            <AISidebar onTimestampClick={handleTimestamp} seekable={Boolean(playbackId)} aiData={aiData} />
           </div>
         </div>
 
@@ -449,7 +497,7 @@ export default function ReplayClient({ playbackId, session }: { playbackId?: str
 
           {/* Tabbed AI panel */}
           <div className="flex-1 flex flex-col overflow-hidden">
-            <AISidebar onTimestampClick={handleTimestamp} seekable={Boolean(playbackId)} />
+            <AISidebar onTimestampClick={handleTimestamp} seekable={Boolean(playbackId)} aiData={aiData} />
           </div>
         </motion.div>
 

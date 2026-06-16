@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Mux from '@mux/mux-node'
 import { createClient } from '@supabase/supabase-js'
+import { processSession } from '@/lib/ai/process-session'
 
 export const runtime = 'nodejs'
 
@@ -79,12 +80,14 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  if (type === 'video.asset.ready') {
-    // Recording ready: save replay playback ID to the live session
-    const assetPlaybackId: string | undefined = data.playback_ids?.[0]?.id
+  if (type === 'video.asset.created') {
+    // Recording asset created while the session is still live (or just ended):
+    // stamp the asset ID on the session NOW so asset.ready can match
+    // deterministically instead of guessing by newest-ended.
+    const assetId: string = data.id
     const liveStreamId: string | undefined = data.live_stream_id
 
-    if (assetPlaybackId && liveStreamId) {
+    if (assetId && liveStreamId) {
       const { data: gym } = await admin
         .from('gyms')
         .select('id')
@@ -92,12 +95,12 @@ export async function POST(req: NextRequest) {
         .maybeSingle()
 
       if (gym) {
-        // Save replay playback ID to the most recently ended session for this gym
         const { data: session } = await admin
           .from('sessions')
           .select('id')
           .eq('gym_id', gym.id)
-          .eq('status', 'ended')
+          .in('status', ['live', 'ended'])
+          .is('mux_asset_id', null)
           .order('scheduled_at', { ascending: false })
           .limit(1)
           .maybeSingle()
@@ -105,11 +108,65 @@ export async function POST(req: NextRequest) {
         if (session) {
           await admin
             .from('sessions')
-            .update({ mux_playback_id: assetPlaybackId })
+            .update({ mux_asset_id: assetId })
             .eq('id', session.id)
-
-          console.log(`[mux-webhook] Replay ready for session ${session.id}: ${assetPlaybackId}`)
         }
+      }
+    }
+  }
+
+  if (type === 'video.asset.ready') {
+    // Recording ready: save replay playback ID to the matching session
+    const assetId: string = data.id
+    const assetPlaybackId: string | undefined = data.playback_ids?.[0]?.id
+    const liveStreamId: string | undefined = data.live_stream_id
+
+    if (assetPlaybackId && liveStreamId) {
+      // Preferred path: match by the asset ID stamped on asset.created
+      const { data: byAsset } = await admin
+        .from('sessions')
+        .select('id')
+        .eq('mux_asset_id', assetId)
+        .maybeSingle()
+
+      let sessionId = byAsset?.id ?? null
+
+      if (!sessionId) {
+        // Fallback heuristic: newest ended session for this gym. Log so we
+        // know the deterministic path missed (e.g. asset.created not received).
+        console.warn(`[mux-webhook] asset.ready fallback matching for asset ${assetId}`)
+
+        const { data: gym } = await admin
+          .from('gyms')
+          .select('id')
+          .eq('mux_live_stream_id', liveStreamId)
+          .maybeSingle()
+
+        if (gym) {
+          const { data: session } = await admin
+            .from('sessions')
+            .select('id')
+            .eq('gym_id', gym.id)
+            .eq('status', 'ended')
+            .order('scheduled_at', { ascending: false })
+            .limit(1)
+            .maybeSingle()
+          sessionId = session?.id ?? null
+        }
+      }
+
+      if (sessionId) {
+        await admin
+          .from('sessions')
+          .update({ mux_playback_id: assetPlaybackId, mux_asset_id: assetId })
+          .eq('id', sessionId)
+
+        console.log(`[mux-webhook] Replay ready for session ${sessionId}: ${assetPlaybackId}`)
+
+        // Fire-and-forget AI processing — transcribe + extract techniques
+        processSession(sessionId).catch(err =>
+          console.error('[mux-webhook] processSession error:', err)
+        )
       }
     }
   }

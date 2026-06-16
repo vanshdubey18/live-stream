@@ -1,9 +1,17 @@
 import { NextResponse } from 'next/server'
-import { assertAdmin, adminClient, UNAUTHORIZED } from '@/lib/supabase/admin'
+import { createClient as createAdminClient } from '@supabase/supabase-js'
+import { assertAdmin } from '@/lib/supabase/admin'
+
+function adminClient() {
+  return createAdminClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  )
+}
 
 export async function GET() {
   const user = await assertAdmin()
-  if (!user) return UNAUTHORIZED()
+  if (!user) return NextResponse.json({ error: 'Not authorized' }, { status: 403 })
 
   const { data, error } = await adminClient()
     .from('memberships')
@@ -12,6 +20,7 @@ export async function GET() {
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
+  // Map emails from auth.users onto each membership
   const { data: authUsers } = await adminClient().auth.admin.listUsers()
   const emailMap: Record<string, string> = {}
   ;(authUsers?.users ?? []).forEach((u: any) => { emailMap[u.id] = u.email })

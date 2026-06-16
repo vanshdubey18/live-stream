@@ -1,16 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { assertGymOwner, adminClient, UNAUTHORIZED } from '@/lib/supabase/admin'
+import { createClient as createAdminClient } from '@supabase/supabase-js'
+import { getDbRole } from '@/lib/supabase/admin'
 import { createLiveStream } from '@/lib/mux'
 
 export async function POST(_req: NextRequest) {
-  const user = await assertGymOwner()
-  if (!user) return UNAUTHORIZED()
-
   const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
+
+  const role = await getDbRole(user.id)
+  if (role !== 'gym_owner' && role !== 'admin') {
+    return NextResponse.json({ error: 'Not authorized' }, { status: 403 })
+  }
+
+  // Get the gym owned by this user
   const { data: gym, error: gymErr } = await supabase
     .from('gyms')
-    .select('id, mux_live_stream_id')
+    .select('id, status, mux_live_stream_id')
     .eq('owner_id', user.id)
     .maybeSingle()
 
@@ -18,8 +25,13 @@ export async function POST(_req: NextRequest) {
     return NextResponse.json({ error: 'No gym found for this account' }, { status: 404 })
   }
 
+  if (gym.status !== 'active') {
+    return NextResponse.json({ error: 'Your gym is pending approval' }, { status: 403 })
+  }
+
+  // If a stream already exists, return the existing credentials
   if (gym.mux_live_stream_id) {
-    const { data: existing } = await adminClient()
+    const { data: existing } = await supabase
       .from('gyms')
       .select('mux_live_stream_id, stream_key, mux_playback_id')
       .eq('id', gym.id)
@@ -32,6 +44,7 @@ export async function POST(_req: NextRequest) {
     })
   }
 
+  // Create a new Mux live stream
   let muxResult: { id: string; stream_key: string | undefined; playback_id: string | undefined }
   try {
     muxResult = await createLiveStream()
@@ -42,11 +55,21 @@ export async function POST(_req: NextRequest) {
   }
   const { id, stream_key, playback_id } = muxResult
 
-  const { error: updateErr } = await adminClient()
+  // Save to Supabase using service role to bypass RLS
+  const admin = createAdminClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  )
+  const { error: updateErr } = await admin
     .from('gyms')
-    .update({ mux_live_stream_id: id, stream_key, mux_playback_id: playback_id })
+    .update({
+      mux_live_stream_id: id,
+      stream_key,
+      mux_playback_id: playback_id,
+    })
     .eq('id', gym.id)
 
   if (updateErr) return NextResponse.json({ error: updateErr.message }, { status: 500 })
+
   return NextResponse.json({ stream_key, playback_id, stream_id: id })
 }

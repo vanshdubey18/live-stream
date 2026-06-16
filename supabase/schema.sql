@@ -78,6 +78,7 @@ create table public.sessions (
   level             text not null check (level in ('Beginner', 'Intermediate', 'Advanced')),
   status            text not null default 'scheduled' check (status in ('scheduled', 'live', 'ended')),
   mux_playback_id   text,
+  mux_asset_id      text,
   replay_url        text,
   transcript        text,
   ai_summary        text,
@@ -95,6 +96,7 @@ create table public.memberships (
   status                   text not null default 'active' check (status in ('active', 'cancelled', 'past_due')),
   razorpay_subscription_id text,
   source                   text not null default 'paid' check (source in ('paid', 'coupon')),
+  plan_type                text default 'full_mma',
   free_until               timestamptz,
   current_period_end       timestamptz,
   created_at               timestamptz not null default now()
@@ -191,8 +193,8 @@ create policy "memberships_insert_own" on public.memberships for insert with che
 -- Watch history: own rows only
 create policy "watch_history_own" on public.watch_history for all using (auth.uid() = user_id);
 
--- Coupons: authenticated users can read active coupons
-create policy "coupons_select_active" on public.coupons for select using (is_active = true and auth.uid() is not null);
+-- Coupons: no client read access — all coupon validation happens through
+-- service-role API routes (join-gym, renew-access, admin/coupons).
 
 -- Coupon redemptions: own rows only
 create policy "coupon_redemptions_own" on public.coupon_redemptions for all using (auth.uid() = user_id);

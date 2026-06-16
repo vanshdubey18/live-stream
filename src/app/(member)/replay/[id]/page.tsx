@@ -1,17 +1,23 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import { adminClient, getDbRole } from '@/lib/supabase/admin'
-import Link from 'next/link'
+import { createClient as createAdminClient } from '@supabase/supabase-js'
+import { getDbRole } from '@/lib/supabase/admin'
 import ReplayClient from './ReplayClient'
+import AccessLockedScreen from '@/components/shared/AccessLockedScreen'
 
 export default async function ReplayPage({ params }: { params: { id: string } }) {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect(`/login?redirectTo=/replay/${params.id}`)
 
-  const { data: session } = await adminClient()
+  const adminClient = createAdminClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  )
+
+  const { data: session } = await adminClient
     .from('sessions')
-    .select('id, title, discipline, duration_minutes, mux_playback_id, gym_id, coaches(name), gyms(name)')
+    .select('id, title, discipline, duration_minutes, mux_playback_id, gym_id, ai_summary, ai_techniques, ai_key_moments, coaches(name), gyms(name)')
     .eq('id', params.id)
     .eq('status', 'ended')
     .maybeSingle()
@@ -20,7 +26,7 @@ export default async function ReplayPage({ params }: { params: { id: string } })
     redirect('/dashboard')
   }
 
-  // Check membership — admin (verified against DB) can always watch
+  // Check membership
   const role = await getDbRole(user.id)
   if (role !== 'admin') {
     const { data: membership } = await supabase
@@ -41,21 +47,12 @@ export default async function ReplayPage({ params }: { params: { id: string } })
         : null
 
     if (expiryDate && expiryDate < now) {
-      return (
-        <div className="min-h-screen bg-[#0D0D0D] flex items-center justify-center px-4">
-          <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm p-10 max-w-md w-full text-center space-y-4">
-            <p className="font-inter text-[11px] text-[#555555] tracking-[4px] uppercase">Access Expired</p>
-            <h1 className="font-bebas text-3xl text-white tracking-[1px]">ACCESS LOCKED</h1>
-            <p className="font-inter text-[#999999] text-sm leading-relaxed">
-              Your access period ended on {expiryDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}.
-              You&apos;re still a member of this gym — contact your coach to renew access.
-            </p>
-            <Link href="/dashboard" className="inline-block border border-[#333333] hover:border-[#555555] text-white font-bebas tracking-[3px] px-6 py-3 rounded-sm text-sm transition-colors">GO TO DASHBOARD</Link>
-          </div>
-        </div>
-      )
+      return <AccessLockedScreen gymId={session.gym_id} expiryDate={expiryDate.toISOString()} />
     }
   }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const aiKeyMoments = session.ai_key_moments as any
 
   return (
     <ReplayClient
@@ -67,6 +64,12 @@ export default async function ReplayPage({ params }: { params: { id: string } })
         coach: (session.coaches as any)?.name ?? null,
         gym: (session.gyms as any)?.name ?? null,
       }}
+      aiData={session.ai_summary ? {
+        summary: session.ai_summary,
+        techniques: aiKeyMoments?.techniques ?? (session.ai_techniques ?? []).map((name: string) => ({ name, timestamp: null })),
+        moments: aiKeyMoments?.moments ?? [],
+        coachQuote: aiKeyMoments?.coachQuote ?? '',
+      } : null}
     />
   )
 }

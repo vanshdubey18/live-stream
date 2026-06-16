@@ -8,23 +8,9 @@ export async function GET(req: NextRequest) {
 
   const supabase = createClient()
 
-  // Require authentication
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
-
-  // Require active membership in this gym
-  const { data: membership } = await supabase
-    .from('memberships')
-    .select('id')
-    .eq('user_id', user.id)
-    .eq('gym_id', gymId)
-    .eq('status', 'active')
-    .maybeSingle()
-  if (!membership) return NextResponse.json({ error: 'No active membership' }, { status: 403 })
-
   const { data: gym, error } = await supabase
     .from('gyms')
-    .select('mux_live_stream_id, mux_playback_id')
+    .select('mux_live_stream_id, stream_key, mux_playback_id')
     .eq('id', gymId)
     .maybeSingle()
 

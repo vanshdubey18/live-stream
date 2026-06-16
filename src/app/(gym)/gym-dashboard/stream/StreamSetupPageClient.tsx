@@ -22,7 +22,9 @@ export default function StreamSetupPageClient({ gymId, streamKey: initialKey, ha
   const [copied, setCopied] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [streamKey, setStreamKey] = useState<string | null>(initialKey)
-  const [provisioning, setProvisioning] = useState(!initialHasStream && !initialKey)
+  // Provision whenever stream key is missing — handles both fresh gyms and
+  // the case where mux_live_stream_id exists but stream_key wasn't saved
+  const [provisioning, setProvisioning] = useState(!initialKey)
 
   const videoRef = useRef<HTMLVideoElement>(null)
   const pcRef = useRef<RTCPeerConnection | null>(null)
@@ -30,14 +32,17 @@ export default function StreamSetupPageClient({ gymId, streamKey: initialKey, ha
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
-  // Provision Mux stream if needed
+  // Always fetch/create stream key on mount if missing
   useEffect(() => {
-    if (provisioning) {
-      fetch('/api/gym/create-stream', { method: 'POST' })
-        .then(r => r.json())
-        .then(d => { if (d.stream_key) setStreamKey(d.stream_key) })
-        .finally(() => setProvisioning(false))
-    }
+    if (!provisioning) return
+    fetch('/api/gym/create-stream', { method: 'POST' })
+      .then(r => r.json())
+      .then(d => {
+        if (d.stream_key) setStreamKey(d.stream_key)
+        else setError('Could not get stream key. Check Mux credentials in Vercel.')
+      })
+      .catch(() => setError('Failed to reach stream server.'))
+      .finally(() => setProvisioning(false))
   }, [provisioning])
 
   const startPreview = useCallback(async () => {

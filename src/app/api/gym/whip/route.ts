@@ -2,6 +2,45 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createClient as createAdminClient } from '@supabase/supabase-js'
 import { getDbRole } from '@/lib/supabase/admin'
+import { createLiveStream, getLiveStreamKey } from '@/lib/mux'
+
+function getAdmin() {
+  return createAdminClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  )
+}
+
+async function resolveStreamKey(gymId: string, muxStreamId: string | null, existingKey: string | null): Promise<string | null> {
+  // Already have a key
+  if (existingKey) return existingKey
+
+  // Have stream ID but no key — fetch from Mux
+  if (muxStreamId) {
+    try {
+      const { stream_key, playback_id } = await getLiveStreamKey(muxStreamId)
+      if (stream_key) {
+        await getAdmin().from('gyms').update({ stream_key, ...(playback_id ? { mux_playback_id: playback_id } : {}) }).eq('id', gymId)
+        return stream_key
+      }
+    } catch (err) {
+      console.error('[whip] getLiveStreamKey failed, will create fresh stream:', err)
+    }
+  }
+
+  // No key anywhere — create a fresh Mux stream
+  try {
+    const { id, stream_key, playback_id } = await createLiveStream()
+    if (stream_key) {
+      await getAdmin().from('gyms').update({ mux_live_stream_id: id, stream_key, mux_playback_id: playback_id }).eq('id', gymId)
+      return stream_key
+    }
+  } catch (err) {
+    console.error('[whip] createLiveStream failed:', err)
+  }
+
+  return null
+}
 
 export async function POST(req: NextRequest) {
   const supabase = createClient()
@@ -18,19 +57,20 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Missing SDP offer' }, { status: 400 })
   }
 
-  // Read stream_key server-side — never expose it to the browser
-  const admin = createAdminClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  )
-  const { data: gym } = await admin
+  // Read gym — service role to bypass RLS
+  const { data: gym } = await getAdmin()
     .from('gyms')
-    .select('stream_key, mux_live_stream_id')
+    .select('id, status, stream_key, mux_live_stream_id')
     .eq('owner_id', user.id)
     .maybeSingle()
 
-  if (!gym?.stream_key) {
-    return NextResponse.json({ error: 'Stream not provisioned — go to Stream Setup and wait for the key to load' }, { status: 400 })
+  if (!gym) return NextResponse.json({ error: 'Gym not found' }, { status: 404 })
+  if (gym.status !== 'active') return NextResponse.json({ error: 'Gym not active' }, { status: 403 })
+
+  // Auto-provision stream key if missing
+  const streamKey = await resolveStreamKey(gym.id, gym.mux_live_stream_id, gym.stream_key)
+  if (!streamKey) {
+    return NextResponse.json({ error: 'Could not provision stream key — check Mux credentials in Vercel env vars (MUX_TOKEN_ID, MUX_TOKEN_SECRET)' }, { status: 502 })
   }
 
   // Proxy the WHIP POST to Mux — solves CORS and keeps stream_key server-side
@@ -40,7 +80,7 @@ export async function POST(req: NextRequest) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/sdp',
-        'Authorization': `Bearer ${gym.stream_key}`,
+        'Authorization': `Bearer ${streamKey}`,
       },
       body: sdp,
     })
@@ -50,7 +90,7 @@ export async function POST(req: NextRequest) {
   }
 
   const body = await muxRes.text()
-  console.log(`[whip] Mux responded ${muxRes.status}`, body.slice(0, 200))
+  console.log(`[whip] Mux responded ${muxRes.status}`, body.slice(0, 300))
 
   if (muxRes.status !== 201) {
     return NextResponse.json(

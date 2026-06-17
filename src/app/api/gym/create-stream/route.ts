@@ -29,17 +29,40 @@ export async function POST(_req: NextRequest) {
     return NextResponse.json({ error: 'Your gym is pending approval' }, { status: 403 })
   }
 
-  // If a stream already exists, return the existing credentials
+  // If a stream already exists, return existing credentials (fetching from Mux if key is missing in DB)
   if (gym.mux_live_stream_id) {
     const { data: existing } = await supabase
       .from('gyms')
       .select('mux_live_stream_id, stream_key, mux_playback_id')
       .eq('id', gym.id)
       .single()
+
+    let streamKey = existing?.stream_key
+    let playbackId = existing?.mux_playback_id
+
+    // stream_key was never saved (partial provision) — fetch from Mux and backfill
+    if (!streamKey && existing?.mux_live_stream_id) {
+      try {
+        const { video } = new (await import('@mux/mux-node')).default()
+        const muxStream = await video.liveStreams.retrieve(existing.mux_live_stream_id)
+        streamKey = muxStream.stream_key ?? undefined
+        playbackId = playbackId ?? muxStream.playback_ids?.[0]?.id ?? undefined
+        if (streamKey) {
+          const admin = createAdminClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.SUPABASE_SERVICE_ROLE_KEY!,
+          )
+          await admin.from('gyms').update({ stream_key: streamKey, mux_playback_id: playbackId }).eq('id', gym.id)
+        }
+      } catch (err) {
+        console.error('[create-stream] failed to fetch stream key from Mux:', err)
+      }
+    }
+
     return NextResponse.json({
       already_exists: true,
-      stream_key: existing?.stream_key,
-      playback_id: existing?.mux_playback_id,
+      stream_key: streamKey,
+      playback_id: playbackId,
       stream_id: existing?.mux_live_stream_id,
     })
   }

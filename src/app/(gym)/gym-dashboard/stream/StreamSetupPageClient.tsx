@@ -61,7 +61,11 @@ export default function StreamSetupPageClient({ gymId, streamKey: initialKey, ha
   }, [])
 
   async function goLive() {
-    if (!streamKey || !localStreamRef.current) return
+    if (!streamKey) {
+      setError('Stream key not ready — wait a moment and try again, or refresh the page.')
+      return
+    }
+    if (!localStreamRef.current) return
     setLiveState('connecting')
     setError(null)
 

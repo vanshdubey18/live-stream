@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createClient as createAdminClient } from '@supabase/supabase-js'
 import { getDbRole } from '@/lib/supabase/admin'
-import { createLiveStream } from '@/lib/mux'
+import { createLiveStream, getLiveStreamKey } from '@/lib/mux'
 
 export async function POST(_req: NextRequest) {
   const supabase = createClient()
@@ -43,10 +43,9 @@ export async function POST(_req: NextRequest) {
     // stream_key was never saved (partial provision) — fetch from Mux and backfill
     if (!streamKey && existing?.mux_live_stream_id) {
       try {
-        const { video } = new (await import('@mux/mux-node')).default()
-        const muxStream = await video.liveStreams.retrieve(existing.mux_live_stream_id)
-        streamKey = muxStream.stream_key ?? undefined
-        playbackId = playbackId ?? muxStream.playback_ids?.[0]?.id ?? undefined
+        const fetched = await getLiveStreamKey(existing.mux_live_stream_id)
+        streamKey = fetched.stream_key ?? undefined
+        playbackId = playbackId ?? fetched.playback_id ?? undefined
         if (streamKey) {
           const admin = createAdminClient(
             process.env.NEXT_PUBLIC_SUPABASE_URL!,

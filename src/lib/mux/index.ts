@@ -33,6 +33,15 @@ export async function getLiveStreamStatus(streamId: string) {
   }
 }
 
+export async function getLiveStreamKey(streamId: string) {
+  const { video } = getMux()
+  const stream = await video.liveStreams.retrieve(streamId)
+  return {
+    stream_key: stream.stream_key,
+    playback_id: stream.playback_ids?.[0]?.id,
+  }
+}
+
 export async function deleteLiveStream(streamId: string) {
   const { video } = getMux()
   await video.liveStreams.delete(streamId)

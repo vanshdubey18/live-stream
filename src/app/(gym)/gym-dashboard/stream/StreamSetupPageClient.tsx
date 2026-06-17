@@ -270,6 +270,13 @@ export default function StreamSetupPageClient({ gymId, streamKey: initialKey, ha
             />
           )}
 
+          {/* Stream key status — shown in preview so user knows if ready */}
+          {liveState === 'preview' && (
+            <p className="font-inter text-[10px] mb-3 px-1" style={{ color: streamKey ? '#00D4AA' : '#FF3B3B' }}>
+              {streamKey ? '● Stream channel ready' : provisioning ? '● Connecting to stream server…' : '● Stream key missing — refresh or contact support'}
+            </p>
+          )}
+
           {/* Error */}
           {error && (
             <p className="font-inter text-xs text-[#FF3B3B] mb-4 px-1">{error}</p>

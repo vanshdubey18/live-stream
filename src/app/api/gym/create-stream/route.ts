@@ -4,6 +4,13 @@ import { createClient as createAdminClient } from '@supabase/supabase-js'
 import { getDbRole } from '@/lib/supabase/admin'
 import { createLiveStream, getLiveStreamKey } from '@/lib/mux'
 
+function getAdmin() {
+  return createAdminClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  )
+}
+
 export async function POST(_req: NextRequest) {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -14,10 +21,9 @@ export async function POST(_req: NextRequest) {
     return NextResponse.json({ error: 'Not authorized' }, { status: 403 })
   }
 
-  // Get the gym owned by this user
   const { data: gym, error: gymErr } = await supabase
     .from('gyms')
-    .select('id, status, mux_live_stream_id')
+    .select('id, status, mux_live_stream_id, stream_key, mux_playback_id')
     .eq('owner_id', user.id)
     .maybeSingle()
 
@@ -29,66 +35,49 @@ export async function POST(_req: NextRequest) {
     return NextResponse.json({ error: 'Your gym is pending approval' }, { status: 403 })
   }
 
-  // If a stream already exists, return existing credentials (fetching from Mux if key is missing in DB)
-  if (gym.mux_live_stream_id) {
-    const { data: existing } = await supabase
-      .from('gyms')
-      .select('mux_live_stream_id, stream_key, mux_playback_id')
-      .eq('id', gym.id)
-      .single()
-
-    let streamKey = existing?.stream_key
-    let playbackId = existing?.mux_playback_id
-
-    // stream_key was never saved (partial provision) — fetch from Mux and backfill
-    if (!streamKey && existing?.mux_live_stream_id) {
-      try {
-        const fetched = await getLiveStreamKey(existing.mux_live_stream_id)
-        streamKey = fetched.stream_key ?? undefined
-        playbackId = playbackId ?? fetched.playback_id ?? undefined
-        if (streamKey) {
-          const admin = createAdminClient(
-            process.env.NEXT_PUBLIC_SUPABASE_URL!,
-            process.env.SUPABASE_SERVICE_ROLE_KEY!,
-          )
-          await admin.from('gyms').update({ stream_key: streamKey, mux_playback_id: playbackId }).eq('id', gym.id)
-        }
-      } catch (err) {
-        console.error('[create-stream] failed to fetch stream key from Mux:', err)
-      }
-    }
-
+  // Already have everything we need
+  if (gym.stream_key) {
     return NextResponse.json({
-      already_exists: true,
-      stream_key: streamKey,
-      playback_id: playbackId,
-      stream_id: existing?.mux_live_stream_id,
+      stream_key: gym.stream_key,
+      playback_id: gym.mux_playback_id,
+      stream_id: gym.mux_live_stream_id,
     })
   }
 
-  // Create a new Mux live stream
+  // Have a stream ID but no key — try fetching from Mux
+  if (gym.mux_live_stream_id) {
+    try {
+      const fetched = await getLiveStreamKey(gym.mux_live_stream_id)
+      if (fetched.stream_key) {
+        await getAdmin().from('gyms').update({
+          stream_key: fetched.stream_key,
+          mux_playback_id: fetched.playback_id ?? gym.mux_playback_id,
+        }).eq('id', gym.id)
+        return NextResponse.json({
+          stream_key: fetched.stream_key,
+          playback_id: fetched.playback_id ?? gym.mux_playback_id,
+          stream_id: gym.mux_live_stream_id,
+        })
+      }
+    } catch (err) {
+      console.error('[create-stream] Mux retrieve failed, will create fresh stream:', err)
+    }
+  }
+
+  // No key found anywhere — create a brand new Mux stream
   let muxResult: { id: string; stream_key: string | undefined; playback_id: string | undefined }
   try {
     muxResult = await createLiveStream()
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : 'Mux API error'
-    console.error('[create-stream] Mux error:', msg)
+    console.error('[create-stream] Mux create error:', msg)
     return NextResponse.json({ error: `Mux error: ${msg}` }, { status: 502 })
   }
-  const { id, stream_key, playback_id } = muxResult
 
-  // Save to Supabase using service role to bypass RLS
-  const admin = createAdminClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  )
-  const { error: updateErr } = await admin
+  const { id, stream_key, playback_id } = muxResult
+  const { error: updateErr } = await getAdmin()
     .from('gyms')
-    .update({
-      mux_live_stream_id: id,
-      stream_key,
-      mux_playback_id: playback_id,
-    })
+    .update({ mux_live_stream_id: id, stream_key, mux_playback_id: playback_id })
     .eq('id', gym.id)
 
   if (updateErr) return NextResponse.json({ error: updateErr.message }, { status: 500 })

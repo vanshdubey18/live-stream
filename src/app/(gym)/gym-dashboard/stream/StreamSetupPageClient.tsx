@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback } from 'react'
 import GymSidebar from '@/components/layout/GymSidebar'
 import { Video, Loader2, Square, Users, Copy, Check } from 'lucide-react'
 
@@ -8,11 +8,9 @@ type LiveState = 'idle' | 'preview' | 'connecting' | 'live' | 'ending'
 
 interface Props {
   gymId: string
-  streamKey: string | null
-  hasStream: boolean
 }
 
-export default function StreamSetupPageClient({ gymId, streamKey: initialKey, hasStream: initialHasStream }: Props) {
+export default function StreamSetupPageClient({ gymId }: Props) {
   const [liveState, setLiveState] = useState<LiveState>('idle')
   const [className, setClassName] = useState('')
   const [duration, setDuration] = useState(0)
@@ -21,29 +19,12 @@ export default function StreamSetupPageClient({ gymId, streamKey: initialKey, ha
   const [watchUrl, setWatchUrl] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [streamKey, setStreamKey] = useState<string | null>(initialKey)
-  // Provision whenever stream key is missing — handles both fresh gyms and
-  // the case where mux_live_stream_id exists but stream_key wasn't saved
-  const [provisioning, setProvisioning] = useState(!initialKey)
 
   const videoRef = useRef<HTMLVideoElement>(null)
   const pcRef = useRef<RTCPeerConnection | null>(null)
   const localStreamRef = useRef<MediaStream | null>(null)
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
-
-  // Always fetch/create stream key on mount if missing
-  useEffect(() => {
-    if (!provisioning) return
-    fetch('/api/gym/create-stream', { method: 'POST' })
-      .then(r => r.json())
-      .then(d => {
-        if (d.stream_key) setStreamKey(d.stream_key)
-        else setError('Could not get stream key. Check Mux credentials in Vercel.')
-      })
-      .catch(() => setError('Failed to reach stream server.'))
-      .finally(() => setProvisioning(false))
-  }, [provisioning])
 
   const startPreview = useCallback(async () => {
     setError(null)
@@ -61,16 +42,12 @@ export default function StreamSetupPageClient({ gymId, streamKey: initialKey, ha
   }, [])
 
   async function goLive() {
-    if (!streamKey) {
-      setError('Stream key not ready — wait a moment and try again, or refresh the page.')
-      return
-    }
     if (!localStreamRef.current) return
     setLiveState('connecting')
     setError(null)
 
     try {
-      // Create the live session first
+      // Create the live session record first
       const title = className.trim() ||
         `Live Class — ${new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}`
       const res = await fetch('/api/gym/go-live', {
@@ -83,47 +60,54 @@ export default function StreamSetupPageClient({ gymId, streamKey: initialKey, ha
       setSessionId(data.sessionId)
       setWatchUrl(`${window.location.origin}/watch/${data.sessionId}`)
 
-      // WebRTC WHIP — stream directly from browser to Mux
+      // RTCPeerConnection — max-bundle required for WHIP
       const pc = new RTCPeerConnection({
         iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
+        bundlePolicy: 'max-bundle',
       })
       pcRef.current = pc
 
-      localStreamRef.current.getTracks().forEach(track =>
-        pc.addTrack(track, localStreamRef.current!)
-      )
+      // Use sendonly transceivers (WHIP requires sendonly, not sendrecv)
+      const videoTrack = localStreamRef.current.getVideoTracks()[0]
+      const audioTrack = localStreamRef.current.getAudioTracks()[0]
+      const videoTx = pc.addTransceiver(videoTrack, { direction: 'sendonly' })
+      pc.addTransceiver(audioTrack, { direction: 'sendonly' })
+
+      // Prefer H.264 — Mux WHIP ingest requires H.264 + Opus
+      const caps = RTCRtpSender.getCapabilities('video')
+      if (caps) {
+        const h264 = caps.codecs.filter(c => c.mimeType === 'video/H264')
+        if (h264.length) videoTx.setCodecPreferences(h264)
+      }
 
       const offer = await pc.createOffer()
       await pc.setLocalDescription(offer)
 
-      // Wait for ICE candidates (max 4s)
+      // Wait for ICE gathering (max 5s) before sending — non-trickle mode
       await new Promise<void>(resolve => {
         if (pc.iceGatheringState === 'complete') { resolve(); return }
-        pc.onicegatheringstatechange = () => { if (pc.iceGatheringState === 'complete') resolve() }
-        setTimeout(resolve, 4000)
+        const timeout = setTimeout(resolve, 5000)
+        pc.addEventListener('icegatheringstatechange', () => {
+          if (pc.iceGatheringState === 'complete') { clearTimeout(timeout); resolve() }
+        })
       })
 
-      const whipRes = await fetch('https://global-relay.mux.com/whip', {
+      // Proxy WHIP through our backend — avoids CORS, keeps stream_key server-side
+      const whipRes = await fetch('/api/gym/whip', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/sdp',
-          'Authorization': `Bearer ${streamKey}`,
-        },
-        body: pc.localDescription!.sdp,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sdp: pc.localDescription!.sdp }),
       })
+      const whipData = await whipRes.json()
+      if (!whipRes.ok) throw new Error(whipData.error ?? `Stream connection failed (${whipRes.status})`)
 
-      if (!whipRes.ok) throw new Error(`Stream connection failed (${whipRes.status}). Check Mux credentials.`)
-
-      const answerSdp = await whipRes.text()
-      await pc.setRemoteDescription({ type: 'answer', sdp: answerSdp })
+      await pc.setRemoteDescription({ type: 'answer', sdp: whipData.answer })
 
       setLiveState('live')
 
-      // Duration timer
       let secs = 0
       timerRef.current = setInterval(() => setDuration(++secs), 1000)
 
-      // Poll viewer count
       pollRef.current = setInterval(async () => {
         try {
           const r = await fetch(`/api/gym/stream-status?gym_id=${gymId}`)
@@ -137,7 +121,6 @@ export default function StreamSetupPageClient({ gymId, streamKey: initialKey, ha
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to go live')
       setLiveState('preview')
-      // Rollback session if created
       if (sessionId) {
         await fetch('/api/gym/end-class', {
           method: 'POST',
@@ -154,16 +137,13 @@ export default function StreamSetupPageClient({ gymId, streamKey: initialKey, ha
     if (timerRef.current) clearInterval(timerRef.current)
     if (pollRef.current) clearInterval(pollRef.current)
 
-    // Close WebRTC
     if (pcRef.current) { pcRef.current.close(); pcRef.current = null }
 
-    // Stop camera
     if (localStreamRef.current) {
       localStreamRef.current.getTracks().forEach(t => t.stop())
       localStreamRef.current = null
     }
 
-    // Mark session ended
     await fetch('/api/gym/end-class', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -239,14 +219,10 @@ export default function StreamSetupPageClient({ gymId, streamKey: initialKey, ha
                 <Video size={28} className="text-[#444444]" />
                 <button
                   onClick={startPreview}
-                  disabled={provisioning}
-                  className="px-8 py-3 bg-[#FF3B3B] rounded-sm font-bebas text-white text-base tracking-[3px] hover:bg-[#cc2f2f] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                  className="px-8 py-3 bg-[#FF3B3B] rounded-sm font-bebas text-white text-base tracking-[3px] hover:bg-[#cc2f2f] transition-colors"
                 >
-                  {provisioning ? 'SETTING UP…' : 'TURN ON CAMERA'}
+                  TURN ON CAMERA
                 </button>
-                {provisioning && (
-                  <p className="font-inter text-xs text-[#555555]">Provisioning your stream channel…</p>
-                )}
               </div>
             )}
 
@@ -268,13 +244,6 @@ export default function StreamSetupPageClient({ gymId, streamKey: initialKey, ha
               placeholder="Class name  (e.g. Intermediate BJJ)"
               className="w-full bg-[#1A1A1A] border border-[#333333] rounded-sm px-4 py-3 font-inter text-sm text-white placeholder-[#444444] focus:outline-none focus:border-[#555555] transition-colors mb-4"
             />
-          )}
-
-          {/* Stream key status — shown in preview so user knows if ready */}
-          {liveState === 'preview' && (
-            <p className="font-inter text-[10px] mb-3 px-1" style={{ color: streamKey ? '#00D4AA' : '#FF3B3B' }}>
-              {streamKey ? '● Stream channel ready' : provisioning ? '● Connecting to stream server…' : '● Stream key missing — refresh or contact support'}
-            </p>
           )}
 
           {/* Error */}

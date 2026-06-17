@@ -12,10 +12,6 @@ export default async function StreamSetupPage() {
   if (!gym) redirect('/gym-dashboard')
 
   return (
-    <StreamSetupPageClient
-      gymId={gym.id}
-      streamKey={gym.stream_key ?? null}
-      hasStream={!!gym.mux_live_stream_id}
-    />
+    <StreamSetupPageClient gymId={gym.id} />
   )
 }

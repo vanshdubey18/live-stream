@@ -28,7 +28,6 @@ export async function POST(req: NextRequest) {
 
   if (!gym) return NextResponse.json({ error: 'No gym found' }, { status: 404 })
   if (gym.status !== 'active') return NextResponse.json({ error: 'Gym not active' }, { status: 403 })
-  if (!gym.mux_live_stream_id) return NextResponse.json({ error: 'Stream not provisioned' }, { status: 400 })
 
   const { title, discipline } = await req.json().catch(() => ({}))
   const classTitle = title?.trim() || `Live Class — ${new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}`

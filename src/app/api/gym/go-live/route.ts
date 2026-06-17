@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
       discipline: classDisc,
       scheduled_at: new Date().toISOString(),
       duration_minutes: 60,
-      level: 'all',
+      level: 'Beginner',
       status: 'live',
       mux_playback_id: gym.mux_playback_id,
     })

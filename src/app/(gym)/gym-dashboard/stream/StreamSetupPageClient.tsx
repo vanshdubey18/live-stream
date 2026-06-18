@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import GymSidebar from '@/components/layout/GymSidebar'
 import { Copy, Check, Loader2, Radio, Wifi, WifiOff } from 'lucide-react'
 
-const RTMP_SERVER = 'rtmp://live.mux.com/app'
+const RTMP_SERVER = 'rtmps://global-live.mux.com:443/app'
 
 interface Props {
   gymId: string

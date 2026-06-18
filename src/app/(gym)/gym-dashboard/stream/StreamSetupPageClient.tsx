@@ -18,6 +18,7 @@ export default function StreamSetupPageClient({ gymId, streamKey: initialKey, ha
   const [streamKey, setStreamKey] = useState<string | null>(initialKey)
   const [status, setStatus] = useState<StreamStatus>('loading')
   const [provisioning, setProvisioning] = useState(!initialHasStream)
+  const [provisionError, setProvisionError] = useState<string | null>(null)
   const [copied, setCopied] = useState<'url' | 'key' | null>(null)
   const [showKey, setShowKey] = useState(false)
 
@@ -29,10 +30,17 @@ export default function StreamSetupPageClient({ gymId, streamKey: initialKey, ha
 
   const provision = useCallback(async () => {
     setProvisioning(true)
+    setProvisionError(null)
     try {
       const res = await fetch('/api/gym/create-stream', { method: 'POST' })
       const data = await res.json()
-      if (data.stream_key) setStreamKey(data.stream_key)
+      if (data.stream_key) {
+        setStreamKey(data.stream_key)
+      } else if (data.error) {
+        setProvisionError(data.error)
+      }
+    } catch {
+      setProvisionError('Network error — could not reach the server')
     } finally {
       setProvisioning(false)
     }
@@ -127,7 +135,15 @@ export default function StreamSetupPageClient({ gymId, streamKey: initialKey, ha
               {/* Stream Key */}
               <div>
                 <p className="font-inter text-[11px] text-[#999999] tracking-[3px] uppercase mb-2">Stream Key</p>
-                {provisioning || !streamKey ? (
+                {provisionError ? (
+                  <div className="bg-[#0D0D0D] border border-[#FF3B3B]/30 rounded-sm px-4 py-2.5 space-y-1">
+                    <p className="font-inter text-xs text-[#FF3B3B]">Failed to provision stream</p>
+                    <p className="font-mono text-xs text-[#555555] break-all">{provisionError}</p>
+                    <button onClick={provision} className="font-inter text-xs text-[#999999] hover:text-white underline mt-1">
+                      Retry
+                    </button>
+                  </div>
+                ) : provisioning || !streamKey ? (
                   <div className="flex items-center gap-3 bg-[#0D0D0D] border border-[#333333] rounded-sm px-4 py-2.5">
                     <Loader2 size={14} className="animate-spin text-[#555555]" />
                     <span className="font-inter text-sm text-[#555555]">Provisioning your stream…</span>

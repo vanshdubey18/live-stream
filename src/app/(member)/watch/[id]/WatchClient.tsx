@@ -154,33 +154,85 @@ function WaitingRoom({ session }: { session: SessionInfo }) {
 // ─── HLS video player ─────────────────────────────────────────────────────────
 function HlsPlayer({ hlsUrl }: { hlsUrl: string | null }) {
   const videoRef = useRef<HTMLVideoElement>(null)
+  const [muted, setMuted] = useState(true)
+  const [hlsError, setHlsError] = useState<string | null>(null)
 
   useEffect(() => {
     const video = videoRef.current
     if (!video || !hlsUrl) return
+    setHlsError(null)
 
     if (Hls.isSupported()) {
       const hls = new Hls({ liveSyncDurationCount: 3, liveMaxLatencyDurationCount: 6 })
       hls.loadSource(hlsUrl)
       hls.attachMedia(video)
-      hls.on(Hls.Events.MANIFEST_PARSED, () => { video.play().catch(() => { /* autoplay blocked */ }) })
+      hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        // Start muted — browsers permit muted autoplay; user can unmute via overlay.
+        video.muted = true
+        video.play().catch(() => { /* user gesture required on some devices */ })
+      })
+      hls.on(Hls.Events.ERROR, (_, data) => {
+        if (data.fatal) {
+          console.error('[HlsPlayer] fatal error', data.type, data.details)
+          setHlsError(`Stream error: ${data.details}`)
+          hls.destroy()
+        }
+      })
       return () => hls.destroy()
     } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
       // Safari native HLS
       video.src = hlsUrl
-      video.play().catch(() => { /* autoplay blocked */ })
+      video.muted = true
+      video.play().catch(() => { /* ignore */ })
     }
   }, [hlsUrl])
 
+  function unmute() {
+    const video = videoRef.current
+    if (!video) return
+    video.muted = false
+    video.play().catch(() => { /* ignore */ })
+    setMuted(false)
+  }
+
+  if (hlsError) {
+    return (
+      <div className="w-full h-full flex items-center justify-center bg-black">
+        <div className="text-center space-y-3 px-6">
+          <p className="font-inter text-[#FF3B3B] text-xs tracking-[2px] uppercase">Stream error</p>
+          <p className="font-inter text-[#555555] text-xs">{hlsError}</p>
+          <button
+            onClick={() => setHlsError(null)}
+            className="font-inter text-xs text-[#999999] hover:text-white underline"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <video
-      ref={videoRef}
-      autoPlay
-      controls
-      playsInline
-      className="w-full h-full object-contain"
-      style={{ background: '#000' }}
-    />
+    <div className="relative w-full h-full">
+      <video
+        ref={videoRef}
+        autoPlay
+        muted
+        controls
+        playsInline
+        className="w-full h-full object-contain"
+        style={{ background: '#000' }}
+      />
+      {/* Unmute overlay — shown until user taps it */}
+      {muted && (
+        <button
+          onClick={unmute}
+          className="absolute top-3 right-3 flex items-center gap-1.5 bg-black/70 hover:bg-black/90 border border-white/20 text-white font-inter text-xs px-3 py-1.5 rounded-sm transition-all"
+        >
+          <span>🔇</span> TAP TO UNMUTE
+        </button>
+      )}
+    </div>
   )
 }
 

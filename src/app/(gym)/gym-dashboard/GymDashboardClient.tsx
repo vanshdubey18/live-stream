@@ -314,7 +314,7 @@ export default function GymDashboardClient({ gym, ownerName, sessions, coaches, 
           </div>
 
           {/* Stream Setup */}
-          <StreamSetupCard gymId={gym.id} streamKey={gym.stream_key} />
+          <StreamSetupCard gymId={gym.id} />
 
           {/* Sessions */}
           <section>

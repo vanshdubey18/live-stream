@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowLeft, CheckCircle2, Circle, Lock, Sparkles, BookOpen, Layers, MessageCircle } from 'lucide-react'
 import Link from 'next/link'
-import Hls from 'hls.js'
 import SessionSummary, { DEMO_SUMMARY } from '@/components/ai/SessionSummary'
 
 function pad(n: number) { return String(n).padStart(2, '0') }
@@ -151,41 +150,75 @@ function WaitingRoom({ session }: { session: SessionInfo }) {
   )
 }
 
-// ─── HLS video player ─────────────────────────────────────────────────────────
-function HlsPlayer({ hlsUrl }: { hlsUrl: string | null }) {
+// ─── WHEP (WebRTC) live player ─────────────────────────────────────────────────
+// Cloudflare serves live playback over WebRTC (WHEP) with sub-second latency and
+// — unlike HLS — without needing the recording/storage pipeline. The WHEP URL is
+// public; we derive it from the stored playback URL.
+function WhepPlayer({ playbackUrl, attempt, onRetry }: { playbackUrl: string | null; attempt: number; onRetry: () => void }) {
   const videoRef = useRef<HTMLVideoElement>(null)
   const [muted, setMuted] = useState(true)
-  const [hlsError, setHlsError] = useState<string | null>(null)
+  const [connecting, setConnecting] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    const video = videoRef.current
-    if (!video || !hlsUrl) return
-    setHlsError(null)
+    if (!playbackUrl) return
+    // .../manifest/video.m3u8  ->  .../webRTC/play
+    const whepUrl = playbackUrl.replace('/manifest/video.m3u8', '/webRTC/play')
+    let cancelled = false
+    setConnecting(true)
+    setError(null)
 
-    if (Hls.isSupported()) {
-      const hls = new Hls({ liveSyncDurationCount: 3, liveMaxLatencyDurationCount: 6 })
-      hls.loadSource(hlsUrl)
-      hls.attachMedia(video)
-      hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        // Start muted — browsers permit muted autoplay; user can unmute via overlay.
+    const pc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.cloudflare.com:3478' }] })
+    pc.addTransceiver('video', { direction: 'recvonly' })
+    pc.addTransceiver('audio', { direction: 'recvonly' })
+
+    pc.ontrack = (e) => {
+      const video = videoRef.current
+      if (video && e.streams[0] && video.srcObject !== e.streams[0]) {
+        video.srcObject = e.streams[0]
         video.muted = true
-        video.play().catch(() => { /* user gesture required on some devices */ })
-      })
-      hls.on(Hls.Events.ERROR, (_, data) => {
-        if (data.fatal) {
-          console.error('[HlsPlayer] fatal error', data.type, data.details)
-          setHlsError(`Stream error: ${data.details}`)
-          hls.destroy()
-        }
-      })
-      return () => hls.destroy()
-    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-      // Safari native HLS
-      video.src = hlsUrl
-      video.muted = true
-      video.play().catch(() => { /* ignore */ })
+        video.play().catch(() => { /* gesture needed on some devices */ })
+        setConnecting(false)
+      }
     }
-  }, [hlsUrl])
+    pc.onconnectionstatechange = () => {
+      if (cancelled) return
+      if (pc.connectionState === 'failed') setError('Could not connect to the stream')
+    }
+
+    ;(async () => {
+      try {
+        const offer = await pc.createOffer()
+        await pc.setLocalDescription(offer)
+        // Wait for ICE gathering (non-trickle WHEP), cap at 3s
+        await Promise.race([
+          new Promise<void>(resolve => {
+            if (pc.iceGatheringState === 'complete') return resolve()
+            pc.addEventListener('icegatheringstatechange', () => {
+              if (pc.iceGatheringState === 'complete') resolve()
+            })
+          }),
+          new Promise<void>(resolve => setTimeout(resolve, 3000)),
+        ])
+        const res = await fetch(whepUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/sdp' },
+          body: pc.localDescription!.sdp,
+        })
+        if (!res.ok) throw new Error(`Playback error (${res.status})`)
+        const answer = await res.text()
+        if (cancelled) return
+        await pc.setRemoteDescription({ type: 'answer', sdp: answer })
+      } catch (err) {
+        if (!cancelled) {
+          console.error('[WhepPlayer]', err)
+          setError(err instanceof Error ? err.message : 'Playback failed')
+        }
+      }
+    })()
+
+    return () => { cancelled = true; pc.close() }
+  }, [playbackUrl, attempt])
 
   function unmute() {
     const video = videoRef.current
@@ -195,16 +228,13 @@ function HlsPlayer({ hlsUrl }: { hlsUrl: string | null }) {
     setMuted(false)
   }
 
-  if (hlsError) {
+  if (error) {
     return (
       <div className="w-full h-full flex items-center justify-center bg-black">
         <div className="text-center space-y-3 px-6">
           <p className="font-inter text-[#FF3B3B] text-xs tracking-[2px] uppercase">Stream error</p>
-          <p className="font-inter text-[#555555] text-xs">{hlsError}</p>
-          <button
-            onClick={() => setHlsError(null)}
-            className="font-inter text-xs text-[#999999] hover:text-white underline"
-          >
+          <p className="font-inter text-[#555555] text-xs">{error}</p>
+          <button onClick={onRetry} className="font-inter text-xs text-[#999999] hover:text-white underline">
             Retry
           </button>
         </div>
@@ -223,8 +253,23 @@ function HlsPlayer({ hlsUrl }: { hlsUrl: string | null }) {
         className="w-full h-full object-contain"
         style={{ background: '#000' }}
       />
-      {/* Unmute overlay — shown until user taps it */}
-      {muted && (
+      {/* Connecting overlay */}
+      {connecting && (
+        <div className="absolute inset-0 flex items-center justify-center bg-black/40 pointer-events-none">
+          <div className="text-center space-y-4">
+            <div className="flex gap-2 justify-center">
+              {[0, 1, 2].map(i => (
+                <motion.div key={i} className="w-2 h-2 rounded-full bg-[#FF3B3B]"
+                  animate={{ scale: [1, 1.5, 1], opacity: [0.4, 1, 0.4] }}
+                  transition={{ duration: 0.9, delay: i * 0.25, repeat: Infinity }} />
+              ))}
+            </div>
+            <p className="font-inter text-[#999999] text-[11px] tracking-[2px] uppercase">Connecting to stream…</p>
+          </div>
+        </div>
+      )}
+      {/* Unmute overlay */}
+      {!connecting && muted && (
         <button
           onClick={unmute}
           className="absolute top-3 right-3 flex items-center gap-1.5 bg-black/70 hover:bg-black/90 border border-white/20 text-white font-inter text-xs px-3 py-1.5 rounded-sm transition-all"
@@ -245,6 +290,7 @@ function LiveViewer({ playbackId, sessionId, session, onEnded }: {
 }) {
   const router = useRouter()
   const [elapsed, setElapsed] = useState(0)
+  const [attempt, setAttempt] = useState(0)
 
   useEffect(() => {
     const t = setInterval(() => setElapsed(s => s + 1), 1000)
@@ -274,7 +320,7 @@ function LiveViewer({ playbackId, sessionId, session, onEnded }: {
       {/* Left: video player — 70% on desktop */}
       <div className="flex-1 lg:w-[70%] bg-black flex items-center min-h-[56vw] lg:min-h-screen">
         {playbackId ? (
-          <HlsPlayer hlsUrl={playbackId} />
+          <WhepPlayer playbackUrl={playbackId} attempt={attempt} onRetry={() => setAttempt(a => a + 1)} />
         ) : (
           <div className="w-full aspect-video flex items-center justify-center">
             <div className="text-center space-y-6">

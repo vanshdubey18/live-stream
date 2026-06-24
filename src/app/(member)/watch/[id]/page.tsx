@@ -74,29 +74,33 @@ export default async function WatchPage({ params }: { params: { id: string } }) 
     }
   }
 
-  // Determine initial phase + playback ID
+  // Determine initial phase + HLS URL
   let initialPhase: 'waiting' | 'live' | 'post' = 'waiting'
-  let initialPlaybackId: string | null = null
+  let initialHlsUrl: string | null = null
 
   if (session.status === 'live') {
     initialPhase = 'live'
-    // Get gym's live stream playback ID
-    const { data: gym } = await supabase
-      .from('gyms')
-      .select('mux_playback_id')
-      .eq('id', session.gym_id)
-      .maybeSingle()
-    initialPlaybackId = gym?.mux_playback_id ?? null
+    // Prefer HLS URL stored on the session; fall back to gym's current URL
+    if ((session as any).cf_hls_url) {
+      initialHlsUrl = (session as any).cf_hls_url
+    } else {
+      const { data: gym } = await supabase
+        .from('gyms')
+        .select('cf_hls_url')
+        .eq('id', session.gym_id)
+        .maybeSingle()
+      initialHlsUrl = gym?.cf_hls_url ?? null
+    }
   } else if (session.status === 'ended') {
     initialPhase = 'post'
-    initialPlaybackId = session.mux_playback_id ?? null
+    // No recording on free plan
   }
 
   return (
     <WatchClient
       session={session as any}
       initialPhase={initialPhase}
-      initialPlaybackId={initialPlaybackId}
+      initialPlaybackId={initialHlsUrl}
     />
   )
 }

@@ -1,48 +1,38 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import GymSidebar from '@/components/layout/GymSidebar'
-import { Copy, Check, Loader2, Radio, Wifi, WifiOff, Smartphone } from 'lucide-react'
-
-const RTMP_SERVER = 'rtmps://global-live.mux.com:443/app'
-
-interface Props {
-  gymId: string
-  streamKey: string | null
-  hasStream: boolean
-}
+import { Loader2, Radio, Wifi, WifiOff, AlertCircle, Camera, CameraOff } from 'lucide-react'
 
 type StreamStatus = 'loading' | 'idle' | 'active' | 'disconnected'
 
-type CopiedField = 'combined' | 'url' | 'key' | null
+interface Props {
+  gymId: string
+  hasCfStream: boolean
+}
 
-export default function StreamSetupPageClient({ gymId, streamKey: initialKey, hasStream: initialHasStream }: Props) {
-  const [streamKey, setStreamKey] = useState<string | null>(initialKey)
+export default function StreamSetupPageClient({ gymId, hasCfStream: initialHasCfStream }: Props) {
   const [status, setStatus] = useState<StreamStatus>('loading')
-  const [provisioning, setProvisioning] = useState(!initialHasStream)
+  const [provisioning, setProvisioning] = useState(!initialHasCfStream)
   const [provisionError, setProvisionError] = useState<string | null>(null)
-  const [copied, setCopied] = useState<CopiedField>(null)
-  const [showKey, setShowKey] = useState(false)
   const [goingLive, setGoingLive] = useState(false)
   const [endingStream, setEndingStream] = useState(false)
+  const [goLiveError, setGoLiveError] = useState<string | null>(null)
+  const [elapsed, setElapsed] = useState(0)
 
-  function copy(text: string, which: CopiedField) {
-    navigator.clipboard.writeText(text)
-    setCopied(which)
-    setTimeout(() => setCopied(null), 2000)
-  }
+  const pcRef = useRef<RTCPeerConnection | null>(null)
+  const localStreamRef = useRef<MediaStream | null>(null)
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const elapsedRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
+  // Provision Cloudflare live input on first visit
   const provision = useCallback(async () => {
     setProvisioning(true)
     setProvisionError(null)
     try {
       const res = await fetch('/api/gym/create-stream', { method: 'POST' })
       const data = await res.json()
-      if (data.stream_key) {
-        setStreamKey(data.stream_key)
-      } else if (data.error) {
-        setProvisionError(data.error)
-      }
+      if (data.error) setProvisionError(data.error)
     } catch {
       setProvisionError('Network error — could not reach the server')
     } finally {
@@ -50,6 +40,7 @@ export default function StreamSetupPageClient({ gymId, streamKey: initialKey, ha
     }
   }, [])
 
+  // Poll stream status
   const pollStatus = useCallback(async () => {
     try {
       const res = await fetch(`/api/gym/stream-status?gym_id=${gymId}`)
@@ -66,12 +57,92 @@ export default function StreamSetupPageClient({ gymId, streamKey: initialKey, ha
     return () => clearInterval(t)
   }, [pollStatus])
 
+  // Attach local stream to video element
+  useEffect(() => {
+    if (videoRef.current && localStreamRef.current) {
+      videoRef.current.srcObject = localStreamRef.current
+    }
+  })
+
+  function startElapsedTimer() {
+    setElapsed(0)
+    elapsedRef.current = setInterval(() => setElapsed(s => s + 1), 1000)
+  }
+
+  function stopElapsedTimer() {
+    if (elapsedRef.current) clearInterval(elapsedRef.current)
+    elapsedRef.current = null
+    setElapsed(0)
+  }
+
+  function pad(n: number) { return String(n).padStart(2, '0') }
+
   async function handleGoLive() {
     setGoingLive(true)
+    setGoLiveError(null)
     try {
+      // 1. Get camera + mic
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+      localStreamRef.current = stream
+
+      // 2. Setup RTCPeerConnection
+      const pc = new RTCPeerConnection({
+        iceServers: [{ urls: 'stun:stun.cloudflare.com:3478' }],
+      })
+      pcRef.current = pc
+
+      // 3. Add tracks as sendonly
+      for (const track of stream.getTracks()) {
+        pc.addTransceiver(track, { direction: 'sendonly' })
+      }
+
+      // 4. Create + set local offer
+      const offer = await pc.createOffer()
+      await pc.setLocalDescription(offer)
+
+      // 5. Wait for ICE gathering (or 5s timeout)
+      await Promise.race([
+        new Promise<void>(resolve => {
+          if (pc.iceGatheringState === 'complete') { resolve(); return }
+          pc.addEventListener('icegatheringstatechange', () => {
+            if (pc.iceGatheringState === 'complete') resolve()
+          })
+        }),
+        new Promise<void>(resolve => setTimeout(resolve, 5000)),
+      ])
+
+      // 6. Send SDP to our WHIP proxy
+      const whipRes = await fetch('/api/gym/cf-whip', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/sdp' },
+        body: pc.localDescription!.sdp,
+      })
+
+      if (!whipRes.ok) {
+        const errText = await whipRes.text().catch(() => '')
+        let msg = `WHIP error (${whipRes.status})`
+        try { const j = JSON.parse(errText); msg = j.error ?? msg } catch { /* raw text */ }
+        throw new Error(msg)
+      }
+
+      // 7. Set remote description (SDP answer from Cloudflare)
+      const sdpAnswer = await whipRes.text()
+      await pc.setRemoteDescription({ type: 'answer', sdp: sdpAnswer })
+
+      // 8. Notify server — creates session record
       await fetch('/api/gym/go-live', { method: 'POST' })
+
       setStatus('active')
-    } catch { /* poll will correct */ } finally {
+      startElapsedTimer()
+    } catch (err) {
+      console.error('[GoLive]', err)
+      // Cleanup on failure
+      localStreamRef.current?.getTracks().forEach(t => t.stop())
+      localStreamRef.current = null
+      pcRef.current?.close()
+      pcRef.current = null
+      setGoLiveError(err instanceof Error ? err.message : 'Failed to start stream')
+    } finally {
       setGoingLive(false)
     }
   }
@@ -79,6 +150,13 @@ export default function StreamSetupPageClient({ gymId, streamKey: initialKey, ha
   async function handleEndStream() {
     setEndingStream(true)
     try {
+      // Stop tracks + close connection
+      localStreamRef.current?.getTracks().forEach(t => t.stop())
+      localStreamRef.current = null
+      pcRef.current?.close()
+      pcRef.current = null
+      stopElapsedTimer()
+
       await fetch('/api/gym/end-class', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -92,16 +170,13 @@ export default function StreamSetupPageClient({ gymId, streamKey: initialKey, ha
 
   const isLive = status === 'active'
   const isLoading = status === 'loading' || provisioning
-  const combinedUrl = streamKey ? `${RTMP_SERVER}/${streamKey}` : null
-  const larixUrl = streamKey
-    ? `larix://app?action=openStream&server=${encodeURIComponent(RTMP_SERVER)}&streamKey=${encodeURIComponent(streamKey)}`
-    : null
 
   return (
     <div className="min-h-screen bg-[#0D0D0D] flex">
       <GymSidebar active="Stream Setup" />
 
       <main className="flex-1 lg:ml-64 min-w-0">
+        {/* Header bar */}
         <div className="sticky top-0 z-20 bg-[#0D0D0D] border-b border-[#222222] px-6 h-16 flex items-center justify-between mt-14 lg:mt-0">
           <div>
             <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase">Gym Dashboard</p>
@@ -134,8 +209,77 @@ export default function StreamSetupPageClient({ gymId, streamKey: initialKey, ha
 
         <div className="px-6 py-8 max-w-xl space-y-4">
 
-          {/* GO LIVE / END STREAM action */}
-          {streamKey && !provisionError && (
+          {/* Provisioning state */}
+          {provisioning && (
+            <div className="flex items-center gap-3 bg-[#1A1A1A] border border-[#333333] rounded-sm px-5 py-4">
+              <Loader2 size={14} className="animate-spin text-[#555555] shrink-0" />
+              <span className="font-inter text-sm text-[#555555]">Setting up your stream…</span>
+            </div>
+          )}
+
+          {/* Provision error */}
+          {provisionError && (
+            <div className="bg-[#1A1A1A] border border-[#FF3B3B]/30 rounded-sm px-5 py-4 space-y-2">
+              <div className="flex items-center gap-2">
+                <AlertCircle size={14} className="text-[#FF3B3B] shrink-0" />
+                <p className="font-inter text-xs text-[#FF3B3B]">Failed to set up stream</p>
+              </div>
+              <p className="font-mono text-xs text-[#555555] break-all">{provisionError}</p>
+              <button onClick={provision} className="font-inter text-xs text-[#999999] hover:text-white underline">
+                Retry
+              </button>
+            </div>
+          )}
+
+          {/* GO LIVE error */}
+          {goLiveError && (
+            <div className="bg-[#1A1A1A] border border-[#FF3B3B]/30 rounded-sm px-5 py-4 space-y-2">
+              <div className="flex items-center gap-2">
+                <AlertCircle size={14} className="text-[#FF3B3B] shrink-0" />
+                <p className="font-inter text-xs text-[#FF3B3B]">Could not start stream</p>
+              </div>
+              <p className="font-mono text-xs text-[#555555] break-all">{goLiveError}</p>
+              <button onClick={() => setGoLiveError(null)} className="font-inter text-xs text-[#999999] hover:text-white underline">
+                Dismiss
+              </button>
+            </div>
+          )}
+
+          {/* Camera preview card — shown when streaming */}
+          {isLive && (
+            <div className="bg-[#111111] border border-[#333333] rounded-sm overflow-hidden">
+              <div className="relative aspect-video bg-black">
+                <video
+                  ref={videoRef}
+                  autoPlay
+                  muted
+                  playsInline
+                  className="w-full h-full object-cover"
+                />
+                {/* LIVE badge overlay */}
+                <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-[#FF3B3B] px-2 py-1 rounded-sm">
+                  <Radio size={10} className="text-white live-pulse" />
+                  <span className="font-bebas text-white text-xs tracking-[2px]">LIVE</span>
+                </div>
+                {/* Elapsed time */}
+                <div className="absolute top-3 right-3 bg-black/70 px-2 py-1 rounded-sm">
+                  <span className="font-bebas text-white text-sm tracking-[1px] tabular-nums">
+                    {pad(Math.floor(elapsed / 3600) > 0 ? Math.floor(elapsed / 3600) : Math.floor(elapsed / 60))}
+                    :{pad(Math.floor(elapsed / 3600) > 0 ? Math.floor((elapsed % 3600) / 60) : elapsed % 60)}
+                  </span>
+                </div>
+                {/* No camera fallback */}
+                {!localStreamRef.current && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <CameraOff size={32} className="text-[#333333]" />
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Primary action button */}
+          {!provisioning && !provisionError && (
             isLive ? (
               <button
                 onClick={handleEndStream}
@@ -151,126 +295,22 @@ export default function StreamSetupPageClient({ gymId, streamKey: initialKey, ha
                 disabled={goingLive || isLoading}
                 className="w-full flex items-center justify-center gap-3 bg-[#FF3B3B] hover:bg-[#e03030] text-white font-bebas tracking-[3px] text-lg py-4 rounded-sm transition-all disabled:opacity-60"
               >
-                {goingLive ? <Loader2 size={16} className="animate-spin" /> : <Radio size={16} />}
-                {goingLive ? 'STARTING…' : 'GO LIVE'}
+                {goingLive
+                  ? <Loader2 size={16} className="animate-spin" />
+                  : <Camera size={16} />
+                }
+                {goingLive ? 'CONNECTING…' : 'GO LIVE'}
               </button>
             )
           )}
 
-          {/* Credentials card */}
-          <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm overflow-hidden">
-            <div className="px-6 py-4 border-b border-[#222222]">
-              <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase">Stream Credentials</p>
-              <p className="font-inter text-xs text-[#555555] mt-0.5">Open your streaming app and paste these in.</p>
-            </div>
-
-            <div className="px-6 py-5 space-y-5">
-
-              {/* Stream key state */}
-              {provisionError ? (
-                <div className="bg-[#0D0D0D] border border-[#FF3B3B]/30 rounded-sm px-4 py-3 space-y-1.5">
-                  <p className="font-inter text-xs text-[#FF3B3B]">Failed to provision stream</p>
-                  <p className="font-mono text-xs text-[#555555] break-all">{provisionError}</p>
-                  <button onClick={provision} className="font-inter text-xs text-[#999999] hover:text-white underline">
-                    Retry
-                  </button>
-                </div>
-              ) : provisioning || !streamKey ? (
-                <div className="flex items-center gap-3 bg-[#0D0D0D] border border-[#333333] rounded-sm px-4 py-3">
-                  <Loader2 size={14} className="animate-spin text-[#555555] shrink-0" />
-                  <span className="font-inter text-sm text-[#555555]">Provisioning your stream…</span>
-                </div>
-              ) : (
-                <>
-                  {/* Combined URL — for Larix / Streamlabs mobile */}
-                  <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <p className="font-inter text-[11px] text-[#999999] tracking-[3px] uppercase">Stream URL (Larix / Streamlabs)</p>
-                      {larixUrl && (
-                        <a
-                          href={larixUrl}
-                          className="flex items-center gap-1 font-inter text-[11px] text-[#555555] hover:text-white transition-colors"
-                        >
-                          <Smartphone size={11} />
-                          Open in Larix
-                        </a>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="flex-1 bg-[#0D0D0D] border border-[#333333] rounded-sm px-4 py-2.5 font-mono text-xs text-[#999999] truncate">
-                        {combinedUrl}
-                      </div>
-                      <button
-                        onClick={() => copy(combinedUrl!, 'combined')}
-                        className={`shrink-0 flex items-center gap-1.5 border font-inter text-xs px-3 py-2.5 rounded-sm transition-all ${
-                          copied === 'combined'
-                            ? 'border-[#00D4AA]/40 bg-[#00D4AA]/5 text-[#00D4AA]'
-                            : 'border-[#333333] text-[#555555] hover:text-white hover:border-[#555555]'
-                        }`}
-                      >
-                        {copied === 'combined' ? <><Check size={12} /> COPIED</> : <><Copy size={12} /> COPY</>}
-                      </button>
-                    </div>
-                    <p className="font-inter text-[10px] text-[#444444] mt-1.5">
-                      Paste as a single URL in Larix → Connections → New connection → Server URL
-                    </p>
-                  </div>
-
-                  {/* Separate fields for OBS */}
-                  <div className="border-t border-[#222222] pt-4 space-y-3">
-                    <p className="font-inter text-[11px] text-[#555555] tracking-[3px] uppercase">OBS / Split fields</p>
-                    <div>
-                      <p className="font-inter text-[10px] text-[#666666] mb-1.5">Server</p>
-                      <div className="flex items-center gap-2">
-                        <div className="flex-1 bg-[#0D0D0D] border border-[#2A2A2A] rounded-sm px-3 py-2 font-mono text-xs text-[#777777] truncate">
-                          {RTMP_SERVER}
-                        </div>
-                        <button
-                          onClick={() => copy(RTMP_SERVER, 'url')}
-                          className={`shrink-0 flex items-center gap-1 border font-inter text-xs px-2.5 py-2 rounded-sm transition-all ${
-                            copied === 'url'
-                              ? 'border-[#00D4AA]/40 bg-[#00D4AA]/5 text-[#00D4AA]'
-                              : 'border-[#2A2A2A] text-[#444444] hover:text-white hover:border-[#555555]'
-                          }`}
-                        >
-                          {copied === 'url' ? <Check size={11} /> : <Copy size={11} />}
-                        </button>
-                      </div>
-                    </div>
-                    <div>
-                      <p className="font-inter text-[10px] text-[#666666] mb-1.5">Stream Key</p>
-                      <div className="flex items-center gap-2">
-                        <div className="flex-1 bg-[#0D0D0D] border border-[#2A2A2A] rounded-sm px-3 py-2 font-mono text-xs text-[#777777] truncate">
-                          {showKey ? streamKey : '••••••••••••••••••••••'}
-                        </div>
-                        <button
-                          onClick={() => setShowKey(v => !v)}
-                          className="shrink-0 border border-[#2A2A2A] text-[#444444] hover:text-white hover:border-[#555555] font-inter text-xs px-2.5 py-2 rounded-sm transition-all"
-                        >
-                          {showKey ? 'HIDE' : 'SHOW'}
-                        </button>
-                        <button
-                          onClick={() => copy(streamKey!, 'key')}
-                          className={`shrink-0 flex items-center gap-1 border font-inter text-xs px-2.5 py-2 rounded-sm transition-all ${
-                            copied === 'key'
-                              ? 'border-[#00D4AA]/40 bg-[#00D4AA]/5 text-[#00D4AA]'
-                              : 'border-[#2A2A2A] text-[#444444] hover:text-white hover:border-[#555555]'
-                          }`}
-                        >
-                          {copied === 'key' ? <Check size={11} /> : <Copy size={11} />}
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-
-          <p className="font-inter text-xs text-[#444444] px-1">
-            Click GO LIVE to notify members a stream is starting, then open your streaming app and paste the credentials.
-            Status updates automatically every 30 seconds.
-          </p>
+          {/* Info text */}
+          {!isLive && !provisioning && !provisionError && (
+            <p className="font-inter text-xs text-[#444444] px-1">
+              Click GO LIVE — your browser will ask for camera and microphone access, then start streaming instantly.
+              Members will be notified and can join right away.
+            </p>
+          )}
 
         </div>
       </main>

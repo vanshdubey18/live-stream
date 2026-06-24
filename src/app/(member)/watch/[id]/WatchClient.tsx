@@ -1,11 +1,11 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowLeft, CheckCircle2, Circle, Lock, Sparkles, BookOpen, Layers, MessageCircle } from 'lucide-react'
 import Link from 'next/link'
-import MuxPlayer from '@mux/mux-player-react'
+import Hls from 'hls.js'
 import SessionSummary, { DEMO_SUMMARY } from '@/components/ai/SessionSummary'
 
 function pad(n: number) { return String(n).padStart(2, '0') }
@@ -151,6 +151,39 @@ function WaitingRoom({ session }: { session: SessionInfo }) {
   )
 }
 
+// ─── HLS video player ─────────────────────────────────────────────────────────
+function HlsPlayer({ hlsUrl }: { hlsUrl: string | null }) {
+  const videoRef = useRef<HTMLVideoElement>(null)
+
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video || !hlsUrl) return
+
+    if (Hls.isSupported()) {
+      const hls = new Hls({ liveSyncDurationCount: 3, liveMaxLatencyDurationCount: 6 })
+      hls.loadSource(hlsUrl)
+      hls.attachMedia(video)
+      hls.on(Hls.Events.MANIFEST_PARSED, () => { video.play().catch(() => { /* autoplay blocked */ }) })
+      return () => hls.destroy()
+    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+      // Safari native HLS
+      video.src = hlsUrl
+      video.play().catch(() => { /* autoplay blocked */ })
+    }
+  }, [hlsUrl])
+
+  return (
+    <video
+      ref={videoRef}
+      autoPlay
+      controls
+      playsInline
+      className="w-full h-full object-contain"
+      style={{ background: '#000' }}
+    />
+  )
+}
+
 // ─── Live viewer ──────────────────────────────────────────────────────────────
 function LiveViewer({ playbackId, sessionId, session, onEnded }: {
   playbackId: string | null
@@ -189,17 +222,10 @@ function LiveViewer({ playbackId, sessionId, session, onEnded }: {
       {/* Left: video player — 70% on desktop */}
       <div className="flex-1 lg:w-[70%] bg-black flex items-center min-h-[56vw] lg:min-h-screen">
         {playbackId ? (
-          <MuxPlayer
-            streamType="live"
-            playbackId={playbackId}
-            autoPlay
-            accentColor="#FF3B3B"
-            style={{ width: '100%', display: 'block' }}
-          />
+          <HlsPlayer hlsUrl={playbackId} />
         ) : (
           <div className="w-full aspect-video flex items-center justify-center">
             <div className="text-center space-y-6">
-              {/* Top bar nav inside player fallback */}
               <div className="flex gap-2 justify-center">
                 {[0, 1, 2].map(i => (
                   <motion.div key={i} className="w-2 h-2 rounded-full bg-[#FF3B3B]"

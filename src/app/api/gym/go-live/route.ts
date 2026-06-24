@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
 
   const { data: gym } = await supabase
     .from('gyms')
-    .select('id, status, mux_playback_id, mux_live_stream_id')
+    .select('id, status, mux_playback_id, mux_live_stream_id, cf_hls_url')
     .eq('owner_id', user.id)
     .maybeSingle()
 
@@ -52,6 +52,7 @@ export async function POST(req: NextRequest) {
       level: 'Beginner',
       status: 'live',
       mux_playback_id: gym.mux_playback_id,
+      cf_hls_url: gym.cf_hls_url ?? null,
     })
     .select('id')
     .single()

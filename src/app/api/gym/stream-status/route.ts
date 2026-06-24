@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { getLiveStreamStatus } from '@/lib/mux'
+import { getLiveInputStatus } from '@/lib/cloudflare'
 
 export async function GET(req: NextRequest) {
   const gymId = req.nextUrl.searchParams.get('gym_id')
@@ -10,25 +10,21 @@ export async function GET(req: NextRequest) {
 
   const { data: gym, error } = await supabase
     .from('gyms')
-    .select('mux_live_stream_id, stream_key, mux_playback_id')
+    .select('cf_live_input_uid, cf_hls_url')
     .eq('id', gymId)
     .maybeSingle()
 
   if (error || !gym) return NextResponse.json({ error: 'Gym not found' }, { status: 404 })
 
-  if (!gym.mux_live_stream_id) {
+  if (!gym.cf_live_input_uid) {
     return NextResponse.json({ status: 'idle', has_stream: false })
   }
 
   try {
-    const { status, viewer_count } = await getLiveStreamStatus(gym.mux_live_stream_id)
-    return NextResponse.json({
-      has_stream: true,
-      status,
-      viewer_count,
-      playback_id: gym.mux_playback_id,
-    })
+    const cfStatus = await getLiveInputStatus(gym.cf_live_input_uid)
+    const status = cfStatus === 'connected' ? 'active' : 'idle'
+    return NextResponse.json({ has_stream: true, status, hls_url: gym.cf_hls_url })
   } catch {
-    return NextResponse.json({ has_stream: true, status: 'idle', viewer_count: 0 })
+    return NextResponse.json({ has_stream: true, status: 'idle' })
   }
 }

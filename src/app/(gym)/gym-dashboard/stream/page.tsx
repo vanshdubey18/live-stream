@@ -14,8 +14,7 @@ export default async function StreamSetupPage() {
   return (
     <StreamSetupPageClient
       gymId={gym.id}
-      streamKey={gym.stream_key ?? null}
-      hasStream={!!gym.mux_live_stream_id}
+      hasCfStream={!!gym.cf_live_input_uid}
     />
   )
 }

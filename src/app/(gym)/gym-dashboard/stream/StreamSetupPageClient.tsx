@@ -46,6 +46,9 @@ export default function StreamSetupPageClient({ gymId, hasCfStream: initialHasCf
       const res = await fetch(`/api/gym/stream-status?gym_id=${gymId}`)
       if (!res.ok) return
       const data = await res.json()
+      // If we have an active local RTCPeerConnection, trust it — don't let a
+      // slow Cloudflare status response flip us back to idle mid-stream.
+      if (pcRef.current) return
       setStatus((data.status ?? 'idle') as StreamStatus)
       if (!data.has_stream) provision()
     } catch { /* ignore */ }
@@ -57,12 +60,14 @@ export default function StreamSetupPageClient({ gymId, hasCfStream: initialHasCf
     return () => clearInterval(t)
   }, [pollStatus])
 
-  // Attach local stream to video element
+  // Attach local stream to video element only when going live
   useEffect(() => {
-    if (videoRef.current && localStreamRef.current) {
-      videoRef.current.srcObject = localStreamRef.current
+    if (isLive && videoRef.current && localStreamRef.current) {
+      if (videoRef.current.srcObject !== localStreamRef.current) {
+        videoRef.current.srcObject = localStreamRef.current
+      }
     }
-  })
+  }, [isLive])
 
   function startElapsedTimer() {
     setElapsed(0)

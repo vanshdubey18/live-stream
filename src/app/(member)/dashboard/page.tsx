@@ -43,6 +43,9 @@ export default async function DashboardPage() {
     })
   )
 
+  const gymNames: Record<string, string> = {}
+  memberships.forEach((m: any) => { if (m.gyms?.id) gymNames[m.gyms.id] = m.gyms.name ?? '' })
+
   return (
     <DashboardClient
       user={{ name: user.user_metadata?.full_name ?? user.email ?? 'Fighter', email: user.email ?? '' }}
@@ -53,6 +56,8 @@ export default async function DashboardPage() {
       completedCount={completedCount}
       totalHours={totalHours}
       monthCount={monthCount}
+      gymIds={gymIds}
+      gymNames={gymNames}
     />
   )
 }

@@ -1,10 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import MemberSidebar from '@/components/layout/MemberSidebar'
 import InsightCard from '@/components/ui/InsightCard'
 import { ChevronRight, ArrowRight, BookOpen, Sparkles, Layers, MessageCircle, Lock } from 'lucide-react'
+import { createClient } from '@/lib/supabase/client'
 
 interface Props {
   user: { name: string; email: string }
@@ -15,6 +16,8 @@ interface Props {
   completedCount: number
   totalHours: number
   monthCount: number
+  gymIds: string[]
+  gymNames: Record<string, string>
 }
 
 const DISCIPLINE_COLOR: Record<string, string> = {
@@ -645,8 +648,32 @@ function AICoachSection() {
 }
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
-export default function DashboardClient({ user, memberships, upcoming, replays, liveSession, completedCount, totalHours, monthCount }: Props) {
+export default function DashboardClient({ user, memberships, upcoming, replays, liveSession: initialLiveSession, completedCount, totalHours, monthCount, gymIds, gymNames }: Props) {
   const [, setSearchOpen] = useState(false)
+  const [liveSession, setLiveSession] = useState<any | null>(initialLiveSession)
+
+  // Real-time: detect when any session in member's gyms goes live or ends
+  useEffect(() => {
+    if (!gymIds.length) return
+    const supabase = createClient()
+    const channel = supabase.channel('dashboard-live-sessions')
+    channel.on(
+      'postgres_changes',
+      { event: 'UPDATE', schema: 'public', table: 'sessions' },
+      (payload) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const s = payload.new as any
+        if (!gymIds.includes(s.gym_id)) return
+        if (s.status === 'live') {
+          setLiveSession({ ...s, gyms: { name: gymNames[s.gym_id] ?? '' } })
+        } else {
+          setLiveSession(prev => prev?.id === s.id ? null : prev)
+        }
+      }
+    )
+    channel.subscribe()
+    return () => { supabase.removeChannel(channel) }
+  }, [gymIds, gymNames])
 
   return (
     <div className="min-h-screen bg-[#0D0D0D] flex">

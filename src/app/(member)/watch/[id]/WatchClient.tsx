@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowLeft, CheckCircle2, Circle, Lock, Sparkles, BookOpen, Layers, MessageCircle } from 'lucide-react'
 import Link from 'next/link'
@@ -28,25 +27,12 @@ function WaitingRoom({ session }: { session: SessionInfo }) {
   const [seconds, setSeconds] = useState(getRemaining)
   const [checklist, setChecklist] = useState([false, false, false])
   const checkItems = ['Find your gear', 'Clear your space', 'Set up your mat']
-  const router = useRouter()
 
   useEffect(() => {
     const t = setInterval(() => setSeconds(getRemaining()), 1000)
     return () => clearInterval(t)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
-  useEffect(() => {
-    const poll = async () => {
-      try {
-        const res = await fetch(`/api/watch/session-status?session_id=${session.id}`)
-        const data = await res.json()
-        if (data.status === 'live') router.refresh()
-      } catch { /* ignore */ }
-    }
-    const t = setInterval(poll, 10_000)
-    return () => clearInterval(t)
-  }, [session.id, router])
 
   const mins = Math.floor(seconds / 60)
   const secs = seconds % 60
@@ -239,15 +225,13 @@ function WhepPlayer({ playbackUrl, attempt, onRetry }: { playbackUrl: string | n
 }
 
 // ─── Live viewer ──────────────────────────────────────────────────────────────
-function LiveViewer({ playbackId, sessionId, session, userId, userName, onEnded }: {
+function LiveViewer({ playbackId, sessionId, session, userId, userName }: {
   playbackId: string | null
   sessionId: string
   session: SessionInfo
   userId: string
   userName: string
-  onEnded: () => void
 }) {
-  const router = useRouter()
   const [elapsed, setElapsed] = useState(0)
   const [attempt, setAttempt] = useState(0)
   const [startedMinsAgo, setStartedMinsAgo] = useState(0)
@@ -274,18 +258,6 @@ function LiveViewer({ playbackId, sessionId, session, userId, userName, onEnded 
     })
     return () => { supabase.removeChannel(channel) }
   }, [sessionId, userId, userName])
-
-  useEffect(() => {
-    const poll = async () => {
-      try {
-        const res = await fetch(`/api/watch/session-status?session_id=${sessionId}`)
-        const data = await res.json()
-        if (data.status === 'ended') onEnded()
-      } catch { /* ignore */ }
-    }
-    const t = setInterval(poll, 15_000)
-    return () => clearInterval(t)
-  }, [sessionId, router, onEnded])
 
   return (
     <motion.div key="live" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="min-h-screen bg-[#0D0D0D] flex flex-col lg:flex-row">
@@ -453,9 +425,57 @@ interface Props {
 export default function WatchClient({ session, initialPhase, initialPlaybackId, userId, userName }: Props) {
   const [phase, setPhase] = useState<Phase>(initialPhase)
   const [playbackId, setPlaybackId] = useState<string | null>(initialPlaybackId)
+  // Ref to avoid stale closure in async Realtime handler
+  const phaseRef = useRef(phase)
+  phaseRef.current = phase
 
   useEffect(() => { setPhase(initialPhase) }, [initialPhase])
   useEffect(() => { if (initialPlaybackId) setPlaybackId(initialPlaybackId) }, [initialPlaybackId])
+
+  // Supabase Realtime — instant live/ended detection for this session
+  useEffect(() => {
+    const supabase = createClient()
+    const channel = supabase.channel(`watch-session-${session.id}`)
+    channel.on(
+      'postgres_changes',
+      { event: 'UPDATE', schema: 'public', table: 'sessions', filter: `id=eq.${session.id}` },
+      async (payload) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const s = payload.new as any
+        if (s.status === 'live' && phaseRef.current !== 'live') {
+          try {
+            const res = await fetch(`/api/watch/session-status?session_id=${session.id}`)
+            const data = await res.json()
+            setPlaybackId(data.cf_hls_url ?? null)
+          } catch { /* ignore — show connecting spinner */ }
+          setPhase('live')
+        } else if (s.status === 'ended' && phaseRef.current !== 'post') {
+          setPhase('post')
+        }
+      }
+    )
+    channel.subscribe()
+    return () => { supabase.removeChannel(channel) }
+  }, [session.id])
+
+  // 30s fallback poll — catches transitions if Realtime WebSocket drops
+  useEffect(() => {
+    if (phase === 'post') return
+    const poll = async () => {
+      try {
+        const res = await fetch(`/api/watch/session-status?session_id=${session.id}`)
+        const data = await res.json()
+        if (data.status === 'live' && phaseRef.current !== 'live') {
+          setPlaybackId(data.cf_hls_url ?? null)
+          setPhase('live')
+        } else if (data.status === 'ended' && phaseRef.current !== 'post') {
+          setPhase('post')
+        }
+      } catch { /* ignore */ }
+    }
+    const t = setInterval(poll, 30_000)
+    return () => clearInterval(t)
+  }, [session.id, phase])
 
   return (
     <div className="min-h-screen bg-[#0D0D0D] overflow-x-hidden">
@@ -463,7 +483,7 @@ export default function WatchClient({ session, initialPhase, initialPlaybackId, 
         {phase === 'waiting' && <WaitingRoom key="waiting" session={session} />}
         {phase === 'live' && (
           <LiveViewer key="live" playbackId={playbackId} sessionId={session.id} session={session}
-            userId={userId} userName={userName} onEnded={() => setPhase('post')} />
+            userId={userId} userName={userName} />
         )}
         {phase === 'post' && <PostViewer key="post" />}
       </AnimatePresence>

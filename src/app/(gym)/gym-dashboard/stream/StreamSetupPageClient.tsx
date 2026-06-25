@@ -115,6 +115,21 @@ export default function StreamSetupPageClient({ gymId, hasCfStream: initialHasCf
           case 'connected':
             setConn('live')
             setGoLiveError(null)
+            // Poll Cloudflare via stream-status until it confirms the stream is
+            // distributable (status: 'active'), then create the Supabase session.
+            // This prevents members from seeing a live session before Cloudflare
+            // has registered the broadcaster — which causes WHEP 409 errors.
+            ;(async () => {
+              for (let i = 0; i < 10; i++) {
+                try {
+                  const r = await fetch(`/api/gym/stream-status?gym_id=${gymId}`)
+                  const d = await r.json()
+                  if (d.status === 'active') break
+                } catch { /* ignore network errors, keep polling */ }
+                await new Promise<void>(res => setTimeout(res, 2000))
+              }
+              fetch('/api/gym/go-live', { method: 'POST' }).catch(console.error)
+            })()
             break
           case 'disconnected':
             // Transient — WebRTC often self-heals. Show reconnecting, don't tear down.
@@ -166,10 +181,8 @@ export default function StreamSetupPageClient({ gymId, hasCfStream: initialHasCf
       const sdpAnswer = await whipRes.text()
       await pc.setRemoteDescription({ type: 'answer', sdp: sdpAnswer })
 
-      // 8. Create the session record so members can join.
-      await fetch('/api/gym/go-live', { method: 'POST' })
-
-      // The onconnectionstatechange handler flips us to 'live' once ICE connects.
+      // ICE negotiation continues in the background; onconnectionstatechange
+      // fires 'connected' once video is flowing — that's when we create the session.
       // Fallback: if already connected by now, set it directly.
       if (pc.connectionState === 'connected') setConn('live')
     } catch (err) {

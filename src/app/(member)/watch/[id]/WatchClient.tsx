@@ -172,14 +172,25 @@ function WhepPlayer({ playbackUrl, attempt, onRetry }: { playbackUrl: string | n
     pc.addTransceiver('video', { direction: 'recvonly' })
     pc.addTransceiver('audio', { direction: 'recvonly' })
 
+    // Create a single MediaStream and bind it to the video element immediately.
+    // ontrack fires separately for audio and video — adding each track to the
+    // same stream lets the element render them as they arrive without remounting.
+    const stream = new MediaStream()
+    const videoEl = videoRef.current
+    if (videoEl) {
+      videoEl.srcObject = stream
+      videoEl.muted = true
+    }
+
     pc.ontrack = (e) => {
+      if (cancelled) return
+      stream.addTrack(e.track)
       const video = videoRef.current
-      if (video && e.streams[0] && video.srcObject !== e.streams[0]) {
-        video.srcObject = e.streams[0]
-        video.muted = true
-        video.play().catch(() => { /* gesture needed on some devices */ })
-        setConnecting(false)
-      }
+      if (!video) return
+      if (video.paused) video.play().catch(() => {})
+      // Only dismiss the connecting overlay once the video track arrives —
+      // audio arrives first and the element would otherwise show black.
+      if (e.track.kind === 'video') setConnecting(false)
     }
     pc.onconnectionstatechange = () => {
       if (cancelled) return
@@ -200,15 +211,30 @@ function WhepPlayer({ playbackUrl, attempt, onRetry }: { playbackUrl: string | n
           }),
           new Promise<void>(resolve => setTimeout(resolve, 3000)),
         ])
-        const res = await fetch(whepUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/sdp' },
-          body: pc.localDescription!.sdp,
-        })
-        if (!res.ok) throw new Error(`Playback error (${res.status})`)
-        const answer = await res.text()
-        if (cancelled) return
-        await pc.setRemoteDescription({ type: 'answer', sdp: answer })
+        // Retry on 409: Cloudflare returns 409 when no broadcaster is registered
+        // yet. Retry up to 10 times with 3s gaps (30s total) to cover the window
+        // between stream-status going 'active' and WHEP becoming available.
+        let retriesLeft = 10
+        while (true) {
+          const res = await fetch(whepUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/sdp' },
+            body: pc.localDescription!.sdp,
+          })
+          if (res.ok) {
+            const answer = await res.text()
+            if (cancelled) return
+            await pc.setRemoteDescription({ type: 'answer', sdp: answer })
+            break
+          }
+          if (res.status === 409 && retriesLeft > 0) {
+            retriesLeft--
+            await new Promise<void>(r => setTimeout(r, 3000))
+            if (cancelled) return
+            continue
+          }
+          throw new Error(`Playback error (${res.status})`)
+        }
       } catch (err) {
         if (!cancelled) {
           console.error('[WhepPlayer]', err)

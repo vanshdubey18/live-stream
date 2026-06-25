@@ -172,14 +172,25 @@ function WhepPlayer({ playbackUrl, attempt, onRetry }: { playbackUrl: string | n
     pc.addTransceiver('video', { direction: 'recvonly' })
     pc.addTransceiver('audio', { direction: 'recvonly' })
 
+    // Create a single MediaStream and bind it to the video element immediately.
+    // ontrack fires separately for audio and video — adding each track to the
+    // same stream lets the element render them as they arrive without remounting.
+    const stream = new MediaStream()
+    const videoEl = videoRef.current
+    if (videoEl) {
+      videoEl.srcObject = stream
+      videoEl.muted = true
+    }
+
     pc.ontrack = (e) => {
+      if (cancelled) return
+      stream.addTrack(e.track)
       const video = videoRef.current
-      if (video && e.streams[0] && video.srcObject !== e.streams[0]) {
-        video.srcObject = e.streams[0]
-        video.muted = true
-        video.play().catch(() => { /* gesture needed on some devices */ })
-        setConnecting(false)
-      }
+      if (!video) return
+      if (video.paused) video.play().catch(() => {})
+      // Only dismiss the connecting overlay once the video track arrives —
+      // audio arrives first and the element would otherwise show black.
+      if (e.track.kind === 'video') setConnecting(false)
     }
     pc.onconnectionstatechange = () => {
       if (cancelled) return

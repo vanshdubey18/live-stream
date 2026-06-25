@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowLeft, CheckCircle2, Circle, Lock, Sparkles, BookOpen, Layers, MessageCircle } from 'lucide-react'
 import Link from 'next/link'
 import SessionSummary, { DEMO_SUMMARY } from '@/components/ai/SessionSummary'
+import { createClient } from '@/lib/supabase/client'
 
 function pad(n: number) { return String(n).padStart(2, '0') }
 
@@ -29,22 +30,18 @@ function WaitingRoom({ session }: { session: SessionInfo }) {
   const checkItems = ['Find your gear', 'Clear your space', 'Set up your mat']
   const router = useRouter()
 
-  // Countdown
   useEffect(() => {
     const t = setInterval(() => setSeconds(getRemaining()), 1000)
     return () => clearInterval(t)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Poll session status every 10s — auto-transition when gym goes live
   useEffect(() => {
     const poll = async () => {
       try {
         const res = await fetch(`/api/watch/session-status?session_id=${session.id}`)
         const data = await res.json()
-        if (data.status === 'live') {
-          router.refresh() // re-run server component → renders LivePhase
-        }
+        if (data.status === 'live') router.refresh()
       } catch { /* ignore */ }
     }
     const t = setInterval(poll, 10_000)
@@ -56,39 +53,22 @@ function WaitingRoom({ session }: { session: SessionInfo }) {
   const toggle = (i: number) => setChecklist(p => p.map((v, idx) => idx === i ? !v : v))
 
   return (
-    <motion.div
-      key="waiting"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0, scale: 0.98 }}
-      transition={{ duration: 0.4 }}
-      className="min-h-screen bg-[#0D0D0D] text-white flex flex-col"
-    >
-      {/* Back nav */}
+    <motion.div key="waiting" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, scale: 0.98 }}
+      transition={{ duration: 0.4 }} className="min-h-screen bg-[#0D0D0D] text-white flex flex-col">
       <div className="px-6 pt-6">
         <Link href="/dashboard" className="inline-flex items-center gap-2 text-[#999999] hover:text-white font-inter text-sm transition-colors">
           <ArrowLeft size={14} /> Dashboard
         </Link>
       </div>
-
-      {/* Center content */}
       <div className="flex flex-col items-center justify-center flex-1 px-4 py-12 text-center">
-
-        {/* Status badge */}
         <div className="flex items-center gap-2 mb-8">
           <span className="w-1.5 h-1.5 rounded-full bg-[#FF3B3B] animate-pulse" />
           <span className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase">Waiting for stream</span>
         </div>
-
-        {/* Session title */}
         <h1 className="font-bebas text-5xl text-white tracking-[1px] mb-2">{session.title}</h1>
-
-        {/* Gym / Coach */}
         <p className="font-inter text-[#999999] text-sm mb-12">
           {session.coaches?.name ?? 'Coach'}{session.gyms?.name ? ` · ${session.gyms.name}` : ''}
         </p>
-
-        {/* Countdown */}
         <div className="flex flex-col items-center gap-3 mb-12">
           <span className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase">Starts in</span>
           <div className="font-bebas text-7xl text-white tracking-[1px] tabular-nums">
@@ -96,21 +76,11 @@ function WaitingRoom({ session }: { session: SessionInfo }) {
             <span className="text-[#333333] mx-1">:</span>
             {pad(Math.floor(mins / 60) > 0 ? mins % 60 : secs)}
           </div>
-          {seconds === 0 && (
-            <p className="font-inter text-[#999999] text-sm animate-pulse">Waiting for the gym to start…</p>
-          )}
+          {seconds === 0 && <p className="font-inter text-[#999999] text-sm animate-pulse">Waiting for the gym to start…</p>}
         </div>
-
-        {/* Two panels */}
         <div className="w-full max-w-2xl flex flex-col sm:flex-row gap-4">
-
-          {/* Session info */}
-          <motion.div
-            initial={{ y: 16, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.15 }}
-            className="flex-1 bg-[#1A1A1A] border border-[#333333] rounded-sm p-5 text-left"
-          >
+          <motion.div initial={{ y: 16, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.15 }}
+            className="flex-1 bg-[#1A1A1A] border border-[#333333] rounded-sm p-5 text-left">
             <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-4">Session</p>
             <div className="space-y-1 mb-4">
               <p className="font-inter text-white text-sm font-medium">{session.coaches?.name ?? 'Coach'}</p>
@@ -121,14 +91,8 @@ function WaitingRoom({ session }: { session: SessionInfo }) {
               <span className="font-inter text-[#999999] text-xs">Waiting for stream to start</span>
             </div>
           </motion.div>
-
-          {/* Checklist */}
-          <motion.div
-            initial={{ y: 16, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.25 }}
-            className="sm:w-64 bg-[#1A1A1A] border border-[#333333] rounded-sm p-5 text-left flex flex-col gap-4"
-          >
+          <motion.div initial={{ y: 16, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.25 }}
+            className="sm:w-64 bg-[#1A1A1A] border border-[#333333] rounded-sm p-5 text-left flex flex-col gap-4">
             <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase">Get ready</p>
             <div className="space-y-3">
               {checkItems.map((item, i) => (
@@ -136,13 +100,10 @@ function WaitingRoom({ session }: { session: SessionInfo }) {
                   {checklist[i]
                     ? <CheckCircle2 size={16} className="text-white shrink-0" />
                     : <Circle size={16} className="text-[#444] shrink-0 group-hover:text-[#666] transition-colors" />}
-                  <span className={`font-inter text-sm transition-colors ${checklist[i] ? 'text-[#999999] line-through' : 'text-[#aaa] group-hover:text-white'}`}>
-                    {item}
-                  </span>
+                  <span className={`font-inter text-sm transition-colors ${checklist[i] ? 'text-[#999999] line-through' : 'text-[#aaa] group-hover:text-white'}`}>{item}</span>
                 </button>
               ))}
             </div>
-
           </motion.div>
         </div>
       </div>
@@ -150,37 +111,32 @@ function WaitingRoom({ session }: { session: SessionInfo }) {
   )
 }
 
-// ─── WHEP (WebRTC) live player ─────────────────────────────────────────────────
-// Cloudflare serves live playback over WebRTC (WHEP) with sub-second latency and
-// — unlike HLS — without needing the recording/storage pipeline. The WHEP URL is
-// public; we derive it from the stored playback URL.
+// ─── WHEP (WebRTC) live player ────────────────────────────────────────────────
 function WhepPlayer({ playbackUrl, attempt, onRetry }: { playbackUrl: string | null; attempt: number; onRetry: () => void }) {
   const videoRef = useRef<HTMLVideoElement>(null)
   const [muted, setMuted] = useState(true)
   const [connecting, setConnecting] = useState(true)
+  const [timedOut, setTimedOut] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     if (!playbackUrl) return
-    // .../manifest/video.m3u8  ->  .../webRTC/play
     const whepUrl = playbackUrl.replace('/manifest/video.m3u8', '/webRTC/play')
     let cancelled = false
     setConnecting(true)
+    setTimedOut(false)
     setError(null)
+
+    // After 30s still connecting, show a retry hint
+    const timeoutTimer = setTimeout(() => { if (!cancelled) setTimedOut(true) }, 30_000)
 
     const pc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.cloudflare.com:3478' }] })
     pc.addTransceiver('video', { direction: 'recvonly' })
     pc.addTransceiver('audio', { direction: 'recvonly' })
 
-    // Create a single MediaStream and bind it to the video element immediately.
-    // ontrack fires separately for audio and video — adding each track to the
-    // same stream lets the element render them as they arrive without remounting.
     const stream = new MediaStream()
     const videoEl = videoRef.current
-    if (videoEl) {
-      videoEl.srcObject = stream
-      videoEl.muted = true
-    }
+    if (videoEl) { videoEl.srcObject = stream; videoEl.muted = true }
 
     pc.ontrack = (e) => {
       if (cancelled) return
@@ -188,9 +144,7 @@ function WhepPlayer({ playbackUrl, attempt, onRetry }: { playbackUrl: string | n
       const video = videoRef.current
       if (!video) return
       if (video.paused) video.play().catch(() => {})
-      // Only dismiss the connecting overlay once the video track arrives —
-      // audio arrives first and the element would otherwise show black.
-      if (e.track.kind === 'video') setConnecting(false)
+      if (e.track.kind === 'video') { setConnecting(false); clearTimeout(timeoutTimer) }
     }
     pc.onconnectionstatechange = () => {
       if (cancelled) return
@@ -201,26 +155,16 @@ function WhepPlayer({ playbackUrl, attempt, onRetry }: { playbackUrl: string | n
       try {
         const offer = await pc.createOffer()
         await pc.setLocalDescription(offer)
-        // Wait for ICE gathering (non-trickle WHEP), cap at 3s
         await Promise.race([
           new Promise<void>(resolve => {
             if (pc.iceGatheringState === 'complete') return resolve()
-            pc.addEventListener('icegatheringstatechange', () => {
-              if (pc.iceGatheringState === 'complete') resolve()
-            })
+            pc.addEventListener('icegatheringstatechange', () => { if (pc.iceGatheringState === 'complete') resolve() })
           }),
           new Promise<void>(resolve => setTimeout(resolve, 3000)),
         ])
-        // Retry on 409: Cloudflare returns 409 when no broadcaster is registered
-        // yet. Retry up to 10 times with 3s gaps (30s total) to cover the window
-        // between stream-status going 'active' and WHEP becoming available.
         let retriesLeft = 10
         while (true) {
-          const res = await fetch(whepUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/sdp' },
-            body: pc.localDescription!.sdp,
-          })
+          const res = await fetch(whepUrl, { method: 'POST', headers: { 'Content-Type': 'application/sdp' }, body: pc.localDescription!.sdp })
           if (res.ok) {
             const answer = await res.text()
             if (cancelled) return
@@ -236,21 +180,18 @@ function WhepPlayer({ playbackUrl, attempt, onRetry }: { playbackUrl: string | n
           throw new Error(`Playback error (${res.status})`)
         }
       } catch (err) {
-        if (!cancelled) {
-          console.error('[WhepPlayer]', err)
-          setError(err instanceof Error ? err.message : 'Playback failed')
-        }
+        if (!cancelled) { console.error('[WhepPlayer]', err); setError(err instanceof Error ? err.message : 'Playback failed') }
       }
     })()
 
-    return () => { cancelled = true; pc.close() }
+    return () => { cancelled = true; clearTimeout(timeoutTimer); pc.close() }
   }, [playbackUrl, attempt])
 
   function unmute() {
     const video = videoRef.current
     if (!video) return
     video.muted = false
-    video.play().catch(() => { /* ignore */ })
+    video.play().catch(() => {})
     setMuted(false)
   }
 
@@ -260,9 +201,7 @@ function WhepPlayer({ playbackUrl, attempt, onRetry }: { playbackUrl: string | n
         <div className="text-center space-y-3 px-6">
           <p className="font-inter text-[#FF3B3B] text-xs tracking-[2px] uppercase">Stream error</p>
           <p className="font-inter text-[#555555] text-xs">{error}</p>
-          <button onClick={onRetry} className="font-inter text-xs text-[#999999] hover:text-white underline">
-            Retry
-          </button>
+          <button onClick={onRetry} className="font-inter text-xs text-[#999999] hover:text-white underline">Retry</button>
         </div>
       </div>
     )
@@ -270,16 +209,7 @@ function WhepPlayer({ playbackUrl, attempt, onRetry }: { playbackUrl: string | n
 
   return (
     <div className="relative w-full h-full">
-      <video
-        ref={videoRef}
-        autoPlay
-        muted
-        controls
-        playsInline
-        className="w-full h-full object-contain"
-        style={{ background: '#000' }}
-      />
-      {/* Connecting overlay */}
+      <video ref={videoRef} autoPlay muted controls playsInline className="w-full h-full object-contain" style={{ background: '#000' }} />
       {connecting && (
         <div className="absolute inset-0 flex items-center justify-center bg-black/40 pointer-events-none">
           <div className="text-center space-y-4">
@@ -291,15 +221,16 @@ function WhepPlayer({ playbackUrl, attempt, onRetry }: { playbackUrl: string | n
               ))}
             </div>
             <p className="font-inter text-[#999999] text-[11px] tracking-[2px] uppercase">Connecting to stream…</p>
+            {timedOut && (
+              <button onClick={onRetry} className="pointer-events-auto font-inter text-xs text-[#555555] hover:text-white underline transition-colors">
+                Taking longer than usual — tap to retry
+              </button>
+            )}
           </div>
         </div>
       )}
-      {/* Unmute overlay */}
       {!connecting && muted && (
-        <button
-          onClick={unmute}
-          className="absolute top-3 right-3 flex items-center gap-1.5 bg-black/70 hover:bg-black/90 border border-white/20 text-white font-inter text-xs px-3 py-1.5 rounded-sm transition-all"
-        >
+        <button onClick={unmute} className="absolute top-3 right-3 flex items-center gap-1.5 bg-black/70 hover:bg-black/90 border border-white/20 text-white font-inter text-xs px-3 py-1.5 rounded-sm transition-all">
           <span>🔇</span> TAP TO UNMUTE
         </button>
       )}
@@ -308,22 +239,42 @@ function WhepPlayer({ playbackUrl, attempt, onRetry }: { playbackUrl: string | n
 }
 
 // ─── Live viewer ──────────────────────────────────────────────────────────────
-function LiveViewer({ playbackId, sessionId, session, onEnded }: {
+function LiveViewer({ playbackId, sessionId, session, userId, userName, onEnded }: {
   playbackId: string | null
   sessionId: string
   session: SessionInfo
+  userId: string
+  userName: string
   onEnded: () => void
 }) {
   const router = useRouter()
   const [elapsed, setElapsed] = useState(0)
   const [attempt, setAttempt] = useState(0)
+  const [startedMinsAgo, setStartedMinsAgo] = useState(0)
 
   useEffect(() => {
     const t = setInterval(() => setElapsed(s => s + 1), 1000)
     return () => clearInterval(t)
   }, [])
 
-  // Poll every 15s — if session flips to 'ended', transition to post-phase
+  // How many minutes ago the session started (updates every minute)
+  useEffect(() => {
+    const update = () => setStartedMinsAgo(Math.max(0, Math.floor((Date.now() - new Date(session.scheduled_at).getTime()) / 60000)))
+    update()
+    const t = setInterval(update, 60_000)
+    return () => clearInterval(t)
+  }, [session.scheduled_at])
+
+  // Join Supabase Realtime Presence so the gym owner can see who's watching
+  useEffect(() => {
+    const supabase = createClient()
+    const channel = supabase.channel(`session-${sessionId}`, { config: { presence: { key: userId } } })
+    channel.subscribe(async (status) => {
+      if (status === 'SUBSCRIBED') await channel.track({ user_id: userId, name: userName, joined_at: Date.now() })
+    })
+    return () => { supabase.removeChannel(channel) }
+  }, [sessionId, userId, userName])
+
   useEffect(() => {
     const poll = async () => {
       try {
@@ -337,13 +288,8 @@ function LiveViewer({ playbackId, sessionId, session, onEnded }: {
   }, [sessionId, router, onEnded])
 
   return (
-    <motion.div
-      key="live"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="min-h-screen bg-[#0D0D0D] flex flex-col lg:flex-row"
-    >
-      {/* Left: video player — 70% on desktop */}
+    <motion.div key="live" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="min-h-screen bg-[#0D0D0D] flex flex-col lg:flex-row">
+      {/* Video — 70% on desktop */}
       <div className="flex-1 lg:w-[70%] bg-black flex items-center min-h-[56vw] lg:min-h-screen">
         {playbackId ? (
           <WhepPlayer playbackUrl={playbackId} attempt={attempt} onRetry={() => setAttempt(a => a + 1)} />
@@ -357,23 +303,18 @@ function LiveViewer({ playbackId, sessionId, session, onEnded }: {
                     transition={{ duration: 0.9, delay: i * 0.25, repeat: Infinity }} />
                 ))}
               </div>
-              <p className="font-inter text-[#999999] text-sm tracking-[2px] uppercase text-[11px]">Stream starting…</p>
+              <p className="font-inter text-[#999999] text-[11px] tracking-[2px] uppercase">Stream starting…</p>
             </div>
           </div>
         )}
       </div>
 
-      {/* Right: data panel — 30% on desktop */}
-      <div className="lg:w-[30%] bg-[#1A1A1A] border-t lg:border-t-0 border-l-0 lg:border-l border-[#333333] flex flex-col">
-
-        {/* Nav bar */}
+      {/* Data panel — 30% on desktop */}
+      <div className="lg:w-[30%] bg-[#1A1A1A] border-t lg:border-t-0 lg:border-l border-[#333333] flex flex-col">
         <div className="px-5 h-12 border-b border-[#2A2A2A] flex items-center">
-          <Link href="/dashboard" className="text-[#999999] hover:text-white transition-colors">
-            <ArrowLeft size={16} />
-          </Link>
+          <Link href="/dashboard" className="text-[#999999] hover:text-white transition-colors"><ArrowLeft size={16} /></Link>
         </div>
 
-        {/* Section 1: LIVE badge + title */}
         <div className="px-5 py-5 border-b border-[#2A2A2A]">
           <div className="flex items-center gap-2 mb-3">
             <span className="inline-flex items-center gap-1.5 bg-[#FF3B3B] px-2 py-0.5 rounded-sm">
@@ -384,24 +325,22 @@ function LiveViewer({ playbackId, sessionId, session, onEnded }: {
           <h1 className="font-bebas text-[28px] text-white tracking-[1px] leading-tight">{session.title}</h1>
         </div>
 
-        {/* Section 2: live indicator */}
-        <div className="px-5 py-5 border-b border-[#2A2A2A]">
+        <div className="px-5 py-4 border-b border-[#2A2A2A] flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-[#FF3B3B] animate-pulse" />
             <span className="font-inter text-[11px] text-[#FF3B3B] tracking-[4px] uppercase">Streaming live</span>
           </div>
+          <span className="font-inter text-[11px] text-[#555555]">
+            {startedMinsAgo === 0 ? 'Just started' : `Started ${startedMinsAgo}m ago`}
+          </span>
         </div>
 
-        {/* Section 3: coach + gym */}
         <div className="px-5 py-5 border-b border-[#2A2A2A]">
           <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-2">Coach</p>
           <p className="font-bebas text-[18px] text-white tracking-[1px]">{session.coaches?.name ?? 'Coach'}</p>
-          {session.gyms?.name && (
-            <p className="font-inter text-[11px] text-[#999999] mt-0.5">{session.gyms.name}</p>
-          )}
+          {session.gyms?.name && <p className="font-inter text-[11px] text-[#999999] mt-0.5">{session.gyms.name}</p>}
         </div>
 
-        {/* Section 4: elapsed time */}
         <div className="px-5 py-5 border-b border-[#2A2A2A]">
           <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-2">Elapsed</p>
           <div className="font-bebas text-[40px] text-white tracking-[1px] tabular-nums leading-none">
@@ -409,7 +348,6 @@ function LiveViewer({ playbackId, sessionId, session, onEnded }: {
           </div>
         </div>
 
-        {/* Section 5: AI Coach teaser */}
         <div className="px-5 py-5 flex-1">
           <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-4">AI Coach</p>
           <div className="space-y-2 mb-5">
@@ -422,9 +360,7 @@ function LiveViewer({ playbackId, sessionId, session, onEnded }: {
               <div key={item.label} className={`flex items-center gap-3 px-3 py-2 rounded-sm ${item.free ? 'opacity-100' : 'opacity-40'}`}>
                 <span className={item.free ? 'text-[#00D4AA]' : 'text-[#555555]'}>{item.icon}</span>
                 <span className="font-inter text-sm text-white flex-1">{item.label}</span>
-                {item.free
-                  ? <span className="font-inter text-[10px] text-[#00D4AA] tracking-[2px] uppercase">Free</span>
-                  : <Lock size={10} className="text-[#FF3B3B]" />}
+                {item.free ? <span className="font-inter text-[10px] text-[#00D4AA] tracking-[2px] uppercase">Free</span> : <Lock size={10} className="text-[#FF3B3B]" />}
               </div>
             ))}
           </div>
@@ -459,23 +395,14 @@ function PostViewer() {
   return (
     <motion.div key="post" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="min-h-screen bg-[#0D0D0D] px-4 py-12 overflow-y-auto">
       <div className="max-w-2xl mx-auto flex flex-col items-center gap-8">
-
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="text-center space-y-2"
-        >
+        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="text-center space-y-2">
           <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase">Session complete</p>
           <h1 className="font-bebas text-5xl text-white tracking-[1px]">Stream Ended</h1>
           <p className="font-inter text-[#999999] text-sm">Class has ended.</p>
         </motion.div>
-
         <AnimatePresence mode="wait">
           {stage === 'processing' && (
-            <motion.div key="proc" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
+            <motion.div key="proc" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
               className="w-full bg-[#1A1A1A] border border-[#333333] rounded-sm px-6 py-8 flex flex-col items-center gap-5">
               <div className="flex gap-2">
                 {[0, 1, 2].map(i => (
@@ -485,10 +412,8 @@ function PostViewer() {
                 ))}
               </div>
               <AnimatePresence mode="wait">
-                <motion.p key={msgIdx} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -6 }} className="font-inter text-[#999999] text-sm">
-                  {POST_MESSAGES[msgIdx]}
-                </motion.p>
+                <motion.p key={msgIdx} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }}
+                  className="font-inter text-[#999999] text-sm">{POST_MESSAGES[msgIdx]}</motion.p>
               </AnimatePresence>
               <div className="w-full space-y-3 mt-2">
                 {[80, 60, 90, 50, 70].map((w, i) => (
@@ -506,11 +431,8 @@ function PostViewer() {
             </motion.div>
           )}
         </AnimatePresence>
-
         {stage !== 'ready' && (
-          <Link href="/dashboard" className="font-inter text-[#555] hover:text-[#999999] text-sm transition-colors">
-            Back to dashboard
-          </Link>
+          <Link href="/dashboard" className="font-inter text-[#555] hover:text-[#999999] text-sm transition-colors">Back to dashboard</Link>
         )}
       </div>
     </motion.div>
@@ -524,32 +446,26 @@ interface Props {
   session: SessionInfo
   initialPhase: Phase
   initialPlaybackId: string | null
+  userId: string
+  userName: string
 }
 
-export default function WatchClient({ session, initialPhase, initialPlaybackId }: Props) {
+export default function WatchClient({ session, initialPhase, initialPlaybackId, userId, userName }: Props) {
   const [phase, setPhase] = useState<Phase>(initialPhase)
   const [playbackId, setPlaybackId] = useState<string | null>(initialPlaybackId)
 
-  // When the waiting room calls router.refresh() after the gym goes live, the
-  // server component re-renders with new props. useState ignores prop changes,
-  // so sync them here — otherwise the page is stuck on "waiting" forever.
   useEffect(() => { setPhase(initialPhase) }, [initialPhase])
-  useEffect(() => {
-    if (initialPlaybackId) setPlaybackId(initialPlaybackId)
-  }, [initialPlaybackId])
+  useEffect(() => { if (initialPlaybackId) setPlaybackId(initialPlaybackId) }, [initialPlaybackId])
 
   return (
     <div className="min-h-screen bg-[#0D0D0D] overflow-x-hidden">
       <AnimatePresence mode="wait">
-        {phase === 'waiting' && (
-          <WaitingRoom key="waiting" session={session} />
-        )}
+        {phase === 'waiting' && <WaitingRoom key="waiting" session={session} />}
         {phase === 'live' && (
-          <LiveViewer key="live" playbackId={playbackId} sessionId={session.id} session={session} onEnded={() => setPhase('post')} />
+          <LiveViewer key="live" playbackId={playbackId} sessionId={session.id} session={session}
+            userId={userId} userName={userName} onEnded={() => setPhase('post')} />
         )}
-        {phase === 'post' && (
-          <PostViewer key="post" />
-        )}
+        {phase === 'post' && <PostViewer key="post" />}
       </AnimatePresence>
     </div>
   )

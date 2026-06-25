@@ -74,6 +74,14 @@ export default async function WatchPage({ params }: { params: { id: string } }) 
     }
   }
 
+  // Fetch the viewer's display name for presence tracking
+  const { data: profile } = await supabase
+    .from('users')
+    .select('name')
+    .eq('id', user.id)
+    .maybeSingle()
+  const userName = profile?.name ?? user.email?.split('@')[0] ?? 'Member'
+
   // Determine initial phase + HLS URL
   let initialPhase: 'waiting' | 'live' | 'post' = 'waiting'
   let initialHlsUrl: string | null = null
@@ -101,6 +109,8 @@ export default async function WatchPage({ params }: { params: { id: string } }) 
       session={session as any}
       initialPhase={initialPhase}
       initialPlaybackId={initialHlsUrl}
+      userId={user.id}
+      userName={userName}
     />
   )
 }

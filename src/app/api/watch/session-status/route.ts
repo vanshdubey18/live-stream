@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
 
   const { data: session } = await supabase
     .from('sessions')
-    .select('status, mux_playback_id, gym_id')
+    .select('status, cf_hls_url, gym_id')
     .eq('id', sessionId)
     .maybeSingle()
 
@@ -29,18 +29,18 @@ export async function GET(req: NextRequest) {
     .maybeSingle()
   if (!membership) return NextResponse.json({ error: 'No active membership' }, { status: 403 })
 
-  let livePlaybackId: string | null = null
-  if (session.status === 'live') {
+  let cfHlsUrl: string | null = session.cf_hls_url ?? null
+  if (session.status === 'live' && !cfHlsUrl) {
     const { data: gym } = await supabase
       .from('gyms')
-      .select('mux_playback_id')
+      .select('cf_hls_url')
       .eq('id', session.gym_id)
       .maybeSingle()
-    livePlaybackId = gym?.mux_playback_id ?? null
+    cfHlsUrl = gym?.cf_hls_url ?? null
   }
 
   return NextResponse.json({
     status: session.status,
-    playback_id: session.status === 'live' ? livePlaybackId : session.mux_playback_id,
+    cf_hls_url: session.status === 'live' ? cfHlsUrl : null,
   })
 }

@@ -115,11 +115,21 @@ export default function StreamSetupPageClient({ gymId, hasCfStream: initialHasCf
           case 'connected':
             setConn('live')
             setGoLiveError(null)
-            // Only create the Supabase session AFTER the WebRTC connection is
-            // confirmed live. Calling go-live earlier (right after WHIP SDP
-            // exchange) means members see a live session before Cloudflare has
-            // any video — they get WHEP 409 errors.
-            fetch('/api/gym/go-live', { method: 'POST' }).catch(console.error)
+            // Poll Cloudflare via stream-status until it confirms the stream is
+            // distributable (status: 'active'), then create the Supabase session.
+            // This prevents members from seeing a live session before Cloudflare
+            // has registered the broadcaster — which causes WHEP 409 errors.
+            ;(async () => {
+              for (let i = 0; i < 10; i++) {
+                try {
+                  const r = await fetch(`/api/gym/stream-status?gym_id=${gymId}`)
+                  const d = await r.json()
+                  if (d.status === 'active') break
+                } catch { /* ignore network errors, keep polling */ }
+                await new Promise<void>(res => setTimeout(res, 2000))
+              }
+              fetch('/api/gym/go-live', { method: 'POST' }).catch(console.error)
+            })()
             break
           case 'disconnected':
             // Transient — WebRTC often self-heals. Show reconnecting, don't tear down.

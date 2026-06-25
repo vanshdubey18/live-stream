@@ -211,10 +211,10 @@ function WhepPlayer({ playbackUrl, attempt, onRetry }: { playbackUrl: string | n
           }),
           new Promise<void>(resolve => setTimeout(resolve, 3000)),
         ])
-        // Retry on 409: Cloudflare returns 409 if no broadcaster is connected yet.
-        // This happens when a member joins in the brief window between the gym
-        // owner clicking GO LIVE and the WebRTC ICE connection fully establishing.
-        let retriesLeft = 6
+        // Retry on 409: Cloudflare returns 409 when no broadcaster is registered
+        // yet. Retry up to 10 times with 3s gaps (30s total) to cover the window
+        // between stream-status going 'active' and WHEP becoming available.
+        let retriesLeft = 10
         while (true) {
           const res = await fetch(whepUrl, {
             method: 'POST',
@@ -229,7 +229,7 @@ function WhepPlayer({ playbackUrl, attempt, onRetry }: { playbackUrl: string | n
           }
           if (res.status === 409 && retriesLeft > 0) {
             retriesLeft--
-            await new Promise<void>(r => setTimeout(r, 2000))
+            await new Promise<void>(r => setTimeout(r, 3000))
             if (cancelled) return
             continue
           }

@@ -28,13 +28,14 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'SDP body required' }, { status: 400 })
   }
 
-  // Forward the SDP to Cloudflare's WHIP endpoint
+  // Forward the SDP to Cloudflare's WHIP endpoint.
+  // The WHIP URL already contains the live input UID in the path — that IS the
+  // credential. Do NOT send CLOUDFLARE_API_TOKEN here; it's the management API
+  // key, not a WHIP key, and sending it causes Cloudflare to not register the
+  // publisher on its distribution layer (WHEP viewers get 409).
   const cfRes = await fetch(gym.cf_whip_url, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/sdp',
-      Authorization: `Bearer ${process.env.CLOUDFLARE_API_TOKEN!}`,
-    },
+    headers: { 'Content-Type': 'application/sdp' },
     body: sdpOffer,
   })
 

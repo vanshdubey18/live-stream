@@ -211,15 +211,30 @@ function WhepPlayer({ playbackUrl, attempt, onRetry }: { playbackUrl: string | n
           }),
           new Promise<void>(resolve => setTimeout(resolve, 3000)),
         ])
-        const res = await fetch(whepUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/sdp' },
-          body: pc.localDescription!.sdp,
-        })
-        if (!res.ok) throw new Error(`Playback error (${res.status})`)
-        const answer = await res.text()
-        if (cancelled) return
-        await pc.setRemoteDescription({ type: 'answer', sdp: answer })
+        // Retry on 409: Cloudflare returns 409 if no broadcaster is connected yet.
+        // This happens when a member joins in the brief window between the gym
+        // owner clicking GO LIVE and the WebRTC ICE connection fully establishing.
+        let retriesLeft = 6
+        while (true) {
+          const res = await fetch(whepUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/sdp' },
+            body: pc.localDescription!.sdp,
+          })
+          if (res.ok) {
+            const answer = await res.text()
+            if (cancelled) return
+            await pc.setRemoteDescription({ type: 'answer', sdp: answer })
+            break
+          }
+          if (res.status === 409 && retriesLeft > 0) {
+            retriesLeft--
+            await new Promise<void>(r => setTimeout(r, 2000))
+            if (cancelled) return
+            continue
+          }
+          throw new Error(`Playback error (${res.status})`)
+        }
       } catch (err) {
         if (!cancelled) {
           console.error('[WhepPlayer]', err)

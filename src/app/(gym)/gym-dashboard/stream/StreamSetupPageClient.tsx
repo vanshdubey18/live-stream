@@ -115,6 +115,11 @@ export default function StreamSetupPageClient({ gymId, hasCfStream: initialHasCf
           case 'connected':
             setConn('live')
             setGoLiveError(null)
+            // Only create the Supabase session AFTER the WebRTC connection is
+            // confirmed live. Calling go-live earlier (right after WHIP SDP
+            // exchange) means members see a live session before Cloudflare has
+            // any video — they get WHEP 409 errors.
+            fetch('/api/gym/go-live', { method: 'POST' }).catch(console.error)
             break
           case 'disconnected':
             // Transient — WebRTC often self-heals. Show reconnecting, don't tear down.
@@ -166,10 +171,8 @@ export default function StreamSetupPageClient({ gymId, hasCfStream: initialHasCf
       const sdpAnswer = await whipRes.text()
       await pc.setRemoteDescription({ type: 'answer', sdp: sdpAnswer })
 
-      // 8. Create the session record so members can join.
-      await fetch('/api/gym/go-live', { method: 'POST' })
-
-      // The onconnectionstatechange handler flips us to 'live' once ICE connects.
+      // ICE negotiation continues in the background; onconnectionstatechange
+      // fires 'connected' once video is flowing — that's when we create the session.
       // Fallback: if already connected by now, set it directly.
       if (pc.connectionState === 'connected') setConn('live')
     } catch (err) {

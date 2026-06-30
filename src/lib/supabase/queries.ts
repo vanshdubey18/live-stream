@@ -190,7 +190,7 @@ export async function getGymSessions(gymId: string) {
     .from('sessions')
     .select(`
       id, title, discipline, scheduled_at, duration_minutes,
-      level, status, mux_playback_id,
+      level, status, mux_playback_id, replay_url,
       clip_status, clip_url, clip_banner_dismissed, cf_video_uid,
       coaches ( id, name )
     `)

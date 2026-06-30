@@ -343,14 +343,22 @@ function AISidebar({
 }
 
 // ─── Main component ───────────────────────────────────────────────────────────
+interface Chapter {
+  id: string
+  timestamp_seconds: number
+  label: string
+}
+
 export default function ReplayClient({
   playbackId,
   session,
   aiData,
+  chapters = [],
 }: {
   playbackId?: string
   session?: SessionMeta
   aiData?: AIData | null
+  chapters?: Chapter[]
 }) {
   const [playing, setPlaying] = useState(false)
   const [progress, setProgress] = useState(0)
@@ -370,6 +378,21 @@ export default function ReplayClient({
     setJumpTo(ts)
     setPlaying(true)
     setTimeout(() => setJumpTo(null), 2000)
+  }
+
+  function handleChapterSeek(seconds: number) {
+    if (playerRef.current) {
+      playerRef.current.currentTime = seconds
+    }
+    const ts = `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`
+    setJumpTo(ts)
+    setTimeout(() => setJumpTo(null), 2000)
+  }
+
+  function fmtSeconds(s: number) {
+    const m = Math.floor(s / 60)
+    const sec = s % 60
+    return `${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`
   }
 
   const displayTitle = session?.title ?? 'Replay'
@@ -468,6 +491,32 @@ export default function ReplayClient({
             </div>
             <span className="font-bebas text-[18px] text-white tracking-[1px] shrink-0 tabular-nums">{Math.round(progress * 100)}%</span>
           </div>
+
+          {/* Chapters */}
+          {chapters.length > 0 && (
+            <div className="border-b border-[#2A2A2A] px-5 py-4">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-5 h-px bg-[#FF3B3B]" />
+                <p className="font-inter text-[11px] text-[#FF3B3B] tracking-[4px] uppercase">Chapters</p>
+              </div>
+              <div className="space-y-1">
+                {chapters.map((ch, i) => (
+                  <button
+                    key={ch.id}
+                    onClick={() => handleChapterSeek(ch.timestamp_seconds)}
+                    className="w-full flex items-center gap-3 px-3 py-2 rounded-sm hover:bg-[#1A1A1A] transition-colors text-left group"
+                  >
+                    <span className="font-bebas text-[#FF3B3B] text-sm tracking-[1px] tabular-nums shrink-0 w-10">
+                      {fmtSeconds(ch.timestamp_seconds)}
+                    </span>
+                    <span className="font-inter text-sm text-[#999999] group-hover:text-white transition-colors truncate">
+                      {ch.label}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Session meta — mobile */}
           <div className="lg:hidden border-b border-[#2A2A2A] px-5 py-5">

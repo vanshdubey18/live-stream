@@ -15,12 +15,19 @@ export default async function ReplayPage({ params }: { params: { id: string } })
     process.env.SUPABASE_SERVICE_ROLE_KEY!,
   )
 
-  const { data: session } = await adminClient
-    .from('sessions')
-    .select('id, title, discipline, duration_minutes, mux_playback_id, gym_id, ai_summary, ai_techniques, ai_key_moments, coaches(name), gyms(name)')
-    .eq('id', params.id)
-    .eq('status', 'ended')
-    .maybeSingle()
+  const [{ data: session }, { data: chaptersData }] = await Promise.all([
+    adminClient
+      .from('sessions')
+      .select('id, title, discipline, duration_minutes, mux_playback_id, gym_id, ai_summary, ai_techniques, ai_key_moments, coaches(name), gyms(name)')
+      .eq('id', params.id)
+      .eq('status', 'ended')
+      .maybeSingle(),
+    adminClient
+      .from('replay_chapters')
+      .select('id, timestamp_seconds, label')
+      .eq('session_id', params.id)
+      .order('timestamp_seconds', { ascending: true }),
+  ])
 
   if (!session) {
     redirect('/dashboard')
@@ -57,6 +64,7 @@ export default async function ReplayPage({ params }: { params: { id: string } })
   return (
     <ReplayClient
       playbackId={session.mux_playback_id ?? undefined}
+      chapters={chaptersData ?? []}
       session={{
         title: session.title,
         discipline: session.discipline,

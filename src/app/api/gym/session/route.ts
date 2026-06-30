@@ -10,6 +10,32 @@ function adminClient() {
   )
 }
 
+export async function PATCH(req: NextRequest) {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
+
+  if ((await getDbRole(user.id)) !== 'gym_owner') {
+    return NextResponse.json({ error: 'Not authorized' }, { status: 403 })
+  }
+
+  const { id, clip_banner_dismissed } = await req.json()
+  if (!id) return NextResponse.json({ error: 'Missing session id' }, { status: 400 })
+
+  const { data: gym } = await adminClient()
+    .from('gyms').select('id').eq('owner_id', user.id).maybeSingle()
+  if (!gym) return NextResponse.json({ error: 'Gym not found' }, { status: 404 })
+
+  const updates: Record<string, any> = {}
+  if (clip_banner_dismissed !== undefined) updates.clip_banner_dismissed = clip_banner_dismissed
+
+  const { error } = await adminClient()
+    .from('sessions').update(updates).eq('id', id).eq('gym_id', gym.id)
+
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  return NextResponse.json({ success: true })
+}
+
 export async function DELETE(req: NextRequest) {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()

@@ -2,9 +2,8 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Copy, Check, X, Loader2, StopCircle, ChevronDown, ChevronUp } from 'lucide-react'
+import { X, Loader2, StopCircle } from 'lucide-react'
 
-const SERVER_URL = 'rtmp://live.mux.com/app'
 
 interface Props {
   sessionId: string
@@ -28,16 +27,8 @@ export default function GoLiveModal({
   const [stage, setStage] = useState<Stage>('setup')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [showCredentials, setShowCredentials] = useState(false)
-  const [copied, setCopied] = useState<'url' | 'key' | null>(null)
 
-  function copy(text: string, which: 'url' | 'key') {
-    navigator.clipboard.writeText(text)
-    setCopied(which)
-    setTimeout(() => setCopied(null), 2000)
-  }
-
-  async function handleGoLive() {
+async function handleGoLive() {
     setLoading(true)
     setError('')
     try {
@@ -143,46 +134,6 @@ export default function GoLiveModal({
                   {loading ? 'STARTING…' : 'GO LIVE'}
                 </button>
 
-                {/* Streaming software credentials — collapsed by default */}
-                {streamKey && (
-                  <div>
-                    <button
-                      onClick={() => setShowCredentials(p => !p)}
-                      className="flex items-center gap-1.5 font-inter text-[11px] text-[#555555] hover:text-white tracking-[2px] uppercase transition-colors"
-                    >
-                      Using streaming software?
-                      {showCredentials ? <ChevronUp size={11} /> : <ChevronDown size={11} />}
-                    </button>
-
-                    {showCredentials && (
-                      <div className="mt-4 space-y-3">
-                        <p className="font-inter text-[#555555] text-xs leading-relaxed">
-                          Paste these into OBS or Streamlabs under{' '}
-                          <span className="text-white">Settings → Stream → Custom RTMP</span>.
-                        </p>
-                        {[
-                          { label: 'Server URL', value: SERVER_URL, which: 'url' as const },
-                          { label: 'Stream Key', value: streamKey, which: 'key' as const },
-                        ].map(({ label, value, which }) => (
-                          <div key={label}>
-                            <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-1.5">{label}</p>
-                            <div className="flex items-center gap-2">
-                              <div className="flex-1 bg-[#0D0D0D] border border-[#333333] rounded-sm px-3 py-2 font-mono text-xs text-[#999999] truncate">
-                                {value}
-                              </div>
-                              <button
-                                onClick={() => copy(value, which)}
-                                className="shrink-0 w-8 h-8 flex items-center justify-center border border-[#333333] text-[#555555] hover:text-white hover:bg-[#222222] rounded-sm transition-all"
-                              >
-                                {copied === which ? <Check size={12} className="text-[#00D4AA]" /> : <Copy size={12} />}
-                              </button>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                )}
               </motion.div>
             ) : (
               <motion.div

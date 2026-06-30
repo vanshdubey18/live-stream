@@ -21,7 +21,7 @@ export async function PATCH(req: NextRequest) {
   const user = await assertGymOwner()
   if (!user) return UNAUTHORIZED()
 
-  const { name, description, city, location, disciplines, monthlyPricePaise, instagram } = await req.json()
+  const { name, description, city, location, disciplines, monthlyPricePaise, instagram, razorpayLink } = await req.json()
 
   const { data: existing } = await adminClient()
     .from('gyms')
@@ -39,6 +39,7 @@ export async function PATCH(req: NextRequest) {
   if (disciplines !== undefined) updates.disciplines = disciplines
   if (monthlyPricePaise !== undefined) updates.monthly_price_paise = monthlyPricePaise
   if (instagram !== undefined) updates.instagram = instagram
+  if (razorpayLink !== undefined) updates.razorpay_link = razorpayLink
 
   let { error } = await adminClient().from('gyms').update(updates).eq('id', existing.id)
 

@@ -355,6 +355,146 @@ function CTABanner() {
   )
 }
 
+const DISCIPLINES_LIST = ['BJJ', 'Boxing', 'Muay Thai', 'Wrestling', 'MMA', 'Kickboxing', 'Judo', 'Sambo']
+
+function GymWaitlist() {
+  const [form, setForm] = useState({ name: '', gym_name: '', discipline: '', city: '', contact: '', website: '' })
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'duplicate' | 'error'>('idle')
+  const [errorMsg, setErrorMsg] = useState('')
+
+  function set(field: string, val: string) { setForm(p => ({ ...p, [field]: val })) }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    setStatus('loading')
+    try {
+      const res = await fetch('/api/gym/waitlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      })
+      if (res.status === 409) { setStatus('duplicate'); return }
+      if (!res.ok) {
+        const d = await res.json()
+        setErrorMsg(d.error ?? 'Something went wrong')
+        setStatus('error')
+        return
+      }
+      setStatus('success')
+    } catch {
+      setErrorMsg('Network error. Please try again.')
+      setStatus('error')
+    }
+  }
+
+  const inputCls = 'w-full bg-[#0D0D0D] border border-[#333333] rounded-sm px-4 py-3 text-white placeholder-[#555555] text-sm focus:outline-none focus:border-white transition-colors'
+
+  return (
+    <section className="bg-[#0D0D0D] border-t border-[#333333]">
+      <div className="max-w-[1280px] mx-auto px-6 py-20">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+          <motion.div
+            initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }} transition={{ duration: 0.2, ease: 'easeOut' }}
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-5 h-px bg-[#FF3B3B]" />
+              <p className="font-inter text-[11px] text-[#FF3B3B] tracking-[4px] uppercase">For Gym Owners</p>
+            </div>
+            <h2 className="font-bebas text-white leading-[0.88] tracking-[1px] mb-6" style={{ fontSize: 'clamp(40px, 6vw, 72px)' }}>
+              STREAM YOUR GYM.<br />REACH THE WORLD.
+            </h2>
+            <p className="font-inter text-[#999999] text-sm leading-relaxed mb-8 max-w-md">
+              Partner with MATPEAK to broadcast your classes live, build a global subscriber base, and earn while your students train — wherever they are.
+            </p>
+            <div className="space-y-3">
+              {[
+                'Go live in minutes from any device',
+                'Members pay monthly — you keep 70%',
+                'Auto-generated preview clips for Instagram',
+              ].map((item, i) => (
+                <div key={i} className="flex items-center gap-3">
+                  <div className="w-1 h-1 bg-[#FF3B3B] rounded-full shrink-0" />
+                  <p className="font-inter text-sm text-[#999999]">{item}</p>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }} transition={{ duration: 0.2, ease: 'easeOut', delay: 0.05 }}
+          >
+            {status === 'success' ? (
+              <div className="relative bg-[#1A1A1A] border border-[#333333] rounded-sm px-6 py-12 text-center overflow-hidden">
+                <span className="absolute inset-0 flex items-center justify-center font-bebas text-[120px] text-white/[0.03] leading-none select-none pointer-events-none">DONE</span>
+                <p className="relative font-bebas text-3xl text-white tracking-[1px] mb-2">YOU'RE ON THE LIST</p>
+                <p className="relative font-inter text-[#999999] text-sm">We'll reach out when we're ready to onboard your gym.</p>
+              </div>
+            ) : status === 'duplicate' ? (
+              <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm px-6 py-12 text-center">
+                <p className="font-bebas text-2xl text-white tracking-[1px] mb-2">ALREADY ON THE LIST</p>
+                <p className="font-inter text-[#999999] text-sm">We already have your details. We'll be in touch soon.</p>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="bg-[#1A1A1A] border border-[#333333] rounded-sm p-6 space-y-4">
+                <h3 className="font-bebas text-xl text-white tracking-[1px]">APPLY TO BECOME A PARTNER</h3>
+                {/* Honeypot */}
+                <input
+                  type="text"
+                  name="website"
+                  value={form.website}
+                  onChange={e => set('website', e.target.value)}
+                  tabIndex={-1}
+                  style={{ display: 'none' }}
+                  aria-hidden="true"
+                />
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase block mb-1.5">Your Name</label>
+                    <input className={inputCls} required value={form.name} onChange={e => set('name', e.target.value)} />
+                  </div>
+                  <div>
+                    <label className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase block mb-1.5">Gym Name</label>
+                    <input className={inputCls} required value={form.gym_name} onChange={e => set('gym_name', e.target.value)} />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase block mb-1.5">Primary Discipline</label>
+                    <select className={`${inputCls} cursor-pointer`} required value={form.discipline} onChange={e => set('discipline', e.target.value)}>
+                      <option value="">Select…</option>
+                      {DISCIPLINES_LIST.map(d => <option key={d} value={d}>{d}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase block mb-1.5">City</label>
+                    <input className={inputCls} required value={form.city} onChange={e => set('city', e.target.value)} />
+                  </div>
+                </div>
+                <div>
+                  <label className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase block mb-1.5">Phone or Email</label>
+                  <input className={inputCls} required value={form.contact} onChange={e => set('contact', e.target.value)} placeholder="+91 98765 43210 or you@gym.com" />
+                </div>
+                {status === 'error' && (
+                  <p className="font-inter text-[#FF3B3B] text-xs">{errorMsg}</p>
+                )}
+                <button
+                  type="submit"
+                  disabled={status === 'loading'}
+                  className="w-full bg-[#FF3B3B] hover:bg-[#e03333] disabled:opacity-50 text-white font-bebas tracking-[3px] py-3.5 rounded-sm text-sm transition-colors"
+                >
+                  {status === 'loading' ? 'SUBMITTING…' : 'JOIN THE WAITLIST'}
+                </button>
+              </form>
+            )}
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 function Footer() {
   return (
     <footer className="bg-[#0D0D0D] border-t border-[#333333]">
@@ -387,6 +527,7 @@ export default function LandingPage() {
       <HowItWorks />
       <Pricing />
       <CTABanner />
+      <GymWaitlist />
       <Footer />
     </main>
   )

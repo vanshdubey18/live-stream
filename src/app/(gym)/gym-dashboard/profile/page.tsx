@@ -16,6 +16,7 @@ export default function GymProfilePage() {
     city: '',
     instagram: '',
     monthlyPrice: '',
+    razorpayLink: '',
   })
   const [loading, setLoading] = useState(false)
   const [fetching, setFetching] = useState(true)
@@ -39,6 +40,7 @@ export default function GymProfilePage() {
             city: d.gym.city ?? '',
             instagram: d.gym.instagram ?? '',
             monthlyPrice: d.gym.monthly_price_paise ? String(d.gym.monthly_price_paise / 100) : '',
+            razorpayLink: d.gym.razorpay_link ?? '',
           })
           if (d.gym.logo_url) setLogoUrl(d.gym.logo_url)
         }
@@ -97,6 +99,7 @@ export default function GymProfilePage() {
           disciplines: form.disciplines,
           monthlyPricePaise: form.monthlyPrice ? Math.round(priceNum * 100) : undefined,
           instagram: form.instagram,
+          razorpayLink: form.razorpayLink || null,
         }),
       })
       const data = await res.json()
@@ -212,6 +215,27 @@ export default function GymProfilePage() {
                   ₹{Math.round(parseFloat(form.monthlyPrice || '0') * 0.7).toLocaleString('en-IN')}/mo
                 </span>
                 {' '}per member.
+              </p>
+            </div>
+          </div>
+
+          {/* Payment */}
+          <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm p-6 space-y-4">
+            <div className="flex items-center gap-3 mb-1">
+              <div className="w-5 h-px bg-[#FF3B3B]" />
+              <p className="font-inter text-[11px] text-[#FF3B3B] tracking-[4px] uppercase">Payment</p>
+            </div>
+            <div>
+              <label className={labelCls}>Razorpay Payment Link</label>
+              <input
+                className={inputCls}
+                type="url"
+                placeholder="https://rzp.io/l/your-link"
+                value={form.razorpayLink}
+                onChange={e => set('razorpayLink', e.target.value)}
+              />
+              <p className="font-inter text-[#555555] text-xs mt-1.5">
+                Members will be directed here to pay. Paste your Razorpay payment link from your Razorpay dashboard.
               </p>
             </div>
           </div>

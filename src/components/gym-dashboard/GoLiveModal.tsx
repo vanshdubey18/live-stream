@@ -19,7 +19,7 @@ type Stage = 'setup' | 'live'
 export default function GoLiveModal({
   sessionId,
   sessionTitle,
-  streamKey,
+  streamKey: _streamKey,
   onClose,
   onWentLive,
   onEnded,

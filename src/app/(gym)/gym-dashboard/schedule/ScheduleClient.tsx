@@ -6,7 +6,8 @@ import ScheduleClassModal, { type ScheduledClass } from '@/components/gym-dashbo
 import GoLiveModal from '@/components/gym-dashboard/GoLiveModal'
 import Toast from '@/components/gym-dashboard/Toast'
 import EmptyState from '@/components/ui/EmptyState'
-import { Plus, Radio, Trash2, Clock, CheckCircle } from 'lucide-react'
+import Link from 'next/link'
+import { Plus, Radio, Trash2, Clock, CheckCircle, BookMarked } from 'lucide-react'
 
 interface Coach { id: string; name: string }
 interface Props {
@@ -248,6 +249,15 @@ export default function ScheduleClient({ gym, sessions, coaches }: Props) {
                                 <Radio size={12} />
                                 {isLive ? 'MANAGE' : 'GO LIVE'}
                               </button>
+                            )}
+                            {isEnded && (
+                              <Link
+                                href={`/gym-dashboard/replay/${s.id}`}
+                                className="w-7 h-7 flex items-center justify-center border border-[#333333] text-[#555555] hover:text-[#FF3B3B] hover:border-[#FF3B3B] rounded-sm transition-all"
+                                title="Edit chapters"
+                              >
+                                <BookMarked size={12} />
+                              </Link>
                             )}
                             {!isLive && (
                               <button

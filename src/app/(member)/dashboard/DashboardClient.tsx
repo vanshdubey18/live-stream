@@ -667,7 +667,7 @@ export default function DashboardClient({ user, memberships, upcoming, replays, 
         if (s.status === 'live') {
           setLiveSession({ ...s, gyms: { name: gymNames[s.gym_id] ?? '' } })
         } else {
-          setLiveSession(prev => prev?.id === s.id ? null : prev)
+          setLiveSession((prev: any | null) => prev?.id === s.id ? null : prev)
         }
       }
     )

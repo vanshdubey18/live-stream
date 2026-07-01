@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { ExternalLink, Plus, CheckCircle, Clock, Radio, AlertTriangle, UserPlus, ArrowRight, Trash2 } from 'lucide-react'
+import { ExternalLink, Plus, CheckCircle, Clock, Radio, AlertTriangle, UserPlus, ArrowRight, Trash2, Download, X, RefreshCw } from 'lucide-react'
 import GymSidebar from '@/components/layout/GymSidebar'
 import StatsCard from '@/components/gym-dashboard/StatsCard'
 import StreamSetupCard from '@/components/gym-dashboard/StreamSetupCard'
@@ -63,6 +63,80 @@ function formatRelTime(iso: string) {
   const hrs = Math.round(mins / 60)
   if (hrs < 24) return `in ${hrs}h`
   return `in ${Math.round(hrs / 24)}d`
+}
+
+// ─── Clip Banner ───────────────────────────────────────────────────────────────
+function ClipBanner({ session, onDismiss }: { session: any; onDismiss: (id: string) => void }) {
+  const [retrying, setRetrying] = useState(false)
+  const [retried, setRetried] = useState(false)
+
+  const endedAt = session.scheduled_at ? new Date(session.scheduled_at).getTime() : 0
+  const stale = Date.now() - endedAt > 30 * 60 * 1000
+  const showRetry = session.clip_status === 'failed' || (session.clip_status === 'pending' && stale)
+
+  async function handleRetry() {
+    setRetrying(true)
+    await fetch('/api/gym/retry-clip', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ session_id: session.id }),
+    })
+    setRetrying(false)
+    setRetried(true)
+  }
+
+  async function handleDismiss() {
+    await fetch('/api/gym/session', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: session.id, clip_banner_dismissed: true }),
+    })
+    onDismiss(session.id)
+  }
+
+  if (session.clip_status !== 'ready' && !showRetry) return null
+
+  return (
+    <div className="bg-[#1A1A1A] border border-[#FF3B3B]/30 rounded-sm px-5 py-4 flex items-center gap-4">
+      <div className="flex-1 min-w-0">
+        <p className="font-bebas text-lg text-white tracking-[1px] leading-none mb-1">
+          {session.clip_status === 'ready' ? 'YOUR PREVIEW CLIP IS READY' : 'CLIP PROCESSING'}
+        </p>
+        <p className="font-inter text-[#999999] text-xs truncate">
+          {session.clip_status === 'ready'
+            ? `${session.title} — first 60 seconds`
+            : showRetry ? 'Taking longer than expected' : 'Encoding in progress…'}
+        </p>
+      </div>
+      <div className="flex items-center gap-2 shrink-0">
+        {session.clip_status === 'ready' && session.clip_url && (
+          <a
+            href={session.clip_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1.5 font-bebas tracking-[2px] text-sm text-[#FF3B3B] hover:text-white transition-colors"
+          >
+            <Download size={13} /> DOWNLOAD
+          </a>
+        )}
+        {showRetry && (
+          <button
+            onClick={handleRetry}
+            disabled={retrying || retried}
+            className="flex items-center gap-1.5 font-inter text-xs text-[#999999] border border-[#333333] hover:border-[#555555] px-3 py-1.5 rounded-sm transition-colors disabled:opacity-50"
+          >
+            <RefreshCw size={11} className={retrying ? 'animate-spin' : ''} />
+            {retried ? 'Requested' : retrying ? 'Retrying…' : 'Retry clip'}
+          </button>
+        )}
+        {session.clip_status === 'ready' && (
+          <button onClick={handleDismiss} className="text-[#555555] hover:text-white transition-colors ml-1">
+            <X size={14} />
+          </button>
+        )}
+      </div>
+    </div>
+  )
 }
 
 // ─── Action Items ──────────────────────────────────────────────────────────────
@@ -243,6 +317,16 @@ export default function GymDashboardClient({ gym, ownerName, sessions, coaches, 
     setToast('Stream ended')
   }
 
+  function handleClipDismissed(id: string) {
+    setLocalSessions(p => p.map(s => s.id === id ? { ...s, clip_banner_dismissed: true } : s))
+  }
+
+  const clipSessions = localSessions.filter(s =>
+    s.status === 'ended' &&
+    !s.clip_banner_dismissed &&
+    (s.clip_status === 'ready' || s.clip_status === 'pending' || s.clip_status === 'failed')
+  )
+
   return (
     <div className="min-h-screen bg-[#0D0D0D] flex">
       <GymSidebar active="Overview" />
@@ -275,6 +359,11 @@ export default function GymDashboardClient({ gym, ownerName, sessions, coaches, 
         </div>
 
         <div className="px-6 py-8 space-y-8 max-w-5xl">
+
+          {/* Clip banners — one per ready/failed clip */}
+          {clipSessions.map(s => (
+            <ClipBanner key={s.id} session={s} onDismiss={handleClipDismissed} />
+          ))}
 
           {/* Action items — first thing the owner sees */}
           <ActionItems

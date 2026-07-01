@@ -63,19 +63,16 @@ export async function POST(req: NextRequest) {
   if (!valid) return NextResponse.json({ error: 'Invalid signature' }, { status: 400 })
 
   const event = JSON.parse(rawBody)
-  const { type, data } = event
 
-  // stream.video.ready fires for both recordings and clips
-  if (type === 'stream.video.ready') {
-    const videoUid: string = data.uid
-    const liveInputUid: string | undefined = data.live_input
+  // CF sends a flat video object (no type/data envelope) when a video finishes processing
+  if (event.readyToStream === true && event.status?.state === 'ready') {
+    const videoUid: string = event.uid
+    const liveInputUid: string | undefined = event.meta?.live_input
 
     if (liveInputUid) {
-      // This is a recording from a live stream
-      await handleRecordingReady(videoUid, liveInputUid, data)
+      await handleRecordingReady(videoUid, liveInputUid, event)
     } else {
-      // This is a clip encoding complete
-      await handleClipReady(videoUid, data)
+      await handleClipReady(videoUid, event)
     }
   }
 

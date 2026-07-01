@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react'
 import GymSidebar from '@/components/layout/GymSidebar'
-import { Loader2, Radio, Wifi, WifiOff, AlertCircle, Camera, Mic, Monitor, Users } from 'lucide-react'
+import { Loader2, Radio, Wifi, WifiOff, AlertCircle, Camera, Mic, Monitor, Users, SwitchCamera } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
 interface Props {
@@ -30,6 +30,9 @@ export default function StreamSetupPageClient({ gymId, hasCfStream: initialHasCf
   const [audioDevices, setAudioDevices] = useState<MediaDeviceInfo[]>([])
   const [selectedVideoId, setSelectedVideoId] = useState('')
   const [selectedAudioId, setSelectedAudioId] = useState('')
+  // Which way the (phone) camera faces. Default to the rear camera so gym owners
+  // film the mat/class, not themselves. Overridden if a specific device is picked.
+  const [facingMode, setFacingMode] = useState<'environment' | 'user'>('environment')
 
   // Viewer tracking
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null)
@@ -159,8 +162,11 @@ export default function StreamSetupPageClient({ gymId, hasCfStream: initialHasCf
     setGoLiveError(null)
     setConn('connecting')
     try {
-      // 1. Camera + mic — use selected device IDs if chosen
-      const videoConstraint = selectedVideoId ? { deviceId: { exact: selectedVideoId } } : true
+      // 1. Camera + mic — a specific picked device wins; otherwise use the chosen
+      //    facing direction (rear by default) so phones don't default to the selfie cam.
+      const videoConstraint = selectedVideoId
+        ? { deviceId: { exact: selectedVideoId } }
+        : { facingMode: { ideal: facingMode } }
       const audioConstraint = selectedAudioId ? { deviceId: { exact: selectedAudioId } } : true
       const stream = await navigator.mediaDevices.getUserMedia({ video: videoConstraint, audio: audioConstraint })
       localStreamRef.current = stream
@@ -274,6 +280,35 @@ export default function StreamSetupPageClient({ gymId, hasCfStream: initialHasCf
     }
   }
 
+  // ── Flip camera (front ⇄ rear) — works live via replaceTrack ─────────────────────
+  async function flipCamera() {
+    const next = facingMode === 'environment' ? 'user' : 'environment'
+    try {
+      const newStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { ideal: next } },
+        audio: false,
+      })
+      const newTrack = newStream.getVideoTracks()[0]
+      if (!newTrack) return
+
+      // Swap the outgoing track on the live peer connection without renegotiating
+      const sender = pcRef.current?.getSenders().find(s => s.track?.kind === 'video')
+      if (sender) await sender.replaceTrack(newTrack)
+
+      // Swap the track in the local preview stream and stop the old camera
+      const local = localStreamRef.current
+      const oldVideo = local?.getVideoTracks()[0]
+      if (local && oldVideo) { local.removeTrack(oldVideo); oldVideo.stop() }
+      local?.addTrack(newTrack)
+      if (videoRef.current && local) videoRef.current.srcObject = local
+
+      setFacingMode(next)
+      setSelectedVideoId('') // we're now driving by facing direction, not a fixed device
+    } catch (e) {
+      console.error('[flipCamera]', e)
+    }
+  }
+
   // ── Badge styling ─────────────────────────────────────────────────────────────
   const badge = isLive
     ? { border: 'border-[#FF3B3B]/30 bg-[#FF3B3B]/10', text: 'text-[#FF3B3B]', label: 'LIVE NOW', icon: <Radio size={12} className="text-[#FF3B3B] live-pulse" /> }
@@ -362,7 +397,7 @@ export default function StreamSetupPageClient({ gymId, hasCfStream: initialHasCf
                   onChange={e => setSelectedVideoId(e.target.value)}
                   className="w-full bg-[#111111] border border-[#333333] rounded-sm px-3 py-2 font-inter text-xs text-[#999999] focus:outline-none focus:border-[#555555] appearance-none cursor-pointer"
                 >
-                  <option value="">Default camera</option>
+                  <option value="">Rear camera (default)</option>
                   {videoDevices.map(d => (
                     <option key={d.deviceId} value={d.deviceId}>{d.label || `Camera ${d.deviceId.slice(0, 6)}`}</option>
                   ))}
@@ -417,6 +452,15 @@ export default function StreamSetupPageClient({ gymId, hasCfStream: initialHasCf
                     :{pad(Math.floor(elapsed / 3600) > 0 ? Math.floor((elapsed % 3600) / 60) : elapsed % 60)}
                   </span>
                 </div>
+              )}
+              {broadcasting && (
+                <button
+                  onClick={flipCamera}
+                  className="absolute bottom-3 right-3 flex items-center gap-1.5 bg-black/70 hover:bg-black/90 px-3 py-1.5 rounded-sm transition-colors"
+                >
+                  <SwitchCamera size={13} className="text-white" />
+                  <span className="font-bebas text-white text-xs tracking-[2px]">FLIP</span>
+                </button>
               )}
             </div>
           </div>

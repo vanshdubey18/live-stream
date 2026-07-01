@@ -573,7 +573,7 @@ function RecentReplays({ replays }: { replays: any[] }) {
                 <span className="font-inter text-[10px] text-[#555555] uppercase tracking-[2px] border border-[#333333] bg-[#222222] px-2 py-0.5 rounded-sm">
                   {s.discipline ?? 'BJJ'}
                 </span>
-                {s.mux_playback_id && (
+                {s.ai_summary && (
                   <span className="font-inter text-[10px] text-[#999999] uppercase tracking-[2px]">AI NOTES</span>
                 )}
               </div>

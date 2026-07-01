@@ -13,7 +13,7 @@ export default async function WatchPage({ params }: { params: { id: string } }) 
   // Fetch session + coach + gym name
   const { data: session } = await supabase
     .from('sessions')
-    .select('id, title, discipline, level, scheduled_at, status, mux_playback_id, cf_hls_url, gym_id, coaches(name), gyms(name)')
+    .select('id, title, discipline, level, scheduled_at, status, cf_hls_url, gym_id, coaches(name), gyms(name)')
     .eq('id', params.id)
     .maybeSingle()
 

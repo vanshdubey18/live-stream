@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import crypto from 'crypto'
+import { processSession } from '@/lib/ai/process-session'
 
 export const runtime = 'nodejs'
 
@@ -72,7 +73,7 @@ export async function POST(req: NextRequest) {
     if (liveInputUid) {
       await handleRecordingReady(videoUid, liveInputUid, event)
     } else {
-      await handleClipReady(videoUid, event)
+      await handleClipReady(videoUid)
     }
   }
 
@@ -119,6 +120,13 @@ async function handleRecordingReady(videoUid: string, liveInputUid: string, data
 
   console.log(`[cf-webhook] Recording ready for session ${session.id}: ${videoUid}`)
 
+  // Fire-and-forget AI processing — transcribe + extract techniques.
+  // Not awaited: this webhook must return quickly, and processSession
+  // internally polls for the MP4 download to finish (can take a while).
+  processSession(session.id).catch(err =>
+    console.error('[cf-webhook] processSession error:', err)
+  )
+
   // Short stream guard — skip clipping if less than 70s
   if (durationSeconds < 70) {
     console.log(`[cf-webhook] Stream too short (${durationSeconds}s), skipping clip`)
@@ -138,7 +146,7 @@ async function handleRecordingReady(videoUid: string, liveInputUid: string, data
   }
 }
 
-async function handleClipReady(clipUid: string, data: any) {
+async function handleClipReady(clipUid: string) {
   // Match by clip_video_uid stored when we called the clip API
   const { data: session } = await admin
     .from('sessions')

@@ -1,10 +1,10 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowLeft, Play, Pause, Volume2, Maximize, Settings, Lock, Sparkles, BookOpen, Layers, MessageCircle, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
-import MuxPlayer from '@mux/mux-player-react'
+import Hls from 'hls.js'
 
 interface SessionMeta {
   title: string
@@ -350,12 +350,12 @@ interface Chapter {
 }
 
 export default function ReplayClient({
-  playbackId,
+  replayUrl,
   session,
   aiData,
   chapters = [],
 }: {
-  playbackId?: string
+  replayUrl?: string
   session?: SessionMeta
   aiData?: AIData | null
   chapters?: Chapter[]
@@ -363,13 +363,28 @@ export default function ReplayClient({
   const [playing, setPlaying] = useState(false)
   const [progress, setProgress] = useState(0)
   const [jumpTo, setJumpTo] = useState<string | null>(null)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const playerRef = useRef<any>(null)
+  const playerRef = useRef<HTMLVideoElement>(null)
+
+  useEffect(() => {
+    const video = playerRef.current
+    if (!video || !replayUrl) return
+
+    if (video.canPlayType('application/vnd.apple.mpegurl')) {
+      video.src = replayUrl
+      return
+    }
+    if (Hls.isSupported()) {
+      const hls = new Hls()
+      hls.loadSource(replayUrl)
+      hls.attachMedia(video)
+      return () => hls.destroy()
+    }
+  }, [replayUrl])
 
   function handleTimestamp(ts: string) {
     const [m, s] = ts.split(':').map(Number)
     const seekSeconds = m * 60 + s
-    if (playbackId && playerRef.current) {
+    if (replayUrl && playerRef.current) {
       playerRef.current.currentTime = seekSeconds
     } else {
       const totalSeconds = (session?.duration_minutes ?? 60) * 60
@@ -418,14 +433,14 @@ export default function ReplayClient({
         {/* ── Left: Video player ── */}
         <div className="flex-1 lg:w-[70%] min-w-0">
           <div className="relative bg-black">
-            {playbackId ? (
+            {replayUrl ? (
               <>
-                <MuxPlayer
+                <video
                   ref={playerRef}
-                  streamType="on-demand"
-                  playbackId={playbackId}
-                  accentColor="#FF3B3B"
-                  style={{ width: '100%', display: 'block' }}
+                  controls
+                  playsInline
+                  className="w-full block"
+                  style={{ background: '#000' }}
                 />
                 {jumpTo && (
                   <motion.div
@@ -527,7 +542,7 @@ export default function ReplayClient({
 
           {/* Mobile AI sidebar */}
           <div className="lg:hidden border-t border-[#333333]">
-            <AISidebar onTimestampClick={handleTimestamp} seekable={Boolean(playbackId)} aiData={aiData} />
+            <AISidebar onTimestampClick={handleTimestamp} seekable={Boolean(replayUrl)} aiData={aiData} />
           </div>
         </div>
 
@@ -546,7 +561,7 @@ export default function ReplayClient({
 
           {/* Tabbed AI panel */}
           <div className="flex-1 flex flex-col overflow-hidden">
-            <AISidebar onTimestampClick={handleTimestamp} seekable={Boolean(playbackId)} aiData={aiData} />
+            <AISidebar onTimestampClick={handleTimestamp} seekable={Boolean(replayUrl)} aiData={aiData} />
           </div>
         </motion.div>
 

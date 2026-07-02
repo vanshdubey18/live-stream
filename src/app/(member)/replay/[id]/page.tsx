@@ -5,6 +5,11 @@ import { getDbRole } from '@/lib/supabase/admin'
 import ReplayClient from './ReplayClient'
 import AccessLockedScreen from '@/components/shared/AccessLockedScreen'
 
+// Member-facing replay visibility window. The underlying video is never
+// deleted (it stays in Cloudflare + feeds AI training indefinitely) — this
+// only limits how long a member can watch it.
+const REPLAY_WINDOW_DAYS = 30
+
 export default async function ReplayPage({ params }: { params: { id: string } }) {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -18,7 +23,7 @@ export default async function ReplayPage({ params }: { params: { id: string } })
   const [{ data: session }, { data: chaptersData }] = await Promise.all([
     adminClient
       .from('sessions')
-      .select('id, title, discipline, duration_minutes, mux_playback_id, gym_id, ai_summary, ai_techniques, ai_key_moments, coaches(name), gyms(name)')
+      .select('id, title, discipline, duration_minutes, replay_url, scheduled_at, gym_id, ai_summary, ai_techniques, ai_key_moments, coaches(name), gyms(name)')
       .eq('id', params.id)
       .eq('status', 'ended')
       .maybeSingle(),
@@ -33,8 +38,9 @@ export default async function ReplayPage({ params }: { params: { id: string } })
     redirect('/dashboard')
   }
 
-  // Check membership
   const role = await getDbRole(user.id)
+
+  // Check membership
   if (role !== 'admin') {
     const { data: membership } = await supabase
       .from('memberships')
@@ -58,12 +64,40 @@ export default async function ReplayPage({ params }: { params: { id: string } })
     }
   }
 
+  // Replay visibility window — separate from membership status. The class
+  // itself just ages out of the replay library after REPLAY_WINDOW_DAYS.
+  if (role !== 'admin') {
+    const classAgeMs = Date.now() - new Date(session.scheduled_at).getTime()
+    const windowMs = REPLAY_WINDOW_DAYS * 24 * 60 * 60 * 1000
+    if (classAgeMs > windowMs) {
+      return (
+        <div className="min-h-screen bg-[#0D0D0D] flex items-center justify-center px-4">
+          <div className="relative bg-[#1A1A1A] border border-[#333333] rounded-sm px-8 py-16 max-w-md w-full text-center overflow-hidden">
+            <span className="absolute inset-0 flex items-center justify-center font-bebas text-[110px] text-white/[0.03] leading-none select-none pointer-events-none">
+              ARCHIVED
+            </span>
+            <div className="relative space-y-3">
+              <p className="font-inter text-[11px] text-[#555555] tracking-[4px] uppercase">Replay Archived</p>
+              <h1 className="font-bebas text-3xl text-white tracking-[1px]">NO LONGER AVAILABLE</h1>
+              <p className="font-inter text-[#999999] text-sm leading-relaxed">
+                Replays are available for {REPLAY_WINDOW_DAYS} days after class. This one has aged out of the library.
+              </p>
+              <a href="/dashboard/replays" className="inline-block font-inter text-[#555555] hover:text-white text-xs transition-colors pt-2">
+                Back to replays
+              </a>
+            </div>
+          </div>
+        </div>
+      )
+    }
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const aiKeyMoments = session.ai_key_moments as any
 
   return (
     <ReplayClient
-      playbackId={session.mux_playback_id ?? undefined}
+      replayUrl={session.replay_url ?? undefined}
       chapters={chaptersData ?? []}
       session={{
         title: session.title,

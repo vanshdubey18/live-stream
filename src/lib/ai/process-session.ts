@@ -22,12 +22,37 @@ export interface AIKeyMoments {
   coachQuote: string
 }
 
-async function transcribeWithDeepgram(muxPlaybackId: string): Promise<string> {
+// Cloudflare Stream doesn't expose a direct fetchable audio/video file by
+// default — an MP4 download has to be explicitly enabled per-video, then
+// polled until Cloudflare finishes encoding it. Enabling is idempotent.
+async function ensureMp4Url(cfVideoUid: string): Promise<string | null> {
+  const base = `https://api.cloudflare.com/client/v4/accounts/${process.env.CF_ACCOUNT_ID}/stream/${cfVideoUid}/downloads`
+  const headers = {
+    Authorization: `Bearer ${process.env.CF_API_TOKEN}`,
+    'Content-Type': 'application/json',
+  }
+
+  await fetch(base, { method: 'POST', headers }).catch(() => null)
+
+  // Poll for encoding to finish — usually under a minute, cap at ~4 minutes.
+  for (let i = 0; i < 16; i++) {
+    const res = await fetch(base, { headers })
+    if (res.ok) {
+      const { result } = await res.json()
+      if (result?.default?.status === 'ready' && result.default.url) {
+        return result.default.url as string
+      }
+    }
+    await new Promise(resolve => setTimeout(resolve, 15_000))
+  }
+  return null
+}
+
+async function transcribeWithDeepgram(mp4Url: string): Promise<string> {
   const { DeepgramClient } = await import('@deepgram/sdk')
   const deepgram = new DeepgramClient({ apiKey: process.env.DEEPGRAM_API_KEY! })
-  const audioUrl = `https://stream.mux.com/${muxPlaybackId}/high.mp4`
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const response = await deepgram.listen.v1.media.transcribeUrl({ url: audioUrl, model: 'nova-3' as any, smart_format: true, punctuate: true })
+  const response = await deepgram.listen.v1.media.transcribeUrl({ url: mp4Url, model: 'nova-3' as any, smart_format: true, punctuate: true })
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return (response as any)?.results?.channels?.[0]?.alternatives?.[0]?.transcript ?? ''
 }
@@ -76,21 +101,27 @@ export async function processSession(sessionId: string): Promise<void> {
 
   const { data: session } = await admin
     .from('sessions')
-    .select('id, title, discipline, mux_playback_id, ai_summary, coaches(name)')
+    .select('id, title, discipline, cf_video_uid, ai_summary, coaches(name)')
     .eq('id', sessionId)
     .maybeSingle()
 
   if (!session) return
   if (session.ai_summary) return  // already processed
-  if (!session.mux_playback_id) {
-    console.warn(`[process-session] No playback ID for ${sessionId}`)
+  if (!session.cf_video_uid) {
+    console.warn(`[process-session] No cf_video_uid for ${sessionId}`)
     return
   }
 
   console.log(`[process-session] Starting for session ${sessionId}`)
 
   try {
-    const transcript = await transcribeWithDeepgram(session.mux_playback_id)
+    const mp4Url = await ensureMp4Url(session.cf_video_uid)
+    if (!mp4Url) {
+      console.warn(`[process-session] MP4 download never became ready for ${sessionId}`)
+      return
+    }
+
+    const transcript = await transcribeWithDeepgram(mp4Url)
     if (!transcript) {
       console.warn(`[process-session] Empty transcript for ${sessionId}`)
       return

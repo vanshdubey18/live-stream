@@ -25,7 +25,9 @@ export async function createLiveInput(name: string): Promise<CloudflareLiveInput
       headers: authHeaders(),
       body: JSON.stringify({
         meta: { name },
-        recording: { mode: 'off' },
+        // 'automatic' records every broadcast on this input so replays/clips/
+        // chapters/AI processing all have video to work with.
+        recording: { mode: 'automatic' },
       }),
     }
   )
@@ -51,4 +53,30 @@ export async function getLiveInputStatus(uid: string): Promise<'connected' | 'di
   if (!res.ok) return 'disconnected'
   const { result } = await res.json()
   return result.status === 'connected' ? 'connected' : 'disconnected'
+}
+
+// Self-heals live inputs provisioned before recording was turned on by
+// default. Cheap to call on every create-stream request — only patches
+// when recording is actually off.
+export async function enableRecordingIfNeeded(uid: string): Promise<void> {
+  try {
+    const res = await fetch(
+      `${BASE}/accounts/${accountId()}/stream/live_inputs/${uid}`,
+      { headers: authHeaders() }
+    )
+    if (!res.ok) return
+    const { result } = await res.json()
+    if (result?.recording?.mode === 'automatic') return
+
+    await fetch(
+      `${BASE}/accounts/${accountId()}/stream/live_inputs/${uid}`,
+      {
+        method: 'POST',
+        headers: authHeaders(),
+        body: JSON.stringify({ recording: { mode: 'automatic' } }),
+      }
+    )
+  } catch (err) {
+    console.error('[cloudflare] enableRecordingIfNeeded failed:', err)
+  }
 }

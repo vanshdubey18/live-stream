@@ -420,7 +420,7 @@ export default function StreamSetupPageClient({ gymId, hasCfStream: initialHasCf
                 </select>
               </div>
               <p className="font-inter text-[10px] text-[#444444]">
-                Device labels populate after your first GO LIVE grants camera permission.
+                Defaults to your rear camera. Tap FLIP on the preview to switch to the selfie camera, or pick a specific device above. Labels appear after your first GO LIVE grants camera permission.
               </p>
             </div>
           )}

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createClient as createAdminClient } from '@supabase/supabase-js'
 import { getDbRole } from '@/lib/supabase/admin'
-import { createLiveInput } from '@/lib/cloudflare'
+import { createLiveInput, enableRecordingIfNeeded } from '@/lib/cloudflare'
 
 function getAdmin() {
   return createAdminClient(
@@ -35,8 +35,10 @@ export async function POST(_req: NextRequest) {
     return NextResponse.json({ error: 'Your gym is pending approval' }, { status: 403 })
   }
 
-  // Already provisioned — return existing credentials
+  // Already provisioned — return existing credentials. Self-heal recording
+  // in case this live input predates recording being turned on by default.
   if (gym.cf_live_input_uid && gym.cf_whip_url && gym.cf_hls_url) {
+    enableRecordingIfNeeded(gym.cf_live_input_uid).catch(() => {})
     return NextResponse.json({
       uid: gym.cf_live_input_uid,
       hls_url: gym.cf_hls_url,

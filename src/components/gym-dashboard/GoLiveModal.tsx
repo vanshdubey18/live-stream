@@ -4,7 +4,6 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Loader2, StopCircle } from 'lucide-react'
 
-
 interface Props {
   sessionId: string
   sessionTitle: string
@@ -28,7 +27,7 @@ export default function GoLiveModal({
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
-async function handleGoLive() {
+  async function handleGoLive() {
     setLoading(true)
     setError('')
     try {

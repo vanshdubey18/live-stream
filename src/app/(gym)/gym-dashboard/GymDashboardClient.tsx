@@ -6,7 +6,6 @@ import GymSidebar from '@/components/layout/GymSidebar'
 import StatsCard from '@/components/gym-dashboard/StatsCard'
 import StreamSetupCard from '@/components/gym-dashboard/StreamSetupCard'
 import ScheduleClassModal, { type ScheduledClass } from '@/components/gym-dashboard/ScheduleClassModal'
-import GoLiveModal from '@/components/gym-dashboard/GoLiveModal'
 import Toast from '@/components/gym-dashboard/Toast'
 
 interface MemberStats {
@@ -269,7 +268,6 @@ function ActionItems({
 export default function GymDashboardClient({ gym, ownerName, sessions, coaches, memberCount, memberStats, payouts }: Props) {
   const [localSessions, setLocalSessions] = useState<any[]>(sessions)
   const [showModal, setShowModal] = useState(false)
-  const [goLiveSession, setGoLiveSession] = useState<{ id: string; title: string } | null>(null)
   const [toast, setToast] = useState('')
 
   const completedCount = localSessions.filter(s => s.status === 'ended').length
@@ -303,18 +301,7 @@ export default function GymDashboardClient({ gym, ownerName, sessions, coaches, 
   }
 
   function handleGoLive(id: string) {
-    const session = localSessions.find(s => s.id === id)
-    if (session) setGoLiveSession({ id, title: session.title })
-  }
-
-  function handleWentLive(id: string) {
-    setLocalSessions(p => p.map(s => s.id === id ? { ...s, status: 'live' } : s))
-    setToast('You\'re live!')
-  }
-
-  function handleStreamEnded(id: string) {
-    setLocalSessions(p => p.map(s => s.id === id ? { ...s, status: 'ended' } : s))
-    setToast('Stream ended')
+    window.location.href = `/gym-dashboard/stream?session_id=${id}`
   }
 
   function handleClipDismissed(id: string) {
@@ -470,12 +457,12 @@ export default function GymDashboardClient({ gym, ownerName, sessions, coaches, 
                           <td className="px-5 py-4">
                             <div className="flex items-center gap-2">
                               {s.status !== 'ended' && (
-                                <button
-                                  onClick={() => handleGoLive(s.id)}
+                                <a
+                                  href={`/gym-dashboard/stream?session_id=${s.id}`}
                                   className="font-bebas tracking-[2px] text-sm bg-white text-black px-3 py-1 rounded-sm hover:bg-[#E5E5E5] transition-colors"
                                 >
                                   {s.status === 'live' ? 'MANAGE' : 'GO LIVE'}
-                                </button>
+                                </a>
                               )}
                               <button
                                 onClick={() => handleDelete(s.id)}
@@ -509,12 +496,12 @@ export default function GymDashboardClient({ gym, ownerName, sessions, coaches, 
                       </div>
                       <div className="flex gap-2">
                         {s.status !== 'ended' && (
-                          <button
-                            onClick={() => handleGoLive(s.id)}
+                          <a
+                            href={`/gym-dashboard/stream?session_id=${s.id}`}
                             className="font-bebas tracking-[2px] text-sm bg-white text-black px-4 py-1.5 rounded-sm hover:bg-[#E5E5E5] transition-colors"
                           >
                             {s.status === 'live' ? 'MANAGE' : 'GO LIVE'}
-                          </button>
+                          </a>
                         )}
                         <button
                           onClick={() => handleDelete(s.id)}
@@ -608,16 +595,6 @@ export default function GymDashboardClient({ gym, ownerName, sessions, coaches, 
           coaches={coaches.map((c: any) => ({ id: c.id, name: c.name }))}
           onClose={() => setShowModal(false)}
           onScheduled={handleScheduled}
-        />
-      )}
-      {goLiveSession && (
-        <GoLiveModal
-          sessionId={goLiveSession.id}
-          sessionTitle={goLiveSession.title}
-          streamKey={gym.stream_key ?? null}
-          onClose={() => setGoLiveSession(null)}
-          onWentLive={handleWentLive}
-          onEnded={handleStreamEnded}
         />
       )}
       {toast && <Toast message={toast} onClose={() => setToast('')} />}

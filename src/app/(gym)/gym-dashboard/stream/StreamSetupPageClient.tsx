@@ -8,6 +8,7 @@ import { createClient } from '@/lib/supabase/client'
 interface Props {
   gymId: string
   hasCfStream: boolean
+  sessionId?: string | null
 }
 
 type ConnState = 'idle' | 'connecting' | 'live' | 'reconnecting'
@@ -16,7 +17,7 @@ interface Viewer { user_id: string; name: string; joined_at: number }
 
 function pad(n: number) { return String(n).padStart(2, '0') }
 
-export default function StreamSetupPageClient({ gymId, hasCfStream: initialHasCfStream }: Props) {
+export default function StreamSetupPageClient({ gymId, hasCfStream: initialHasCfStream, sessionId: scheduledSessionId }: Props) {
   // ── State ─────────────────────────────────────────────────────────────────────
   const [conn, setConn] = useState<ConnState>('idle')
   const [provisioning, setProvisioning] = useState(!initialHasCfStream)
@@ -198,7 +199,11 @@ export default function StreamSetupPageClient({ gymId, hasCfStream: initialHasCf
                 await new Promise<void>(res => setTimeout(res, 2000))
               }
               try {
-                const goRes = await fetch('/api/gym/go-live', { method: 'POST' })
+                const goRes = await fetch('/api/gym/go-live', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(scheduledSessionId ? { session_id: scheduledSessionId } : {}),
+                })
                 if (goRes.ok) {
                   const { sessionId } = await goRes.json()
                   setActiveSessionId(sessionId)

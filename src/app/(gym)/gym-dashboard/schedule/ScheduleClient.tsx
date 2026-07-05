@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import GymSidebar from '@/components/layout/GymSidebar'
 import ScheduleClassModal, { type ScheduledClass } from '@/components/gym-dashboard/ScheduleClassModal'
-import GoLiveModal from '@/components/gym-dashboard/GoLiveModal'
 import Toast from '@/components/gym-dashboard/Toast'
 import EmptyState from '@/components/ui/EmptyState'
 import Link from 'next/link'
@@ -59,7 +58,6 @@ export default function ScheduleClient({ gym, sessions, coaches }: Props) {
     [...sessions].sort((a, b) => new Date(a.scheduled_at).getTime() - new Date(b.scheduled_at).getTime())
   )
   const [showModal, setShowModal] = useState(false)
-  const [goLiveSession, setGoLiveSession] = useState<{ id: string; title: string } | null>(null)
   const [toast, setToast] = useState('')
   const [filter, setFilter] = useState<'upcoming' | 'all'>('upcoming')
 
@@ -83,21 +81,6 @@ export default function ScheduleClient({ gym, sessions, coaches }: Props) {
     })
     setLocalSessions(p => p.filter(s => s.id !== id))
     setToast('Class removed')
-  }
-
-  function handleGoLive(id: string) {
-    const s = localSessions.find(s => s.id === id)
-    if (s) setGoLiveSession({ id, title: s.title })
-  }
-
-  function handleWentLive(id: string) {
-    setLocalSessions(p => p.map(s => s.id === id ? { ...s, status: 'live' } : s))
-    setToast("You're live!")
-  }
-
-  function handleStreamEnded(id: string) {
-    setLocalSessions(p => p.map(s => s.id === id ? { ...s, status: 'ended' } : s))
-    setToast('Stream ended')
   }
 
   const liveCount = localSessions.filter(s => s.status === 'live').length
@@ -238,8 +221,8 @@ export default function ScheduleClient({ gym, sessions, coaches }: Props) {
                           {/* Actions */}
                           <div className="flex items-center gap-2 shrink-0">
                             {!isEnded && (
-                              <button
-                                onClick={() => handleGoLive(s.id)}
+                              <a
+                                href={`/gym-dashboard/stream?session_id=${s.id}`}
                                 className={`flex items-center gap-1.5 font-bebas tracking-[2px] text-sm px-3 py-1.5 rounded-sm transition-colors ${
                                   isLive
                                     ? 'bg-[#FF3B3B] text-white hover:bg-[#cc2f2f]'
@@ -248,7 +231,7 @@ export default function ScheduleClient({ gym, sessions, coaches }: Props) {
                               >
                                 <Radio size={12} />
                                 {isLive ? 'MANAGE' : 'GO LIVE'}
-                              </button>
+                              </a>
                             )}
                             {isEnded && (
                               <Link
@@ -284,16 +267,6 @@ export default function ScheduleClient({ gym, sessions, coaches }: Props) {
           coaches={coaches}
           onClose={() => setShowModal(false)}
           onScheduled={handleScheduled}
-        />
-      )}
-      {goLiveSession && (
-        <GoLiveModal
-          sessionId={goLiveSession.id}
-          sessionTitle={goLiveSession.title}
-          streamKey={gym.stream_key ?? null}
-          onClose={() => setGoLiveSession(null)}
-          onWentLive={handleWentLive}
-          onEnded={handleStreamEnded}
         />
       )}
       {toast && <Toast message={toast} onClose={() => setToast('')} />}

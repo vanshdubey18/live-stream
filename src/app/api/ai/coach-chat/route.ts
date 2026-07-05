@@ -5,10 +5,12 @@ import { createClient as createAdminClient } from '@supabase/supabase-js'
 
 export const runtime = 'nodejs'
 
-const admin = createAdminClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-)
+function getAdmin() {
+  return createAdminClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  )
+}
 
 export async function POST(req: NextRequest) {
   if (!process.env.ANTHROPIC_API_KEY) {
@@ -22,7 +24,7 @@ export async function POST(req: NextRequest) {
   const { question, gymId } = await req.json()
   if (!question?.trim()) return NextResponse.json({ error: 'Question required' }, { status: 400 })
 
-  let query = admin
+  let query = getAdmin()
     .from('sessions')
     .select('id, title, discipline, transcript, ai_summary, ai_key_moments, scheduled_at, coaches(name)')
     .eq('status', 'ended')

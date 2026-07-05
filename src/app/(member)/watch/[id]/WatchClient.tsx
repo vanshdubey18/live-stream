@@ -4,7 +4,6 @@ import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowLeft, CheckCircle2, Circle, Lock, Sparkles, BookOpen, Layers, MessageCircle } from 'lucide-react'
 import Link from 'next/link'
-import SessionSummary, { DEMO_SUMMARY } from '@/components/ai/SessionSummary'
 import { createClient } from '@/lib/supabase/client'
 
 function pad(n: number) { return String(n).padStart(2, '0') }
@@ -346,66 +345,32 @@ function LiveViewer({ playbackId, sessionId, session, userId, userName }: {
 }
 
 // ─── Post-class summary ───────────────────────────────────────────────────────
-const POST_MESSAGES = ['Reviewing today\'s class…', 'Identifying techniques…', 'Finding key moments…']
-
-function PostViewer() {
-  const [stage, setStage] = useState<'instant' | 'processing' | 'ready'>('instant')
-  const [msgIdx, setMsgIdx] = useState(0)
-
-  useEffect(() => {
-    const t1 = setTimeout(() => setStage('processing'), 1200)
-    const t2 = setTimeout(() => setStage('ready'), 11000)
-    return () => { clearTimeout(t1); clearTimeout(t2) }
-  }, [])
-
-  useEffect(() => {
-    if (stage !== 'processing') return
-    const t = setInterval(() => setMsgIdx(i => (i + 1) % POST_MESSAGES.length), 3000)
-    return () => clearInterval(t)
-  }, [stage])
-
+function PostViewer({ sessionId }: { sessionId: string }) {
   return (
     <motion.div key="post" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="min-h-screen bg-[#0D0D0D] px-4 py-12 overflow-y-auto">
       <div className="max-w-2xl mx-auto flex flex-col items-center gap-8">
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="text-center space-y-2">
           <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase">Session complete</p>
           <h1 className="font-bebas text-5xl text-white tracking-[1px]">Stream Ended</h1>
-          <p className="font-inter text-[#999999] text-sm">Class has ended.</p>
+          <p className="font-inter text-[#999999] text-sm">
+            Your replay and AI summary are being processed. This can take a few minutes — check the replay page to see progress.
+          </p>
         </motion.div>
-        <AnimatePresence mode="wait">
-          {stage === 'processing' && (
-            <motion.div key="proc" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-              className="w-full bg-[#1A1A1A] border border-[#333333] rounded-sm px-6 py-8 flex flex-col items-center gap-5">
-              <div className="flex gap-2">
-                {[0, 1, 2].map(i => (
-                  <motion.div key={i} className="w-2 h-2 rounded-full bg-[#FF3B3B]"
-                    animate={{ scale: [1, 1.6, 1], opacity: [0.4, 1, 0.4] }}
-                    transition={{ duration: 0.9, delay: i * 0.25, repeat: Infinity }} />
-                ))}
-              </div>
-              <AnimatePresence mode="wait">
-                <motion.p key={msgIdx} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }}
-                  className="font-inter text-[#999999] text-sm">{POST_MESSAGES[msgIdx]}</motion.p>
-              </AnimatePresence>
-              <div className="w-full space-y-3 mt-2">
-                {[80, 60, 90, 50, 70].map((w, i) => (
-                  <div key={i} className="flex items-center gap-3">
-                    <div className="w-4 h-4 bg-[#222222] animate-pulse shrink-0" />
-                    <div className="h-2 bg-[#222222] animate-pulse rounded-sm" style={{ width: `${w}%` }} />
-                  </div>
-                ))}
-              </div>
-            </motion.div>
-          )}
-          {stage === 'ready' && (
-            <motion.div key="summary" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full">
-              <SessionSummary data={DEMO_SUMMARY} />
-            </motion.div>
-          )}
-        </AnimatePresence>
-        {stage !== 'ready' && (
-          <Link href="/dashboard" className="font-inter text-[#555] hover:text-[#999999] text-sm transition-colors">Back to dashboard</Link>
-        )}
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}
+          className="w-full bg-[#1A1A1A] border border-[#333333] rounded-sm px-6 py-8 flex flex-col items-center gap-5">
+          <div className="flex gap-2">
+            {[0, 1, 2].map(i => (
+              <motion.div key={i} className="w-2 h-2 rounded-full bg-[#FF3B3B]"
+                animate={{ scale: [1, 1.6, 1], opacity: [0.4, 1, 0.4] }}
+                transition={{ duration: 0.9, delay: i * 0.25, repeat: Infinity }} />
+            ))}
+          </div>
+          <p className="font-inter text-[#999999] text-sm">Processing your class…</p>
+        </motion.div>
+        <Link href={`/replay/${sessionId}`} className="font-inter text-white hover:text-[#E5E5E5] text-sm transition-colors underline underline-offset-4">
+          View replay
+        </Link>
+        <Link href="/dashboard" className="font-inter text-[#555] hover:text-[#999999] text-sm transition-colors">Back to dashboard</Link>
       </div>
     </motion.div>
   )
@@ -485,7 +450,7 @@ export default function WatchClient({ session, initialPhase, initialPlaybackId, 
           <LiveViewer key="live" playbackId={playbackId} sessionId={session.id} session={session}
             userId={userId} userName={userName} />
         )}
-        {phase === 'post' && <PostViewer key="post" />}
+        {phase === 'post' && <PostViewer key="post" sessionId={session.id} />}
       </AnimatePresence>
     </div>
   )

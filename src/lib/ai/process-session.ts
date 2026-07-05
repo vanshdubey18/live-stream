@@ -1,10 +1,12 @@
 import Anthropic from '@anthropic-ai/sdk'
 import { createClient } from '@supabase/supabase-js'
 
-const admin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-)
+function getAdmin() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  )
+}
 
 interface ExtractedTechnique {
   name: string
@@ -26,9 +28,9 @@ export interface AIKeyMoments {
 // default — an MP4 download has to be explicitly enabled per-video, then
 // polled until Cloudflare finishes encoding it. Enabling is idempotent.
 async function ensureMp4Url(cfVideoUid: string): Promise<string | null> {
-  const base = `https://api.cloudflare.com/client/v4/accounts/${process.env.CF_ACCOUNT_ID}/stream/${cfVideoUid}/downloads`
+  const base = `https://api.cloudflare.com/client/v4/accounts/${process.env.CLOUDFLARE_ACCOUNT_ID}/stream/${cfVideoUid}/downloads`
   const headers = {
-    Authorization: `Bearer ${process.env.CF_API_TOKEN}`,
+    Authorization: `Bearer ${process.env.CLOUDFLARE_API_TOKEN}`,
     'Content-Type': 'application/json',
   }
 
@@ -98,6 +100,8 @@ export async function processSession(sessionId: string): Promise<void> {
     console.warn('[process-session] Missing DEEPGRAM_API_KEY or ANTHROPIC_API_KEY — skipping')
     return
   }
+
+  const admin = getAdmin()
 
   const { data: session } = await admin
     .from('sessions')

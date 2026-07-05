@@ -2,13 +2,16 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react'
 import GymSidebar from '@/components/layout/GymSidebar'
-import { Loader2, Radio, Wifi, WifiOff, AlertCircle, Camera, Mic, Monitor, Users, SwitchCamera } from 'lucide-react'
+import { Loader2, Radio, Wifi, WifiOff, AlertCircle, Camera, Mic, Monitor, Users, SwitchCamera, Tag, Pencil } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
 interface Props {
   gymId: string
   hasCfStream: boolean
   sessionId?: string | null
+  gymDisciplines?: string[]
+  scheduledTitle?: string | null
+  scheduledDiscipline?: string | null
 }
 
 type ConnState = 'idle' | 'connecting' | 'live' | 'reconnecting'
@@ -17,7 +20,14 @@ interface Viewer { user_id: string; name: string; joined_at: number }
 
 function pad(n: number) { return String(n).padStart(2, '0') }
 
-export default function StreamSetupPageClient({ gymId, hasCfStream: initialHasCfStream, sessionId: scheduledSessionId }: Props) {
+export default function StreamSetupPageClient({
+  gymId,
+  hasCfStream: initialHasCfStream,
+  sessionId: scheduledSessionId,
+  gymDisciplines = [],
+  scheduledTitle,
+  scheduledDiscipline,
+}: Props) {
   // ── State ─────────────────────────────────────────────────────────────────────
   const [conn, setConn] = useState<ConnState>('idle')
   const [provisioning, setProvisioning] = useState(!initialHasCfStream)
@@ -25,6 +35,11 @@ export default function StreamSetupPageClient({ gymId, hasCfStream: initialHasCf
   const [goLiveError, setGoLiveError] = useState<string | null>(null)
   const [endingStream, setEndingStream] = useState(false)
   const [elapsed, setElapsed] = useState(0)
+
+  // Class details — only relevant for an ad-hoc go-live (no scheduled session).
+  // A scheduled class already carries its own title/discipline through.
+  const [classTitle, setClassTitle] = useState('')
+  const [classDiscipline, setClassDiscipline] = useState(gymDisciplines[0] ?? 'BJJ')
 
   // Device selection
   const [videoDevices, setVideoDevices] = useState<MediaDeviceInfo[]>([])
@@ -202,7 +217,11 @@ export default function StreamSetupPageClient({ gymId, hasCfStream: initialHasCf
                 const goRes = await fetch('/api/gym/go-live', {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify(scheduledSessionId ? { session_id: scheduledSessionId } : {}),
+                  body: JSON.stringify(
+                    scheduledSessionId
+                      ? { session_id: scheduledSessionId }
+                      : { title: classTitle, discipline: classDiscipline }
+                  ),
                 })
                 if (goRes.ok) {
                   const { sessionId } = await goRes.json()
@@ -388,6 +407,51 @@ export default function StreamSetupPageClient({ gymId, hasCfStream: initialHasCf
             </div>
           )}
 
+          {/* Class details — scheduled classes already know their title/discipline;
+              ad-hoc streams need to ask, otherwise every class silently defaults to BJJ */}
+          {!provisioning && !provisionError && !broadcasting && (
+            scheduledSessionId ? (
+              <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm px-5 py-4 flex items-center gap-3">
+                <Tag size={13} className="text-[#999999] shrink-0" />
+                <div className="min-w-0">
+                  <p className="font-inter text-white text-sm font-medium truncate">{scheduledTitle ?? 'Scheduled class'}</p>
+                  <p className="font-inter text-[11px] text-[#999999] tracking-[2px] uppercase">{scheduledDiscipline ?? 'BJJ'}</p>
+                </div>
+              </div>
+            ) : (
+              <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm px-5 py-4 space-y-3">
+                <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase">Class Details</p>
+                <div className="space-y-1.5">
+                  <div className="flex items-center gap-2">
+                    <Tag size={11} className="text-[#999999]" />
+                    <span className="font-inter text-[11px] text-[#999999]">Discipline</span>
+                  </div>
+                  <select
+                    value={classDiscipline}
+                    onChange={e => setClassDiscipline(e.target.value)}
+                    className="w-full bg-[#111111] border border-[#333333] rounded-sm px-3 py-2 font-inter text-xs text-[#999999] focus:outline-none focus:border-[#555555] appearance-none cursor-pointer"
+                  >
+                    {(gymDisciplines.length ? gymDisciplines : ['BJJ']).map(d => (
+                      <option key={d} value={d}>{d}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="space-y-1.5">
+                  <div className="flex items-center gap-2">
+                    <Pencil size={11} className="text-[#999999]" />
+                    <span className="font-inter text-[11px] text-[#999999]">What&apos;s the class? (e.g. Guard Passing, Clinch Work)</span>
+                  </div>
+                  <input
+                    value={classTitle}
+                    onChange={e => setClassTitle(e.target.value)}
+                    placeholder="Class title or technique focus"
+                    className="w-full bg-[#111111] border border-[#333333] rounded-sm px-3 py-2 font-inter text-xs text-white placeholder-[#555555] focus:outline-none focus:border-[#555555]"
+                  />
+                </div>
+              </div>
+            )
+          )}
+
           {/* Device selector — only shown when offline */}
           {!provisioning && !provisionError && !broadcasting && (
             <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm px-5 py-4 space-y-3">
@@ -518,12 +582,16 @@ export default function StreamSetupPageClient({ gymId, hasCfStream: initialHasCf
             ) : (
               <button
                 onClick={handleGoLive}
-                className="w-full flex items-center justify-center gap-3 bg-[#FF3B3B] hover:bg-[#e03030] text-white font-bebas tracking-[3px] text-lg py-4 rounded-sm transition-all"
+                disabled={!scheduledSessionId && !classTitle.trim()}
+                className="w-full flex items-center justify-center gap-3 bg-[#FF3B3B] hover:bg-[#e03030] disabled:opacity-40 disabled:cursor-not-allowed text-white font-bebas tracking-[3px] text-lg py-4 rounded-sm transition-all"
               >
                 <Camera size={16} />
                 GO LIVE
               </button>
             )
+          )}
+          {!scheduledSessionId && !broadcasting && !classTitle.trim() && !provisioning && !provisionError && (
+            <p className="font-inter text-[11px] text-[#555555] px-1">Enter what the class is about above to go live.</p>
           )}
 
           {/* Info text */}

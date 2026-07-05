@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { isSessionLive } from '@/lib/session-live'
 
 export async function GET(req: NextRequest) {
   const sessionId = req.nextUrl.searchParams.get('session_id')
@@ -13,11 +14,17 @@ export async function GET(req: NextRequest) {
 
   const { data: session } = await supabase
     .from('sessions')
-    .select('status, cf_hls_url, gym_id')
+    .select('status, cf_hls_url, gym_id, scheduled_at')
     .eq('id', sessionId)
     .maybeSingle()
 
   if (!session) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+
+  // A session stuck 'live' from a crashed/abandoned stream is treated as ended —
+  // this member's client shouldn't sit on a phantom live page forever.
+  if (session.status === 'live' && !isSessionLive(session)) {
+    session.status = 'ended'
+  }
 
   // Require active membership in the session's gym
   const { data: membership } = await supabase

@@ -7,6 +7,7 @@ import Toast from '@/components/gym-dashboard/Toast'
 import EmptyState from '@/components/ui/EmptyState'
 import Link from 'next/link'
 import { Plus, Radio, Trash2, Clock, CheckCircle, BookMarked } from 'lucide-react'
+import { isSessionLive } from '@/lib/session-live'
 
 interface Coach { id: string; name: string }
 interface Props {
@@ -83,7 +84,7 @@ export default function ScheduleClient({ gym, sessions, coaches }: Props) {
     setToast('Class removed')
   }
 
-  const liveCount = localSessions.filter(s => s.status === 'live').length
+  const liveCount = localSessions.filter(s => isSessionLive(s)).length
   const scheduledCount = localSessions.filter(s => s.status === 'scheduled').length
   const endedCount = localSessions.filter(s => s.status === 'ended').length
 
@@ -172,7 +173,7 @@ export default function ScheduleClient({ gym, sessions, coaches }: Props) {
                   <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm overflow-hidden divide-y divide-[#222222]">
                     {grouped.get(day)!.map((s: any) => {
                       const dot = DISCIPLINE_DOT[s.discipline] ?? 'bg-[#555555]'
-                      const isLive = s.status === 'live'
+                      const isLive = isSessionLive(s)
                       const isEnded = s.status === 'ended'
                       return (
                         <div key={s.id} className={`flex items-center gap-4 px-5 py-4 hover:bg-[#222222] transition-colors ${isLive ? 'bg-[#FF3B3B]/5' : ''}`}>

@@ -7,6 +7,7 @@ import StatsCard from '@/components/gym-dashboard/StatsCard'
 import StreamSetupCard from '@/components/gym-dashboard/StreamSetupCard'
 import ScheduleClassModal, { type ScheduledClass } from '@/components/gym-dashboard/ScheduleClassModal'
 import Toast from '@/components/gym-dashboard/Toast'
+import { isSessionLive } from '@/lib/session-live'
 
 interface MemberStats {
   active: number
@@ -275,7 +276,7 @@ export default function GymDashboardClient({ gym, ownerName, sessions, coaches, 
   const totalRevenue = Math.round(memberCount * (gym.monthly_price_paise ?? 99900) * 0.7 / 100)
 
   // Action-item inputs
-  const liveSession = localSessions.find(s => s.status === 'live') ?? null
+  const liveSession = localSessions.find(s => isSessionLive(s)) ?? null
   const nextSession = localSessions
     .filter(s => s.status === 'scheduled' && s.scheduled_at && new Date(s.scheduled_at).getTime() > Date.now())
     .sort((a, b) => new Date(a.scheduled_at).getTime() - new Date(b.scheduled_at).getTime())[0] ?? null
@@ -461,7 +462,7 @@ export default function GymDashboardClient({ gym, ownerName, sessions, coaches, 
                                   href={`/gym-dashboard/stream?session_id=${s.id}`}
                                   className="font-bebas tracking-[2px] text-sm bg-white text-black px-3 py-1 rounded-sm hover:bg-[#E5E5E5] transition-colors"
                                 >
-                                  {s.status === 'live' ? 'MANAGE' : 'GO LIVE'}
+                                  {isSessionLive(s) ? 'MANAGE' : 'GO LIVE'}
                                 </a>
                               )}
                               <button
@@ -500,7 +501,7 @@ export default function GymDashboardClient({ gym, ownerName, sessions, coaches, 
                             href={`/gym-dashboard/stream?session_id=${s.id}`}
                             className="font-bebas tracking-[2px] text-sm bg-white text-black px-4 py-1.5 rounded-sm hover:bg-[#E5E5E5] transition-colors"
                           >
-                            {s.status === 'live' ? 'MANAGE' : 'GO LIVE'}
+                            {isSessionLive(s) ? 'MANAGE' : 'GO LIVE'}
                           </a>
                         )}
                         <button

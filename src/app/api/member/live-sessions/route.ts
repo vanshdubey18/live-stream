@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient as createAdminClient } from '@supabase/supabase-js'
+import { staleLiveCutoffISO } from '@/lib/session-live'
 
 function admin() {
   return createAdminClient(
@@ -21,6 +22,8 @@ export async function GET(req: NextRequest) {
     .select('id, title, discipline, gym_id')
     .in('gym_id', gymIds)
     .eq('status', 'live')
+    // Ignore sessions stuck 'live' from a crashed/abandoned stream.
+    .gte('scheduled_at', staleLiveCutoffISO())
     .limit(1)
     .maybeSingle()
 

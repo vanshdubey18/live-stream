@@ -1,5 +1,7 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
@@ -7,7 +9,6 @@ import { Eye, EyeOff, Loader2, CheckCircle2 } from 'lucide-react'
 
 export default function ResetPasswordPage() {
   const router = useRouter()
-  const supabase = createClient()
 
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
@@ -20,6 +21,7 @@ export default function ResetPasswordPage() {
   // The recovery link lands here with a ?code= param — exchange it for a session
   useEffect(() => {
     async function establishSession() {
+      const supabase = createClient()
       const code = new URLSearchParams(window.location.search).get('code')
       if (code) {
         const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code)
@@ -43,6 +45,7 @@ export default function ResetPasswordPage() {
     if (password !== confirm) { setError('Passwords do not match.'); return }
     setLoading(true)
     try {
+      const supabase = createClient()
       const { error: updateError } = await supabase.auth.updateUser({ password })
       if (updateError) throw updateError
       setDone(true)

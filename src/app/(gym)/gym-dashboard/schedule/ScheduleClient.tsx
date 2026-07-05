@@ -141,7 +141,7 @@ export default function ScheduleClient({ gym, sessions, coaches }: Props) {
             </div>
             <div className="bg-[#1A1A1A] px-5 py-4">
               <p className="font-inter text-[11px] text-[#999999] tracking-[3px] uppercase mb-1">Completed</p>
-              <p className="font-bebas text-3xl tracking-[1px] text-[#555555]">{endedCount}</p>
+              <p className="font-bebas text-3xl tracking-[1px] text-[#999999]">{endedCount}</p>
             </div>
           </div>
 

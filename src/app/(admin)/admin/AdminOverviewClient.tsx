@@ -124,7 +124,7 @@ export default function AdminOverviewClient({ stats, gyms, members, payouts }: P
                   key={tab}
                   onClick={() => setActiveTab(tab)}
                   className={`px-4 py-1.5 rounded-sm font-inter text-sm transition-all capitalize
-                    ${activeTab === tab ? 'bg-[#222222] text-white' : 'text-[#555555] hover:text-white'}`}
+                    ${activeTab === tab ? 'bg-[#222222] text-white' : 'text-[#999999] hover:text-white'}`}
                 >
                   {tab}
                 </button>

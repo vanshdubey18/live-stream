@@ -76,8 +76,8 @@ export default function RevenueClient({
                 { label: 'Your share (70%)', value: fmt(estMonthlyNet), unit: '', highlight: true },
               ].map(({ label, value, unit, dim, highlight }) => (
                 <div key={label} className={`flex items-center justify-between px-5 py-3.5 ${highlight ? 'bg-[#222222]' : ''}`}>
-                  <span className={`font-inter text-sm ${dim ? 'text-[#555555]' : highlight ? 'text-white font-medium' : 'text-[#999999]'}`}>{label}</span>
-                  <span className={`font-bebas text-xl tracking-[1px] ${dim ? 'text-[#555555]' : highlight ? 'text-[#00D4AA]' : 'text-white'}`}>
+                  <span className={`font-inter text-sm ${dim ? 'text-[#999999]' : highlight ? 'text-white font-medium' : 'text-[#999999]'}`}>{label}</span>
+                  <span className={`font-bebas text-xl tracking-[1px] ${dim ? 'text-[#999999]' : highlight ? 'text-[#00D4AA]' : 'text-white'}`}>
                     {value}<span className="font-inter text-xs ml-1">{unit}</span>
                   </span>
                 </div>

@@ -50,7 +50,7 @@ export default function AdminSidebar({ active = 'Overview', pendingCount = 0 }: 
                 className={`flex items-center gap-3 px-3 py-2.5 text-sm font-inter transition-colors duration-200
                   ${isActive
                     ? 'text-white bg-[#1A1A1A] border-l-2 border-[#FF3B3B]'
-                    : 'text-[#555555] hover:text-white'
+                    : 'text-[#999999] hover:text-white'
                   }`}>
                 <Icon size={18} className={isActive ? 'text-[#FF3B3B]' : ''} />
                 <span className="flex-1">{label}</span>

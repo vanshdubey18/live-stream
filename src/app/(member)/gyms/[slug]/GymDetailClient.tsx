@@ -195,10 +195,10 @@ export default function GymDetailClient({ gym, coaches, sessions, memberCount, m
             <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm overflow-hidden">
               {/* Desktop table header */}
               <div className="hidden sm:grid grid-cols-[1fr_1fr_auto_auto] gap-4 px-5 py-3 border-b border-[#2A2A2A]">
-                <span className="font-inter text-[10px] text-[#555555] uppercase tracking-[3px]">Time</span>
-                <span className="font-inter text-[10px] text-[#555555] uppercase tracking-[3px]">Class</span>
-                <span className="font-inter text-[10px] text-[#555555] uppercase tracking-[3px]">Coach</span>
-                <span className="font-inter text-[10px] text-[#555555] uppercase tracking-[3px]">Level</span>
+                <span className="font-inter text-[10px] text-[#999999] uppercase tracking-[3px]">Time</span>
+                <span className="font-inter text-[10px] text-[#999999] uppercase tracking-[3px]">Class</span>
+                <span className="font-inter text-[10px] text-[#999999] uppercase tracking-[3px]">Coach</span>
+                <span className="font-inter text-[10px] text-[#999999] uppercase tracking-[3px]">Level</span>
               </div>
               <div className="divide-y divide-[#2A2A2A]">
                 {upcomingSessions.map((s: any) => (

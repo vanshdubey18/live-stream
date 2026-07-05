@@ -307,7 +307,7 @@ function StatsRow({ completedCount, totalHours, monthCount, upcoming, replays }:
           >
             <div className="absolute left-0 top-2 bottom-2 w-0.5 bg-[#FF3B3B]" />
             <div className="pl-4">
-              <p className="font-inter text-[10px] text-[#555555] uppercase tracking-[3px] mb-2">This Week</p>
+              <p className="font-inter text-[10px] text-[#999999] uppercase tracking-[3px] mb-2">This Week</p>
               <div className="flex items-baseline gap-1">
                 <span className="font-bebas text-5xl sm:text-6xl text-white leading-none tracking-[1px]">{weekCount}</span>
                 <span className="font-bebas text-2xl text-[#333333] leading-none tracking-[1px]">/ {weekGoal}</span>
@@ -321,7 +321,7 @@ function StatsRow({ completedCount, totalHours, monthCount, upcoming, replays }:
                   transition={{ duration: 0.6, ease: 'easeOut', delay: 0.2 }}
                 />
               </div>
-              <p className="font-inter text-[10px] text-[#555555] mt-1.5 tracking-[2px] uppercase">
+              <p className="font-inter text-[10px] text-[#999999] mt-1.5 tracking-[2px] uppercase">
                 {weekCount >= weekGoal ? 'Goal reached' : `${weekGoal - weekCount} to go`}
               </p>
             </div>
@@ -340,7 +340,7 @@ function StatsRow({ completedCount, totalHours, monthCount, upcoming, replays }:
               className="px-6 py-0 flex flex-col justify-center"
             >
               <div className="font-bebas text-4xl sm:text-5xl text-white leading-none tracking-[1px]">{number}</div>
-              <p className="font-inter text-[10px] text-[#555555] uppercase tracking-[3px] mt-1.5">{label}</p>
+              <p className="font-inter text-[10px] text-[#999999] uppercase tracking-[3px] mt-1.5">{label}</p>
             </motion.div>
           ))}
         </div>
@@ -353,7 +353,7 @@ function StatsRow({ completedCount, totalHours, monthCount, upcoming, replays }:
         >
           {/* 7-day activity bars */}
           <div>
-            <p className="font-inter text-[10px] text-[#555555] uppercase tracking-[3px] mb-3">Week Activity</p>
+            <p className="font-inter text-[10px] text-[#999999] uppercase tracking-[3px] mb-3">Week Activity</p>
             <div className="flex items-end gap-1.5 h-10">
               {dayCounts.map((count, i) => {
                 const isToday = i === todayIdx
@@ -384,7 +384,7 @@ function StatsRow({ completedCount, totalHours, monthCount, upcoming, replays }:
 
           {/* Discipline breakdown */}
           <div>
-            <p className="font-inter text-[10px] text-[#555555] uppercase tracking-[3px] mb-3">Discipline Split</p>
+            <p className="font-inter text-[10px] text-[#999999] uppercase tracking-[3px] mb-3">Discipline Split</p>
             {totalDisc > 1 ? (
               <>
                 {/* Segmented bar */}
@@ -403,8 +403,8 @@ function StatsRow({ completedCount, totalHours, monthCount, upcoming, replays }:
                   {topDisc.map(([disc, count]) => (
                     <div key={disc} className="flex items-center gap-1.5">
                       <span className="w-1.5 h-1.5 rounded-sm shrink-0" style={{ backgroundColor: DISCIPLINE_BAR_COLOR[disc] ?? '#444' }} />
-                      <span className="font-inter text-[10px] text-[#555555] uppercase tracking-[1px]">{disc}</span>
-                      <span className="font-inter text-[10px] text-[#333333]">{Math.round((count / totalDisc) * 100)}%</span>
+                      <span className="font-inter text-[10px] text-[#999999] uppercase tracking-[1px]">{disc}</span>
+                      <span className="font-inter text-[10px] text-[#999999]">{Math.round((count / totalDisc) * 100)}%</span>
                     </div>
                   ))}
                 </div>

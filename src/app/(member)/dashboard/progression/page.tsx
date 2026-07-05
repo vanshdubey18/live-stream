@@ -232,13 +232,13 @@ export default function ProgressionPage() {
                   <div key={m.title} className="flex items-center gap-4 px-5 py-4 border border-[#222222] bg-[#0D0D0D] rounded-sm">
                     <div className="flex-1 min-w-0">
                       <p className="font-bebas text-lg text-white tracking-[1px]">{m.title}</p>
-                      <p className="font-inter text-xs text-[#555555] mt-0.5">{m.done} of {m.classes} classes complete</p>
+                      <p className="font-inter text-xs text-[#999999] mt-0.5">{m.done} of {m.classes} classes complete</p>
                     </div>
                     <div className="w-24 shrink-0">
                       <div className="h-1.5 bg-[#1A1A1A] rounded-full overflow-hidden">
                         <div className="h-full bg-[#FF3B3B] rounded-full" style={{ width: `${pct}%` }} />
                       </div>
-                      <p className="font-inter text-[10px] text-[#555555] text-right mt-1">{pct}%</p>
+                      <p className="font-inter text-[10px] text-[#999999] text-right mt-1">{pct}%</p>
                     </div>
                   </div>
                 )

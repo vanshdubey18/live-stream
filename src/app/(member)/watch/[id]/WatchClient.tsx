@@ -423,7 +423,9 @@ export default function WatchClient({ session, initialPhase, initialPlaybackId, 
     return () => { supabase.removeChannel(channel) }
   }, [session.id])
 
-  // 30s fallback poll — catches transitions if Realtime WebSocket drops
+  // Fallback poll — catches transitions if Realtime WebSocket drops or isn't
+  // enabled on this table. Tight interval while live so "stream ended" is
+  // caught within a few seconds instead of freezing on the last frame.
   useEffect(() => {
     if (phase === 'post') return
     const poll = async () => {
@@ -438,7 +440,7 @@ export default function WatchClient({ session, initialPhase, initialPlaybackId, 
         }
       } catch { /* ignore */ }
     }
-    const t = setInterval(poll, 30_000)
+    const t = setInterval(poll, phase === 'live' ? 3_000 : 30_000)
     return () => clearInterval(t)
   }, [session.id, phase])
 

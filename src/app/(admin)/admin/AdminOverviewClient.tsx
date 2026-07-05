@@ -80,7 +80,8 @@ export default function AdminOverviewClient({ stats, gyms, members, payouts }: P
           {/* Stats */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="relative">
-              <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-[#FF3B3B] z-10" />
+              <div className="absolute -inset-4 bg-[#FF3B3B]/[0.06] blur-[32px] rounded-full pointer-events-none" />
+              <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-[#FF3B3B] z-10 shadow-[0_0_8px_1px_rgba(255,59,59,0.5)]" />
               <AdminStatsCard
                 label="Total Members"
                 value={String(stats.memberCount)}

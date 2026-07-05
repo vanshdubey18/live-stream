@@ -96,11 +96,11 @@ export default function MembersClient({ members: initial }: Props) {
             {[
               { value: counts.active, label: 'Active Access', color: 'text-[#00D4AA]' },
               { value: counts.expired, label: 'Access Expired', color: 'text-[#FFD60A]' },
-              { value: counts.removed, label: 'Removed', color: 'text-[#555555]' },
+              { value: counts.removed, label: 'Removed', color: 'text-[#999999]' },
             ].map(({ value, label, color }) => (
               <div key={label} className="px-5 py-4 text-center">
                 <p className={`font-bebas text-3xl tracking-[1px] ${color}`}>{value}</p>
-                <p className="font-inter text-[10px] text-[#555555] uppercase tracking-[2px] mt-0.5">{label}</p>
+                <p className="font-inter text-[10px] text-[#999999] uppercase tracking-[2px] mt-0.5">{label}</p>
               </div>
             ))}
           </div>
@@ -165,9 +165,9 @@ export default function MembersClient({ members: initial }: Props) {
                             <p className="font-inter text-white text-sm font-medium">{name}</p>
                             {email && name !== email && <p className="font-inter text-[#555555] text-xs mt-0.5">{email}</p>}
                           </td>
-                          <td className="px-5 py-4 font-inter text-[11px] text-[#555555] uppercase tracking-[2px]">{m.source ?? '—'}</td>
+                          <td className="px-5 py-4 font-inter text-[11px] text-[#999999] uppercase tracking-[2px]">{m.source ?? '—'}</td>
                           <td className="px-5 py-4 font-inter text-sm text-[#999999]">{formatDate(m.created_at) ?? '—'}</td>
-                          <td className={`px-5 py-4 font-inter text-sm ${expired ? 'text-[#FFD60A]' : 'text-[#555555]'}`}>
+                          <td className={`px-5 py-4 font-inter text-sm ${expired ? 'text-[#FFD60A]' : 'text-[#999999]'}`}>
                             {expiry ? formatDate(expiry.toISOString()) : <span className="text-[#333333]">Permanent</span>}
                           </td>
                           <td className="px-5 py-4">

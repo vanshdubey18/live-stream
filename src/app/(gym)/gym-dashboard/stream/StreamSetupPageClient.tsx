@@ -315,8 +315,8 @@ export default function StreamSetupPageClient({ gymId, hasCfStream: initialHasCf
     : isReconnecting
     ? { border: 'border-[#FFD60A]/30 bg-[#FFD60A]/10', text: 'text-[#FFD60A]', label: 'RECONNECTING', icon: <WifiOff size={12} className="text-[#FFD60A]" /> }
     : isConnecting || provisioning
-    ? { border: 'border-[#333333] bg-[#1A1A1A]', text: 'text-[#555555]', label: isConnecting ? 'CONNECTING…' : 'CHECKING…', icon: <Loader2 size={12} className="animate-spin text-[#555555]" /> }
-    : { border: 'border-[#333333] bg-[#1A1A1A]', text: 'text-[#555555]', label: 'OFFLINE', icon: <Wifi size={12} className="text-[#555555]" /> }
+    ? { border: 'border-[#333333] bg-[#1A1A1A]', text: 'text-[#999999]', label: isConnecting ? 'CONNECTING…' : 'CHECKING…', icon: <Loader2 size={12} className="animate-spin text-[#999999]" /> }
+    : { border: 'border-[#333333] bg-[#1A1A1A]', text: 'text-[#999999]', label: 'OFFLINE', icon: <Wifi size={12} className="text-[#999999]" /> }
 
   const healthDot = health === 'good' ? 'bg-[#00D4AA]' : health === 'fair' ? 'bg-[#FFD60A]' : 'bg-[#FF3B3B]'
   const healthText = health === 'good' ? 'text-[#00D4AA]' : health === 'fair' ? 'text-[#FFD60A]' : 'text-[#FF3B3B]'
@@ -389,8 +389,8 @@ export default function StreamSetupPageClient({ gymId, hasCfStream: initialHasCf
               <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase">Camera &amp; Mic</p>
               <div className="space-y-1.5">
                 <div className="flex items-center gap-2">
-                  <Monitor size={11} className="text-[#555555]" />
-                  <span className="font-inter text-[11px] text-[#555555]">Camera</span>
+                  <Monitor size={11} className="text-[#999999]" />
+                  <span className="font-inter text-[11px] text-[#999999]">Camera</span>
                 </div>
                 <select
                   value={selectedVideoId}
@@ -405,8 +405,8 @@ export default function StreamSetupPageClient({ gymId, hasCfStream: initialHasCf
               </div>
               <div className="space-y-1.5">
                 <div className="flex items-center gap-2">
-                  <Mic size={11} className="text-[#555555]" />
-                  <span className="font-inter text-[11px] text-[#555555]">Microphone</span>
+                  <Mic size={11} className="text-[#999999]" />
+                  <span className="font-inter text-[11px] text-[#999999]">Microphone</span>
                 </div>
                 <select
                   value={selectedAudioId}

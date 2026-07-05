@@ -83,12 +83,12 @@ export default function JoinModal({ gym, onClose, onJoined }: Props) {
               {/* Price display */}
               <div className="bg-[#0D0D0D] border border-[#333333] rounded-sm p-5 flex items-baseline justify-between">
                 <div>
-                  <p className="font-inter text-[11px] text-[#555555] tracking-[4px] uppercase mb-1">Monthly fee</p>
+                  <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-1">Monthly fee</p>
                   <p className="font-inter text-xs text-[#999999]">Live classes &amp; replays</p>
                 </div>
                 <div className="text-right shrink-0 ml-6">
                   <span className="font-bebas text-5xl text-white">{formatPrice(price)}</span>
-                  <span className="font-inter text-sm text-[#555555]">/mo</span>
+                  <span className="font-inter text-sm text-[#999999]">/mo</span>
                 </div>
               </div>
 

@@ -133,7 +133,7 @@ export default function BrowseGymsClient({ gyms, joinedGymIds }: Props) {
 
                     {/* Disciplines as dot-separated text */}
                     {disciplines.length > 0 && (
-                      <p className="font-inter text-xs text-[#555555] uppercase tracking-[2px]">
+                      <p className="font-inter text-xs text-[#999999] uppercase tracking-[2px]">
                         {disciplines.join(' · ')}
                       </p>
                     )}
@@ -143,13 +143,13 @@ export default function BrowseGymsClient({ gyms, joinedGymIds }: Props) {
                       {g.member_count != null && (
                         <div>
                           <span className="font-bebas text-xl text-white">{g.member_count}</span>
-                          <p className="font-inter text-[10px] text-[#555555] uppercase tracking-[2px]">Members</p>
+                          <p className="font-inter text-[10px] text-[#999999] uppercase tracking-[2px]">Members</p>
                         </div>
                       )}
                       {g.classes_per_week != null && (
                         <div>
                           <span className="font-bebas text-xl text-white">{g.classes_per_week}</span>
-                          <p className="font-inter text-[10px] text-[#555555] uppercase tracking-[2px]">Classes/wk</p>
+                          <p className="font-inter text-[10px] text-[#999999] uppercase tracking-[2px]">Classes/wk</p>
                         </div>
                       )}
                     </div>

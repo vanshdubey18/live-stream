@@ -47,7 +47,7 @@ function StatusBadge({ status }: { status: string }) {
   }
   if (status === 'ended') {
     return (
-      <span className="font-bebas tracking-[1px] text-[#555555] text-sm">ENDED</span>
+      <span className="font-bebas tracking-[1px] text-[#999999] text-sm">ENDED</span>
     )
   }
   return (
@@ -498,7 +498,7 @@ export default function GymDashboardClient({ gym, ownerName, sessions, coaches, 
                         <div>
                           <p className="font-inter text-white text-sm font-medium">{s.title}</p>
                           <p className="font-inter text-[#999999] text-xs mt-0.5 tracking-[2px] uppercase">{s.discipline}</p>
-                          <p className="font-inter text-[#555555] text-xs mt-0.5">
+                          <p className="font-inter text-[#999999] text-xs mt-0.5">
                             {s.scheduled_at ? formatDateShort(s.scheduled_at) : s.date}
                             {' · '}
                             {s.scheduled_at ? formatTime(s.scheduled_at) : s.time}

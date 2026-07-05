@@ -30,10 +30,10 @@ export default function MobileTabBar() {
             href={href}
             className="flex-1 flex flex-col items-center justify-center gap-1 h-16 min-w-0 transition-colors"
           >
-            <Icon size={20} className={isActive ? 'text-[#FF3B3B]' : 'text-[#555555]'} />
+            <Icon size={20} className={isActive ? 'text-[#FF3B3B]' : 'text-[#999999]'} />
             <span
               className={`font-inter text-[10px] tracking-[1px] uppercase ${
-                isActive ? 'text-white' : 'text-[#555555]'
+                isActive ? 'text-white' : 'text-[#999999]'
               }`}
             >
               {label}

@@ -682,6 +682,27 @@ export default function DashboardClient({ user, memberships, upcoming, replays, 
     return () => { supabase.removeChannel(channel) }
   }, [gymIds, gymNames])
 
+  // Fallback poll — catches "gym went live" within a few seconds even if the
+  // Realtime subscription above misses the event (e.g. table not replicated yet).
+  useEffect(() => {
+    if (!gymIds.length) return
+    let cancelled = false
+    const poll = async () => {
+      try {
+        const res = await fetch(`/api/member/live-sessions?gym_ids=${gymIds.join(',')}`)
+        const data = await res.json()
+        if (cancelled) return
+        if (data.session) {
+          setLiveSession((prev: any | null) => prev?.id === data.session.id ? prev : { ...data.session, gyms: { name: gymNames[data.session.gym_id] ?? '' } })
+        } else {
+          setLiveSession(null)
+        }
+      } catch { /* ignore */ }
+    }
+    const t = setInterval(poll, 5_000)
+    return () => { cancelled = true; clearInterval(t) }
+  }, [gymIds, gymNames])
+
   return (
     <div className="min-h-screen bg-[#0D0D0D] flex">
       <MemberSidebar active="Dashboard" onSearchOpen={() => setSearchOpen(true)} />

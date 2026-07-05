@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { getGymByOwnerId } from '@/lib/supabase/queries'
 import StreamSetupPageClient from './StreamSetupPageClient'
 
-export default async function StreamSetupPage() {
+export default async function StreamSetupPage({ searchParams }: { searchParams: { session_id?: string } }) {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
@@ -15,6 +15,7 @@ export default async function StreamSetupPage() {
     <StreamSetupPageClient
       gymId={gym.id}
       hasCfStream={!!gym.cf_live_input_uid}
+      sessionId={searchParams.session_id ?? null}
     />
   )
 }

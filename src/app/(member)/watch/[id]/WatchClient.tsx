@@ -231,14 +231,19 @@ function LiveViewer({ playbackId, sessionId, session, userId, userName }: {
   userId: string
   userName: string
 }) {
-  const [elapsed, setElapsed] = useState(0)
+  const getElapsedSecs = () => Math.max(0, Math.floor((Date.now() - new Date(session.scheduled_at).getTime()) / 1000))
+  const [elapsed, setElapsed] = useState(getElapsedSecs)
   const [attempt, setAttempt] = useState(0)
   const [startedMinsAgo, setStartedMinsAgo] = useState(0)
 
+  // Elapsed counts from the class's actual go-live time, not from when this
+  // member's browser opened the page — a member joining late should see the
+  // real elapsed time, not a timer that restarts at 0:00.
   useEffect(() => {
-    const t = setInterval(() => setElapsed(s => s + 1), 1000)
+    const t = setInterval(() => setElapsed(getElapsedSecs()), 1000)
     return () => clearInterval(t)
-  }, [])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session.scheduled_at])
 
   // How many minutes ago the session started (updates every minute)
   useEffect(() => {

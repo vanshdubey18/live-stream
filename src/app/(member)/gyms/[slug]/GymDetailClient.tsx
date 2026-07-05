@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { ChevronLeft } from 'lucide-react'
 import JoinModal from './JoinModal'
 import EmptyState from '@/components/ui/EmptyState'
+import { isSessionLive } from '@/lib/session-live'
 
 function formatTime(iso: string) {
   const d = new Date(iso)
@@ -25,7 +26,7 @@ export default function GymDetailClient({ gym, coaches, sessions, memberCount, m
   const [joined, setJoined] = useState(!!membership)
 
   const upcomingSessions = sessions.filter((s: any) => s.status !== 'ended')
-  const liveSessions = sessions.filter((s: any) => s.status === 'live')
+  const liveSessions = sessions.filter((s: any) => isSessionLive(s))
   const disciplines: string[] = gym.disciplines ?? []
 
   return (
@@ -206,7 +207,7 @@ export default function GymDetailClient({ gym, coaches, sessions, memberCount, m
                     {/* Mobile layout */}
                     <div className="sm:hidden flex items-start justify-between gap-3">
                       <div className="flex-1 min-w-0">
-                        {s.status === 'live' && (
+                        {isSessionLive(s) && (
                           <span className="font-inter text-[10px] text-[#FF3B3B] tracking-[2px] block mb-1">● LIVE</span>
                         )}
                         <p className="font-inter text-sm text-white font-medium truncate">{s.title}</p>
@@ -223,7 +224,7 @@ export default function GymDetailClient({ gym, coaches, sessions, memberCount, m
                     {/* Desktop layout */}
                     <div className="hidden sm:grid grid-cols-[1fr_1fr_auto_auto] gap-4 items-center">
                       <div>
-                        {s.status === 'live' && (
+                        {isSessionLive(s) && (
                           <span className="font-inter text-[10px] text-[#FF3B3B] tracking-[2px] block mb-0.5">● LIVE</span>
                         )}
                         <p className="font-inter text-xs text-[#999999]">{formatTime(s.scheduled_at)}</p>

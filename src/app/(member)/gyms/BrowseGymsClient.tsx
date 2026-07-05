@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Search } from 'lucide-react'
 import MemberSidebar from '@/components/layout/MemberSidebar'
 import EmptyState from '@/components/ui/EmptyState'
+import { isSessionLive } from '@/lib/session-live'
 
 const ALL_DISCIPLINES = ['BJJ', 'Boxing', 'Muay Thai', 'Wrestling', 'MMA', 'Kickboxing', 'Judo', 'Sambo']
 
@@ -84,7 +85,7 @@ export default function BrowseGymsClient({ gyms, joinedGymIds }: Props) {
               {filtered.map(g => {
                 const isJoined = joinedGymIds.includes(g.id)
                 const disciplines: string[] = g.disciplines ?? []
-                const isLive = (g.sessions ?? []).some((s: any) => s.status === 'live')
+                const isLive = (g.sessions ?? []).some((s: any) => isSessionLive(s))
 
                 return (
                   <a

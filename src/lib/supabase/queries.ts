@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { createClient as createAdminClient } from '@supabase/supabase-js'
+import { staleLiveCutoffISO } from '@/lib/session-live'
 
 function adminClient() {
   return createAdminClient(
@@ -110,6 +111,9 @@ export async function getLiveSession(gymIds: string[]) {
     `)
     .in('gym_id', gymIds)
     .eq('status', 'live')
+    // Ignore sessions stuck in 'live' from a crashed/abandoned stream — no real
+    // class runs this long, so treat them as if they'd been ended.
+    .gte('scheduled_at', staleLiveCutoffISO())
     .limit(1)
     .maybeSingle()
 
@@ -137,7 +141,7 @@ export async function getAllActiveGyms() {
   const supabase = createClient()
   const { data, error } = await supabase
     .from('gyms')
-    .select('id, slug, name, city, location, disciplines, logo_url, description, sessions(status)')
+    .select('id, slug, name, city, location, disciplines, logo_url, description, sessions(status, scheduled_at)')
     .eq('status', 'active')
     .order('created_at', { ascending: false })
   if (error) { console.error('getAllActiveGyms:', error); return [] }

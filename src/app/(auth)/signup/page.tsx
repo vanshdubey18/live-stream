@@ -36,23 +36,22 @@ function SignupInner() {
 
     setLoading(true)
     try {
-      const { data, error: signUpError } = await supabase.auth.signUp({
+      const res = await fetch('/api/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: form.name, email: form.email, password: form.password, role }),
+      })
+      const data = await res.json()
+      if (!res.ok) { setError(data.error ?? 'Something went wrong.'); return }
+
+      const { error: signInError } = await supabase.auth.signInWithPassword({
         email: form.email,
         password: form.password,
-        options: {
-          data: {
-            full_name: form.name,
-            role,
-          },
-        },
       })
+      if (signInError) { setError(signInError.message); return }
 
-      if (signUpError) throw signUpError
-
-      if (data.user) {
-        const next = redirectTo ? `/onboarding?redirectTo=${encodeURIComponent(redirectTo)}` : '/onboarding'
-        router.push(role === 'gym_owner' ? '/gym-signup' : next)
-      }
+      const next = redirectTo ? `/onboarding?redirectTo=${encodeURIComponent(redirectTo)}` : '/onboarding'
+      router.push(role === 'gym_owner' ? '/gym-signup' : next)
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Something went wrong.')
     } finally {

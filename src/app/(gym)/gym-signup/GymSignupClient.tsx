@@ -73,7 +73,8 @@ export default function GymSignupClient({ isLoggedIn, prefillName, prefillEmail 
       // Sign in client-side so the browser gets a session cookie
       if (!isLoggedIn) {
         const supabase = createClient()
-        await supabase.auth.signInWithPassword({ email, password })
+        const { error: signInError } = await supabase.auth.signInWithPassword({ email, password })
+        if (signInError) { setError(signInError.message); return }
       }
 
       setStep(3)

@@ -27,12 +27,12 @@ export async function POST(req: NextRequest) {
 
   // Call Cloudflare clip API
   const res = await fetch(
-    `https://api.cloudflare.com/client/v4/accounts/${process.env.CF_ACCOUNT_ID}/stream/clip`,
+    `https://api.cloudflare.com/client/v4/accounts/${process.env.CLOUDFLARE_ACCOUNT_ID}/stream/clip`,
     {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${process.env.CF_API_TOKEN}`,
+        Authorization: `Bearer ${process.env.CLOUDFLARE_API_TOKEN}`,
       },
       body: JSON.stringify({
         clippedFromVideoUID: session.cf_video_uid,

@@ -20,17 +20,21 @@ export async function POST(req: NextRequest) {
   let userId: string
   let userEmail: string
 
-  // If email/password provided, create a new account
+  // Use admin client for gym insert — regular client has no session after signUp in SSR
+  const adminClient = createAdminClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  )
+
+  // If email/password provided, create a new account. Auto-confirm the email
+  // server-side so account creation never depends on the project's "Confirm
+  // email" setting or an inbox actually receiving mail.
   if (email && password) {
-    const { data, error } = await supabase.auth.signUp({
+    const { data, error } = await adminClient.auth.admin.createUser({
       email,
       password,
-      options: {
-        data: {
-          full_name: ownerName,
-          role: 'gym_owner',
-        },
-      },
+      email_confirm: true,
+      user_metadata: { full_name: ownerName, role: 'gym_owner' },
     })
     if (error) return NextResponse.json({ error: error.message }, { status: 400 })
     if (!data.user) return NextResponse.json({ error: 'Signup failed' }, { status: 400 })
@@ -43,12 +47,6 @@ export async function POST(req: NextRequest) {
     userId = user.id
     userEmail = user.email ?? ''
   }
-
-  // Use admin client for gym insert — regular client has no session after signUp in SSR
-  const adminClient = createAdminClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  )
 
   // Generate unique slug
   const baseSlug = slugify(gymName)

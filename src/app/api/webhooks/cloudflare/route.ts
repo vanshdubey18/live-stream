@@ -5,10 +5,12 @@ import { processSession } from '@/lib/ai/process-session'
 
 export const runtime = 'nodejs'
 
-const admin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-)
+function getAdmin() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  )
+}
 
 async function verifySignature(rawBody: string, sigHeader: string | null): Promise<boolean> {
   if (!sigHeader || !process.env.CF_STREAM_WEBHOOK_SECRET) return false
@@ -34,12 +36,12 @@ async function verifySignature(rawBody: string, sigHeader: string | null): Promi
 
 async function callClipApi(cfVideoUid: string): Promise<string | null> {
   const res = await fetch(
-    `https://api.cloudflare.com/client/v4/accounts/${process.env.CF_ACCOUNT_ID}/stream/clip`,
+    `https://api.cloudflare.com/client/v4/accounts/${process.env.CLOUDFLARE_ACCOUNT_ID}/stream/clip`,
     {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${process.env.CF_API_TOKEN}`,
+        Authorization: `Bearer ${process.env.CLOUDFLARE_API_TOKEN}`,
       },
       body: JSON.stringify({
         clippedFromVideoUID: cfVideoUid,
@@ -81,6 +83,7 @@ export async function POST(req: NextRequest) {
 }
 
 async function handleRecordingReady(videoUid: string, liveInputUid: string, data: any) {
+  const admin = getAdmin()
   // Look up gym by cf_live_input_uid
   const { data: gym } = await admin
     .from('gyms')
@@ -147,6 +150,7 @@ async function handleRecordingReady(videoUid: string, liveInputUid: string, data
 }
 
 async function handleClipReady(clipUid: string) {
+  const admin = getAdmin()
   // Match by clip_video_uid stored when we called the clip API
   const { data: session } = await admin
     .from('sessions')

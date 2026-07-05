@@ -93,8 +93,10 @@ function StreakRing({ weekSessions, goal = 4 }: { weekSessions: number; goal?: n
     <div className="flex flex-col items-center gap-4 select-none">
       {/* Ring */}
       <div className="relative" style={{ width: size, height: size }}>
+        {/* Ambient glow behind the whole ring */}
+        <div className="absolute -inset-6 bg-[#FF3B3B]/[0.08] blur-[36px] rounded-full pointer-events-none" />
         {/* Glow layer */}
-        <svg className="absolute inset-0 blur-[6px] opacity-40" width={size} height={size}>
+        <svg className="absolute inset-0 blur-[8px] opacity-50" width={size} height={size}>
           <circle
             cx={cx} cy={cy} r={r}
             fill="none"
@@ -188,16 +190,21 @@ function HeroPanel({ upcoming, user, memberships }: { upcoming: any[]; user: { n
   const firstName = user.name?.split(' ')[0] ?? 'Fighter'
 
   return (
-    <section className="border-b border-[#333333]">
-      <div className="max-w-[1280px] mx-auto px-4 sm:px-6 py-8 lg:py-12">
+    <section className="relative border-b border-[#333333] overflow-hidden">
+      {/* Ambient glow — atmospheric depth behind the hero stat */}
+      <div className="absolute -top-24 -left-24 w-[420px] h-[420px] bg-[#FF3B3B]/[0.07] blur-[100px] rounded-full pointer-events-none" />
+      <div className="relative max-w-[1280px] mx-auto px-4 sm:px-6 py-8 lg:py-12">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 lg:gap-12">
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-5 h-px bg-[#FF3B3B]" />
               <p className="font-inter text-[11px] text-[#FF3B3B] uppercase tracking-[4px]">Today&apos;s Training</p>
             </div>
-            <div className="font-bebas text-[56px] sm:text-[80px] lg:text-[96px] text-white leading-none tracking-[1px]">
-              {todayCount || upcoming.length || 0}
+            <div className="relative inline-block">
+              <div className="absolute -inset-6 bg-[#FF3B3B]/[0.12] blur-[40px] rounded-full pointer-events-none" />
+              <div className="relative font-bebas text-[56px] sm:text-[80px] lg:text-[96px] text-white leading-none tracking-[1px]">
+                {todayCount || upcoming.length || 0}
+              </div>
             </div>
             <p className="font-inter text-sm text-[#999999] mt-3">
               {(todayCount || upcoming.length) ? 'Classes available today' : 'No classes scheduled yet'}
@@ -313,9 +320,9 @@ function StatsRow({ completedCount, totalHours, monthCount, upcoming, replays }:
                 <span className="font-bebas text-2xl text-[#333333] leading-none tracking-[1px]">/ {weekGoal}</span>
               </div>
               {/* Progress bar */}
-              <div className="mt-3 h-0.5 bg-[#222222] rounded-full overflow-hidden">
+              <div className="mt-3 h-0.5 bg-[#222222] rounded-full overflow-visible">
                 <motion.div
-                  className="h-full bg-[#FF3B3B]"
+                  className="h-full bg-[#FF3B3B] rounded-full shadow-[0_0_8px_1px_rgba(255,59,59,0.6)]"
                   initial={{ width: 0 }}
                   animate={{ width: `${weekProgress * 100}%` }}
                   transition={{ duration: 0.6, ease: 'easeOut', delay: 0.2 }}

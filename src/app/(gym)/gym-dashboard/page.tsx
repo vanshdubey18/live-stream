@@ -17,12 +17,12 @@ export default async function GymDashboardPage() {
   const gym = await getGymByOwnerId(user.id)
   if (!gym) {
     return (
-      <div className="min-h-screen bg-[#0D0D0D] flex items-center justify-center px-4">
-        <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm p-10 max-w-md w-full text-center">
-          <p className="font-inter text-[11px] text-[#555555] tracking-[4px] uppercase mb-3">Gym Dashboard</p>
-          <h1 className="font-bebas text-3xl text-white tracking-[1px] mb-2">NO GYM FOUND</h1>
-          <p className="font-inter text-[#999999] text-sm mb-6">You don't have a gym linked to your account yet.</p>
-          <a href="/gym-signup" className="bg-white hover:bg-[#E5E5E5] text-black font-bebas tracking-[3px] px-6 py-3 rounded-sm text-sm transition-colors">
+      <div className="min-h-screen bg-[#141410] flex items-center justify-center px-4">
+        <div className="bg-[#1c1c16] border border-[#322f26] rounded-sm p-10 max-w-md w-full text-center">
+          <p className="font-mincho text-[11px] text-[#7a7568] tracking-[4px] uppercase mb-3">Gym Dashboard</p>
+          <h1 className="font-mincho text-3xl text-[#f0eadc] tracking-[1px] mb-2">NO GYM FOUND</h1>
+          <p className="font-mincho text-[#a29c8c] text-sm mb-6">You don't have a gym linked to your account yet.</p>
+          <a href="/gym-signup" className="bg-[#f0eadc] hover:bg-[#e4dcc8] text-[#141410] font-mincho tracking-[3px] px-6 py-3 rounded-sm text-sm transition-colors">
             APPLY TO LIST YOUR GYM
           </a>
         </div>
@@ -33,21 +33,21 @@ export default async function GymDashboardPage() {
   if (gym.status !== 'active') {
     const rejected = gym.status === 'rejected'
     return (
-      <div className="min-h-screen bg-[#0D0D0D] flex items-center justify-center px-4">
-        <div className="relative bg-[#1A1A1A] border border-[#333333] rounded-sm p-10 max-w-lg w-full text-center overflow-hidden">
-          <span className="absolute inset-0 flex items-center justify-center font-bebas text-[120px] text-white/[0.03] leading-none select-none pointer-events-none">
+      <div className="min-h-screen bg-[#141410] flex items-center justify-center px-4">
+        <div className="relative bg-[#1c1c16] border border-[#322f26] rounded-sm p-10 max-w-lg w-full text-center overflow-hidden">
+          <span className="absolute inset-0 flex items-center justify-center font-mincho text-[120px] text-[#f0eadc]/[0.03] leading-none select-none pointer-events-none">
             {rejected ? 'CLOSED' : 'PENDING'}
           </span>
           <div className="relative space-y-5">
             <div>
-              <p className="font-inter text-[11px] text-[#FFD60A] tracking-[4px] uppercase mb-3">
+              <p className="font-mincho text-[11px] text-[#FFD60A] tracking-[4px] uppercase mb-3">
                 {rejected ? 'Application Closed' : 'Under Review'}
               </p>
-              <h1 className="font-bebas text-4xl text-white tracking-[1px]">
+              <h1 className="font-mincho text-4xl text-[#f0eadc] tracking-[1px]">
                 {rejected ? 'APPLICATION NOT APPROVED' : 'PENDING REVIEW'}
               </h1>
             </div>
-            <p className="font-inter text-[#999999] text-sm leading-relaxed max-w-sm mx-auto">
+            <p className="font-mincho text-[#a29c8c] text-sm leading-relaxed max-w-sm mx-auto">
               {rejected
                 ? `${gym.name}'s application was not approved this time. Reach out to support if you believe this was a mistake.`
                 : `${gym.name} is being reviewed by our team. You'll get access to streaming, scheduling, and member tools as soon as it's approved — usually within 1–2 business days.`}
@@ -60,8 +60,8 @@ export default async function GymDashboardPage() {
                   { label: 'Gym goes live', done: false },
                 ].map((step) => (
                   <div key={step.label} className="flex items-center gap-3">
-                    <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${step.done ? 'bg-[#00D4AA]' : 'bg-[#333333]'}`} />
-                    <p className={`font-inter text-sm ${step.done ? 'text-white' : 'text-[#555555]'}`}>{step.label}</p>
+                    <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${step.done ? 'bg-[#00D4AA]' : 'bg-[#322f26]'}`} />
+                    <p className={`font-mincho text-sm ${step.done ? 'text-[#f0eadc]' : 'text-[#7a7568]'}`}>{step.label}</p>
                   </div>
                 ))}
               </div>

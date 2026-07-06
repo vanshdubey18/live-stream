@@ -40,18 +40,18 @@ function groupByDay(sessions: any[]) {
 }
 
 const STATUS_COLOR: Record<string, string> = {
-  live: 'text-[#FF3B3B]',
-  scheduled: 'text-white',
-  ended: 'text-[#555555]',
+  live: 'text-[#b3402f]',
+  scheduled: 'text-[#f0eadc]',
+  ended: 'text-[#7a7568]',
 }
 
 const DISCIPLINE_DOT: Record<string, string> = {
-  BJJ: 'bg-white',
-  Boxing: 'bg-[#999999]',
+  BJJ: 'bg-[#f0eadc]',
+  Boxing: 'bg-[#a29c8c]',
   'Muay Thai': 'bg-[#FFD60A]',
   Wrestling: 'bg-[#00D4AA]',
-  MMA: 'bg-[#FF3B3B]',
-  Kickboxing: 'bg-[#FF6B6B]',
+  MMA: 'bg-[#b3402f]',
+  Kickboxing: 'bg-[#c25040]',
 }
 
 export default function ScheduleClient({ gym, sessions, coaches }: Props) {
@@ -89,19 +89,19 @@ export default function ScheduleClient({ gym, sessions, coaches }: Props) {
   const endedCount = localSessions.filter(s => s.status === 'ended').length
 
   return (
-    <div className="min-h-screen bg-[#0D0D0D] flex">
+    <div className="min-h-screen bg-[#141410] flex">
       <GymSidebar active="Schedule Classes" />
 
       <main className="flex-1 lg:ml-64 min-w-0">
         {/* Top bar */}
-        <div className="sticky top-0 z-20 bg-[#0D0D0D] border-b border-[#222222] px-6 h-16 flex items-center justify-between mt-14 lg:mt-0">
+        <div className="sticky top-0 z-20 bg-[#141410] border-b border-[#242420] px-6 h-16 flex items-center justify-between mt-14 lg:mt-0">
           <div>
-            <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase">Gym Dashboard</p>
-            <h1 className="font-bebas text-xl text-white tracking-[1px] leading-tight">Schedule</h1>
+            <p className="font-mincho text-[11px] text-[#a29c8c] tracking-[4px] uppercase">Gym Dashboard</p>
+            <h1 className="font-mincho text-xl text-[#f0eadc] tracking-[1px] leading-tight">Schedule</h1>
           </div>
           <button
             onClick={() => setShowModal(true)}
-            className="flex items-center gap-2 bg-white hover:bg-[#E5E5E5] text-black font-bebas tracking-[3px] text-sm px-5 py-2 rounded-sm transition-colors"
+            className="flex items-center gap-2 bg-[#f0eadc] hover:bg-[#e4dcc8] text-[#141410] font-mincho tracking-[3px] text-sm px-5 py-2 rounded-sm transition-colors"
           >
             <Plus size={14} /> Schedule Class
           </button>
@@ -110,22 +110,22 @@ export default function ScheduleClient({ gym, sessions, coaches }: Props) {
         <div className="px-6 py-8 max-w-4xl space-y-8">
 
           {/* Stats strip */}
-          <div className="grid grid-cols-3 gap-px bg-[#333333] rounded-sm overflow-hidden">
+          <div className="grid grid-cols-3 gap-px bg-[#322f26] rounded-sm overflow-hidden">
             {/* First stat — Scheduled — gets the red left-bar accent */}
             <div className="relative">
-              <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-[#FF3B3B] z-10" />
-              <div className="bg-[#1A1A1A] px-5 py-4">
-                <p className="font-inter text-[11px] text-[#999999] tracking-[3px] uppercase mb-1">Scheduled</p>
-                <p className="font-bebas text-3xl tracking-[1px] text-white">{scheduledCount}</p>
+              <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-[#b3402f] z-10" />
+              <div className="bg-[#1c1c16] px-5 py-4">
+                <p className="font-mincho text-[11px] text-[#a29c8c] tracking-[3px] uppercase mb-1">Scheduled</p>
+                <p className="font-mincho text-3xl tracking-[1px] text-[#f0eadc]">{scheduledCount}</p>
               </div>
             </div>
-            <div className="bg-[#1A1A1A] px-5 py-4">
-              <p className="font-inter text-[11px] text-[#999999] tracking-[3px] uppercase mb-1">Live Now</p>
-              <p className="font-bebas text-3xl tracking-[1px] text-[#FF3B3B]">{liveCount}</p>
+            <div className="bg-[#1c1c16] px-5 py-4">
+              <p className="font-mincho text-[11px] text-[#a29c8c] tracking-[3px] uppercase mb-1">Live Now</p>
+              <p className="font-mincho text-3xl tracking-[1px] text-[#b3402f]">{liveCount}</p>
             </div>
-            <div className="bg-[#1A1A1A] px-5 py-4">
-              <p className="font-inter text-[11px] text-[#999999] tracking-[3px] uppercase mb-1">Completed</p>
-              <p className="font-bebas text-3xl tracking-[1px] text-[#999999]">{endedCount}</p>
+            <div className="bg-[#1c1c16] px-5 py-4">
+              <p className="font-mincho text-[11px] text-[#a29c8c] tracking-[3px] uppercase mb-1">Completed</p>
+              <p className="font-mincho text-3xl tracking-[1px] text-[#a29c8c]">{endedCount}</p>
             </div>
           </div>
 
@@ -135,8 +135,8 @@ export default function ScheduleClient({ gym, sessions, coaches }: Props) {
               <button
                 key={f}
                 onClick={() => setFilter(f)}
-                className={`px-4 py-2 font-inter text-xs rounded-sm capitalize transition-colors ${
-                  filter === f ? 'bg-white text-black' : 'bg-[#1A1A1A] border border-[#333333] text-[#555555] hover:text-white'
+                className={`px-4 py-2 font-mincho text-xs rounded-sm capitalize transition-colors ${
+                  filter === f ? 'bg-[#f0eadc] text-[#141410]' : 'bg-[#1c1c16] border border-[#322f26] text-[#7a7568] hover:text-[#f0eadc]'
                 }`}
               >
                 {f === 'upcoming' ? 'Upcoming' : 'All Classes'}
@@ -149,7 +149,7 @@ export default function ScheduleClient({ gym, sessions, coaches }: Props) {
             <EmptyState ghost="SCHEDULE" message={filter === 'upcoming' ? 'No upcoming classes scheduled.' : 'No classes yet.'}>
               <button
                 onClick={() => setShowModal(true)}
-                className="bg-white hover:bg-[#E5E5E5] text-black font-bebas tracking-[3px] text-sm px-6 py-2.5 rounded-sm transition-colors"
+                className="bg-[#f0eadc] hover:bg-[#e4dcc8] text-[#141410] font-mincho tracking-[3px] text-sm px-6 py-2.5 rounded-sm transition-colors"
               >
                 Schedule First Class
               </button>
@@ -160,44 +160,44 @@ export default function ScheduleClient({ gym, sessions, coaches }: Props) {
                 <div key={day}>
                   {/* Day header */}
                   <div className="flex items-center gap-3 mb-3">
-                    <p className="font-bebas text-lg text-white tracking-[1px]">
+                    <p className="font-mincho text-lg text-[#f0eadc] tracking-[1px]">
                       {formatDay(grouped.get(day)![0].scheduled_at)}
                     </p>
-                    <div className="flex-1 h-px bg-[#222222]" />
-                    <span className="font-inter text-[11px] text-[#555555]">
+                    <div className="flex-1 h-px bg-[#242420]" />
+                    <span className="font-mincho text-[11px] text-[#7a7568]">
                       {grouped.get(day)!.length} class{grouped.get(day)!.length > 1 ? 'es' : ''}
                     </span>
                   </div>
 
                   {/* Classes for this day */}
-                  <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm overflow-hidden divide-y divide-[#222222]">
+                  <div className="bg-[#1c1c16] border border-[#322f26] rounded-sm overflow-hidden divide-y divide-[#242420]">
                     {grouped.get(day)!.map((s: any) => {
-                      const dot = DISCIPLINE_DOT[s.discipline] ?? 'bg-[#555555]'
+                      const dot = DISCIPLINE_DOT[s.discipline] ?? 'bg-[#7a7568]'
                       const isLive = isSessionLive(s)
                       const isEnded = s.status === 'ended'
                       return (
-                        <div key={s.id} className={`flex items-center gap-4 px-5 py-4 hover:bg-[#222222] transition-colors ${isLive ? 'bg-[#FF3B3B]/5' : ''}`}>
+                        <div key={s.id} className={`flex items-center gap-4 px-5 py-4 hover:bg-[#242420] transition-colors ${isLive ? 'bg-[#b3402f]/5' : ''}`}>
                           {/* Time */}
                           <div className="w-16 shrink-0 text-right">
-                            <p className={`font-inter text-sm ${STATUS_COLOR[s.status] ?? 'text-white'}`}>
+                            <p className={`font-mincho text-sm ${STATUS_COLOR[s.status] ?? 'text-[#f0eadc]'}`}>
                               {formatTime(s.scheduled_at)}
                             </p>
                           </div>
 
                           {/* Dot */}
-                          <div className={`w-2 h-2 rounded-full shrink-0 ${isLive ? 'bg-[#FF3B3B] live-pulse' : isEnded ? 'bg-[#333333]' : dot}`} />
+                          <div className={`w-2 h-2 rounded-full shrink-0 ${isLive ? 'bg-[#b3402f] live-pulse' : isEnded ? 'bg-[#322f26]' : dot}`} />
 
                           {/* Info */}
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2">
                               {isLive && (
-                                <span className="font-inter text-[10px] text-[#FF3B3B] tracking-[3px] uppercase">LIVE</span>
+                                <span className="font-mincho text-[10px] text-[#b3402f] tracking-[3px] uppercase">LIVE</span>
                               )}
-                              <p className={`font-bebas text-lg tracking-[1px] truncate ${isEnded ? 'text-[#555555]' : 'text-white'}`}>
+                              <p className={`font-mincho text-lg tracking-[1px] truncate ${isEnded ? 'text-[#7a7568]' : 'text-[#f0eadc]'}`}>
                                 {s.title}
                               </p>
                             </div>
-                            <p className="font-inter text-xs text-[#555555] truncate">
+                            <p className="font-mincho text-xs text-[#7a7568] truncate">
                               {s.discipline}
                               {s.coaches?.name ? ` · ${s.coaches.name}` : ''}
                               {` · ${s.duration_minutes ?? 60}m`}
@@ -208,12 +208,12 @@ export default function ScheduleClient({ gym, sessions, coaches }: Props) {
                           {/* Status badge */}
                           <div className="shrink-0">
                             {isEnded && (
-                              <span className="flex items-center gap-1 font-inter text-[11px] text-[#555555]">
+                              <span className="flex items-center gap-1 font-mincho text-[11px] text-[#7a7568]">
                                 <CheckCircle size={11} /> Done
                               </span>
                             )}
                             {!isEnded && !isLive && (
-                              <span className="flex items-center gap-1 font-inter text-[11px] text-[#999999]">
+                              <span className="flex items-center gap-1 font-mincho text-[11px] text-[#a29c8c]">
                                 <Clock size={11} /> Scheduled
                               </span>
                             )}
@@ -224,10 +224,10 @@ export default function ScheduleClient({ gym, sessions, coaches }: Props) {
                             {!isEnded && (
                               <a
                                 href={`/gym-dashboard/stream?session_id=${s.id}`}
-                                className={`flex items-center gap-1.5 font-bebas tracking-[2px] text-sm px-3 py-1.5 rounded-sm transition-colors ${
+                                className={`flex items-center gap-1.5 font-mincho tracking-[2px] text-sm px-3 py-1.5 rounded-sm transition-colors ${
                                   isLive
-                                    ? 'bg-[#FF3B3B] text-white hover:bg-[#cc2f2f]'
-                                    : 'bg-white text-black hover:bg-[#E5E5E5]'
+                                    ? 'bg-[#b3402f] text-[#f0eadc] hover:bg-[#942f22]'
+                                    : 'bg-[#f0eadc] text-[#141410] hover:bg-[#e4dcc8]'
                                 }`}
                               >
                                 <Radio size={12} />
@@ -237,7 +237,7 @@ export default function ScheduleClient({ gym, sessions, coaches }: Props) {
                             {isEnded && (
                               <Link
                                 href={`/gym-dashboard/replay/${s.id}`}
-                                className="w-7 h-7 flex items-center justify-center border border-[#333333] text-[#555555] hover:text-[#FF3B3B] hover:border-[#FF3B3B] rounded-sm transition-all"
+                                className="w-7 h-7 flex items-center justify-center border border-[#322f26] text-[#7a7568] hover:text-[#b3402f] hover:border-[#b3402f] rounded-sm transition-all"
                                 title="Edit chapters"
                               >
                                 <BookMarked size={12} />
@@ -246,7 +246,7 @@ export default function ScheduleClient({ gym, sessions, coaches }: Props) {
                             {!isLive && (
                               <button
                                 onClick={() => handleDelete(s.id)}
-                                className="w-7 h-7 flex items-center justify-center border border-[#333333] text-[#555555] hover:text-white hover:border-[#555555] rounded-sm transition-all"
+                                className="w-7 h-7 flex items-center justify-center border border-[#322f26] text-[#7a7568] hover:text-[#f0eadc] hover:border-[#7a7568] rounded-sm transition-all"
                               >
                                 <Trash2 size={12} />
                               </button>

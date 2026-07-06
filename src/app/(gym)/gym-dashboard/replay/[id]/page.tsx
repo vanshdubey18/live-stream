@@ -40,13 +40,13 @@ export default async function GymReplayPage({ params }: { params: { id: string }
   }))
 
   return (
-    <div className="min-h-screen bg-[#0D0D0D] flex">
+    <div className="min-h-screen bg-[#141410] flex">
       <GymSidebar active="Schedule" />
       <main className="flex-1 lg:ml-64 min-w-0">
-        <div className="sticky top-0 z-20 bg-[#0D0D0D] border-b border-[#333333] px-6 h-16 flex items-center mt-14 lg:mt-0">
+        <div className="sticky top-0 z-20 bg-[#141410] border-b border-[#322f26] px-6 h-16 flex items-center mt-14 lg:mt-0">
           <div>
-            <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase">Replay</p>
-            <h1 className="font-bebas text-2xl text-white tracking-[1px] leading-tight">{session.title}</h1>
+            <p className="font-mincho text-[11px] text-[#a29c8c] tracking-[4px] uppercase">Replay</p>
+            <h1 className="font-mincho text-2xl text-[#f0eadc] tracking-[1px] leading-tight">{session.title}</h1>
           </div>
         </div>
         <div className="px-6 py-6 max-w-2xl space-y-6">

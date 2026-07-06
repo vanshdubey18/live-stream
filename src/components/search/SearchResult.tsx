@@ -43,25 +43,25 @@ interface ClassResult extends BaseResult {
 export type SearchResultItem = TechniqueResult | CoachResult | GymResult | ClassResult
 
 const DISCIPLINE_COLORS: Record<string, string> = {
-  BJJ: 'bg-[#1A1A1A] text-[#999999]',
+  BJJ: 'bg-[#1c1c16] text-[#a29c8c]',
   Boxing: 'bg-[#FFD60A]/10 text-[#FFD60A]',
-  'Muay Thai': 'bg-[#1A1A1A] text-[#999999]',
+  'Muay Thai': 'bg-[#1c1c16] text-[#a29c8c]',
   Wrestling: 'bg-[#00D4AA]/10 text-[#00D4AA]',
 }
 
 export default function SearchResult({ result, isSelected = false, onClick }: { result: SearchResultItem; isSelected?: boolean; onClick?: () => void }) {
   const base = `flex items-center gap-3 px-4 py-3 cursor-pointer transition-colors ${
-    isSelected ? 'bg-[#1A1A1A]' : 'hover:bg-[#1F1F1F]'
+    isSelected ? 'bg-[#1c1c16]' : 'hover:bg-[#242420]'
   }`
 
   if (result.category === 'technique') {
     return (
       <div className={base} onClick={onClick}>
-        <div className="w-8 h-8 rounded-sm bg-[#FF3B3B]/10 flex items-center justify-center shrink-0">
-          <BookOpen size={14} className="text-[#FF3B3B]" />
+        <div className="w-8 h-8 rounded-sm bg-[#b3402f]/10 flex items-center justify-center shrink-0">
+          <BookOpen size={14} className="text-[#b3402f]" />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-white text-sm font-medium truncate">{result.title}</p>
+          <p className="text-[#f0eadc] text-sm font-medium truncate">{result.title}</p>
           <p className="text-[#555] text-xs truncate">{result.example}</p>
         </div>
         <span className="shrink-0 text-[#444] text-xs">{result.sessions} sessions</span>
@@ -72,14 +72,14 @@ export default function SearchResult({ result, isSelected = false, onClick }: { 
   if (result.category === 'coach') {
     return (
       <div className={base} onClick={onClick}>
-        <div className="w-8 h-8 rounded-sm bg-[#FF3B3B]/20 flex items-center justify-center shrink-0">
-          <span className="text-[#FF3B3B] text-xs font-bold">{result.name.split(' ').map(w => w[0]).join('')}</span>
+        <div className="w-8 h-8 rounded-sm bg-[#b3402f]/20 flex items-center justify-center shrink-0">
+          <span className="text-[#b3402f] text-xs font-bold">{result.name.split(' ').map(w => w[0]).join('')}</span>
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-white text-sm font-medium truncate">{result.name}</p>
+          <p className="text-[#f0eadc] text-sm font-medium truncate">{result.name}</p>
           <p className="text-[#555] text-xs truncate">{result.gym}</p>
         </div>
-        <span className={`shrink-0 text-xs font-semibold px-2 py-0.5 rounded-sm ${DISCIPLINE_COLORS[result.discipline] ?? 'bg-[#1A1A1A] text-white/50'}`}>
+        <span className={`shrink-0 text-xs font-semibold px-2 py-0.5 rounded-sm ${DISCIPLINE_COLORS[result.discipline] ?? 'bg-[#1c1c16] text-[#f0eadc]/50'}`}>
           {result.discipline}
         </span>
       </div>
@@ -89,16 +89,16 @@ export default function SearchResult({ result, isSelected = false, onClick }: { 
   if (result.category === 'gym') {
     return (
       <div className={base} onClick={onClick}>
-        <div className="w-8 h-8 rounded-sm bg-[#1A1A1A] flex items-center justify-center shrink-0">
-          <Building2 size={14} className="text-[#999999]" />
+        <div className="w-8 h-8 rounded-sm bg-[#1c1c16] flex items-center justify-center shrink-0">
+          <Building2 size={14} className="text-[#a29c8c]" />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-white text-sm font-medium truncate">{result.name}</p>
+          <p className="text-[#f0eadc] text-sm font-medium truncate">{result.name}</p>
           <p className="text-[#555] text-xs truncate">{result.city}</p>
         </div>
         <div className="shrink-0 flex gap-1">
           {result.disciplines.slice(0, 2).map(d => (
-            <span key={d} className={`text-xs font-medium px-1.5 py-0.5 rounded-sm ${DISCIPLINE_COLORS[d] ?? 'bg-[#1A1A1A] text-white/40'}`}>
+            <span key={d} className={`text-xs font-medium px-1.5 py-0.5 rounded-sm ${DISCIPLINE_COLORS[d] ?? 'bg-[#1c1c16] text-[#f0eadc]/40'}`}>
               {d}
             </span>
           ))}
@@ -113,19 +113,19 @@ export default function SearchResult({ result, isSelected = false, onClick }: { 
   if (result.category === 'class') {
     return (
       <div className={base} onClick={onClick}>
-        <div className="w-8 h-8 rounded-sm bg-[#1A1A1A] flex items-center justify-center shrink-0 relative">
-          <Radio size={14} className={result.status === 'live' ? 'text-[#FF3B3B]' : 'text-[#999999]'} />
+        <div className="w-8 h-8 rounded-sm bg-[#1c1c16] flex items-center justify-center shrink-0 relative">
+          <Radio size={14} className={result.status === 'live' ? 'text-[#b3402f]' : 'text-[#a29c8c]'} />
           {result.status === 'live' && (
-            <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-sm bg-[#FF3B3B] animate-pulse" />
+            <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-sm bg-[#b3402f] animate-pulse" />
           )}
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-white text-sm font-medium truncate">{result.title}</p>
+          <p className="text-[#f0eadc] text-sm font-medium truncate">{result.title}</p>
           <p className="text-[#555] text-xs truncate">{result.gym}</p>
         </div>
         <div className="shrink-0 flex items-center gap-2">
           {result.status === 'live' && (
-            <span className="text-[#FF3B3B] text-xs font-bold uppercase">Live</span>
+            <span className="text-[#b3402f] text-xs font-bold uppercase">Live</span>
           )}
           <span className="text-[#444] text-xs">{result.level}</span>
         </div>

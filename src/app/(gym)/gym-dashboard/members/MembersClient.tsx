@@ -77,30 +77,30 @@ export default function MembersClient({ members: initial }: Props) {
   }
 
   return (
-    <div className="min-h-screen bg-[#0D0D0D] flex">
+    <div className="min-h-screen bg-[#141410] flex">
       <GymSidebar active="Members" />
 
       <main className="flex-1 lg:ml-64 min-w-0">
-        <div className="sticky top-0 z-20 bg-[#0D0D0D] border-b border-[#222222] px-6 h-16 flex items-center justify-between mt-14 lg:mt-0">
+        <div className="sticky top-0 z-20 bg-[#141410] border-b border-[#242420] px-6 h-16 flex items-center justify-between mt-14 lg:mt-0">
           <div>
-            <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase">Gym Dashboard</p>
-            <h1 className="font-bebas text-xl text-white tracking-[1px] leading-tight">Members</h1>
+            <p className="font-mincho text-[11px] text-[#a29c8c] tracking-[4px] uppercase">Gym Dashboard</p>
+            <h1 className="font-mincho text-xl text-[#f0eadc] tracking-[1px] leading-tight">Members</h1>
           </div>
-          <span className="font-bebas text-2xl text-white tracking-[1px]">{members.length}</span>
+          <span className="font-mincho text-2xl text-[#f0eadc] tracking-[1px]">{members.length}</span>
         </div>
 
         <div className="px-6 py-8 max-w-5xl space-y-6">
 
           {/* Summary strip */}
-          <div className="grid grid-cols-3 divide-x divide-[#222222] border border-[#222222] rounded-sm bg-[#0D0D0D]">
+          <div className="grid grid-cols-3 divide-x divide-[#242420] border border-[#242420] rounded-sm bg-[#141410]">
             {[
               { value: counts.active, label: 'Active Access', color: 'text-[#00D4AA]' },
               { value: counts.expired, label: 'Access Expired', color: 'text-[#FFD60A]' },
-              { value: counts.removed, label: 'Removed', color: 'text-[#999999]' },
+              { value: counts.removed, label: 'Removed', color: 'text-[#a29c8c]' },
             ].map(({ value, label, color }) => (
               <div key={label} className="px-5 py-4 text-center">
-                <p className={`font-bebas text-3xl tracking-[1px] ${color}`}>{value}</p>
-                <p className="font-inter text-[10px] text-[#999999] uppercase tracking-[2px] mt-0.5">{label}</p>
+                <p className={`font-mincho text-3xl tracking-[1px] ${color}`}>{value}</p>
+                <p className="font-mincho text-[10px] text-[#a29c8c] uppercase tracking-[2px] mt-0.5">{label}</p>
               </div>
             ))}
           </div>
@@ -108,12 +108,12 @@ export default function MembersClient({ members: initial }: Props) {
           {/* Search + filter */}
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1">
-              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#555555]" />
+              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#7a7568]" />
               <input
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 placeholder="Search by name or email…"
-                className="w-full bg-[#1A1A1A] border border-[#333333] rounded-sm pl-8 pr-3 py-2.5 font-inter text-sm text-white placeholder-[#444444] focus:outline-none focus:border-[#555555] transition-colors"
+                className="w-full bg-[#1c1c16] border border-[#322f26] rounded-sm pl-8 pr-3 py-2.5 font-mincho text-sm text-[#f0eadc] placeholder-[#635f54] focus:outline-none focus:border-[#7a7568] transition-colors"
               />
             </div>
             <div className="flex gap-1">
@@ -121,8 +121,8 @@ export default function MembersClient({ members: initial }: Props) {
                 <button
                   key={f}
                   onClick={() => setFilter(f)}
-                  className={`px-3 py-2 font-inter text-xs rounded-sm capitalize transition-colors ${
-                    filter === f ? 'bg-white text-black' : 'bg-[#1A1A1A] border border-[#333333] text-[#555555] hover:text-white'
+                  className={`px-3 py-2 font-mincho text-xs rounded-sm capitalize transition-colors ${
+                    filter === f ? 'bg-[#f0eadc] text-[#141410]' : 'bg-[#1c1c16] border border-[#322f26] text-[#7a7568] hover:text-[#f0eadc]'
                   }`}
                 >
                   {f} {counts[f] > 0 && <span className="opacity-60">({counts[f]})</span>}
@@ -133,21 +133,21 @@ export default function MembersClient({ members: initial }: Props) {
 
           {/* Table */}
           {filtered.length === 0 ? (
-            <div className="relative bg-[#1A1A1A] border border-[#333333] rounded-sm px-6 py-12 text-center overflow-hidden">
-              <span className="absolute inset-0 flex items-center justify-center font-bebas text-[120px] text-white/[0.03] leading-none select-none pointer-events-none">SQUAD</span>
-              <p className="relative font-inter text-[#555555] text-sm">
+            <div className="relative bg-[#1c1c16] border border-[#322f26] rounded-sm px-6 py-12 text-center overflow-hidden">
+              <span className="absolute inset-0 flex items-center justify-center font-mincho text-[120px] text-[#f0eadc]/[0.03] leading-none select-none pointer-events-none">SQUAD</span>
+              <p className="relative font-mincho text-[#7a7568] text-sm">
                 {members.length === 0 ? 'No members yet. Share your gym page to get started.' : 'No members match this filter.'}
               </p>
             </div>
           ) : (
-            <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm overflow-hidden">
+            <div className="bg-[#1c1c16] border border-[#322f26] rounded-sm overflow-hidden">
               {/* Desktop */}
               <div className="hidden md:block overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b border-[#333333]">
+                    <tr className="border-b border-[#322f26]">
                       {['Member', 'Source', 'Joined', 'Expires', 'Access', ''].map((h, i) => (
-                        <th key={i} className="px-5 py-3 text-left font-inter text-[11px] text-[#999999] tracking-[4px] uppercase">{h}</th>
+                        <th key={i} className="px-5 py-3 text-left font-mincho text-[11px] text-[#a29c8c] tracking-[4px] uppercase">{h}</th>
                       ))}
                     </tr>
                   </thead>
@@ -160,45 +160,45 @@ export default function MembersClient({ members: initial }: Props) {
                       const expiry = getExpiry(m)
 
                       return (
-                        <tr key={m.id} className={`hover:bg-[#222222] transition-colors ${i < filtered.length - 1 ? 'border-b border-[#222222]' : ''}`}>
+                        <tr key={m.id} className={`hover:bg-[#242420] transition-colors ${i < filtered.length - 1 ? 'border-b border-[#242420]' : ''}`}>
                           <td className="px-5 py-4">
-                            <p className="font-inter text-white text-sm font-medium">{name}</p>
-                            {email && name !== email && <p className="font-inter text-[#555555] text-xs mt-0.5">{email}</p>}
+                            <p className="font-mincho text-[#f0eadc] text-sm font-medium">{name}</p>
+                            {email && name !== email && <p className="font-mincho text-[#7a7568] text-xs mt-0.5">{email}</p>}
                           </td>
-                          <td className="px-5 py-4 font-inter text-[11px] text-[#999999] uppercase tracking-[2px]">{m.source ?? '—'}</td>
-                          <td className="px-5 py-4 font-inter text-sm text-[#999999]">{formatDate(m.created_at) ?? '—'}</td>
-                          <td className={`px-5 py-4 font-inter text-sm ${expired ? 'text-[#FFD60A]' : 'text-[#999999]'}`}>
-                            {expiry ? formatDate(expiry.toISOString()) : <span className="text-[#333333]">Permanent</span>}
+                          <td className="px-5 py-4 font-mincho text-[11px] text-[#a29c8c] uppercase tracking-[2px]">{m.source ?? '—'}</td>
+                          <td className="px-5 py-4 font-mincho text-sm text-[#a29c8c]">{formatDate(m.created_at) ?? '—'}</td>
+                          <td className={`px-5 py-4 font-mincho text-sm ${expired ? 'text-[#FFD60A]' : 'text-[#a29c8c]'}`}>
+                            {expiry ? formatDate(expiry.toISOString()) : <span className="text-[#322f26]">Permanent</span>}
                           </td>
                           <td className="px-5 py-4">
                             {removed ? (
-                              <span className="flex items-center gap-1.5 font-inter text-xs text-[#FF3B3B]"><UserX size={11} /> Removed</span>
+                              <span className="flex items-center gap-1.5 font-mincho text-xs text-[#b3402f]"><UserX size={11} /> Removed</span>
                             ) : expired ? (
-                              <span className="flex items-center gap-1.5 font-inter text-xs text-[#FFD60A]"><Clock size={11} /> Access Expired</span>
+                              <span className="flex items-center gap-1.5 font-mincho text-xs text-[#FFD60A]"><Clock size={11} /> Access Expired</span>
                             ) : (
-                              <span className="flex items-center gap-1.5 font-inter text-xs text-[#00D4AA]"><UserCheck size={11} /> Active</span>
+                              <span className="flex items-center gap-1.5 font-mincho text-xs text-[#00D4AA]"><UserCheck size={11} /> Active</span>
                             )}
                           </td>
                           <td className="px-5 py-4 text-right">
                             {!removed && (
                               confirmId === m.id ? (
                                 <div className="flex items-center gap-2 justify-end">
-                                  <span className="font-inter text-xs text-[#999999]">Remove?</span>
+                                  <span className="font-mincho text-xs text-[#a29c8c]">Remove?</span>
                                   <button
                                     onClick={() => handleRemove(m.id)}
                                     disabled={removing === m.id}
-                                    className="font-inter text-xs text-[#FF3B3B] hover:text-white transition-colors disabled:opacity-50"
+                                    className="font-mincho text-xs text-[#b3402f] hover:text-[#f0eadc] transition-colors disabled:opacity-50"
                                   >
                                     {removing === m.id ? '…' : 'Yes'}
                                   </button>
-                                  <button onClick={() => setConfirmId(null)} className="font-inter text-xs text-[#555555] hover:text-white transition-colors">
+                                  <button onClick={() => setConfirmId(null)} className="font-mincho text-xs text-[#7a7568] hover:text-[#f0eadc] transition-colors">
                                     Cancel
                                   </button>
                                 </div>
                               ) : (
                                 <button
                                   onClick={() => setConfirmId(m.id)}
-                                  className="flex items-center gap-1.5 font-inter text-xs text-[#555555] hover:text-[#FF3B3B] transition-colors ml-auto"
+                                  className="flex items-center gap-1.5 font-mincho text-xs text-[#7a7568] hover:text-[#b3402f] transition-colors ml-auto"
                                 >
                                   <Trash2 size={11} /> Remove
                                 </button>
@@ -213,7 +213,7 @@ export default function MembersClient({ members: initial }: Props) {
               </div>
 
               {/* Mobile */}
-              <div className="md:hidden divide-y divide-[#222222]">
+              <div className="md:hidden divide-y divide-[#242420]">
                 {filtered.map(m => {
                   const name = m.profile?.full_name || m.profile?.email || 'Unknown'
                   const email = m.profile?.email ?? ''
@@ -224,26 +224,26 @@ export default function MembersClient({ members: initial }: Props) {
                   return (
                     <div key={m.id} className="px-4 py-4 flex items-center justify-between gap-3">
                       <div className="min-w-0">
-                        <p className="font-inter text-white text-sm font-medium truncate">{name}</p>
-                        {email && name !== email && <p className="font-inter text-[#555555] text-xs truncate">{email}</p>}
-                        <p className="font-inter text-[#555555] text-xs mt-0.5">
+                        <p className="font-mincho text-[#f0eadc] text-sm font-medium truncate">{name}</p>
+                        {email && name !== email && <p className="font-mincho text-[#7a7568] text-xs truncate">{email}</p>}
+                        <p className="font-mincho text-[#7a7568] text-xs mt-0.5">
                           {expiry ? `Expires ${formatDate(expiry.toISOString())}` : 'Permanent access'}
                         </p>
                       </div>
                       <div className="shrink-0 text-right flex flex-col items-end gap-1.5">
-                        <p className={`font-inter text-xs ${removed ? 'text-[#FF3B3B]' : expired ? 'text-[#FFD60A]' : 'text-[#00D4AA]'}`}>
+                        <p className={`font-mincho text-xs ${removed ? 'text-[#b3402f]' : expired ? 'text-[#FFD60A]' : 'text-[#00D4AA]'}`}>
                           {removed ? 'Removed' : expired ? 'Access Expired' : 'Active'}
                         </p>
                         {!removed && (
                           confirmId === m.id ? (
                             <div className="flex gap-2">
-                              <button onClick={() => handleRemove(m.id)} disabled={removing === m.id} className="font-inter text-[10px] text-[#FF3B3B]">
+                              <button onClick={() => handleRemove(m.id)} disabled={removing === m.id} className="font-mincho text-[10px] text-[#b3402f]">
                                 {removing === m.id ? '…' : 'Yes'}
                               </button>
-                              <button onClick={() => setConfirmId(null)} className="font-inter text-[10px] text-[#555555]">No</button>
+                              <button onClick={() => setConfirmId(null)} className="font-mincho text-[10px] text-[#7a7568]">No</button>
                             </div>
                           ) : (
-                            <button onClick={() => setConfirmId(m.id)} className="font-inter text-[10px] text-[#555555] hover:text-[#FF3B3B] transition-colors">
+                            <button onClick={() => setConfirmId(m.id)} className="font-mincho text-[10px] text-[#7a7568] hover:text-[#b3402f] transition-colors">
                               Remove
                             </button>
                           )

@@ -66,16 +66,16 @@ export default function AddCoachModal({ onClose, onSaved, coach: editCoach }: Pr
     }
   }
 
-  const inputCls = 'w-full bg-[#0D0D0D] border border-[#333333] rounded-sm px-4 py-2.5 text-white text-sm focus:outline-none focus:border-[#FF3B3B]/50 transition-colors'
-  const labelCls = 'block text-[#999999] text-xs font-medium mb-1.5'
+  const inputCls = 'w-full bg-[#141410] border border-[#322f26] rounded-sm px-4 py-2.5 text-[#f0eadc] text-sm focus:outline-none focus:border-[#b3402f]/50 transition-colors'
+  const labelCls = 'block text-[#a29c8c] text-xs font-medium mb-1.5'
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/70" onClick={onClose} />
-      <div className="relative bg-[#1A1A1A] border border-[#333333] rounded-sm w-full max-w-md max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#2A2A2A]">
-          <h2 className="font-bebas text-xl text-white tracking-[1px]">{isEdit ? 'EDIT COACH' : 'ADD COACH'}</h2>
-          <button onClick={onClose} className="text-[#999999] hover:text-white transition-colors"><X size={20} /></button>
+      <div className="relative bg-[#1c1c16] border border-[#322f26] rounded-sm w-full max-w-md max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#2a2a20]">
+          <h2 className="font-mincho text-xl text-[#f0eadc] tracking-[1px]">{isEdit ? 'EDIT COACH' : 'ADD COACH'}</h2>
+          <button onClick={onClose} className="text-[#a29c8c] hover:text-[#f0eadc] transition-colors"><X size={20} /></button>
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
@@ -84,24 +84,24 @@ export default function AddCoachModal({ onClose, onSaved, coach: editCoach }: Pr
             <label className={labelCls}>Photo <span className="text-[#555]">(optional)</span></label>
             <div className="flex items-center gap-4">
               <div
-                className="w-20 h-20 rounded-sm bg-[#0D0D0D] border border-[#333333] flex items-center justify-center overflow-hidden shrink-0 cursor-pointer hover:border-[#555555] transition-colors"
+                className="w-20 h-20 rounded-sm bg-[#141410] border border-[#322f26] flex items-center justify-center overflow-hidden shrink-0 cursor-pointer hover:border-[#7a7568] transition-colors"
                 onClick={() => fileRef.current?.click()}
               >
                 {preview ? (
                   <img src={preview} alt="Preview" className="w-full h-full object-cover" />
                 ) : (
-                  <Camera size={20} className="text-[#444444]" />
+                  <Camera size={20} className="text-[#635f54]" />
                 )}
               </div>
               <div>
                 <button
                   type="button"
                   onClick={() => fileRef.current?.click()}
-                  className="font-inter text-xs text-[#999999] border border-[#333333] hover:border-[#555555] hover:text-white px-3 py-1.5 rounded-sm transition-all"
+                  className="font-mincho text-xs text-[#a29c8c] border border-[#322f26] hover:border-[#7a7568] hover:text-[#f0eadc] px-3 py-1.5 rounded-sm transition-all"
                 >
                   {preview ? 'Change photo' : 'Upload photo'}
                 </button>
-                <p className="font-inter text-[11px] text-[#444444] mt-1.5">JPG or PNG, max 5MB</p>
+                <p className="font-mincho text-[11px] text-[#635f54] mt-1.5">JPG or PNG, max 5MB</p>
               </div>
             </div>
             <input
@@ -138,16 +138,16 @@ export default function AddCoachModal({ onClose, onSaved, coach: editCoach }: Pr
           </div>
 
           {error && (
-            <p className="font-inter text-[#FF3B3B] text-sm bg-[#FF3B3B]/5 border border-[#FF3B3B]/20 rounded-sm px-4 py-3">{error}</p>
+            <p className="font-mincho text-[#b3402f] text-sm bg-[#b3402f]/5 border border-[#b3402f]/20 rounded-sm px-4 py-3">{error}</p>
           )}
           <div className="flex gap-3 pt-1">
             <button type="button" onClick={onClose}
-              className="flex-1 py-3 border border-[#333333] text-white text-sm font-semibold rounded-sm transition-all hover:bg-[#222222]">
+              className="flex-1 py-3 border border-[#322f26] text-[#f0eadc] text-sm font-semibold rounded-sm transition-all hover:bg-[#242420]">
               Cancel
             </button>
             <button type="submit" disabled={loading}
-              className="flex-1 py-3 bg-white hover:bg-[#E5E5E5] disabled:opacity-50 text-black font-bebas tracking-[2px] text-sm rounded-sm transition-all flex items-center justify-center gap-2">
-              {loading ? <Loader2 size={15} className="animate-spin text-black" /> : isEdit ? 'SAVE CHANGES' : 'SAVE COACH'}
+              className="flex-1 py-3 bg-[#f0eadc] hover:bg-[#e4dcc8] disabled:opacity-50 text-[#141410] font-mincho tracking-[2px] text-sm rounded-sm transition-all flex items-center justify-center gap-2">
+              {loading ? <Loader2 size={15} className="animate-spin text-[#141410]" /> : isEdit ? 'SAVE CHANGES' : 'SAVE COACH'}
             </button>
           </div>
         </form>

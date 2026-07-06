@@ -91,13 +91,13 @@ export default function GymSignupClient({ isLoggedIn, prefillName, prefillEmail 
     { n: 3, label: 'Submitted', icon: CheckCircle },
   ]
 
-  const inputCls = 'w-full bg-[#0D0D0D] border border-[#333333] rounded-sm px-4 py-3 text-white placeholder-[#555555] text-sm focus:outline-none focus:border-white transition-colors'
-  const labelCls = 'font-inter text-[11px] text-[#999999] tracking-[4px] uppercase block mb-1.5'
+  const inputCls = 'w-full bg-[#141410] border border-[#322f26] rounded-sm px-4 py-3 text-[#f0eadc] placeholder-[#7a7568] text-sm focus:outline-none focus:border-[#f0eadc] transition-colors'
+  const labelCls = 'font-mincho text-[11px] text-[#a29c8c] tracking-[4px] uppercase block mb-1.5'
 
   return (
-    <div className="min-h-screen bg-[#0D0D0D] flex flex-col items-center justify-center px-4 py-16">
+    <div className="min-h-screen bg-[#141410] flex flex-col items-center justify-center px-4 py-16">
       {/* Wordmark */}
-      <a href="/" className="font-bebas text-2xl tracking-[1px] text-[#FF3B3B] mb-10">MATPEAK</a>
+      <a href="/" className="font-mincho text-2xl tracking-[1px] text-[#b3402f] mb-10">MATPEAK</a>
 
       <div className="w-full max-w-lg">
         {/* Step indicator */}
@@ -105,11 +105,11 @@ export default function GymSignupClient({ isLoggedIn, prefillName, prefillEmail 
           <div className="flex items-center justify-center gap-6 mb-10">
             {steps.filter(s => !isLoggedIn || s.n !== 1).map((s, idx, arr) => (
               <div key={s.n} className="flex items-center gap-2">
-                <span className={`font-inter text-sm transition-colors ${step === s.n ? 'text-white' : step > s.n ? 'text-[#555555]' : 'text-[#555555]'}`}>
+                <span className={`font-mincho text-sm transition-colors ${step === s.n ? 'text-[#f0eadc]' : step > s.n ? 'text-[#7a7568]' : 'text-[#7a7568]'}`}>
                   {step > s.n ? <Check size={14} className="inline" /> : s.n}
                 </span>
-                <span className={`font-inter text-sm transition-colors ${step === s.n ? 'text-white' : 'text-[#555555]'}`}>{s.label}</span>
-                {idx < arr.length - 1 && <span className="text-[#333333] ml-6">/</span>}
+                <span className={`font-mincho text-sm transition-colors ${step === s.n ? 'text-[#f0eadc]' : 'text-[#7a7568]'}`}>{s.label}</span>
+                {idx < arr.length - 1 && <span className="text-[#322f26] ml-6">/</span>}
               </div>
             ))}
           </div>
@@ -117,10 +117,10 @@ export default function GymSignupClient({ isLoggedIn, prefillName, prefillEmail 
 
         {/* ── Step 1: Account ── */}
         {step === 1 && (
-          <form onSubmit={handleStep1} className="bg-[#1A1A1A] border border-[#333333] rounded-sm p-8 space-y-5">
+          <form onSubmit={handleStep1} className="bg-[#1c1c16] border border-[#322f26] rounded-sm p-8 space-y-5">
             <div>
-              <h1 className="font-bebas text-2xl text-white tracking-[1px]">CREATE YOUR ACCOUNT</h1>
-              <p className="font-inter text-sm text-[#999999] mt-1">Already have an account? <a href="/login" className="text-white hover:text-[#999999] underline transition-colors">Log in</a></p>
+              <h1 className="font-mincho text-2xl text-[#f0eadc] tracking-[1px]">CREATE YOUR ACCOUNT</h1>
+              <p className="font-mincho text-sm text-[#a29c8c] mt-1">Already have an account? <a href="/login" className="text-[#f0eadc] hover:text-[#a29c8c] underline transition-colors">Log in</a></p>
             </div>
 
             <div className="space-y-4">
@@ -171,10 +171,10 @@ export default function GymSignupClient({ isLoggedIn, prefillName, prefillEmail 
               </div>
             </div>
 
-            {error && <p className="font-inter text-sm text-[#FF3B3B] border border-[#FF3B3B]/20 rounded-sm px-4 py-3">{error}</p>}
+            {error && <p className="font-mincho text-sm text-[#b3402f] border border-[#b3402f]/20 rounded-sm px-4 py-3">{error}</p>}
 
             <button type="submit"
-              className="w-full bg-white text-black font-bebas tracking-[3px] hover:bg-[#E5E5E5] py-3.5 rounded-sm text-sm transition-colors">
+              className="w-full bg-[#f0eadc] text-[#141410] font-mincho tracking-[3px] hover:bg-[#e4dcc8] py-3.5 rounded-sm text-sm transition-colors">
               CONTINUE
             </button>
           </form>
@@ -182,10 +182,10 @@ export default function GymSignupClient({ isLoggedIn, prefillName, prefillEmail 
 
         {/* ── Step 2: Gym Details ── */}
         {step === 2 && (
-          <form onSubmit={handleStep2} className="bg-[#1A1A1A] border border-[#333333] rounded-sm p-8 space-y-6">
+          <form onSubmit={handleStep2} className="bg-[#1c1c16] border border-[#322f26] rounded-sm p-8 space-y-6">
             <div>
-              <h1 className="font-bebas text-2xl text-white tracking-[1px]">TELL US ABOUT YOUR GYM</h1>
-              <p className="font-inter text-sm text-[#999999] mt-1">This will be reviewed by our team before going live.</p>
+              <h1 className="font-mincho text-2xl text-[#f0eadc] tracking-[1px]">TELL US ABOUT YOUR GYM</h1>
+              <p className="font-mincho text-sm text-[#a29c8c] mt-1">This will be reviewed by our team before going live.</p>
             </div>
 
             <div className="space-y-4">
@@ -236,7 +236,7 @@ export default function GymSignupClient({ isLoggedIn, prefillName, prefillEmail 
               <div>
                 <label className={labelCls}>Monthly Membership Price (₹)</label>
                 <div className="flex items-center">
-                  <span className="bg-[#0D0D0D] border border-[#333333] border-r-0 rounded-l-sm px-3 py-3 text-[#555555] font-inter text-sm">₹</span>
+                  <span className="bg-[#141410] border border-[#322f26] border-r-0 rounded-l-sm px-3 py-3 text-[#7a7568] font-mincho text-sm">₹</span>
                   <input
                     required
                     type="number"
@@ -247,7 +247,7 @@ export default function GymSignupClient({ isLoggedIn, prefillName, prefillEmail 
                     className={`${inputCls} rounded-l-none`}
                   />
                 </div>
-                <p className="font-inter text-[#555555] text-xs mt-1">Platform takes 30%. You keep 70%.</p>
+                <p className="font-mincho text-[#7a7568] text-xs mt-1">Platform takes 30%. You keep 70%.</p>
               </div>
 
               <div>
@@ -260,10 +260,10 @@ export default function GymSignupClient({ isLoggedIn, prefillName, prefillEmail 
                         key={d}
                         type="button"
                         onClick={() => toggleDiscipline(d)}
-                        className={`px-3.5 py-1.5 rounded-sm text-xs font-inter border transition-all
+                        className={`px-3.5 py-1.5 rounded-sm text-xs font-mincho border transition-all
                           ${active
-                            ? 'border-white bg-[#222222] text-white'
-                            : 'border-[#333333] bg-[#0D0D0D] text-[#555555] hover:border-[#555555] hover:text-[#999999]'}`}>
+                            ? 'border-[#f0eadc] bg-[#242420] text-[#f0eadc]'
+                            : 'border-[#322f26] bg-[#141410] text-[#7a7568] hover:border-[#7a7568] hover:text-[#a29c8c]'}`}>
                         {active && <Check size={10} className="inline mr-1" />}
                         {d}
                       </button>
@@ -271,22 +271,22 @@ export default function GymSignupClient({ isLoggedIn, prefillName, prefillEmail 
                   })}
                 </div>
                 {disciplines.length > 0 && (
-                  <p className="font-inter text-[#555555] text-xs mt-2">{disciplines.length} selected</p>
+                  <p className="font-mincho text-[#7a7568] text-xs mt-2">{disciplines.length} selected</p>
                 )}
               </div>
             </div>
 
-            {error && <p className="font-inter text-sm text-[#FF3B3B] border border-[#FF3B3B]/20 rounded-sm px-4 py-3">{error}</p>}
+            {error && <p className="font-mincho text-sm text-[#b3402f] border border-[#b3402f]/20 rounded-sm px-4 py-3">{error}</p>}
 
             <div className="flex gap-3">
               {!isLoggedIn && (
                 <button type="button" onClick={() => setStep(1)}
-                  className="px-5 py-3.5 rounded-sm border border-[#333333] text-white font-inter text-sm hover:bg-[#222222] transition-colors">
+                  className="px-5 py-3.5 rounded-sm border border-[#322f26] text-[#f0eadc] font-mincho text-sm hover:bg-[#242420] transition-colors">
                   Back
                 </button>
               )}
               <button type="submit" disabled={loading}
-                className="flex-1 bg-white text-black font-bebas tracking-[3px] hover:bg-[#E5E5E5] disabled:opacity-50 disabled:cursor-not-allowed py-3.5 rounded-sm text-sm transition-colors flex items-center justify-center gap-2">
+                className="flex-1 bg-[#f0eadc] text-[#141410] font-mincho tracking-[3px] hover:bg-[#e4dcc8] disabled:opacity-50 disabled:cursor-not-allowed py-3.5 rounded-sm text-sm transition-colors flex items-center justify-center gap-2">
                 {loading ? <><Loader2 size={16} className="animate-spin" /> SUBMITTING…</> : 'SUBMIT APPLICATION'}
               </button>
             </div>
@@ -295,35 +295,35 @@ export default function GymSignupClient({ isLoggedIn, prefillName, prefillEmail 
 
         {/* ── Step 3: Success ── */}
         {step === 3 && (
-          <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm p-10 text-center space-y-5">
+          <div className="bg-[#1c1c16] border border-[#322f26] rounded-sm p-10 text-center space-y-5">
             <div className="w-12 h-12 border border-[#00D4AA] flex items-center justify-center mx-auto rounded-sm">
               <CheckCircle size={24} className="text-[#00D4AA]" />
             </div>
             <div>
-              <h1 className="font-bebas text-2xl text-white tracking-[1px]">APPLICATION SUBMITTED</h1>
-              <p className="font-inter text-[#999999] text-sm mt-2 max-w-sm mx-auto">
+              <h1 className="font-mincho text-2xl text-[#f0eadc] tracking-[1px]">APPLICATION SUBMITTED</h1>
+              <p className="font-mincho text-[#a29c8c] text-sm mt-2 max-w-sm mx-auto">
                 Our team will review your gym within 24–48 hours. Log back in to check your approval status.
               </p>
             </div>
 
-            <div className="bg-[#0D0D0D] border border-[#333333] rounded-sm p-5 text-left space-y-3">
+            <div className="bg-[#141410] border border-[#322f26] rounded-sm p-5 text-left space-y-3">
               {[
                 { n: '1', text: 'Application review by MATPEAK team', done: true },
                 { n: '2', text: 'Gym page goes live on platform', done: false },
                 { n: '3', text: 'Start streaming classes to members', done: false },
               ].map(item => (
                 <div key={item.n} className="flex items-center gap-3">
-                  <div className={`w-6 h-6 flex items-center justify-center text-xs font-inter shrink-0
-                    ${item.done ? 'text-[#00D4AA]' : 'text-[#555555]'}`}>
+                  <div className={`w-6 h-6 flex items-center justify-center text-xs font-mincho shrink-0
+                    ${item.done ? 'text-[#00D4AA]' : 'text-[#7a7568]'}`}>
                     {item.done ? <Check size={12} /> : item.n}
                   </div>
-                  <span className={`font-inter text-sm ${item.done ? 'text-white' : 'text-[#555555]'}`}>{item.text}</span>
+                  <span className={`font-mincho text-sm ${item.done ? 'text-[#f0eadc]' : 'text-[#7a7568]'}`}>{item.text}</span>
                 </div>
               ))}
             </div>
 
             <button onClick={() => router.push('/gym-dashboard')}
-              className="w-full bg-white text-black font-bebas tracking-[3px] hover:bg-[#E5E5E5] py-3.5 rounded-sm text-sm transition-colors">
+              className="w-full bg-[#f0eadc] text-[#141410] font-mincho tracking-[3px] hover:bg-[#e4dcc8] py-3.5 rounded-sm text-sm transition-colors">
               GO TO YOUR DASHBOARD
             </button>
           </div>

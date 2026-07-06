@@ -43,29 +43,29 @@ export default function ReplaysClient({ replays, gyms }: ReplaysClientProps) {
   const showGymFilter = gyms.length > 1
 
   return (
-    <div className="flex-1 min-h-screen bg-[#0D0D0D] lg:pl-64">
+    <div className="flex-1 min-h-screen bg-[#141410] lg:pl-64">
       <div className="pt-14 lg:pt-0">
         <div className="max-w-6xl mx-auto px-6 py-8">
 
           {/* Header */}
           <div className="mb-8">
             <div className="flex items-center gap-3 mb-2">
-              <div className="w-5 h-px bg-[#FF3B3B]" />
-              <p className="font-inter text-[11px] text-[#FF3B3B] tracking-[4px] uppercase">Library</p>
+              <div className="w-5 h-px bg-[#b3402f]" />
+              <p className="font-mincho text-[11px] text-[#b3402f] tracking-[4px] uppercase">Library</p>
             </div>
-            <h1 className="font-bebas text-4xl text-white tracking-[1px]">REPLAYS</h1>
-            <p className="font-inter text-sm text-[#555555] mt-1">
+            <h1 className="font-mincho text-4xl text-[#f0eadc] tracking-[1px]">REPLAYS</h1>
+            <p className="font-mincho text-sm text-[#7a7568] mt-1">
               {replays.length} class{replays.length !== 1 ? 'es' : ''} recorded
             </p>
           </div>
 
           {replays.length === 0 ? (
             /* Empty state */
-            <div className="relative bg-[#1A1A1A] border border-[#333333] rounded-sm px-6 py-20 text-center overflow-hidden">
-              <span className="absolute inset-0 flex items-center justify-center font-bebas text-[120px] text-white/[0.03] leading-none select-none pointer-events-none">
+            <div className="relative bg-[#1c1c16] border border-[#322f26] rounded-sm px-6 py-20 text-center overflow-hidden">
+              <span className="absolute inset-0 flex items-center justify-center font-mincho text-[120px] text-[#f0eadc]/[0.03] leading-none select-none pointer-events-none">
                 REPLAYS
               </span>
-              <p className="relative font-inter text-[#555555] text-sm">
+              <p className="relative font-mincho text-[#7a7568] text-sm">
                 No recorded classes yet. Check back after a live session ends.
               </p>
             </div>
@@ -79,10 +79,10 @@ export default function ReplaysClient({ replays, gyms }: ReplaysClientProps) {
                     <button
                       key={d}
                       onClick={() => setDiscipline(d)}
-                      className={`shrink-0 font-bebas tracking-[2px] text-sm px-4 py-2 transition-colors duration-150 border-b-2 ${
+                      className={`shrink-0 font-mincho tracking-[2px] text-sm px-4 py-2 transition-colors duration-150 border-b-2 ${
                         discipline === d
-                          ? 'text-white border-[#FF3B3B]'
-                          : 'text-[#555555] border-transparent hover:text-white'
+                          ? 'text-[#f0eadc] border-[#b3402f]'
+                          : 'text-[#7a7568] border-transparent hover:text-[#f0eadc]'
                       }`}
                     >
                       {d.toUpperCase()}
@@ -93,14 +93,14 @@ export default function ReplaysClient({ replays, gyms }: ReplaysClientProps) {
                 {/* Gym selector */}
                 {showGymFilter && (
                   <div className="flex items-center gap-2">
-                    <p className="font-inter text-[11px] text-[#555555] uppercase tracking-[3px] shrink-0">Gym</p>
+                    <p className="font-mincho text-[11px] text-[#7a7568] uppercase tracking-[3px] shrink-0">Gym</p>
                     <div className="flex items-center gap-2 flex-wrap">
                       <button
                         onClick={() => setGymFilter('All')}
-                        className={`font-inter text-xs px-3 py-1.5 rounded-sm border transition-colors duration-150 ${
+                        className={`font-mincho text-xs px-3 py-1.5 rounded-sm border transition-colors duration-150 ${
                           gymFilter === 'All'
-                            ? 'bg-[#1A1A1A] border-[#555555] text-white'
-                            : 'border-[#333333] text-[#555555] hover:text-white'
+                            ? 'bg-[#1c1c16] border-[#7a7568] text-[#f0eadc]'
+                            : 'border-[#322f26] text-[#7a7568] hover:text-[#f0eadc]'
                         }`}
                       >
                         All gyms
@@ -109,10 +109,10 @@ export default function ReplaysClient({ replays, gyms }: ReplaysClientProps) {
                         <button
                           key={g.id}
                           onClick={() => setGymFilter(g.id)}
-                          className={`font-inter text-xs px-3 py-1.5 rounded-sm border transition-colors duration-150 ${
+                          className={`font-mincho text-xs px-3 py-1.5 rounded-sm border transition-colors duration-150 ${
                             gymFilter === g.id
-                              ? 'bg-[#1A1A1A] border-[#555555] text-white'
-                              : 'border-[#333333] text-[#555555] hover:text-white'
+                              ? 'bg-[#1c1c16] border-[#7a7568] text-[#f0eadc]'
+                              : 'border-[#322f26] text-[#7a7568] hover:text-[#f0eadc]'
                           }`}
                         >
                           {g.name}
@@ -125,20 +125,20 @@ export default function ReplaysClient({ replays, gyms }: ReplaysClientProps) {
 
               {/* Results count */}
               {(discipline !== 'All' || gymFilter !== 'All') && (
-                <p className="font-inter text-[11px] text-[#555555] mb-4">
+                <p className="font-mincho text-[11px] text-[#7a7568] mb-4">
                   {filtered.length} result{filtered.length !== 1 ? 's' : ''}
                 </p>
               )}
 
               {filtered.length === 0 ? (
-                <div className="relative bg-[#1A1A1A] border border-[#333333] rounded-sm px-6 py-16 text-center overflow-hidden">
-                  <span className="absolute inset-0 flex items-center justify-center font-bebas text-[80px] text-white/[0.03] leading-none select-none pointer-events-none">
+                <div className="relative bg-[#1c1c16] border border-[#322f26] rounded-sm px-6 py-16 text-center overflow-hidden">
+                  <span className="absolute inset-0 flex items-center justify-center font-mincho text-[80px] text-[#f0eadc]/[0.03] leading-none select-none pointer-events-none">
                     NONE
                   </span>
-                  <p className="relative font-inter text-[#555555] text-sm">No replays match this filter.</p>
+                  <p className="relative font-mincho text-[#7a7568] text-sm">No replays match this filter.</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-[#333333]">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-[#322f26]">
                   {filtered.map((s, i) => (
                     <motion.a
                       key={s.id}
@@ -146,25 +146,25 @@ export default function ReplaysClient({ replays, gyms }: ReplaysClientProps) {
                       initial={{ opacity: 0, y: 8 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.2, ease: 'easeOut', delay: i * 0.03 }}
-                      className="bg-[#1A1A1A] p-5 block group hover:bg-[#222222] transition-colors duration-150"
+                      className="bg-[#1c1c16] p-5 block group hover:bg-[#242420] transition-colors duration-150"
                     >
                       {/* Top row */}
                       <div className="flex items-center justify-between mb-3">
-                        <span className="font-inter text-[10px] text-[#555555] uppercase tracking-[2px] border border-[#333333] bg-[#222222] group-hover:bg-[#2A2A2A] px-2 py-0.5 rounded-sm transition-colors">
+                        <span className="font-mincho text-[10px] text-[#7a7568] uppercase tracking-[2px] border border-[#322f26] bg-[#242420] group-hover:bg-[#2a2a20] px-2 py-0.5 rounded-sm transition-colors">
                           {s.discipline ?? 'BJJ'}
                         </span>
-                        <div className="w-7 h-7 rounded-sm bg-[#222222] group-hover:bg-[#FF3B3B]/10 border border-[#333333] group-hover:border-[#FF3B3B]/20 flex items-center justify-center transition-colors duration-150">
-                          <Play size={11} className="text-[#555555] group-hover:text-[#FF3B3B] transition-colors duration-150 translate-x-px" />
+                        <div className="w-7 h-7 rounded-sm bg-[#242420] group-hover:bg-[#b3402f]/10 border border-[#322f26] group-hover:border-[#b3402f]/20 flex items-center justify-center transition-colors duration-150">
+                          <Play size={11} className="text-[#7a7568] group-hover:text-[#b3402f] transition-colors duration-150 translate-x-px" />
                         </div>
                       </div>
 
                       {/* Title */}
-                      <p className="font-bebas text-lg text-white leading-tight tracking-[1px] mb-1.5 group-hover:text-[#FF3B3B] transition-colors duration-150 line-clamp-2">
+                      <p className="font-mincho text-lg text-[#f0eadc] leading-tight tracking-[1px] mb-1.5 group-hover:text-[#b3402f] transition-colors duration-150 line-clamp-2">
                         {s.title}
                       </p>
 
                       {/* Meta */}
-                      <p className="font-inter text-xs text-[#555555]">
+                      <p className="font-mincho text-xs text-[#7a7568]">
                         {s.coaches?.name ?? 'Coach'}
                         {s.duration_minutes ? <>&nbsp;·&nbsp;{s.duration_minutes}m</> : null}
                         {s.gyms?.name && showGymFilter ? <>&nbsp;·&nbsp;{s.gyms.name}</> : null}
@@ -172,7 +172,7 @@ export default function ReplaysClient({ replays, gyms }: ReplaysClientProps) {
 
                       {/* Date */}
                       {s.scheduled_at && (
-                        <p className="font-inter text-[11px] text-[#444444] mt-1">
+                        <p className="font-mincho text-[11px] text-[#635f54] mt-1">
                           {new Date(s.scheduled_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
                         </p>
                       )}

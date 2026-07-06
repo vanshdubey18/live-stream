@@ -30,13 +30,13 @@ export default function GymDetailClient({ gym, coaches, sessions, memberCount, m
   const disciplines: string[] = gym.disciplines ?? []
 
   return (
-    <div className="min-h-screen bg-[#0D0D0D]">
+    <div className="min-h-screen bg-[#141410]">
 
       {/* Back nav */}
-      <div className="sticky top-0 z-20 bg-[#0D0D0D] border-b border-[#1F1F1F] px-6 h-14 flex items-center gap-3">
+      <div className="sticky top-0 z-20 bg-[#141410] border-b border-[#242420] px-6 h-14 flex items-center gap-3">
         <a
           href="/gyms"
-          className="flex items-center gap-1.5 font-inter text-sm text-[#555555] hover:text-white transition-colors"
+          className="flex items-center gap-1.5 font-mincho text-sm text-[#7a7568] hover:text-[#f0eadc] transition-colors"
         >
           <ChevronLeft size={15} />
           ALL GYMS
@@ -49,65 +49,65 @@ export default function GymDetailClient({ gym, coaches, sessions, memberCount, m
         <div>
           {/* Active member badge */}
           {joined && (
-            <p className="font-inter text-xs text-[#00D4AA] tracking-[3px] uppercase mb-3">
+            <p className="font-mincho text-xs text-[#00D4AA] tracking-[3px] uppercase mb-3">
               ● ACTIVE MEMBER
             </p>
           )}
 
           {/* Live badge */}
           {liveSessions.length > 0 && (
-            <p className="font-inter text-xs text-[#FF3B3B] tracking-[3px] uppercase mb-3">
+            <p className="font-mincho text-xs text-[#b3402f] tracking-[3px] uppercase mb-3">
               ● LIVE NOW
             </p>
           )}
 
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-5 h-px bg-[#FF3B3B]" />
-            <p className="font-inter text-[11px] text-[#FF3B3B] tracking-[4px] uppercase">Gym Profile</p>
+            <div className="w-5 h-px bg-[#b3402f]" />
+            <p className="font-mincho text-[11px] text-[#b3402f] tracking-[4px] uppercase">Gym Profile</p>
           </div>
           <div className="flex items-center gap-4 mt-2">
             {gym.logo_url && (
-              <img src={gym.logo_url} alt={gym.name} className="w-16 h-16 rounded-sm object-cover border border-[#333333] shrink-0" />
+              <img src={gym.logo_url} alt={gym.name} className="w-16 h-16 rounded-sm object-cover border border-[#322f26] shrink-0" />
             )}
-            <h1 className="font-bebas text-6xl lg:text-7xl text-white leading-none">{gym.name}</h1>
+            <h1 className="font-mincho text-6xl lg:text-7xl text-[#f0eadc] leading-none">{gym.name}</h1>
           </div>
 
           {gym.city && (
-            <p className="font-inter text-sm text-[#999999] mt-3">
+            <p className="font-mincho text-sm text-[#a29c8c] mt-3">
               {gym.city}{gym.location ? `, ${gym.location}` : ''}
             </p>
           )}
 
           {/* Stats row */}
-          <div className="flex flex-wrap gap-8 mt-6 pb-6 border-b border-[#1F1F1F]">
+          <div className="flex flex-wrap gap-8 mt-6 pb-6 border-b border-[#242420]">
             <div>
-              <p className="font-bebas text-3xl text-white">{memberCount}</p>
-              <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase">Members</p>
+              <p className="font-mincho text-3xl text-[#f0eadc]">{memberCount}</p>
+              <p className="font-mincho text-[11px] text-[#a29c8c] tracking-[4px] uppercase">Members</p>
             </div>
             {gym.classes_per_week != null && (
               <div>
-                <p className="font-bebas text-3xl text-white">{gym.classes_per_week}</p>
-                <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase">Classes / Week</p>
+                <p className="font-mincho text-3xl text-[#f0eadc]">{gym.classes_per_week}</p>
+                <p className="font-mincho text-[11px] text-[#a29c8c] tracking-[4px] uppercase">Classes / Week</p>
               </div>
             )}
             {disciplines.length > 0 && (
               <div>
-                <p className="font-bebas text-3xl text-white">{disciplines.length}</p>
-                <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase">Disciplines</p>
+                <p className="font-mincho text-3xl text-[#f0eadc]">{disciplines.length}</p>
+                <p className="font-mincho text-[11px] text-[#a29c8c] tracking-[4px] uppercase">Disciplines</p>
               </div>
             )}
           </div>
 
           {/* Disciplines dot-separated */}
           {disciplines.length > 0 && (
-            <p className="font-inter text-xs text-[#555555] uppercase tracking-[2px] mt-4">
+            <p className="font-mincho text-xs text-[#7a7568] uppercase tracking-[2px] mt-4">
               {disciplines.join(' · ')}
             </p>
           )}
 
           {/* Description */}
           {gym.description && (
-            <p className="font-inter text-sm text-[#999999] mt-4 leading-relaxed max-w-2xl">
+            <p className="font-mincho text-sm text-[#a29c8c] mt-4 leading-relaxed max-w-2xl">
               {gym.description}
             </p>
           )}
@@ -115,7 +115,7 @@ export default function GymDetailClient({ gym, coaches, sessions, memberCount, m
           {/* Join / Active CTA */}
           <div className="mt-6">
             {joined ? (
-              <span className="font-inter text-xs text-[#00D4AA] tracking-[3px] uppercase px-4 py-2 border border-[#00D4AA]/30 rounded-sm inline-block">
+              <span className="font-mincho text-xs text-[#00D4AA] tracking-[3px] uppercase px-4 py-2 border border-[#00D4AA]/30 rounded-sm inline-block">
                 ● ACTIVE MEMBER
               </span>
             ) : (
@@ -125,7 +125,7 @@ export default function GymDetailClient({ gym, coaches, sessions, memberCount, m
                     ? setShowJoin(true)
                     : (window.location.href = `/signup?redirectTo=/gyms/${gym.slug}`)
                 }
-                className="bg-white text-black font-bebas tracking-[3px] px-8 py-3 rounded-sm hover:bg-[#E5E5E5] transition-colors text-sm"
+                className="bg-[#f0eadc] text-[#141410] font-mincho tracking-[3px] px-8 py-3 rounded-sm hover:bg-[#e4dcc8] transition-colors text-sm"
               >
                 JOIN GYM
               </button>
@@ -135,20 +135,20 @@ export default function GymDetailClient({ gym, coaches, sessions, memberCount, m
 
         {/* Live session banner */}
         {liveSessions.length > 0 && (
-          <div className="bg-[#1A1A1A] border border-[#FF3B3B]/40 rounded-sm px-6 py-4 flex items-center justify-between gap-4 shadow-[0_0_0_1px_rgba(255,59,59,0.1),0_0_20px_rgba(255,59,59,0.06)]">
+          <div className="bg-[#1c1c16] border border-[#b3402f]/40 rounded-sm px-6 py-4 flex items-center justify-between gap-4 shadow-[0_0_0_1px_rgba(255,59,59,0.1),0_0_20px_rgba(255,59,59,0.06)]">
             <div>
-              <p className="font-inter text-xs text-[#FF3B3B] tracking-[3px] uppercase mb-1">● Live Now</p>
-              <p className="font-bebas text-xl text-white">{liveSessions[0].title}</p>
+              <p className="font-mincho text-xs text-[#b3402f] tracking-[3px] uppercase mb-1">● Live Now</p>
+              <p className="font-mincho text-xl text-[#f0eadc]">{liveSessions[0].title}</p>
             </div>
             {joined ? (
               <a
                 href={`/watch/${liveSessions[0].id}`}
-                className="bg-white text-black font-bebas tracking-[3px] px-6 py-2.5 rounded-sm hover:bg-[#E5E5E5] transition-colors text-sm shrink-0"
+                className="bg-[#f0eadc] text-[#141410] font-mincho tracking-[3px] px-6 py-2.5 rounded-sm hover:bg-[#e4dcc8] transition-colors text-sm shrink-0"
               >
                 WATCH →
               </a>
             ) : (
-              <span className="font-inter text-xs text-[#555555]">Join to watch</span>
+              <span className="font-mincho text-xs text-[#7a7568]">Join to watch</span>
             )}
           </div>
         )}
@@ -157,25 +157,25 @@ export default function GymDetailClient({ gym, coaches, sessions, memberCount, m
         {coaches.length > 0 && (
           <section>
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-5 h-px bg-[#FF3B3B]" />
-              <p className="font-inter text-[11px] text-[#FF3B3B] tracking-[4px] uppercase">Coaches</p>
+              <div className="w-5 h-px bg-[#b3402f]" />
+              <p className="font-mincho text-[11px] text-[#b3402f] tracking-[4px] uppercase">Coaches</p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {coaches.map((c: any) => (
-                <div key={c.id} className="flex items-center gap-4 px-5 py-4 bg-[#1A1A1A] border border-[#2A2A2A] rounded-sm hover:border-[#333333] transition-colors">
-                  <div className="w-12 h-12 rounded-sm bg-[#2A2A2A] border border-[#333333] flex items-center justify-center shrink-0 overflow-hidden">
+                <div key={c.id} className="flex items-center gap-4 px-5 py-4 bg-[#1c1c16] border border-[#2a2a20] rounded-sm hover:border-[#322f26] transition-colors">
+                  <div className="w-12 h-12 rounded-sm bg-[#2a2a20] border border-[#322f26] flex items-center justify-center shrink-0 overflow-hidden">
                     {c.avatar_url
                       ? <img src={c.avatar_url} alt={c.name} className="w-full h-full object-cover" />
-                      : <span className="font-bebas text-white text-xl">{c.name[0]}</span>
+                      : <span className="font-mincho text-[#f0eadc] text-xl">{c.name[0]}</span>
                     }
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-bebas text-lg text-white leading-tight">{c.name}</p>
-                    <p className="font-inter text-xs text-[#999999]">
+                    <p className="font-mincho text-lg text-[#f0eadc] leading-tight">{c.name}</p>
+                    <p className="font-mincho text-xs text-[#a29c8c]">
                       {c.discipline}{c.belt_rank ? ` · ${c.belt_rank}` : ''}
                     </p>
                     {c.bio && (
-                      <p className="font-inter text-xs text-[#555555] mt-1 line-clamp-1">{c.bio}</p>
+                      <p className="font-mincho text-xs text-[#7a7568] mt-1 line-clamp-1">{c.bio}</p>
                     )}
                   </div>
                 </div>
@@ -187,56 +187,56 @@ export default function GymDetailClient({ gym, coaches, sessions, memberCount, m
         {/* Upcoming Schedule */}
         <section>
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-5 h-px bg-[#FF3B3B]" />
-            <p className="font-inter text-[11px] text-[#FF3B3B] tracking-[4px] uppercase">Upcoming Schedule</p>
+            <div className="w-5 h-px bg-[#b3402f]" />
+            <p className="font-mincho text-[11px] text-[#b3402f] tracking-[4px] uppercase">Upcoming Schedule</p>
           </div>
           {upcomingSessions.length === 0 ? (
             <EmptyState ghost="SCHEDULE" message="No upcoming classes scheduled yet." />
           ) : (
-            <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm overflow-hidden">
+            <div className="bg-[#1c1c16] border border-[#322f26] rounded-sm overflow-hidden">
               {/* Desktop table header */}
-              <div className="hidden sm:grid grid-cols-[1fr_1fr_auto_auto] gap-4 px-5 py-3 border-b border-[#2A2A2A]">
-                <span className="font-inter text-[10px] text-[#999999] uppercase tracking-[3px]">Time</span>
-                <span className="font-inter text-[10px] text-[#999999] uppercase tracking-[3px]">Class</span>
-                <span className="font-inter text-[10px] text-[#999999] uppercase tracking-[3px]">Coach</span>
-                <span className="font-inter text-[10px] text-[#999999] uppercase tracking-[3px]">Level</span>
+              <div className="hidden sm:grid grid-cols-[1fr_1fr_auto_auto] gap-4 px-5 py-3 border-b border-[#2a2a20]">
+                <span className="font-mincho text-[10px] text-[#a29c8c] uppercase tracking-[3px]">Time</span>
+                <span className="font-mincho text-[10px] text-[#a29c8c] uppercase tracking-[3px]">Class</span>
+                <span className="font-mincho text-[10px] text-[#a29c8c] uppercase tracking-[3px]">Coach</span>
+                <span className="font-mincho text-[10px] text-[#a29c8c] uppercase tracking-[3px]">Level</span>
               </div>
-              <div className="divide-y divide-[#2A2A2A]">
+              <div className="divide-y divide-[#2a2a20]">
                 {upcomingSessions.map((s: any) => (
-                  <div key={s.id} className="px-5 py-3.5 hover:bg-[#222222] transition-colors">
+                  <div key={s.id} className="px-5 py-3.5 hover:bg-[#242420] transition-colors">
                     {/* Mobile layout */}
                     <div className="sm:hidden flex items-start justify-between gap-3">
                       <div className="flex-1 min-w-0">
                         {isSessionLive(s) && (
-                          <span className="font-inter text-[10px] text-[#FF3B3B] tracking-[2px] block mb-1">● LIVE</span>
+                          <span className="font-mincho text-[10px] text-[#b3402f] tracking-[2px] block mb-1">● LIVE</span>
                         )}
-                        <p className="font-inter text-sm text-white font-medium truncate">{s.title}</p>
+                        <p className="font-mincho text-sm text-[#f0eadc] font-medium truncate">{s.title}</p>
                         {s.discipline && (
-                          <p className="font-inter text-xs text-[#555555] uppercase tracking-[1px] mt-0.5">{s.discipline}</p>
+                          <p className="font-mincho text-xs text-[#7a7568] uppercase tracking-[1px] mt-0.5">{s.discipline}</p>
                         )}
-                        <p className="font-inter text-xs text-[#999999] mt-1">{s.coaches?.name ?? '—'}</p>
+                        <p className="font-mincho text-xs text-[#a29c8c] mt-1">{s.coaches?.name ?? '—'}</p>
                       </div>
                       <div className="text-right shrink-0">
-                        <p className="font-inter text-xs text-[#999999]">{formatTime(s.scheduled_at)}</p>
-                        <p className="font-inter text-xs text-[#555555] mt-1">{s.level ?? '—'}</p>
+                        <p className="font-mincho text-xs text-[#a29c8c]">{formatTime(s.scheduled_at)}</p>
+                        <p className="font-mincho text-xs text-[#7a7568] mt-1">{s.level ?? '—'}</p>
                       </div>
                     </div>
                     {/* Desktop layout */}
                     <div className="hidden sm:grid grid-cols-[1fr_1fr_auto_auto] gap-4 items-center">
                       <div>
                         {isSessionLive(s) && (
-                          <span className="font-inter text-[10px] text-[#FF3B3B] tracking-[2px] block mb-0.5">● LIVE</span>
+                          <span className="font-mincho text-[10px] text-[#b3402f] tracking-[2px] block mb-0.5">● LIVE</span>
                         )}
-                        <p className="font-inter text-xs text-[#999999]">{formatTime(s.scheduled_at)}</p>
+                        <p className="font-mincho text-xs text-[#a29c8c]">{formatTime(s.scheduled_at)}</p>
                       </div>
                       <div>
-                        <p className="font-inter text-sm text-white">{s.title}</p>
+                        <p className="font-mincho text-sm text-[#f0eadc]">{s.title}</p>
                         {s.discipline && (
-                          <p className="font-inter text-xs text-[#555555] uppercase tracking-[1px] mt-0.5">{s.discipline}</p>
+                          <p className="font-mincho text-xs text-[#7a7568] uppercase tracking-[1px] mt-0.5">{s.discipline}</p>
                         )}
                       </div>
-                      <p className="font-inter text-sm text-[#999999]">{s.coaches?.name ?? '—'}</p>
-                      <p className="font-inter text-xs text-[#555555]">{s.level ?? '—'}</p>
+                      <p className="font-mincho text-sm text-[#a29c8c]">{s.coaches?.name ?? '—'}</p>
+                      <p className="font-mincho text-xs text-[#7a7568]">{s.level ?? '—'}</p>
                     </div>
                   </div>
                 ))}
@@ -249,19 +249,19 @@ export default function GymDetailClient({ gym, coaches, sessions, memberCount, m
         {!joined && (
           <section>
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-5 h-px bg-[#FF3B3B]" />
-              <p className="font-inter text-[11px] text-[#FF3B3B] tracking-[4px] uppercase">Membership</p>
+              <div className="w-5 h-px bg-[#b3402f]" />
+              <p className="font-mincho text-[11px] text-[#b3402f] tracking-[4px] uppercase">Membership</p>
             </div>
-            <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm p-8">
-              <h3 className="font-bebas text-4xl text-white mb-2">JOIN {gym.name.toUpperCase()}</h3>
-              <p className="font-inter text-sm text-[#999999] mb-6">
+            <div className="bg-[#1c1c16] border border-[#322f26] rounded-sm p-8">
+              <h3 className="font-mincho text-4xl text-[#f0eadc] mb-2">JOIN {gym.name.toUpperCase()}</h3>
+              <p className="font-mincho text-sm text-[#a29c8c] mb-6">
                 Access all live classes and replays from anywhere.
               </p>
               <div className="flex items-baseline gap-2 mb-8">
-                <span className="font-bebas text-6xl text-white">
+                <span className="font-mincho text-6xl text-[#f0eadc]">
                   ₹{((gym.monthly_price_paise ?? 99900) / 100).toLocaleString('en-IN')}
                 </span>
-                <span className="font-inter text-sm text-[#555555]">/mo</span>
+                <span className="font-mincho text-sm text-[#7a7568]">/mo</span>
               </div>
               <button
                 onClick={() =>
@@ -269,7 +269,7 @@ export default function GymDetailClient({ gym, coaches, sessions, memberCount, m
                     ? setShowJoin(true)
                     : (window.location.href = `/signup?redirectTo=/gyms/${gym.slug}`)
                 }
-                className="bg-white text-black font-bebas tracking-[3px] px-10 py-3 rounded-sm hover:bg-[#E5E5E5] transition-colors text-sm"
+                className="bg-[#f0eadc] text-[#141410] font-mincho tracking-[3px] px-10 py-3 rounded-sm hover:bg-[#e4dcc8] transition-colors text-sm"
               >
                 JOIN NOW →
               </button>

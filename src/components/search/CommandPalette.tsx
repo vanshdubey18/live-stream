@@ -90,7 +90,7 @@ function SectionHeader({ label }: { label: string }) {
   return (
     <div className="px-4 py-1.5 flex items-center gap-3">
       <span className="text-[#555] text-xs font-bold uppercase tracking-wider">{label}</span>
-      <span className="flex-1 h-px bg-[#1A1A1A]" />
+      <span className="flex-1 h-px bg-[#1c1c16]" />
     </div>
   )
 }
@@ -200,9 +200,9 @@ export default function CommandPalette({ isOpen, onClose }: Props) {
             transition={{ duration: 0.18, ease: 'easeOut' }}
             className="fixed inset-0 z-50 pointer-events-none flex justify-center"
           >
-            <div className="pointer-events-auto mt-20 max-w-2xl w-full mx-4 bg-[#111] border border-[#333333] rounded-sm overflow-hidden shadow-2xl self-start flex flex-col">
+            <div className="pointer-events-auto mt-20 max-w-2xl w-full mx-4 bg-[#111] border border-[#322f26] rounded-sm overflow-hidden shadow-2xl self-start flex flex-col">
               {/* Search input */}
-              <div className="flex items-center gap-3 px-4 py-4 border-b border-[#2A2A2A]">
+              <div className="flex items-center gap-3 px-4 py-4 border-b border-[#2a2a20]">
                 <Search size={18} className="text-[#555] shrink-0" />
                 <input
                   ref={inputRef}
@@ -210,14 +210,14 @@ export default function CommandPalette({ isOpen, onClose }: Props) {
                   value={query}
                   onChange={handleQueryChange}
                   placeholder="Search techniques, coaches, gyms, classes..."
-                  className="flex-1 bg-transparent text-white text-base placeholder:text-[#444] focus:outline-none"
+                  className="flex-1 bg-transparent text-[#f0eadc] text-base placeholder:text-[#444] focus:outline-none"
                 />
                 {query && (
-                  <button onClick={() => { setQuery(''); inputRef.current?.focus() }} className="text-[#555] hover:text-white transition-colors">
+                  <button onClick={() => { setQuery(''); inputRef.current?.focus() }} className="text-[#555] hover:text-[#f0eadc] transition-colors">
                     <X size={16} />
                   </button>
                 )}
-                <kbd className="hidden sm:flex items-center gap-1 shrink-0 text-[#444] text-xs bg-[#1A1A1A] border border-[#333333] rounded px-1.5 py-0.5 font-mono">
+                <kbd className="hidden sm:flex items-center gap-1 shrink-0 text-[#444] text-xs bg-[#1c1c16] border border-[#322f26] rounded px-1.5 py-0.5 font-mono">
                   esc
                 </kbd>
               </div>
@@ -271,15 +271,15 @@ export default function CommandPalette({ isOpen, onClose }: Props) {
               </div>
 
               {/* Footer */}
-              <div className="px-4 py-2.5 border-t border-[#2A2A2A] flex items-center gap-4 text-[#444] text-xs">
+              <div className="px-4 py-2.5 border-t border-[#2a2a20] flex items-center gap-4 text-[#444] text-xs">
                 <span className="flex items-center gap-1">
-                  <kbd className="bg-[#1A1A1A] border border-[#333333] rounded px-1 py-0.5 font-mono">↑↓</kbd> navigate
+                  <kbd className="bg-[#1c1c16] border border-[#322f26] rounded px-1 py-0.5 font-mono">↑↓</kbd> navigate
                 </span>
                 <span className="flex items-center gap-1">
-                  <kbd className="bg-[#1A1A1A] border border-[#333333] rounded px-1 py-0.5 font-mono">↵</kbd> select
+                  <kbd className="bg-[#1c1c16] border border-[#322f26] rounded px-1 py-0.5 font-mono">↵</kbd> select
                 </span>
                 <span className="flex items-center gap-1">
-                  <kbd className="bg-[#1A1A1A] border border-[#333333] rounded px-1 py-0.5 font-mono">esc</kbd> close
+                  <kbd className="bg-[#1c1c16] border border-[#322f26] rounded px-1 py-0.5 font-mono">esc</kbd> close
                 </span>
               </div>
             </div>

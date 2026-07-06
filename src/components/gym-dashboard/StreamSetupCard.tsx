@@ -31,22 +31,22 @@ export default function StreamSetupCard({ gymId }: Props) {
   }, [pollStatus])
 
   const display = (() => {
-    if (status === 'loading') return { label: 'CHECKING…', color: 'text-[#555555]', spinner: true }
+    if (status === 'loading') return { label: 'CHECKING…', color: 'text-[#7a7568]', spinner: true }
     switch (status) {
-      case 'active':       return { label: '● LIVE NOW', color: 'text-[#FF3B3B]', spinner: false }
+      case 'active':       return { label: '● LIVE NOW', color: 'text-[#b3402f]', spinner: false }
       case 'disconnected': return { label: '⟳ RECONNECTING', color: 'text-[#FFD60A]', spinner: false }
-      default:             return { label: 'OFFLINE', color: 'text-white', spinner: false }
+      default:             return { label: 'OFFLINE', color: 'text-[#f0eadc]', spinner: false }
     }
   })()
 
   const isLive = status === 'active'
 
   return (
-    <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm p-6">
+    <div className="bg-[#1c1c16] border border-[#322f26] rounded-sm p-6">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-2">Stream Status</p>
-          <span className={`font-bebas text-5xl tracking-[1px] flex items-center gap-3 ${display.color}`}>
+          <p className="font-mincho text-[11px] text-[#a29c8c] tracking-[4px] uppercase mb-2">Stream Status</p>
+          <span className={`font-mincho text-5xl tracking-[1px] flex items-center gap-3 ${display.color}`}>
             {display.spinner && <Loader2 size={28} className="animate-spin" />}
             {display.label}
           </span>
@@ -55,10 +55,10 @@ export default function StreamSetupCard({ gymId }: Props) {
         {/* Real action — go to the one-click stream page */}
         <Link
           href="/gym-dashboard/stream"
-          className={`shrink-0 flex items-center gap-2 font-bebas tracking-[3px] text-sm px-5 py-3 rounded-sm transition-colors ${
+          className={`shrink-0 flex items-center gap-2 font-mincho tracking-[3px] text-sm px-5 py-3 rounded-sm transition-colors ${
             isLive
-              ? 'bg-[#FF3B3B]/10 border border-[#FF3B3B]/40 text-[#FF3B3B] hover:bg-[#FF3B3B]/20'
-              : 'bg-[#FF3B3B] text-white hover:bg-[#e03030]'
+              ? 'bg-[#b3402f]/10 border border-[#b3402f]/40 text-[#b3402f] hover:bg-[#b3402f]/20'
+              : 'bg-[#b3402f] text-[#f0eadc] hover:bg-[#942f22]'
           }`}
         >
           {isLive ? <Radio size={14} className="live-pulse" /> : <Camera size={14} />}
@@ -66,8 +66,8 @@ export default function StreamSetupCard({ gymId }: Props) {
         </Link>
       </div>
 
-      <div className="border-t border-[#222222] pt-4 mt-6">
-        <p className="font-inter text-[11px] text-[#555555]">
+      <div className="border-t border-[#242420] pt-4 mt-6">
+        <p className="font-mincho text-[11px] text-[#7a7568]">
           Status refreshes every 30s automatically. Start or stop your stream from the Stream Setup page.
         </p>
       </div>

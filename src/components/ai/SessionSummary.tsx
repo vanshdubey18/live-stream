@@ -49,11 +49,11 @@ export const DEMO_SUMMARY: SessionSummaryData = {
 }
 
 const DISCIPLINE_COLORS: Record<string, string> = {
-  BJJ: 'bg-[#1A1A1A] text-[#999999]',
+  BJJ: 'bg-[#1c1c16] text-[#a29c8c]',
   Boxing: 'bg-[#FFD60A]/10 text-[#FFD60A]',
-  'Muay Thai': 'bg-[#1A1A1A] text-[#999999]',
-  Wrestling: 'bg-[#1A1A1A] text-[#999999]',
-  MMA: 'bg-[#FF3B3B]/10 text-[#FF3B3B]',
+  'Muay Thai': 'bg-[#1c1c16] text-[#a29c8c]',
+  Wrestling: 'bg-[#1c1c16] text-[#a29c8c]',
+  MMA: 'bg-[#b3402f]/10 text-[#b3402f]',
 }
 
 // ─── Section wrapper ───────────────────────────────────────────────────────────
@@ -70,14 +70,14 @@ function Section({ children, delay = 0 }: { children: React.ReactNode; delay?: n
 }
 
 function Divider() {
-  return <div className="h-px bg-[#333333]" />
+  return <div className="h-px bg-[#322f26]" />
 }
 
 function SectionHeader({ icon, label }: { icon: React.ReactNode; label: string }) {
   return (
     <div className="flex items-center gap-2 mb-3">
-      <span className="text-[#FF3B3B]">{icon}</span>
-      <span className="text-[10px] font-black text-[#999999] uppercase tracking-[0.12em]">{label}</span>
+      <span className="text-[#b3402f]">{icon}</span>
+      <span className="text-[10px] font-black text-[#a29c8c] uppercase tracking-[0.12em]">{label}</span>
     </div>
   )
 }
@@ -93,22 +93,22 @@ export default function SessionSummary({ data = DEMO_SUMMARY, onTimestampClick, 
   const [saved, setSaved] = useState(false)
 
   return (
-    <div className={`bg-[#1A1A1A] border border-[#333333] rounded-sm overflow-hidden ${compact ? '' : ''}`}>
+    <div className={`bg-[#1c1c16] border border-[#322f26] rounded-sm overflow-hidden ${compact ? '' : ''}`}>
 
       {/* ── Header ── */}
       <Section delay={0}>
         <div className="px-6 pt-6 pb-5">
           <div className="flex items-start justify-between gap-3 mb-4">
-            <div className="text-xs font-black text-[#FF3B3B] uppercase tracking-[0.12em] flex items-center gap-1.5">
+            <div className="text-xs font-black text-[#b3402f] uppercase tracking-[0.12em] flex items-center gap-1.5">
               <BookOpen size={12} />
               Today's Session
             </div>
-            <span className={`font-inter text-[10px] tracking-[2px] uppercase px-2 py-1 rounded-sm ${DISCIPLINE_COLORS[data.discipline] ?? 'bg-[#1A1A1A] text-[#999999]'}`}>
+            <span className={`font-mincho text-[10px] tracking-[2px] uppercase px-2 py-1 rounded-sm ${DISCIPLINE_COLORS[data.discipline] ?? 'bg-[#1c1c16] text-[#a29c8c]'}`}>
               {data.discipline}
             </span>
           </div>
-          <h2 className="text-white font-black text-xl leading-tight mb-1">{data.title}</h2>
-          <p className="text-[#999999] text-sm">{data.coach} · {data.gym}</p>
+          <h2 className="text-[#f0eadc] font-black text-xl leading-tight mb-1">{data.title}</h2>
+          <p className="text-[#a29c8c] text-sm">{data.coach} · {data.gym}</p>
           <p className="text-[#555] text-xs mt-1">{data.duration}</p>
         </div>
       </Section>
@@ -119,7 +119,7 @@ export default function SessionSummary({ data = DEMO_SUMMARY, onTimestampClick, 
       <Section delay={0.08}>
         <div className="px-6 py-5">
           <SectionHeader icon={<span className="text-sm">📝</span>} label="The Breakdown" />
-          <p className="text-[#aaaaaa] text-sm leading-relaxed">{data.summary}</p>
+          <p className="text-[#a29c8c] text-sm leading-relaxed">{data.summary}</p>
         </div>
       </Section>
 
@@ -137,9 +137,9 @@ export default function SessionSummary({ data = DEMO_SUMMARY, onTimestampClick, 
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.16 + i * 0.06 }}
-                className="group px-3 py-1.5 rounded-sm bg-[#222222] border border-[#333333] hover:border-[#FF3B3B]/40 hover:bg-[#FF3B3B]/5 transition-all cursor-pointer"
+                className="group px-3 py-1.5 rounded-sm bg-[#242420] border border-[#322f26] hover:border-[#b3402f]/40 hover:bg-[#b3402f]/5 transition-all cursor-pointer"
               >
-                <span className="text-[#cccccc] group-hover:text-white text-xs font-medium transition-colors">{t}</span>
+                <span className="text-[#a29c8c] group-hover:text-[#f0eadc] text-xs font-medium transition-colors">{t}</span>
               </motion.a>
             ))}
           </div>
@@ -160,14 +160,14 @@ export default function SessionSummary({ data = DEMO_SUMMARY, onTimestampClick, 
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.28 + i * 0.07 }}
                 onClick={() => onTimestampClick?.(m.timestamp)}
-                className="w-full flex items-center gap-3 group text-left hover:bg-[#1F1F1F] rounded-sm px-2 py-2 -mx-2 transition-colors"
+                className="w-full flex items-center gap-3 group text-left hover:bg-[#242420] rounded-sm px-2 py-2 -mx-2 transition-colors"
               >
-                <div className="w-7 h-7 rounded-sm bg-[#FF3B3B]/10 flex items-center justify-center shrink-0 group-hover:bg-[#FF3B3B]/20 transition-colors">
-                  <Play size={10} className="text-[#FF3B3B]" />
+                <div className="w-7 h-7 rounded-sm bg-[#b3402f]/10 flex items-center justify-center shrink-0 group-hover:bg-[#b3402f]/20 transition-colors">
+                  <Play size={10} className="text-[#b3402f]" />
                 </div>
-                <span className="text-[#FF3B3B] font-mono text-xs font-bold shrink-0">{m.timestamp}</span>
-                <span className="text-[#aaaaaa] text-sm group-hover:text-white transition-colors flex-1">{m.label}</span>
-                <ChevronRight size={13} className="text-[#333] group-hover:text-[#FF3B3B] transition-colors shrink-0" />
+                <span className="text-[#b3402f] font-mono text-xs font-bold shrink-0">{m.timestamp}</span>
+                <span className="text-[#a29c8c] text-sm group-hover:text-[#f0eadc] transition-colors flex-1">{m.label}</span>
+                <ChevronRight size={13} className="text-[#333] group-hover:text-[#b3402f] transition-colors shrink-0" />
               </motion.button>
             ))}
           </div>
@@ -181,8 +181,8 @@ export default function SessionSummary({ data = DEMO_SUMMARY, onTimestampClick, 
         <div className="px-6 py-5">
           <SectionHeader icon={<Lightbulb size={12} />} label="Coach's Key Point" />
           <blockquote className="relative pl-4">
-            <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-[#FF3B3B]" />
-            <p className="text-white text-sm leading-relaxed font-medium italic">
+            <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-[#b3402f]" />
+            <p className="text-[#f0eadc] text-sm leading-relaxed font-medium italic">
               &ldquo;{data.quote}&rdquo;
             </p>
           </blockquote>
@@ -203,16 +203,16 @@ export default function SessionSummary({ data = DEMO_SUMMARY, onTimestampClick, 
                 initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.48 + i * 0.07 }}
-                className="flex items-center gap-3 bg-[#0D0D0D] hover:bg-[#151515] border border-[#333333] hover:border-[#333333] rounded-sm px-4 py-3 group transition-all"
+                className="flex items-center gap-3 bg-[#141410] hover:bg-[#18180f] border border-[#322f26] hover:border-[#322f26] rounded-sm px-4 py-3 group transition-all"
               >
-                <div className="w-8 h-8 rounded-sm bg-[#FF3B3B]/10 flex items-center justify-center shrink-0">
-                  <Play size={12} className="text-[#FF3B3B]" />
+                <div className="w-8 h-8 rounded-sm bg-[#b3402f]/10 flex items-center justify-center shrink-0">
+                  <Play size={12} className="text-[#b3402f]" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-white text-sm font-medium truncate">{c.title}</p>
+                  <p className="text-[#f0eadc] text-sm font-medium truncate">{c.title}</p>
                   <p className="text-[#555] text-xs">{c.coach}</p>
                 </div>
-                <ChevronRight size={14} className="text-[#333] group-hover:text-[#FF3B3B] transition-colors shrink-0" />
+                <ChevronRight size={14} className="text-[#333] group-hover:text-[#b3402f] transition-colors shrink-0" />
               </motion.a>
             ))}
           </div>
@@ -228,15 +228,15 @@ export default function SessionSummary({ data = DEMO_SUMMARY, onTimestampClick, 
             onClick={() => setSaved(v => !v)}
             className={`flex items-center justify-center gap-2 w-full border rounded-sm py-3 text-sm font-semibold transition-all
               ${saved
-                ? 'bg-[#FF3B3B]/10 border-[#FF3B3B]/30 text-[#FF3B3B]'
-                : 'bg-[#0D0D0D] border-[#333333] text-[#999999] hover:border-[#FF3B3B]/20 hover:text-white'}`}
+                ? 'bg-[#b3402f]/10 border-[#b3402f]/30 text-[#b3402f]'
+                : 'bg-[#141410] border-[#322f26] text-[#a29c8c] hover:border-[#b3402f]/20 hover:text-[#f0eadc]'}`}
           >
-            <Bookmark size={15} className={saved ? 'fill-[#FF3B3B]' : ''} />
+            <Bookmark size={15} className={saved ? 'fill-[#b3402f]' : ''} />
             {saved ? 'Saved to journal' : 'Save to my journal'}
           </button>
           <a
             href="/dashboard"
-            className="flex items-center justify-center gap-2 w-full bg-white hover:bg-[#E5E5E5] text-black font-bebas tracking-[2px] py-3 rounded-sm text-sm transition-colors"
+            className="flex items-center justify-center gap-2 w-full bg-[#f0eadc] hover:bg-[#e4dcc8] text-[#141410] font-mincho tracking-[2px] py-3 rounded-sm text-sm transition-colors"
           >
             <RotateCcw size={15} />
             Watch replay anytime

@@ -335,40 +335,40 @@ export default function StreamSetupPageClient({
 
   // ── Badge styling ─────────────────────────────────────────────────────────────
   const badge = isLive
-    ? { border: 'border-[#FF3B3B]/30 bg-[#FF3B3B]/10', text: 'text-[#FF3B3B]', label: 'LIVE NOW', icon: <Radio size={12} className="text-[#FF3B3B] live-pulse" /> }
+    ? { border: 'border-[#b3402f]/30 bg-[#b3402f]/10', text: 'text-[#b3402f]', label: 'LIVE NOW', icon: <Radio size={12} className="text-[#b3402f] live-pulse" /> }
     : isReconnecting
     ? { border: 'border-[#FFD60A]/30 bg-[#FFD60A]/10', text: 'text-[#FFD60A]', label: 'RECONNECTING', icon: <WifiOff size={12} className="text-[#FFD60A]" /> }
     : isConnecting || provisioning
-    ? { border: 'border-[#333333] bg-[#1A1A1A]', text: 'text-[#999999]', label: isConnecting ? 'CONNECTING…' : 'CHECKING…', icon: <Loader2 size={12} className="animate-spin text-[#999999]" /> }
-    : { border: 'border-[#333333] bg-[#1A1A1A]', text: 'text-[#999999]', label: 'OFFLINE', icon: <Wifi size={12} className="text-[#999999]" /> }
+    ? { border: 'border-[#322f26] bg-[#1c1c16]', text: 'text-[#a29c8c]', label: isConnecting ? 'CONNECTING…' : 'CHECKING…', icon: <Loader2 size={12} className="animate-spin text-[#a29c8c]" /> }
+    : { border: 'border-[#322f26] bg-[#1c1c16]', text: 'text-[#a29c8c]', label: 'OFFLINE', icon: <Wifi size={12} className="text-[#a29c8c]" /> }
 
-  const healthDot = health === 'good' ? 'bg-[#00D4AA]' : health === 'fair' ? 'bg-[#FFD60A]' : 'bg-[#FF3B3B]'
-  const healthText = health === 'good' ? 'text-[#00D4AA]' : health === 'fair' ? 'text-[#FFD60A]' : 'text-[#FF3B3B]'
+  const healthDot = health === 'good' ? 'bg-[#00D4AA]' : health === 'fair' ? 'bg-[#FFD60A]' : 'bg-[#b3402f]'
+  const healthText = health === 'good' ? 'text-[#00D4AA]' : health === 'fair' ? 'text-[#FFD60A]' : 'text-[#b3402f]'
 
   return (
-    <div className="min-h-screen bg-[#0D0D0D] flex">
+    <div className="min-h-screen bg-[#141410] flex">
       <GymSidebar active="Stream Setup" />
 
       <main className="flex-1 lg:ml-64 min-w-0">
         {/* Header */}
-        <div className="sticky top-0 z-20 bg-[#0D0D0D] border-b border-[#222222] px-6 h-16 flex items-center justify-between mt-14 lg:mt-0">
+        <div className="sticky top-0 z-20 bg-[#141410] border-b border-[#242420] px-6 h-16 flex items-center justify-between mt-14 lg:mt-0">
           <div>
-            <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase">Gym Dashboard</p>
-            <h1 className="font-bebas text-xl text-white tracking-[1px] leading-tight">Go Live</h1>
+            <p className="font-mincho text-[11px] text-[#a29c8c] tracking-[4px] uppercase">Gym Dashboard</p>
+            <h1 className="font-mincho text-xl text-[#f0eadc] tracking-[1px] leading-tight">Go Live</h1>
           </div>
           <div className="flex items-center gap-3">
             {/* Signal health — only when live */}
             {isLive && health && (
-              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-sm border border-[#333333] bg-[#1A1A1A]">
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-sm border border-[#322f26] bg-[#1c1c16]">
                 <span className={`w-1.5 h-1.5 rounded-full ${healthDot}`} />
-                <span className={`font-inter text-[10px] tracking-[2px] uppercase ${healthText}`}>
+                <span className={`font-mincho text-[10px] tracking-[2px] uppercase ${healthText}`}>
                   {health === 'good' ? 'Good signal' : health === 'fair' ? 'Fair' : 'Poor signal'}
                 </span>
               </div>
             )}
             <div className={`flex items-center gap-2 px-3 py-1.5 rounded-sm border ${badge.border}`}>
               {badge.icon}
-              <span className={`font-bebas tracking-[2px] text-sm ${badge.text}`}>{badge.label}</span>
+              <span className={`font-mincho tracking-[2px] text-sm ${badge.text}`}>{badge.label}</span>
             </div>
           </div>
         </div>
@@ -377,33 +377,33 @@ export default function StreamSetupPageClient({
 
           {/* Provisioning spinner */}
           {provisioning && (
-            <div className="flex items-center gap-3 bg-[#1A1A1A] border border-[#333333] rounded-sm px-5 py-4">
-              <Loader2 size={14} className="animate-spin text-[#555555] shrink-0" />
-              <span className="font-inter text-sm text-[#555555]">Setting up your stream…</span>
+            <div className="flex items-center gap-3 bg-[#1c1c16] border border-[#322f26] rounded-sm px-5 py-4">
+              <Loader2 size={14} className="animate-spin text-[#7a7568] shrink-0" />
+              <span className="font-mincho text-sm text-[#7a7568]">Setting up your stream…</span>
             </div>
           )}
 
           {/* Provision error */}
           {provisionError && (
-            <div className="bg-[#1A1A1A] border border-[#FF3B3B]/30 rounded-sm px-5 py-4 space-y-2">
+            <div className="bg-[#1c1c16] border border-[#b3402f]/30 rounded-sm px-5 py-4 space-y-2">
               <div className="flex items-center gap-2">
-                <AlertCircle size={14} className="text-[#FF3B3B] shrink-0" />
-                <p className="font-inter text-xs text-[#FF3B3B]">Failed to set up stream</p>
+                <AlertCircle size={14} className="text-[#b3402f] shrink-0" />
+                <p className="font-mincho text-xs text-[#b3402f]">Failed to set up stream</p>
               </div>
-              <p className="font-mono text-xs text-[#555555] break-all">{provisionError}</p>
-              <button onClick={provision} className="font-inter text-xs text-[#999999] hover:text-white underline">Retry</button>
+              <p className="font-mono text-xs text-[#7a7568] break-all">{provisionError}</p>
+              <button onClick={provision} className="font-mincho text-xs text-[#a29c8c] hover:text-[#f0eadc] underline">Retry</button>
             </div>
           )}
 
           {/* GO LIVE error */}
           {goLiveError && (
-            <div className="bg-[#1A1A1A] border border-[#FF3B3B]/30 rounded-sm px-5 py-4 space-y-2">
+            <div className="bg-[#1c1c16] border border-[#b3402f]/30 rounded-sm px-5 py-4 space-y-2">
               <div className="flex items-center gap-2">
-                <AlertCircle size={14} className="text-[#FF3B3B] shrink-0" />
-                <p className="font-inter text-xs text-[#FF3B3B]">Could not start stream</p>
+                <AlertCircle size={14} className="text-[#b3402f] shrink-0" />
+                <p className="font-mincho text-xs text-[#b3402f]">Could not start stream</p>
               </div>
-              <p className="font-mono text-xs text-[#555555] break-all">{goLiveError}</p>
-              <button onClick={() => setGoLiveError(null)} className="font-inter text-xs text-[#999999] hover:text-white underline">Dismiss</button>
+              <p className="font-mono text-xs text-[#7a7568] break-all">{goLiveError}</p>
+              <button onClick={() => setGoLiveError(null)} className="font-mincho text-xs text-[#a29c8c] hover:text-[#f0eadc] underline">Dismiss</button>
             </div>
           )}
 
@@ -411,25 +411,25 @@ export default function StreamSetupPageClient({
               ad-hoc streams need to ask, otherwise every class silently defaults to BJJ */}
           {!provisioning && !provisionError && !broadcasting && (
             scheduledSessionId ? (
-              <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm px-5 py-4 flex items-center gap-3">
-                <Tag size={13} className="text-[#999999] shrink-0" />
+              <div className="bg-[#1c1c16] border border-[#322f26] rounded-sm px-5 py-4 flex items-center gap-3">
+                <Tag size={13} className="text-[#a29c8c] shrink-0" />
                 <div className="min-w-0">
-                  <p className="font-inter text-white text-sm font-medium truncate">{scheduledTitle ?? 'Scheduled class'}</p>
-                  <p className="font-inter text-[11px] text-[#999999] tracking-[2px] uppercase">{scheduledDiscipline ?? 'BJJ'}</p>
+                  <p className="font-mincho text-[#f0eadc] text-sm font-medium truncate">{scheduledTitle ?? 'Scheduled class'}</p>
+                  <p className="font-mincho text-[11px] text-[#a29c8c] tracking-[2px] uppercase">{scheduledDiscipline ?? 'BJJ'}</p>
                 </div>
               </div>
             ) : (
-              <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm px-5 py-4 space-y-3">
-                <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase">Class Details</p>
+              <div className="bg-[#1c1c16] border border-[#322f26] rounded-sm px-5 py-4 space-y-3">
+                <p className="font-mincho text-[11px] text-[#a29c8c] tracking-[4px] uppercase">Class Details</p>
                 <div className="space-y-1.5">
                   <div className="flex items-center gap-2">
-                    <Tag size={11} className="text-[#999999]" />
-                    <span className="font-inter text-[11px] text-[#999999]">Discipline</span>
+                    <Tag size={11} className="text-[#a29c8c]" />
+                    <span className="font-mincho text-[11px] text-[#a29c8c]">Discipline</span>
                   </div>
                   <select
                     value={classDiscipline}
                     onChange={e => setClassDiscipline(e.target.value)}
-                    className="w-full bg-[#111111] border border-[#333333] rounded-sm px-3 py-2 font-inter text-xs text-[#999999] focus:outline-none focus:border-[#555555] appearance-none cursor-pointer"
+                    className="w-full bg-[#18180f] border border-[#322f26] rounded-sm px-3 py-2 font-mincho text-xs text-[#a29c8c] focus:outline-none focus:border-[#7a7568] appearance-none cursor-pointer"
                   >
                     {(gymDisciplines.length ? gymDisciplines : ['BJJ']).map(d => (
                       <option key={d} value={d}>{d}</option>
@@ -438,14 +438,14 @@ export default function StreamSetupPageClient({
                 </div>
                 <div className="space-y-1.5">
                   <div className="flex items-center gap-2">
-                    <Pencil size={11} className="text-[#999999]" />
-                    <span className="font-inter text-[11px] text-[#999999]">What&apos;s the class? (e.g. Guard Passing, Clinch Work)</span>
+                    <Pencil size={11} className="text-[#a29c8c]" />
+                    <span className="font-mincho text-[11px] text-[#a29c8c]">What&apos;s the class? (e.g. Guard Passing, Clinch Work)</span>
                   </div>
                   <input
                     value={classTitle}
                     onChange={e => setClassTitle(e.target.value)}
                     placeholder="Class title or technique focus"
-                    className="w-full bg-[#111111] border border-[#333333] rounded-sm px-3 py-2 font-inter text-xs text-white placeholder-[#555555] focus:outline-none focus:border-[#555555]"
+                    className="w-full bg-[#18180f] border border-[#322f26] rounded-sm px-3 py-2 font-mincho text-xs text-[#f0eadc] placeholder-[#7a7568] focus:outline-none focus:border-[#7a7568]"
                   />
                 </div>
               </div>
@@ -454,17 +454,17 @@ export default function StreamSetupPageClient({
 
           {/* Device selector — only shown when offline */}
           {!provisioning && !provisionError && !broadcasting && (
-            <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm px-5 py-4 space-y-3">
-              <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase">Camera &amp; Mic</p>
+            <div className="bg-[#1c1c16] border border-[#322f26] rounded-sm px-5 py-4 space-y-3">
+              <p className="font-mincho text-[11px] text-[#a29c8c] tracking-[4px] uppercase">Camera &amp; Mic</p>
               <div className="space-y-1.5">
                 <div className="flex items-center gap-2">
-                  <Monitor size={11} className="text-[#999999]" />
-                  <span className="font-inter text-[11px] text-[#999999]">Camera</span>
+                  <Monitor size={11} className="text-[#a29c8c]" />
+                  <span className="font-mincho text-[11px] text-[#a29c8c]">Camera</span>
                 </div>
                 <select
                   value={selectedVideoId}
                   onChange={e => setSelectedVideoId(e.target.value)}
-                  className="w-full bg-[#111111] border border-[#333333] rounded-sm px-3 py-2 font-inter text-xs text-[#999999] focus:outline-none focus:border-[#555555] appearance-none cursor-pointer"
+                  className="w-full bg-[#18180f] border border-[#322f26] rounded-sm px-3 py-2 font-mincho text-xs text-[#a29c8c] focus:outline-none focus:border-[#7a7568] appearance-none cursor-pointer"
                 >
                   <option value="">Rear camera (default)</option>
                   {videoDevices.map(d => (
@@ -474,13 +474,13 @@ export default function StreamSetupPageClient({
               </div>
               <div className="space-y-1.5">
                 <div className="flex items-center gap-2">
-                  <Mic size={11} className="text-[#999999]" />
-                  <span className="font-inter text-[11px] text-[#999999]">Microphone</span>
+                  <Mic size={11} className="text-[#a29c8c]" />
+                  <span className="font-mincho text-[11px] text-[#a29c8c]">Microphone</span>
                 </div>
                 <select
                   value={selectedAudioId}
                   onChange={e => setSelectedAudioId(e.target.value)}
-                  className="w-full bg-[#111111] border border-[#333333] rounded-sm px-3 py-2 font-inter text-xs text-[#999999] focus:outline-none focus:border-[#555555] appearance-none cursor-pointer"
+                  className="w-full bg-[#18180f] border border-[#322f26] rounded-sm px-3 py-2 font-mincho text-xs text-[#a29c8c] focus:outline-none focus:border-[#7a7568] appearance-none cursor-pointer"
                 >
                   <option value="">Default microphone</option>
                   {audioDevices.map(d => (
@@ -488,27 +488,27 @@ export default function StreamSetupPageClient({
                   ))}
                 </select>
               </div>
-              <p className="font-inter text-[10px] text-[#444444]">
+              <p className="font-mincho text-[10px] text-[#635f54]">
                 Defaults to your rear camera. Tap FLIP on the preview to switch to the selfie camera, or pick a specific device above. Labels appear after your first GO LIVE grants camera permission.
               </p>
             </div>
           )}
 
           {/* Camera preview — always mounted; toggled with CSS */}
-          <div className={`bg-[#111111] border border-[#333333] rounded-sm overflow-hidden ${broadcasting ? '' : 'hidden'}`}>
+          <div className={`bg-[#18180f] border border-[#322f26] rounded-sm overflow-hidden ${broadcasting ? '' : 'hidden'}`}>
             <div className="relative aspect-video bg-black">
               <video ref={videoRef} autoPlay muted playsInline className="w-full h-full object-cover" />
               {isLive && (
-                <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-[#FF3B3B] px-2 py-1 rounded-sm">
-                  <Radio size={10} className="text-white live-pulse" />
-                  <span className="font-bebas text-white text-xs tracking-[2px]">LIVE</span>
+                <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-[#b3402f] px-2 py-1 rounded-sm">
+                  <Radio size={10} className="text-[#f0eadc] live-pulse" />
+                  <span className="font-mincho text-[#f0eadc] text-xs tracking-[2px]">LIVE</span>
                 </div>
               )}
               {(isConnecting || isReconnecting) && (
                 <div className="absolute inset-0 flex items-center justify-center bg-black/40">
                   <div className="flex items-center gap-2">
-                    <Loader2 size={16} className="animate-spin text-white" />
-                    <span className="font-bebas text-white text-sm tracking-[2px]">
+                    <Loader2 size={16} className="animate-spin text-[#f0eadc]" />
+                    <span className="font-mincho text-[#f0eadc] text-sm tracking-[2px]">
                       {isReconnecting ? 'RECONNECTING…' : 'CONNECTING…'}
                     </span>
                   </div>
@@ -516,7 +516,7 @@ export default function StreamSetupPageClient({
               )}
               {isLive && (
                 <div className="absolute top-3 right-3 bg-black/70 px-2 py-1 rounded-sm">
-                  <span className="font-bebas text-white text-sm tracking-[1px] tabular-nums">
+                  <span className="font-mincho text-[#f0eadc] text-sm tracking-[1px] tabular-nums">
                     {pad(Math.floor(elapsed / 3600) > 0 ? Math.floor(elapsed / 3600) : Math.floor(elapsed / 60))}
                     :{pad(Math.floor(elapsed / 3600) > 0 ? Math.floor((elapsed % 3600) / 60) : elapsed % 60)}
                   </span>
@@ -527,8 +527,8 @@ export default function StreamSetupPageClient({
                   onClick={flipCamera}
                   className="absolute bottom-3 right-3 flex items-center gap-1.5 bg-black/70 hover:bg-black/90 px-3 py-1.5 rounded-sm transition-colors"
                 >
-                  <SwitchCamera size={13} className="text-white" />
-                  <span className="font-bebas text-white text-xs tracking-[2px]">FLIP</span>
+                  <SwitchCamera size={13} className="text-[#f0eadc]" />
+                  <span className="font-mincho text-[#f0eadc] text-xs tracking-[2px]">FLIP</span>
                 </button>
               )}
             </div>
@@ -536,30 +536,30 @@ export default function StreamSetupPageClient({
 
           {/* Viewer panel — shown when live with an active session */}
           {isLive && activeSessionId && (
-            <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm overflow-hidden">
-              <div className="px-5 py-3 border-b border-[#2A2A2A] flex items-center justify-between">
+            <div className="bg-[#1c1c16] border border-[#322f26] rounded-sm overflow-hidden">
+              <div className="px-5 py-3 border-b border-[#2a2a20] flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Users size={13} className="text-[#555555]" />
-                  <span className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase">Watching now</span>
+                  <Users size={13} className="text-[#7a7568]" />
+                  <span className="font-mincho text-[11px] text-[#a29c8c] tracking-[4px] uppercase">Watching now</span>
                 </div>
-                <span className="font-bebas text-[22px] text-[#FF3B3B] tracking-[1px] leading-none">{viewers.length}</span>
+                <span className="font-mincho text-[22px] text-[#b3402f] tracking-[1px] leading-none">{viewers.length}</span>
               </div>
               {viewers.length === 0 ? (
                 <div className="px-5 py-6 text-center relative overflow-hidden">
-                  <span className="absolute inset-0 flex items-center justify-center font-bebas text-[80px] text-white/[0.03] leading-none select-none pointer-events-none">0</span>
-                  <p className="relative font-inter text-[#555555] text-xs">No members watching yet</p>
+                  <span className="absolute inset-0 flex items-center justify-center font-mincho text-[80px] text-[#f0eadc]/[0.03] leading-none select-none pointer-events-none">0</span>
+                  <p className="relative font-mincho text-[#7a7568] text-xs">No members watching yet</p>
                 </div>
               ) : (
-                <div className="max-h-48 overflow-y-auto divide-y divide-[#2A2A2A]">
+                <div className="max-h-48 overflow-y-auto divide-y divide-[#2a2a20]">
                   {viewers
                     .slice()
                     .sort((a, b) => a.joined_at - b.joined_at)
                     .map(v => (
                       <div key={v.user_id} className="px-5 py-3 flex items-center gap-3">
-                        <div className="w-6 h-6 rounded-sm bg-[#222222] flex items-center justify-center shrink-0">
-                          <span className="font-bebas text-[#555555] text-xs leading-none">{v.name.charAt(0).toUpperCase()}</span>
+                        <div className="w-6 h-6 rounded-sm bg-[#242420] flex items-center justify-center shrink-0">
+                          <span className="font-mincho text-[#7a7568] text-xs leading-none">{v.name.charAt(0).toUpperCase()}</span>
                         </div>
-                        <span className="font-inter text-sm text-[#999999] truncate">{v.name}</span>
+                        <span className="font-mincho text-sm text-[#a29c8c] truncate">{v.name}</span>
                         <span className="ml-auto w-1.5 h-1.5 rounded-full bg-[#00D4AA] shrink-0" title="Watching" />
                       </div>
                     ))}
@@ -574,7 +574,7 @@ export default function StreamSetupPageClient({
               <button
                 onClick={handleEndStream}
                 disabled={endingStream}
-                className="w-full flex items-center justify-center gap-3 bg-[#FF3B3B]/10 border border-[#FF3B3B]/40 hover:bg-[#FF3B3B]/20 text-[#FF3B3B] font-bebas tracking-[3px] text-lg py-4 rounded-sm transition-all disabled:opacity-50"
+                className="w-full flex items-center justify-center gap-3 bg-[#b3402f]/10 border border-[#b3402f]/40 hover:bg-[#b3402f]/20 text-[#b3402f] font-mincho tracking-[3px] text-lg py-4 rounded-sm transition-all disabled:opacity-50"
               >
                 {endingStream ? <Loader2 size={16} className="animate-spin" /> : <Radio size={16} className="live-pulse" />}
                 {endingStream ? 'ENDING…' : 'END STREAM'}
@@ -583,7 +583,7 @@ export default function StreamSetupPageClient({
               <button
                 onClick={handleGoLive}
                 disabled={!scheduledSessionId && !classTitle.trim()}
-                className="w-full flex items-center justify-center gap-3 bg-[#FF3B3B] hover:bg-[#e03030] disabled:opacity-40 disabled:cursor-not-allowed text-white font-bebas tracking-[3px] text-lg py-4 rounded-sm transition-all"
+                className="w-full flex items-center justify-center gap-3 bg-[#b3402f] hover:bg-[#942f22] disabled:opacity-40 disabled:cursor-not-allowed text-[#f0eadc] font-mincho tracking-[3px] text-lg py-4 rounded-sm transition-all"
               >
                 <Camera size={16} />
                 GO LIVE
@@ -591,12 +591,12 @@ export default function StreamSetupPageClient({
             )
           )}
           {!scheduledSessionId && !broadcasting && !classTitle.trim() && !provisioning && !provisionError && (
-            <p className="font-inter text-[11px] text-[#555555] px-1">Enter what the class is about above to go live.</p>
+            <p className="font-mincho text-[11px] text-[#7a7568] px-1">Enter what the class is about above to go live.</p>
           )}
 
           {/* Info text */}
           {!broadcasting && !provisioning && !provisionError && (
-            <p className="font-inter text-xs text-[#444444] px-1">
+            <p className="font-mincho text-xs text-[#635f54] px-1">
               Click GO LIVE — your browser will ask for camera and microphone access, then start streaming instantly.
               Members will be notified and can join right away.
             </p>

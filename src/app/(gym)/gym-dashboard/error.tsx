@@ -10,26 +10,26 @@ export default function GymDashboardError({
   reset: () => void
 }) {
   return (
-    <div className="min-h-screen bg-[#0D0D0D] flex items-center justify-center p-6">
-      <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm p-8 max-w-md w-full text-center">
-        <p className="font-inter text-[11px] text-[#FF3B3B] tracking-[4px] uppercase mb-4">Error</p>
-        <h2 className="font-bebas text-3xl text-white tracking-[1px] mb-2">SOMETHING WENT WRONG</h2>
-        <p className="font-inter text-[#999999] text-sm mb-6">
+    <div className="min-h-screen bg-[#141410] flex items-center justify-center p-6">
+      <div className="bg-[#1c1c16] border border-[#322f26] rounded-sm p-8 max-w-md w-full text-center">
+        <p className="font-mincho text-[11px] text-[#b3402f] tracking-[4px] uppercase mb-4">Error</p>
+        <h2 className="font-mincho text-3xl text-[#f0eadc] tracking-[1px] mb-2">SOMETHING WENT WRONG</h2>
+        <p className="font-mincho text-[#a29c8c] text-sm mb-6">
           We couldn&apos;t load your gym dashboard. Your data is safe — please try again.
         </p>
         {error.digest && (
-          <p className="font-mono text-[#555555] text-xs mb-6">Error ID: {error.digest}</p>
+          <p className="font-mono text-[#7a7568] text-xs mb-6">Error ID: {error.digest}</p>
         )}
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <button
             onClick={reset}
-            className="px-6 py-2.5 bg-white hover:bg-[#E5E5E5] text-black font-bebas tracking-[2px] text-sm rounded-sm transition-colors"
+            className="px-6 py-2.5 bg-[#f0eadc] hover:bg-[#e4dcc8] text-[#141410] font-mincho tracking-[2px] text-sm rounded-sm transition-colors"
           >
             TRY AGAIN
           </button>
           <Link
             href="/"
-            className="px-6 py-2.5 bg-[#1A1A1A] border border-[#333333] hover:bg-[#222222] text-white font-inter text-sm rounded-sm transition-colors"
+            className="px-6 py-2.5 bg-[#1c1c16] border border-[#322f26] hover:bg-[#242420] text-[#f0eadc] font-mincho text-sm rounded-sm transition-colors"
           >
             Go Home
           </Link>

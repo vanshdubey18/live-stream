@@ -17,7 +17,7 @@ export default function ProgressRing({
   max,
   size = 120,
   strokeWidth = 6,
-  color = '#ffffff',
+  color = '#f0eadc',
   label,
   sublabel,
 }: Props) {
@@ -64,7 +64,7 @@ export default function ProgressRing({
           cy={size / 2}
           r={radius}
           fill="none"
-          stroke="#2A2A2A"
+          stroke="#2a2a20"
           strokeWidth={strokeWidth}
         />
         <circle
@@ -82,12 +82,12 @@ export default function ProgressRing({
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         {label && (
-          <span className="font-bebas text-white leading-none" style={{ fontSize: size * 0.26 }}>
+          <span className="font-mincho text-[#f0eadc] leading-none" style={{ fontSize: size * 0.26 }}>
             {label}
           </span>
         )}
         {sublabel && (
-          <span className="font-inter text-[#999999] uppercase tracking-[2px] text-center leading-tight" style={{ fontSize: size * 0.09 }}>
+          <span className="font-mincho text-[#a29c8c] uppercase tracking-[2px] text-center leading-tight" style={{ fontSize: size * 0.09 }}>
             {sublabel}
           </span>
         )}

@@ -68,21 +68,21 @@ export default function AICoachButton({ gymId }: { gymId?: string }) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 16, scale: 0.97 }}
             transition={{ duration: 0.2 }}
-            className="fixed top-1/2 -translate-y-1/2 right-14 z-50 w-[340px] bg-[#1A1A1A] border border-[#333333] rounded-sm shadow-2xl flex flex-col overflow-hidden"
+            className="fixed top-1/2 -translate-y-1/2 right-14 z-50 w-[340px] bg-[#1c1c16] border border-[#322f26] rounded-sm shadow-2xl flex flex-col overflow-hidden"
             style={{ maxHeight: 'calc(100vh - 80px)' }}
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-[#2A2A2A] bg-[#0D0D0D] shrink-0">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-[#2a2a20] bg-[#141410] shrink-0">
               <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded-sm bg-[#FF3B3B]/10 border border-[#FF3B3B]/20 flex items-center justify-center">
-                  <Sparkles size={12} className="text-[#FF3B3B]" />
+                <div className="w-6 h-6 rounded-sm bg-[#b3402f]/10 border border-[#b3402f]/20 flex items-center justify-center">
+                  <Sparkles size={12} className="text-[#b3402f]" />
                 </div>
                 <div>
-                  <p className="font-bebas text-sm text-white tracking-[1px]">AI COACH</p>
-                  <p className="font-inter text-[10px] text-[#555555]">Knows every class you attended</p>
+                  <p className="font-mincho text-sm text-[#f0eadc] tracking-[1px]">AI COACH</p>
+                  <p className="font-mincho text-[10px] text-[#7a7568]">Knows every class you attended</p>
                 </div>
               </div>
-              <button onClick={() => setOpen(false)} className="text-[#555555] hover:text-white transition-colors">
+              <button onClick={() => setOpen(false)} className="text-[#7a7568] hover:text-[#f0eadc] transition-colors">
                 <X size={16} />
               </button>
             </div>
@@ -96,10 +96,10 @@ export default function AICoachButton({ gymId }: { gymId?: string }) {
                   animate={{ opacity: 1, y: 0 }}
                   className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
-                  <div className={`max-w-[85%] px-3 py-2.5 rounded-sm font-inter text-sm leading-relaxed ${
+                  <div className={`max-w-[85%] px-3 py-2.5 rounded-sm font-mincho text-sm leading-relaxed ${
                     msg.role === 'user'
-                      ? 'bg-[#FF3B3B]/10 border border-[#FF3B3B]/20 text-white'
-                      : 'bg-[#0D0D0D] border border-[#2A2A2A] text-[#cccccc]'
+                      ? 'bg-[#b3402f]/10 border border-[#b3402f]/20 text-[#f0eadc]'
+                      : 'bg-[#141410] border border-[#2a2a20] text-[#a29c8c]'
                   }`}>
                     {msg.text}
                   </div>
@@ -111,9 +111,9 @@ export default function AICoachButton({ gymId }: { gymId?: string }) {
                   animate={{ opacity: 1 }}
                   className="flex justify-start"
                 >
-                  <div className="bg-[#0D0D0D] border border-[#2A2A2A] px-3 py-2.5 rounded-sm flex items-center gap-2">
-                    <Loader2 size={12} className="text-[#FF3B3B] animate-spin" />
-                    <span className="font-inter text-xs text-[#555555]">Searching your classes…</span>
+                  <div className="bg-[#141410] border border-[#2a2a20] px-3 py-2.5 rounded-sm flex items-center gap-2">
+                    <Loader2 size={12} className="text-[#b3402f] animate-spin" />
+                    <span className="font-mincho text-xs text-[#7a7568]">Searching your classes…</span>
                   </div>
                 </motion.div>
               )}
@@ -127,7 +127,7 @@ export default function AICoachButton({ gymId }: { gymId?: string }) {
                   <button
                     key={s}
                     onClick={() => sendQuestion(s)}
-                    className="text-left px-3 py-2 border border-[#333333] rounded-sm font-inter text-xs text-[#999999] hover:border-[#555555] hover:text-white transition-colors"
+                    className="text-left px-3 py-2 border border-[#322f26] rounded-sm font-mincho text-xs text-[#a29c8c] hover:border-[#7a7568] hover:text-[#f0eadc] transition-colors"
                   >
                     {s}
                   </button>
@@ -136,7 +136,7 @@ export default function AICoachButton({ gymId }: { gymId?: string }) {
             )}
 
             {/* Input */}
-            <div className="px-4 py-3 border-t border-[#2A2A2A] shrink-0">
+            <div className="px-4 py-3 border-t border-[#2a2a20] shrink-0">
               <div className="flex items-center gap-2">
                 <input
                   value={input}
@@ -144,12 +144,12 @@ export default function AICoachButton({ gymId }: { gymId?: string }) {
                   onKeyDown={e => e.key === 'Enter' && sendQuestion(input)}
                   placeholder="Ask about your classes…"
                   disabled={loading}
-                  className="flex-1 bg-[#0D0D0D] border border-[#333333] rounded-sm px-3 py-2 font-inter text-sm text-white placeholder-[#444444] focus:outline-none focus:border-[#555555] disabled:opacity-50 transition-colors"
+                  className="flex-1 bg-[#141410] border border-[#322f26] rounded-sm px-3 py-2 font-mincho text-sm text-[#f0eadc] placeholder-[#635f54] focus:outline-none focus:border-[#7a7568] disabled:opacity-50 transition-colors"
                 />
                 <button
                   onClick={() => sendQuestion(input)}
                   disabled={!input.trim() || loading}
-                  className="w-8 h-8 bg-[#FF3B3B]/10 border border-[#FF3B3B]/20 rounded-sm flex items-center justify-center text-[#FF3B3B] hover:bg-[#FF3B3B]/20 disabled:opacity-30 disabled:cursor-not-allowed transition-colors shrink-0"
+                  className="w-8 h-8 bg-[#b3402f]/10 border border-[#b3402f]/20 rounded-sm flex items-center justify-center text-[#b3402f] hover:bg-[#b3402f]/20 disabled:opacity-30 disabled:cursor-not-allowed transition-colors shrink-0"
                 >
                   <Send size={13} />
                 </button>
@@ -162,16 +162,16 @@ export default function AICoachButton({ gymId }: { gymId?: string }) {
       {/* FAB */}
       <motion.button
         onClick={() => setOpen(v => !v)}
-        className="fixed top-1/2 -translate-y-1/2 right-0 z-50 w-12 h-20 bg-[#FF3B3B] rounded-l-sm flex flex-col items-center justify-center gap-1 shadow-lg hover:bg-[#cc2f2f] transition-colors"
+        className="fixed top-1/2 -translate-y-1/2 right-0 z-50 w-12 h-20 bg-[#b3402f] rounded-l-sm flex flex-col items-center justify-center gap-1 shadow-lg hover:bg-[#942f22] transition-colors"
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
       >
         <AnimatePresence mode="wait">
           {open
-            ? <motion.div key="x" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.15 }}><X size={16} className="text-white" /></motion.div>
+            ? <motion.div key="x" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.15 }}><X size={16} className="text-[#f0eadc]" /></motion.div>
             : <motion.div key="spark" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex flex-col items-center gap-1">
-                <Sparkles size={16} className="text-white" />
-                <span className="font-bebas text-white text-[10px] tracking-[2px] [writing-mode:vertical-rl] rotate-180">AI COACH</span>
+                <Sparkles size={16} className="text-[#f0eadc]" />
+                <span className="font-mincho text-[#f0eadc] text-[10px] tracking-[2px] [writing-mode:vertical-rl] rotate-180">AI COACH</span>
               </motion.div>
           }
         </AnimatePresence>

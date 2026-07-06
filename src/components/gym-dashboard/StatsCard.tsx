@@ -8,20 +8,20 @@ interface StatsCardProps {
 export default function StatsCard({ label, value, sub, href }: StatsCardProps) {
   const inner = (
     <>
-      <span className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase">{label}</span>
-      <span className="font-bebas text-4xl text-white tracking-[1px] leading-none">{value}</span>
-      {sub && <span className="font-inter text-[11px] text-[#555555]">{sub}</span>}
+      <span className="font-mincho text-[11px] text-[#a29c8c] tracking-[4px] uppercase">{label}</span>
+      <span className="font-mincho text-4xl text-[#f0eadc] tracking-[1px] leading-none">{value}</span>
+      {sub && <span className="font-mincho text-[11px] text-[#7a7568]">{sub}</span>}
     </>
   )
   if (href) {
     return (
-      <a href={href} className="bg-[#1A1A1A] border border-[#333333] rounded-sm p-6 flex flex-col gap-2 hover:bg-[#222222] hover:border-[#555555] transition-colors group">
+      <a href={href} className="bg-[#1c1c16] border border-[#322f26] rounded-sm p-6 flex flex-col gap-2 hover:bg-[#242420] hover:border-[#7a7568] transition-colors group">
         {inner}
       </a>
     )
   }
   return (
-    <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm p-6 flex flex-col gap-2 hover:bg-[#222222] transition-colors">
+    <div className="bg-[#1c1c16] border border-[#322f26] rounded-sm p-6 flex flex-col gap-2 hover:bg-[#242420] transition-colors">
       {inner}
     </div>
   )

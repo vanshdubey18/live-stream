@@ -60,28 +60,28 @@ export default function CoachesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0D0D0D] flex">
+    <div className="min-h-screen bg-[#141410] flex">
       <GymSidebar active="Coaches" />
 
       <main className="flex-1 lg:ml-64 min-w-0">
-        <div className="sticky top-0 z-20 bg-[#0D0D0D] border-b border-[#333333] px-6 h-16 flex items-center justify-between mt-14 lg:mt-0">
+        <div className="sticky top-0 z-20 bg-[#141410] border-b border-[#322f26] px-6 h-16 flex items-center justify-between mt-14 lg:mt-0">
           <div>
-            <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase">Gym</p>
-            <h1 className="font-bebas text-2xl text-white tracking-[1px] leading-tight">COACHES</h1>
+            <p className="font-mincho text-[11px] text-[#a29c8c] tracking-[4px] uppercase">Gym</p>
+            <h1 className="font-mincho text-2xl text-[#f0eadc] tracking-[1px] leading-tight">COACHES</h1>
           </div>
           <button onClick={() => setShowModal(true)}
-            className="flex items-center gap-1.5 bg-white hover:bg-[#E5E5E5] text-black font-bebas tracking-[2px] text-sm px-4 py-2 rounded-sm transition-colors">
+            className="flex items-center gap-1.5 bg-[#f0eadc] hover:bg-[#e4dcc8] text-[#141410] font-mincho tracking-[2px] text-sm px-4 py-2 rounded-sm transition-colors">
             <Plus size={15} /> ADD COACH
           </button>
         </div>
 
         <div className="px-6 py-6 max-w-5xl">
           {coaches.length === 0 ? (
-            <div className="relative bg-[#1A1A1A] border border-[#333333] rounded-sm px-6 py-16 text-center overflow-hidden">
-              <span className="absolute inset-0 flex items-center justify-center font-bebas text-[120px] text-white/[0.03] leading-none select-none pointer-events-none">COACH</span>
-              <p className="relative font-inter text-[#555555] text-sm mb-4">No coaches yet.</p>
+            <div className="relative bg-[#1c1c16] border border-[#322f26] rounded-sm px-6 py-16 text-center overflow-hidden">
+              <span className="absolute inset-0 flex items-center justify-center font-mincho text-[120px] text-[#f0eadc]/[0.03] leading-none select-none pointer-events-none">COACH</span>
+              <p className="relative font-mincho text-[#7a7568] text-sm mb-4">No coaches yet.</p>
               <button onClick={() => setShowModal(true)}
-                className="relative bg-white hover:bg-[#E5E5E5] text-black font-bebas tracking-[2px] text-sm px-5 py-2.5 rounded-sm transition-colors">
+                className="relative bg-[#f0eadc] hover:bg-[#e4dcc8] text-[#141410] font-mincho tracking-[2px] text-sm px-5 py-2.5 rounded-sm transition-colors">
                 ADD YOUR FIRST COACH
               </button>
             </div>

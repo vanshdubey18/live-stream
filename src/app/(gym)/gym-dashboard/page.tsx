@@ -8,6 +8,7 @@ import {
   getGymMembershipStats,
 } from '@/lib/supabase/queries'
 import GymDashboardClient from './GymDashboardClient'
+import GymGateHeader from '@/components/layout/GymGateHeader'
 
 export default async function GymDashboardPage() {
   const supabase = createClient()
@@ -18,6 +19,7 @@ export default async function GymDashboardPage() {
   if (!gym) {
     return (
       <div className="relative min-h-screen bg-[#141410] flex items-center justify-center px-6 overflow-hidden">
+        <GymGateHeader />
         <span className="absolute inset-0 flex items-center justify-center font-mincho text-[26vw] text-[#f0eadc]/[0.03] leading-none select-none pointer-events-none">
           MATPEAK
         </span>
@@ -37,6 +39,7 @@ export default async function GymDashboardPage() {
     const rejected = gym.status === 'rejected'
     return (
       <div className="relative min-h-screen bg-[#141410] flex items-center justify-center px-6 overflow-hidden">
+        <GymGateHeader />
         <span className="absolute inset-0 flex items-center justify-center font-mincho text-[22vw] text-[#f0eadc]/[0.03] leading-none select-none pointer-events-none">
           {rejected ? 'CLOSED' : 'PENDING'}
         </span>

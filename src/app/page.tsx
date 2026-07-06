@@ -31,32 +31,32 @@ function Navbar() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 ${scrolled ? 'bg-[#0D0D0D] border-b border-[#333333]' : 'bg-transparent'}`}>
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 ${scrolled ? 'bg-[#141410] border-b border-[#322f26]' : 'bg-transparent'}`}>
       <div className="max-w-[1280px] mx-auto px-6 h-16 flex items-center justify-between">
-        <a href="/" className="font-bebas text-2xl tracking-[2px] text-white">MATPEAK</a>
+        <a href="/" className="font-mincho text-2xl tracking-[1px] text-[#f0eadc]">MAT<span className="text-[#b3402f]">PEAK</span></a>
         <div className="hidden md:flex items-center gap-8">
           {['#disciplines', '#how-it-works', '#pricing'].map((href, i) => (
-            <a key={href} href={href} className="font-inter text-sm text-[#555555] hover:text-white transition-colors duration-150">
+            <a key={href} href={href} className="font-mincho text-sm text-[#7a7568] hover:text-[#f0eadc] transition-colors duration-150">
               {['Disciplines', 'How it works', 'Pricing'][i]}
             </a>
           ))}
         </div>
         <div className="hidden md:flex items-center gap-3">
-          <a href="/login" className="font-inter text-sm text-[#555555] hover:text-white transition-colors duration-150 px-4 py-2">Log in</a>
-          <a href="/signup" className="font-bebas text-sm tracking-[3px] bg-white text-black px-6 py-2.5 rounded-sm hover:bg-[#E5E5E5] transition-all duration-150">START TRAINING</a>
+          <a href="/login" className="font-mincho text-sm text-[#7a7568] hover:text-[#f0eadc] transition-colors duration-150 px-4 py-2">Log in</a>
+          <a href="/signup" className="font-mincho text-sm tracking-[2px] bg-[#f0eadc] text-[#141410] px-6 py-2.5 rounded-sm hover:bg-[#e4dcc8] transition-all duration-150">Start Training</a>
         </div>
-        <button onClick={() => setOpen(!open)} className="md:hidden text-[#999999] hover:text-white">
+        <button onClick={() => setOpen(!open)} className="md:hidden text-[#a29c8c] hover:text-[#f0eadc]">
           {open ? <X size={20} /> : <Menu size={20} />}
         </button>
       </div>
       {open && (
-        <div className="md:hidden bg-[#0D0D0D] border-t border-[#333333] px-6 py-6 flex flex-col gap-5">
+        <div className="md:hidden bg-[#141410] border-t border-[#322f26] px-6 py-6 flex flex-col gap-5">
           {[['#disciplines','Disciplines'],['#how-it-works','How it works'],['#pricing','Pricing']].map(([href, label]) => (
-            <a key={href} href={href} onClick={() => setOpen(false)} className="font-inter text-sm text-[#555555] hover:text-white transition-colors">{label}</a>
+            <a key={href} href={href} onClick={() => setOpen(false)} className="font-mincho text-sm text-[#7a7568] hover:text-[#f0eadc] transition-colors">{label}</a>
           ))}
-          <div className="border-t border-[#333333] pt-5 flex flex-col gap-3">
-            <a href="/login" className="font-inter text-sm text-[#555555] hover:text-white">Log in</a>
-            <a href="/signup" className="font-bebas text-sm tracking-[3px] bg-white text-black px-6 py-3 rounded-sm text-center hover:bg-[#E5E5E5] transition-all">START TRAINING</a>
+          <div className="border-t border-[#322f26] pt-5 flex flex-col gap-3">
+            <a href="/login" className="font-mincho text-sm text-[#7a7568] hover:text-[#f0eadc]">Log in</a>
+            <a href="/signup" className="font-mincho text-sm tracking-[2px] bg-[#f0eadc] text-[#141410] px-6 py-3 rounded-sm text-center hover:bg-[#e4dcc8] transition-all">Start Training</a>
           </div>
         </div>
       )}
@@ -66,7 +66,7 @@ function Navbar() {
 
 function Hero() {
   return (
-    <section className="relative min-h-screen bg-[#0D0D0D] flex flex-col justify-between pt-16 overflow-hidden">
+    <section className="relative min-h-screen bg-[#141410] flex flex-col justify-between pt-16 overflow-hidden">
 
       {/* Full-bleed athlete photo */}
       <div className="absolute inset-0">
@@ -77,15 +77,15 @@ function Hero() {
           className="w-full h-full object-cover object-center grayscale contrast-110 brightness-110"
         />
         {/* Subtle base dim — keep photo readable */}
-        <div className="absolute inset-0 bg-black/30" />
+        <div className="absolute inset-0 bg-black/35" />
         {/* Left gradient — text zone dark, athlete visible on right */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/30 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#141410] via-[#141410]/40 to-transparent" />
         {/* Bottom fade into stat bar */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0D0D0D] via-[#0D0D0D]/20 to-transparent" style={{ top: '65%' }} />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#141410] via-[#141410]/20 to-transparent" style={{ top: '65%' }} />
         {/* Top fade into navbar */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0D0D0D]/50 via-transparent to-transparent" style={{ bottom: '88%' }} />
-        {/* Warm red tint — brand feel */}
-        <div className="absolute inset-0 bg-[#FF3B3B]/5 mix-blend-overlay" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#141410]/50 via-transparent to-transparent" style={{ bottom: '88%' }} />
+        {/* Warm rust tint — brand feel */}
+        <div className="absolute inset-0 bg-[#b3402f]/10 mix-blend-overlay" />
       </div>
 
       {/* Content */}
@@ -98,8 +98,8 @@ function Hero() {
               transition={{ duration: 0.2, ease: 'easeOut' }}
               className="flex items-center gap-3 mb-8"
             >
-              <div className="w-6 h-px bg-[#FF3B3B]" />
-              <p className="font-inter text-[11px] text-[#FF3B3B] tracking-[4px] uppercase">
+              <div className="w-6 h-px bg-[#b3402f]" />
+              <p className="font-mincho text-[11px] text-[#b3402f] tracking-[4px] uppercase">
                 Combat Sports &bull; Live Training
               </p>
             </motion.div>
@@ -107,18 +107,18 @@ function Hero() {
             <motion.h1
               initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, ease: 'easeOut', delay: 0.05 }}
-              className="font-bebas uppercase leading-[0.88] tracking-[1px]"
-              style={{ fontSize: 'clamp(68px, 9vw, 120px)' }}
+              className="font-mincho font-normal leading-[1.08] tracking-[.5px]"
+              style={{ fontSize: 'clamp(48px, 7vw, 84px)' }}
             >
-              <span className="block text-white">WORLD-CLASS</span>
-              <span className="block text-white">TRAINING.</span>
-              <span className="block text-[#FF3B3B]">WHEREVER YOU ARE.</span>
+              <span className="block text-[#f0eadc]">World-class</span>
+              <span className="block text-[#f0eadc]">training.</span>
+              <span className="block text-[#b3402f]">Wherever you are.</span>
             </motion.h1>
 
             <motion.p
               initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.25, ease: 'easeOut', delay: 0.12 }}
-              className="font-inter text-[#AAAAAA] text-base mt-8 max-w-[400px] leading-relaxed"
+              className="font-mincho text-[#a29c8c] text-base mt-8 max-w-[400px] leading-relaxed"
             >
               Stream live classes from real MMA gyms.<br />
               BJJ. Boxing. Muay Thai. Wrestling.<br />
@@ -130,10 +130,10 @@ function Hero() {
               transition={{ duration: 0.25, ease: 'easeOut', delay: 0.18 }}
               className="flex flex-wrap items-center gap-3 mt-10"
             >
-              <a href="/signup" className="font-bebas text-sm tracking-[3px] bg-white text-black px-5 sm:px-8 py-3.5 sm:py-4 rounded-sm hover:bg-[#E5E5E5] transition-all duration-150 flex items-center gap-2">
-                START TRAINING <ArrowRight size={14} />
+              <a href="/signup" className="font-mincho text-sm tracking-[2px] bg-[#f0eadc] text-[#141410] px-5 sm:px-8 py-3.5 sm:py-4 rounded-sm hover:bg-[#e4dcc8] transition-all duration-150 flex items-center gap-2">
+                Start Training <ArrowRight size={14} />
               </a>
-              <a href="/gyms" className="font-inter text-sm text-[#AAAAAA] border border-white/20 px-5 sm:px-8 py-3.5 sm:py-[14px] rounded-sm hover:text-white hover:border-white/40 transition-all duration-150">
+              <a href="/gyms" className="font-mincho text-sm text-[#a29c8c] border border-[#f0eadc]/20 px-5 sm:px-8 py-3.5 sm:py-[14px] rounded-sm hover:text-[#f0eadc] hover:border-[#f0eadc]/40 transition-all duration-150">
                 Browse Gyms
               </a>
             </motion.div>
@@ -148,7 +148,7 @@ function Hero() {
         transition={{ duration: 0.3, delay: 0.25 }}
         className="relative z-10 max-w-[1280px] mx-auto px-6 pb-6"
       >
-        <span className="font-inter text-[9px] text-[#FF3B3B] tracking-[3px] uppercase border border-[#FF3B3B]/30 bg-black/40 px-2.5 py-1.5 rounded-sm backdrop-blur-sm">
+        <span className="font-mincho text-[9px] text-[#b3402f] tracking-[3px] uppercase border border-[#b3402f]/30 bg-black/40 px-2.5 py-1.5 rounded-sm backdrop-blur-sm">
           Train at the source
         </span>
       </motion.div>
@@ -157,20 +157,20 @@ function Hero() {
       <motion.div
         initial={{ opacity: 0 }} animate={{ opacity: 1 }}
         transition={{ duration: 0.25, delay: 0.2, ease: 'easeOut' }}
-        className="relative z-10 border-t border-[#333333]"
+        className="relative z-10 border-t border-[#322f26]"
       >
         <div className="max-w-[1280px] mx-auto px-6">
-          <div className="grid grid-cols-3 divide-x divide-[#333333]">
+          <div className="grid grid-cols-3 divide-x divide-[#322f26]">
             {[
               { value: 2400, suffix: '+', label: 'HOURS STREAMED' },
               { value: 47, suffix: '', label: 'COACHES' },
               { value: 8, suffix: '', label: 'DISCIPLINES' },
             ].map(({ value, suffix, label }) => (
               <div key={label} className="px-4 sm:px-6 lg:px-10 py-6 lg:py-8 first:pl-0">
-                <div className="font-bebas text-4xl sm:text-5xl lg:text-6xl text-white tracking-[1px] leading-none">
+                <div className="font-mincho text-4xl sm:text-5xl lg:text-6xl text-[#f0eadc] tracking-[.5px] leading-none">
                   <StatCounter end={value} suffix={suffix} />
                 </div>
-                <p className="font-inter text-[10px] sm:text-[11px] text-[#555555] tracking-[3px] sm:tracking-[4px] uppercase mt-2">{label}</p>
+                <p className="font-mincho text-[10px] sm:text-[11px] text-[#7a7568] tracking-[3px] sm:tracking-[4px] uppercase mt-2">{label}</p>
               </div>
             ))}
           </div>
@@ -182,27 +182,27 @@ function Hero() {
 
 const DISCIPLINES = [
   { name: 'BJJ',        full: 'Brazilian Jiu-Jitsu', desc: 'Ground control, submissions, guard play. The chess match of combat sports.',         count: '12 gyms' },
-  { name: 'BOXING',     full: 'Boxing',              desc: 'Footwork, combinations, head movement. The sweet science.',                           count: '8 gyms'  },
-  { name: 'MUAY THAI',  full: 'Muay Thai',           desc: 'Eight limbs. Elbows, knees, clinch. The art of eight weapons.',                       count: '9 gyms'  },
-  { name: 'WRESTLING',  full: 'Wrestling',           desc: 'Takedowns, scrambles, top pressure. The foundation of MMA.',                         count: '5 gyms'  },
+  { name: 'Boxing',     full: 'Boxing',              desc: 'Footwork, combinations, head movement. The sweet science.',                           count: '8 gyms'  },
+  { name: 'Muay Thai',  full: 'Muay Thai',           desc: 'Eight limbs. Elbows, knees, clinch. The art of eight weapons.',                       count: '9 gyms'  },
+  { name: 'Wrestling',  full: 'Wrestling',           desc: 'Takedowns, scrambles, top pressure. The foundation of MMA.',                         count: '5 gyms'  },
   { name: 'MMA',        full: 'Mixed Martial Arts',  desc: 'Stand-up, clinch, ground. The complete combat sport.',                               count: '7 gyms'  },
-  { name: 'KICKBOXING', full: 'Kickboxing',          desc: 'Punches and kicks in combination. Power, speed, and distance management.',           count: '4 gyms'  },
-  { name: 'JUDO',       full: 'Judo',                desc: 'Throws, trips, and pins. Explosive off-balance and control.',                        count: '3 gyms'  },
-  { name: 'SAMBO',      full: 'Sambo',               desc: 'Russian combat system — throws, leg locks, and ground work combined.',               count: '2 gyms'  },
+  { name: 'Kickboxing', full: 'Kickboxing',          desc: 'Punches and kicks in combination. Power, speed, and distance management.',           count: '4 gyms'  },
+  { name: 'Judo',       full: 'Judo',                desc: 'Throws, trips, and pins. Explosive off-balance and control.',                        count: '3 gyms'  },
+  { name: 'Sambo',      full: 'Sambo',               desc: 'Russian combat system — throws, leg locks, and ground work combined.',               count: '2 gyms'  },
 ]
 
 function Disciplines() {
   return (
-    <section id="disciplines" className="bg-[#0D0D0D] border-t border-[#333333]">
+    <section id="disciplines" className="bg-[#141410] border-t border-[#322f26]">
       <div className="max-w-[1280px] mx-auto px-6 py-20">
         <div className="mb-16">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-6 h-px bg-[#FF3B3B]" />
-            <p className="font-inter text-[11px] text-[#FF3B3B] tracking-[4px] uppercase">What we stream</p>
+            <div className="w-6 h-px bg-[#b3402f]" />
+            <p className="font-mincho text-[11px] text-[#b3402f] tracking-[4px] uppercase">What we stream</p>
           </div>
-          <h2 className="font-bebas text-5xl lg:text-6xl text-white tracking-[1px] leading-none">EVERY DISCIPLINE.<br />ONE PLATFORM.</h2>
+          <h2 className="font-mincho font-normal text-4xl lg:text-5xl text-[#f0eadc] tracking-[.5px] leading-tight">Every discipline.<br />One platform.</h2>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-[#333333]">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-[#322f26]">
           {DISCIPLINES.map(({ name, full, desc, count }, i) => (
             <motion.div
               key={name}
@@ -210,12 +210,12 @@ function Disciplines() {
               viewport={{ once: true }}
               transition={{ duration: 0.2, ease: 'easeOut', delay: i * 0.04 }}
               whileHover={{ y: -2 }}
-              className="bg-[#0D0D0D] p-8 group cursor-pointer hover:bg-[#111111] transition-colors duration-150 border-t-2 border-transparent hover:border-[#FF3B3B]"
+              className="bg-[#141410] p-8 group cursor-pointer hover:bg-[#18180f] transition-colors duration-150 border-t-2 border-transparent hover:border-[#b3402f]"
             >
-              <span className="font-inter text-[10px] text-[#666666] tracking-[3px] uppercase border border-[#333333] px-2 py-0.5 rounded-sm">{count}</span>
-              <h3 className="font-bebas text-4xl text-white tracking-[1px] leading-none mt-5 mb-2 group-hover:text-[#FF3B3B] transition-colors duration-150">{name}</h3>
-              <p className="font-inter text-xs text-[#666666] mb-1">{full}</p>
-              <p className="font-inter text-sm text-[#666666] leading-relaxed mt-2">{desc}</p>
+              <span className="font-mincho text-[10px] text-[#7a7568] tracking-[3px] uppercase border border-[#322f26] px-2 py-0.5 rounded-sm">{count}</span>
+              <h3 className="font-mincho font-normal text-3xl text-[#f0eadc] tracking-[.5px] leading-none mt-5 mb-2 group-hover:text-[#b3402f] transition-colors duration-150">{name}</h3>
+              <p className="font-mincho text-xs text-[#7a7568] mb-1">{full}</p>
+              <p className="font-mincho text-sm text-[#7a7568] leading-relaxed mt-2">{desc}</p>
             </motion.div>
           ))}
         </div>
@@ -225,34 +225,34 @@ function Disciplines() {
 }
 
 const STEPS = [
-  { num: '01', title: 'FIND YOUR GYM', desc: 'Browse verified gyms by discipline, city, or coach. Every gym is vetted.' },
-  { num: '02', title: 'JOIN THE STREAM', desc: 'Subscribe to a gym. Watch live classes in real-time from anywhere.' },
-  { num: '03', title: 'TRAIN EVERY DAY', desc: 'Replay sessions on demand. Build your library. Track what you\'ve learned.' },
+  { num: '01', title: 'Find your gym', desc: 'Browse verified gyms by discipline, city, or coach. Every gym is vetted.' },
+  { num: '02', title: 'Join the stream', desc: 'Subscribe to a gym. Watch live classes in real-time from anywhere.' },
+  { num: '03', title: 'Train every day', desc: 'Replay sessions on demand. Build your library. Track what you\'ve learned.' },
 ]
 
 function HowItWorks() {
   return (
-    <section id="how-it-works" className="bg-[#111111] border-t border-[#333333]">
+    <section id="how-it-works" className="bg-[#18180f] border-t border-[#322f26]">
       <div className="max-w-[1280px] mx-auto px-6 py-20">
         <div className="mb-16">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-6 h-px bg-[#FF3B3B]" />
-            <p className="font-inter text-[11px] text-[#FF3B3B] tracking-[4px] uppercase">Simple process</p>
+            <div className="w-6 h-px bg-[#b3402f]" />
+            <p className="font-mincho text-[11px] text-[#b3402f] tracking-[4px] uppercase">Simple process</p>
           </div>
-          <h2 className="font-bebas text-5xl lg:text-6xl text-white tracking-[1px] leading-none">HOW IT WORKS</h2>
+          <h2 className="font-mincho font-normal text-4xl lg:text-5xl text-[#f0eadc] tracking-[.5px] leading-tight">How it works</h2>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-[#333333]">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-[#322f26]">
           {STEPS.map(({ num, title, desc }, i) => (
             <motion.div
               key={num}
               initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.2, ease: 'easeOut', delay: i * 0.06 }}
-              className="bg-[#111111] p-8"
+              className="bg-[#18180f] p-8"
             >
-              <div className="font-bebas text-7xl text-[#FF3B3B]/15 tracking-[1px] leading-none mb-6">{num}</div>
-              <h3 className="font-bebas text-2xl text-white tracking-[1px] leading-none mb-4">{title}</h3>
-              <p className="font-inter text-sm text-[#666666] leading-relaxed">{desc}</p>
+              <div className="font-mincho text-7xl text-[#b3402f]/15 tracking-[.5px] leading-none mb-6">{num}</div>
+              <h3 className="font-mincho font-normal text-2xl text-[#f0eadc] tracking-[.5px] leading-none mb-4">{title}</h3>
+              <p className="font-mincho text-sm text-[#7a7568] leading-relaxed">{desc}</p>
             </motion.div>
           ))}
         </div>
@@ -270,39 +270,39 @@ const PRICING_FEATURES = [
 
 function Pricing() {
   return (
-    <section id="pricing" className="bg-[#0D0D0D] border-t border-[#333333]">
+    <section id="pricing" className="bg-[#141410] border-t border-[#322f26]">
       <div className="max-w-[1280px] mx-auto px-6 py-20">
         <div className="mb-16">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-6 h-px bg-[#FF3B3B]" />
-            <p className="font-inter text-[11px] text-[#FF3B3B] tracking-[4px] uppercase">Simple pricing</p>
+            <div className="w-6 h-px bg-[#b3402f]" />
+            <p className="font-mincho text-[11px] text-[#b3402f] tracking-[4px] uppercase">Simple pricing</p>
           </div>
-          <h2 className="font-bebas text-5xl lg:text-6xl text-white tracking-[1px] leading-none">PAY YOUR GYM.<br />TRAIN ONLINE.</h2>
+          <h2 className="font-mincho font-normal text-4xl lg:text-5xl text-[#f0eadc] tracking-[.5px] leading-tight">Pay your gym.<br />Train online.</h2>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-[#333333] max-w-2xl">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-[#322f26] max-w-2xl">
           <motion.div
             initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.2, ease: 'easeOut' }}
-            className="p-8 bg-[#1A1A1A]"
+            className="p-8 bg-[#1c1c16]"
           >
-            <p className="font-inter text-[11px] text-[#555555] tracking-[4px] uppercase mb-5">Per Gym Membership</p>
+            <p className="font-mincho text-[11px] text-[#7a7568] tracking-[4px] uppercase mb-5">Per Gym Membership</p>
             <div className="flex items-baseline gap-1 mb-2">
-              <span className="font-bebas text-6xl text-white tracking-[1px] leading-none">GYM SETS PRICE</span>
+              <span className="font-mincho font-normal text-4xl text-[#f0eadc] tracking-[.5px] leading-none">Gym sets price</span>
             </div>
-            <p className="font-inter text-sm text-[#555555] mb-8 leading-relaxed">
+            <p className="font-mincho text-sm text-[#7a7568] mb-8 leading-relaxed">
               Each gym sets their own monthly price. You pay directly for access to that gym's live classes and replays.
             </p>
-            <div className="border-t border-[#2A2A2A] pt-6 mb-8 space-y-3">
+            <div className="border-t border-[#2a2a20] pt-6 mb-8 space-y-3">
               {PRICING_FEATURES.map(f => (
                 <div key={f} className="flex items-start gap-3">
-                  <div className="w-1 h-1 bg-[#555555] mt-2 shrink-0" />
-                  <p className="font-inter text-sm text-[#999999]">{f}</p>
+                  <div className="w-1 h-1 bg-[#7a7568] mt-2 shrink-0" />
+                  <p className="font-mincho text-sm text-[#a29c8c]">{f}</p>
                 </div>
               ))}
             </div>
-            <a href="/gyms" className="block font-bebas text-sm tracking-[3px] text-center py-4 rounded-sm transition-all duration-150 bg-white text-black hover:bg-[#E5E5E5]">
-              BROWSE GYMS
+            <a href="/gyms" className="block font-mincho text-sm tracking-[2px] text-center py-4 rounded-sm transition-all duration-150 bg-[#f0eadc] text-[#141410] hover:bg-[#e4dcc8]">
+              Browse Gyms
             </a>
           </motion.div>
 
@@ -310,17 +310,17 @@ function Pricing() {
             initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.2, ease: 'easeOut', delay: 0.05 }}
-            className="p-8 bg-[#0D0D0D] flex flex-col justify-center"
+            className="p-8 bg-[#141410] flex flex-col justify-center"
           >
-            <p className="font-inter text-[11px] text-[#FF3B3B] tracking-[4px] uppercase mb-6">How It Works</p>
+            <p className="font-mincho text-[11px] text-[#b3402f] tracking-[4px] uppercase mb-6">How It Works</p>
             {[
               { n: '01', text: 'Browse gyms and pick one you like' },
               { n: '02', text: 'Pay their monthly membership fee securely online' },
               { n: '03', text: 'Watch every live class and replay' },
             ].map(item => (
               <div key={item.n} className="flex items-start gap-4 mb-6 last:mb-0">
-                <span className="font-bebas text-2xl text-[#FF3B3B]/40 leading-none shrink-0">{item.n}</span>
-                <p className="font-inter text-sm text-[#999999] leading-relaxed">{item.text}</p>
+                <span className="font-mincho text-2xl text-[#b3402f]/40 leading-none shrink-0">{item.n}</span>
+                <p className="font-mincho text-sm text-[#a29c8c] leading-relaxed">{item.text}</p>
               </div>
             ))}
           </motion.div>
@@ -332,7 +332,7 @@ function Pricing() {
 
 function CTABanner() {
   return (
-    <section className="bg-[#111111] border-t border-[#333333]">
+    <section className="bg-[#18180f] border-t border-[#322f26]">
       <div className="max-w-[1280px] mx-auto px-6 py-20">
         <motion.div
           initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }}
@@ -340,14 +340,14 @@ function CTABanner() {
           transition={{ duration: 0.2, ease: 'easeOut' }}
         >
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-6 h-px bg-[#FF3B3B]" />
-            <p className="font-inter text-[11px] text-[#FF3B3B] tracking-[4px] uppercase">Ready?</p>
+            <div className="w-6 h-px bg-[#b3402f]" />
+            <p className="font-mincho text-[11px] text-[#b3402f] tracking-[4px] uppercase">Ready?</p>
           </div>
-          <h2 className="font-bebas text-white leading-[0.88] tracking-[1px] mb-10 border-l-2 border-[#FF3B3B] pl-6" style={{ fontSize: 'clamp(48px, 7vw, 80px)' }}>
-            TRAIN WITH THE BEST.<br />FROM ANYWHERE.
+          <h2 className="font-mincho font-normal text-[#f0eadc] leading-[1.1] tracking-[.5px] mb-10 border-l-2 border-[#b3402f] pl-6" style={{ fontSize: 'clamp(36px, 5vw, 60px)' }}>
+            Train with the best.<br />From anywhere.
           </h2>
-          <a href="/signup" className="inline-flex items-center gap-2 font-bebas text-sm tracking-[3px] bg-white text-black px-10 py-4 rounded-sm hover:bg-[#E5E5E5] transition-all duration-150">
-            JOIN MATPEAK <ArrowRight size={14} />
+          <a href="/signup" className="inline-flex items-center gap-2 font-mincho text-sm tracking-[2px] bg-[#f0eadc] text-[#141410] px-10 py-4 rounded-sm hover:bg-[#e4dcc8] transition-all duration-150">
+            Join MATPEAK <ArrowRight size={14} />
           </a>
         </motion.div>
       </div>
@@ -387,10 +387,10 @@ function GymWaitlist() {
     }
   }
 
-  const inputCls = 'w-full bg-[#0D0D0D] border border-[#333333] rounded-sm px-4 py-3 text-white placeholder-[#555555] text-sm focus:outline-none focus:border-white transition-colors'
+  const inputCls = 'w-full bg-[#141410] border border-[#322f26] rounded-sm px-4 py-3 text-[#f0eadc] placeholder-[#635f54] text-sm font-mincho focus:outline-none focus:border-[#f0eadc]/40 transition-colors'
 
   return (
-    <section className="bg-[#0D0D0D] border-t border-[#333333]">
+    <section className="bg-[#141410] border-t border-[#322f26]">
       <div className="max-w-[1280px] mx-auto px-6 py-20">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
           <motion.div
@@ -398,13 +398,13 @@ function GymWaitlist() {
             viewport={{ once: true }} transition={{ duration: 0.2, ease: 'easeOut' }}
           >
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-5 h-px bg-[#FF3B3B]" />
-              <p className="font-inter text-[11px] text-[#FF3B3B] tracking-[4px] uppercase">For Gym Owners</p>
+              <div className="w-5 h-px bg-[#b3402f]" />
+              <p className="font-mincho text-[11px] text-[#b3402f] tracking-[4px] uppercase">For Gym Owners</p>
             </div>
-            <h2 className="font-bebas text-white leading-[0.88] tracking-[1px] mb-6" style={{ fontSize: 'clamp(40px, 6vw, 72px)' }}>
-              STREAM YOUR GYM.<br />REACH THE WORLD.
+            <h2 className="font-mincho font-normal text-[#f0eadc] leading-[1.1] tracking-[.5px] mb-6" style={{ fontSize: 'clamp(30px, 4vw, 46px)' }}>
+              Stream your gym.<br />Reach the world.
             </h2>
-            <p className="font-inter text-[#999999] text-sm leading-relaxed mb-8 max-w-md">
+            <p className="font-mincho text-[#a29c8c] text-sm leading-relaxed mb-8 max-w-md">
               Partner with MATPEAK to broadcast your classes live, build a global subscriber base, and earn while your students train — wherever they are.
             </p>
             <div className="space-y-3">
@@ -414,8 +414,8 @@ function GymWaitlist() {
                 'Auto-generated preview clips for Instagram',
               ].map((item, i) => (
                 <div key={i} className="flex items-center gap-3">
-                  <div className="w-1 h-1 bg-[#FF3B3B] rounded-full shrink-0" />
-                  <p className="font-inter text-sm text-[#999999]">{item}</p>
+                  <div className="w-1 h-1 bg-[#b3402f] rounded-full shrink-0" />
+                  <p className="font-mincho text-sm text-[#a29c8c]">{item}</p>
                 </div>
               ))}
             </div>
@@ -426,19 +426,19 @@ function GymWaitlist() {
             viewport={{ once: true }} transition={{ duration: 0.2, ease: 'easeOut', delay: 0.05 }}
           >
             {status === 'success' ? (
-              <div className="relative bg-[#1A1A1A] border border-[#333333] rounded-sm px-6 py-12 text-center overflow-hidden">
-                <span className="absolute inset-0 flex items-center justify-center font-bebas text-[120px] text-white/[0.03] leading-none select-none pointer-events-none">DONE</span>
-                <p className="relative font-bebas text-3xl text-white tracking-[1px] mb-2">YOU'RE ON THE LIST</p>
-                <p className="relative font-inter text-[#999999] text-sm">We'll reach out when we're ready to onboard your gym.</p>
+              <div className="relative bg-[#1c1c16] border border-[#322f26] rounded-sm px-6 py-12 text-center overflow-hidden">
+                <span className="absolute inset-0 flex items-center justify-center font-mincho text-[110px] text-[#f0eadc]/[0.03] leading-none select-none pointer-events-none">Done</span>
+                <p className="relative font-mincho font-normal text-3xl text-[#f0eadc] tracking-[.5px] mb-2">You're on the list</p>
+                <p className="relative font-mincho text-[#a29c8c] text-sm">We'll reach out when we're ready to onboard your gym.</p>
               </div>
             ) : status === 'duplicate' ? (
-              <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm px-6 py-12 text-center">
-                <p className="font-bebas text-2xl text-white tracking-[1px] mb-2">ALREADY ON THE LIST</p>
-                <p className="font-inter text-[#999999] text-sm">We already have your details. We'll be in touch soon.</p>
+              <div className="bg-[#1c1c16] border border-[#322f26] rounded-sm px-6 py-12 text-center">
+                <p className="font-mincho font-normal text-2xl text-[#f0eadc] tracking-[.5px] mb-2">Already on the list</p>
+                <p className="font-mincho text-[#a29c8c] text-sm">We already have your details. We'll be in touch soon.</p>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="bg-[#1A1A1A] border border-[#333333] rounded-sm p-6 space-y-4">
-                <h3 className="font-bebas text-xl text-white tracking-[1px]">APPLY TO BECOME A PARTNER</h3>
+              <form onSubmit={handleSubmit} className="bg-[#1c1c16] border border-[#322f26] rounded-sm p-6 space-y-4">
+                <h3 className="font-mincho font-normal text-xl text-[#f0eadc] tracking-[.5px]">Apply to become a partner</h3>
                 {/* Honeypot */}
                 <input
                   type="text"
@@ -451,40 +451,40 @@ function GymWaitlist() {
                 />
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase block mb-1.5">Your Name</label>
+                    <label className="font-mincho text-[11px] text-[#a29c8c] tracking-[4px] uppercase block mb-1.5">Your Name</label>
                     <input className={inputCls} required value={form.name} onChange={e => set('name', e.target.value)} />
                   </div>
                   <div>
-                    <label className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase block mb-1.5">Gym Name</label>
+                    <label className="font-mincho text-[11px] text-[#a29c8c] tracking-[4px] uppercase block mb-1.5">Gym Name</label>
                     <input className={inputCls} required value={form.gym_name} onChange={e => set('gym_name', e.target.value)} />
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase block mb-1.5">Primary Discipline</label>
+                    <label className="font-mincho text-[11px] text-[#a29c8c] tracking-[4px] uppercase block mb-1.5">Primary Discipline</label>
                     <select className={`${inputCls} cursor-pointer`} required value={form.discipline} onChange={e => set('discipline', e.target.value)}>
                       <option value="">Select…</option>
                       {DISCIPLINES_LIST.map(d => <option key={d} value={d}>{d}</option>)}
                     </select>
                   </div>
                   <div>
-                    <label className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase block mb-1.5">City</label>
+                    <label className="font-mincho text-[11px] text-[#a29c8c] tracking-[4px] uppercase block mb-1.5">City</label>
                     <input className={inputCls} required value={form.city} onChange={e => set('city', e.target.value)} />
                   </div>
                 </div>
                 <div>
-                  <label className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase block mb-1.5">Phone or Email</label>
+                  <label className="font-mincho text-[11px] text-[#a29c8c] tracking-[4px] uppercase block mb-1.5">Phone or Email</label>
                   <input className={inputCls} required value={form.contact} onChange={e => set('contact', e.target.value)} placeholder="+91 98765 43210 or you@gym.com" />
                 </div>
                 {status === 'error' && (
-                  <p className="font-inter text-[#FF3B3B] text-xs">{errorMsg}</p>
+                  <p className="font-mincho text-[#b3402f] text-xs">{errorMsg}</p>
                 )}
                 <button
                   type="submit"
                   disabled={status === 'loading'}
-                  className="w-full bg-[#FF3B3B] hover:bg-[#e03333] disabled:opacity-50 text-white font-bebas tracking-[3px] py-3.5 rounded-sm text-sm transition-colors"
+                  className="w-full bg-[#b3402f] hover:bg-[#c25040] disabled:opacity-50 text-[#f0eadc] font-mincho tracking-[2px] py-3.5 rounded-sm text-sm transition-colors"
                 >
-                  {status === 'loading' ? 'SUBMITTING…' : 'JOIN THE WAITLIST'}
+                  {status === 'loading' ? 'Submitting…' : 'Join the Waitlist'}
                 </button>
               </form>
             )}
@@ -497,21 +497,21 @@ function GymWaitlist() {
 
 function Footer() {
   return (
-    <footer className="bg-[#0D0D0D] border-t border-[#333333]">
+    <footer className="bg-[#141410] border-t border-[#322f26]">
       <div className="max-w-[1280px] mx-auto px-6 py-12">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
           <div>
-            <span className="font-bebas text-xl tracking-[2px] text-white">MATPEAK</span>
-            <p className="font-inter text-xs text-[#444444] mt-2">Combat sports live training platform.</p>
+            <span className="font-mincho text-xl tracking-[1px] text-[#f0eadc]">MAT<span className="text-[#b3402f]">PEAK</span></span>
+            <p className="font-mincho text-xs text-[#635f54] mt-2">Combat sports live training platform.</p>
           </div>
           <div className="flex flex-wrap gap-8">
             {['Gyms', 'Coaches', 'Disciplines', 'Pricing', 'Login', 'Sign up'].map(l => (
-              <a key={l} href="#" className="font-inter text-xs text-[#444444] hover:text-white transition-colors duration-150">{l}</a>
+              <a key={l} href="#" className="font-mincho text-xs text-[#635f54] hover:text-[#f0eadc] transition-colors duration-150">{l}</a>
             ))}
           </div>
         </div>
-        <div className="border-t border-[#222222] mt-12 pt-8">
-          <p className="font-inter text-[11px] text-[#444444]">© 2026 MATPEAK. All rights reserved.</p>
+        <div className="border-t border-[#2a2a20] mt-12 pt-8">
+          <p className="font-mincho text-[11px] text-[#635f54]">© 2026 MATPEAK. All rights reserved.</p>
         </div>
       </div>
     </footer>
@@ -520,7 +520,7 @@ function Footer() {
 
 export default function LandingPage() {
   return (
-    <main className="bg-[#0D0D0D] min-h-screen">
+    <main className="bg-[#141410] min-h-screen">
       <Navbar />
       <Hero />
       <Disciplines />

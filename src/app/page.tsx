@@ -250,7 +250,7 @@ function HowItWorks() {
               transition={{ duration: 0.2, ease: 'easeOut', delay: i * 0.06 }}
               className="bg-[#18180f] p-8"
             >
-              <div className="font-mincho text-7xl text-[#942f22]/25 tracking-[.5px] leading-none mb-6">{num}</div>
+              <div className="font-mincho font-semibold text-7xl text-[#942f22]/35 tracking-[.5px] leading-none mb-6">{num}</div>
               <h3 className="font-mincho font-normal text-2xl text-[#f0eadc] tracking-[.5px] leading-none mb-4">{title}</h3>
               <p className="font-mincho text-sm text-[#7a7568] leading-relaxed">{desc}</p>
             </motion.div>

@@ -90,13 +90,13 @@ function Hero() {
 
       {/* Content */}
       <div className="relative z-10 flex-1 flex items-center">
-        <div className="max-w-[1280px] mx-auto px-6 w-full py-24 lg:py-36">
+        <div className="max-w-[1280px] mx-auto px-6 w-full py-14 lg:py-16">
           <div className="max-w-[620px]">
 
             <motion.div
               initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.2, ease: 'easeOut' }}
-              className="flex items-center gap-3 mb-8"
+              className="flex items-center gap-3 mb-6"
             >
               <div className="w-6 h-px bg-[#b3402f]" />
               <p className="font-mincho text-[11px] text-[#b3402f] tracking-[4px] uppercase">
@@ -107,8 +107,8 @@ function Hero() {
             <motion.h1
               initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, ease: 'easeOut', delay: 0.05 }}
-              className="font-mincho font-medium leading-[1.05] tracking-[.5px]"
-              style={{ fontSize: 'clamp(64px, 9.5vw, 116px)' }}
+              className="font-mincho font-medium leading-[1] tracking-[.5px]"
+              style={{ fontSize: 'clamp(60px, 8.5vw, 104px)' }}
             >
               <span className="block text-[#f0eadc]">World-class</span>
               <span className="block text-[#f0eadc]">training.</span>
@@ -118,7 +118,7 @@ function Hero() {
             <motion.p
               initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.25, ease: 'easeOut', delay: 0.12 }}
-              className="font-mincho text-[#a29c8c] text-base mt-8 max-w-[400px] leading-relaxed"
+              className="font-mincho text-[#a29c8c] text-base mt-6 max-w-[400px] leading-relaxed"
             >
               Stream live classes from real MMA gyms.<br />
               BJJ. Boxing. Muay Thai. Wrestling.<br />
@@ -128,7 +128,7 @@ function Hero() {
             <motion.div
               initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.25, ease: 'easeOut', delay: 0.18 }}
-              className="flex flex-wrap items-center gap-3 mt-10"
+              className="flex flex-wrap items-center gap-3 mt-8"
             >
               <a href="/signup" className="font-mincho text-sm tracking-[2px] bg-[#f0eadc] text-[#141410] px-5 sm:px-8 py-3.5 sm:py-4 rounded-sm hover:bg-[#e4dcc8] transition-all duration-150 flex items-center gap-2">
                 Start Training <ArrowRight size={14} />
@@ -146,7 +146,7 @@ function Hero() {
       <motion.div
         initial={{ opacity: 0 }} animate={{ opacity: 1 }}
         transition={{ duration: 0.3, delay: 0.25 }}
-        className="relative z-10 max-w-[1280px] mx-auto px-6 pb-6"
+        className="relative z-10 max-w-[1280px] mx-auto px-6 pb-4"
       >
         <span className="font-mincho text-[9px] text-[#b3402f] tracking-[3px] uppercase border border-[#b3402f]/30 bg-black/40 px-2.5 py-1.5 rounded-sm backdrop-blur-sm">
           Train at the source
@@ -166,7 +166,7 @@ function Hero() {
               { value: 47, suffix: '', label: 'COACHES' },
               { value: 8, suffix: '', label: 'DISCIPLINES' },
             ].map(({ value, suffix, label }) => (
-              <div key={label} className="px-4 sm:px-6 lg:px-10 py-6 lg:py-8 first:pl-0">
+              <div key={label} className="px-4 sm:px-6 lg:px-10 py-5 lg:py-6 first:pl-0">
                 <div className="font-mincho text-4xl sm:text-5xl lg:text-6xl text-[#c9bda0] tracking-[.5px] leading-none">
                   <StatCounter end={value} suffix={suffix} />
                 </div>

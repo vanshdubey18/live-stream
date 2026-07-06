@@ -167,7 +167,7 @@ function Hero() {
               { value: 8, suffix: '', label: 'DISCIPLINES' },
             ].map(({ value, suffix, label }) => (
               <div key={label} className="px-4 sm:px-6 lg:px-10 py-6 lg:py-8 first:pl-0">
-                <div className="font-mincho text-4xl sm:text-5xl lg:text-6xl text-[#f0eadc] tracking-[.5px] leading-none">
+                <div className="font-mincho text-4xl sm:text-5xl lg:text-6xl text-[#c9bda0] tracking-[.5px] leading-none">
                   <StatCounter end={value} suffix={suffix} />
                 </div>
                 <p className="font-mincho text-[10px] sm:text-[11px] text-[#7a7568] tracking-[3px] sm:tracking-[4px] uppercase mt-2">{label}</p>

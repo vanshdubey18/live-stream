@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { ExternalLink, Plus, CheckCircle, Clock, Radio, AlertTriangle, UserPlus, ArrowRight, Trash2, Download, X, RefreshCw } from 'lucide-react'
+import { ExternalLink, Plus, CheckCircle, Clock, Radio, AlertTriangle, UserPlus, ArrowRight, Download, X, RefreshCw } from 'lucide-react'
 import GymSidebar from '@/components/layout/GymSidebar'
 import StatsCard from '@/components/gym-dashboard/StatsCard'
 import StreamSetupCard from '@/components/gym-dashboard/StreamSetupCard'
@@ -291,16 +291,6 @@ export default function GymDashboardClient({ gym, ownerName, sessions, coaches, 
     setToast('Class scheduled ✓')
   }
 
-  async function handleDelete(id: string) {
-    await fetch('/api/gym/session', {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id }),
-    })
-    setLocalSessions(p => p.filter(c => c.id !== id))
-    setToast('Class removed')
-  }
-
   function handleGoLive(id: string) {
     window.location.href = `/gym-dashboard/stream?session_id=${id}`
   }
@@ -394,7 +384,7 @@ export default function GymDashboardClient({ gym, ownerName, sessions, coaches, 
           {/* Stream Setup */}
           <StreamSetupCard gymId={gym.id} />
 
-          {/* Sessions */}
+          {/* Sessions — peek only, full table lives on Schedule Classes */}
           <section>
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
@@ -421,105 +411,41 @@ export default function GymDashboardClient({ gym, ownerName, sessions, coaches, 
                 </button>
               </div>
             ) : (
-              <div className="bg-[#1c1c16] border border-[#322f26] rounded-sm overflow-hidden">
-
-                {/* Desktop table */}
-                <div className="hidden md:block overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="border-b border-[#322f26]">
-                        {['Title', 'Discipline', 'Date / Time', 'Status', 'Actions'].map(h => (
-                          <th key={h} className="px-5 py-3 text-left font-mincho text-[11px] text-[#a29c8c] tracking-[4px] uppercase">
-                            {h}
-                          </th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {localSessions.map((s: any, i: number) => (
-                        <tr
-                          key={s.id}
-                          className={`hover:bg-[#242420] transition-colors ${i < localSessions.length - 1 ? 'border-b border-[#242420]' : ''}`}
-                        >
-                          <td className="px-5 py-4 font-mincho text-[#f0eadc] text-sm font-medium">{s.title}</td>
-                          <td className="px-5 py-4">
-                            <span className="font-mincho text-[11px] text-[#a29c8c] tracking-[2px] uppercase">
-                              {s.discipline}
-                            </span>
-                          </td>
-                          <td className="px-5 py-4 font-mincho text-[#a29c8c] text-sm whitespace-nowrap">
-                            {s.scheduled_at ? formatDateShort(s.scheduled_at) : s.date}
-                            {' · '}
-                            {s.scheduled_at ? formatTime(s.scheduled_at) : s.time}
-                          </td>
-                          <td className="px-5 py-4">
-                            <StatusBadge status={s.status ?? 'scheduled'} />
-                          </td>
-                          <td className="px-5 py-4">
-                            <div className="flex items-center gap-2">
-                              {s.status !== 'ended' && (
-                                <a
-                                  href={`/gym-dashboard/stream?session_id=${s.id}`}
-                                  className="font-mincho tracking-[2px] text-sm bg-[#f0eadc] text-[#141410] px-3 py-1 rounded-sm hover:bg-[#e4dcc8] transition-colors"
-                                >
-                                  {isSessionLive(s) ? 'MANAGE' : 'GO LIVE'}
-                                </a>
-                              )}
-                              <button
-                                onClick={() => handleDelete(s.id)}
-                                className="w-7 h-7 flex items-center justify-center border border-[#322f26] text-[#7a7568] hover:text-[#f0eadc] hover:border-[#7a7568] rounded-sm transition-all"
-                              >
-                                <Trash2 size={12} />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-
-                {/* Mobile rows */}
-                <div className="md:hidden divide-y divide-[#242420]">
-                  {localSessions.map((s: any) => (
-                    <div key={s.id} className="px-4 py-4 space-y-3 hover:bg-[#242420] transition-colors">
-                      <div className="flex items-start justify-between gap-2">
-                        <div>
-                          <p className="font-mincho text-[#f0eadc] text-sm font-medium">{s.title}</p>
-                          <p className="font-mincho text-[#a29c8c] text-xs mt-0.5 tracking-[2px] uppercase">{s.discipline}</p>
-                          <p className="font-mincho text-[#a29c8c] text-xs mt-0.5">
-                            {s.scheduled_at ? formatDateShort(s.scheduled_at) : s.date}
-                            {' · '}
-                            {s.scheduled_at ? formatTime(s.scheduled_at) : s.time}
-                          </p>
-                        </div>
-                        <StatusBadge status={s.status ?? 'scheduled'} />
-                      </div>
-                      <div className="flex gap-2">
-                        {s.status !== 'ended' && (
-                          <a
-                            href={`/gym-dashboard/stream?session_id=${s.id}`}
-                            className="font-mincho tracking-[2px] text-sm bg-[#f0eadc] text-[#141410] px-4 py-1.5 rounded-sm hover:bg-[#e4dcc8] transition-colors"
-                          >
-                            {isSessionLive(s) ? 'MANAGE' : 'GO LIVE'}
-                          </a>
-                        )}
-                        <button
-                          onClick={() => handleDelete(s.id)}
-                          className="flex items-center gap-1.5 border border-[#322f26] text-[#7a7568] hover:text-[#f0eadc] font-mincho text-xs px-3 py-1.5 rounded-sm transition-all"
-                        >
-                          <Trash2 size={11} /> Remove
-                        </button>
-                      </div>
+              <div className="bg-[#1c1c16] border border-[#322f26] rounded-sm divide-y divide-[#242420]">
+                {localSessions.slice(0, 3).map((s: any) => (
+                  <div key={s.id} className="px-5 py-4 flex items-center justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="font-mincho text-[#f0eadc] text-sm font-medium truncate">{s.title}</p>
+                      <p className="font-mincho text-[#a29c8c] text-xs mt-0.5">
+                        {s.scheduled_at ? formatDateShort(s.scheduled_at) : s.date}
+                        {' · '}
+                        {s.scheduled_at ? formatTime(s.scheduled_at) : s.time}
+                      </p>
                     </div>
-                  ))}
-                </div>
-
+                    <div className="flex items-center gap-3 shrink-0">
+                      <StatusBadge status={s.status ?? 'scheduled'} />
+                      {s.status !== 'ended' && (
+                        <a
+                          href={`/gym-dashboard/stream?session_id=${s.id}`}
+                          className="font-mincho tracking-[2px] text-sm bg-[#f0eadc] text-[#141410] px-3 py-1 rounded-sm hover:bg-[#e4dcc8] transition-colors"
+                        >
+                          {isSessionLive(s) ? 'MANAGE' : 'GO LIVE'}
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                ))}
+                <a
+                  href="/gym-dashboard/schedule"
+                  className="flex items-center justify-center gap-1.5 px-5 py-3 font-mincho text-xs text-[#7a7568] hover:text-[#f0eadc] transition-colors"
+                >
+                  View all sessions <ArrowRight size={12} />
+                </a>
               </div>
             )}
           </section>
 
-          {/* Payouts */}
+          {/* Payouts — peek only, full ledger lives on Revenue */}
           <section>
             <div className="flex items-center gap-3 mb-4">
               <div className="w-5 h-px bg-[#b3402f]" />
@@ -531,59 +457,32 @@ export default function GymDashboardClient({ gym, ownerName, sessions, coaches, 
                 <p className="relative font-mincho text-[#7a7568] text-sm">No payouts yet.</p>
               </div>
             ) : (
-              <div className="bg-[#1c1c16] border border-[#322f26] rounded-sm overflow-hidden">
-                {/* Desktop table */}
-                <table className="hidden sm:table w-full">
-                  <thead>
-                    <tr className="border-b border-[#322f26]">
-                      {['Period', 'Amount (70%)', 'Status'].map(h => (
-                        <th key={h} className="px-5 py-3 text-left font-mincho text-[11px] text-[#a29c8c] tracking-[4px] uppercase">{h}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {payouts.map((p: any, i: number) => (
-                      <tr
-                        key={p.id}
-                        className={`hover:bg-[#242420] transition-colors ${i < payouts.length - 1 ? 'border-b border-[#242420]' : ''}`}
-                      >
-                        <td className="px-5 py-4 font-mincho text-[#f0eadc] text-sm">
-                          {new Date(p.period_start).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' })}
-                        </td>
-                        <td className="px-5 py-4 font-mincho text-[#f0eadc] text-xl tracking-[1px]">
-                          {formatPaise(p.amount_paise)}
-                        </td>
-                        <td className="px-5 py-4">
-                          {p.status === 'paid' ? (
-                            <span className="flex items-center gap-1.5 font-mincho text-[#00D4AA] text-xs">
-                              <CheckCircle size={12} /> PAID
-                            </span>
-                          ) : (
-                            <span className="flex items-center gap-1.5 font-mincho text-[#FFD60A] text-xs">
-                              <Clock size={12} /> PENDING
-                            </span>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-                {/* Mobile cards */}
-                <div className="sm:hidden divide-y divide-[#242420]">
-                  {payouts.map((p: any) => (
-                    <div key={p.id} className="px-5 py-4 flex items-center justify-between gap-3">
-                      <div>
-                        <p className="font-mincho text-[#f0eadc] text-sm">
-                          {new Date(p.period_start).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' })}
-                        </p>
-                        <p className={`font-mincho text-xs mt-1 ${p.status === 'paid' ? 'text-[#00D4AA]' : 'text-[#FFD60A]'}`}>
-                          {p.status === 'paid' ? 'PAID' : 'PENDING'}
-                        </p>
-                      </div>
-                      <p className="font-mincho text-[#f0eadc] text-xl tracking-[1px]">{formatPaise(p.amount_paise)}</p>
+              <div className="bg-[#1c1c16] border border-[#322f26] rounded-sm divide-y divide-[#242420]">
+                {payouts.slice(0, 3).map((p: any) => (
+                  <div key={p.id} className="px-5 py-4 flex items-center justify-between gap-3">
+                    <div>
+                      <p className="font-mincho text-[#f0eadc] text-sm">
+                        {new Date(p.period_start).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' })}
+                      </p>
+                      {p.status === 'paid' ? (
+                        <span className="flex items-center gap-1.5 font-mincho text-[#00D4AA] text-xs mt-1">
+                          <CheckCircle size={12} /> PAID
+                        </span>
+                      ) : (
+                        <span className="flex items-center gap-1.5 font-mincho text-[#FFD60A] text-xs mt-1">
+                          <Clock size={12} /> PENDING
+                        </span>
+                      )}
                     </div>
-                  ))}
-                </div>
+                    <p className="font-mincho text-[#f0eadc] text-xl tracking-[1px]">{formatPaise(p.amount_paise)}</p>
+                  </div>
+                ))}
+                <a
+                  href="/gym-dashboard/revenue"
+                  className="flex items-center justify-center gap-1.5 px-5 py-3 font-mincho text-xs text-[#7a7568] hover:text-[#f0eadc] transition-colors"
+                >
+                  View all payouts <ArrowRight size={12} />
+                </a>
               </div>
             )}
           </section>

@@ -19,15 +19,30 @@ import {
   Trophy,
 } from 'lucide-react'
 
-const navItems = [
-  { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-  { label: 'Browse Gyms', href: '/gyms', icon: Building2 },
-  { label: 'Schedule', href: '/dashboard/schedule', icon: Calendar },
-  { label: 'Replays', href: '/dashboard/replays', icon: PlaySquare },
-  { label: 'Progression', href: '/dashboard/progression', icon: Award, soon: true },
-  { label: 'Achievements', href: '/dashboard/achievements', icon: Trophy, soon: true },
-  { label: 'Billing', href: '/dashboard/billing', icon: CreditCard },
-  { label: 'Account', href: '/dashboard/account', icon: User },
+const navGroups = [
+  {
+    label: 'Today',
+    items: [
+      { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+    ],
+  },
+  {
+    label: 'Train',
+    items: [
+      { label: 'Browse Gyms', href: '/gyms', icon: Building2 },
+      { label: 'Schedule', href: '/dashboard/schedule', icon: Calendar },
+      { label: 'Replays', href: '/dashboard/replays', icon: PlaySquare },
+      { label: 'Progression', href: '/dashboard/progression', icon: Award, soon: true },
+    ],
+  },
+  {
+    label: 'You',
+    items: [
+      { label: 'Achievements', href: '/dashboard/achievements', icon: Trophy, soon: true },
+      { label: 'Billing', href: '/dashboard/billing', icon: CreditCard },
+      { label: 'Account', href: '/dashboard/account', icon: User },
+    ],
+  },
 ]
 
 interface MemberSidebarProps {
@@ -119,30 +134,39 @@ export default function MemberSidebar({ active = 'Dashboard', onSearchOpen }: Me
         </div>
 
         {/* Nav */}
-        <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
-          {navItems.map(({ label, href, icon: Icon, soon }) => {
-            const isActive = active === label
-            return (
-              <a
-                key={label}
-                href={href}
-                onClick={() => setOpen(false)}
-                className={`flex items-center gap-3 px-3 py-2.5 text-sm font-mincho transition-colors duration-200
-                  ${isActive
-                    ? 'text-[#f0eadc] bg-[#1c1c16] border-l-2 border-[#b3402f]'
-                    : 'text-[#a29c8c] hover:text-[#f0eadc]'
-                  }`}
-              >
-                <Icon size={18} className={isActive ? 'text-[#b3402f]' : ''} />
-                <span className="flex-1">{label}</span>
-                {soon && (
-                  <span className="font-mincho text-[9px] text-[#b3402f] tracking-[2px] uppercase border border-[#b3402f]/30 px-1.5 py-0.5 rounded-sm shrink-0">
-                    Soon
-                  </span>
-                )}
-              </a>
-            )
-          })}
+        <nav className="flex-1 px-3 py-4 overflow-y-auto">
+          {navGroups.map((group, gi) => (
+            <div key={group.label} className={gi > 0 ? 'mt-5' : ''}>
+              <p className="font-mincho text-[10px] text-[#635f54] tracking-[3px] uppercase px-3 mb-1.5">
+                {group.label}
+              </p>
+              <div className="space-y-0.5">
+                {group.items.map(({ label, href, icon: Icon, soon }) => {
+                  const isActive = active === label
+                  return (
+                    <a
+                      key={label}
+                      href={href}
+                      onClick={() => setOpen(false)}
+                      className={`flex items-center gap-3 px-3 py-2.5 text-sm font-mincho transition-colors duration-200
+                        ${isActive
+                          ? 'text-[#f0eadc] bg-[#1c1c16] border-l-2 border-[#b3402f]'
+                          : 'text-[#a29c8c] hover:text-[#f0eadc]'
+                        }`}
+                    >
+                      <Icon size={18} className={isActive ? 'text-[#b3402f]' : ''} />
+                      <span className="flex-1">{label}</span>
+                      {soon && (
+                        <span className="font-mincho text-[9px] text-[#b3402f] tracking-[2px] uppercase border border-[#b3402f]/30 px-1.5 py-0.5 rounded-sm shrink-0">
+                          Soon
+                        </span>
+                      )}
+                    </a>
+                  )
+                })}
+              </div>
+            </div>
+          ))}
         </nav>
 
         {/* Logout */}

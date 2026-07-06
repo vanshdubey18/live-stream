@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import MemberSidebar from '@/components/layout/MemberSidebar'
 import InsightCard from '@/components/ui/InsightCard'
-import { ChevronRight, ArrowRight, BookOpen, Sparkles, Layers, MessageCircle, Lock } from 'lucide-react'
+import { ChevronRight, ArrowRight } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
 interface Props {
@@ -489,7 +489,7 @@ function MyGyms({ memberships }: { memberships: any[] }) {
 
 // ─── Upcoming Classes ─────────────────────────────────────────────────────────
 function UpcomingClasses({ sessions }: { sessions: any[] }) {
-  const items = sessions.slice(0, 6)
+  const items = sessions.slice(0, 3)
 
   return (
     <section className="border-b border-[#322f26]">
@@ -551,7 +551,7 @@ function UpcomingClasses({ sessions }: { sessions: any[] }) {
 
 // ─── Recent Replays ───────────────────────────────────────────────────────────
 function RecentReplays({ replays }: { replays: any[] }) {
-  const items = replays.slice(0, 4)
+  const items = replays.slice(0, 3)
   if (!items.length) return null
 
   return (
@@ -566,7 +566,7 @@ function RecentReplays({ replays }: { replays: any[] }) {
             View all <ChevronRight size={12} />
           </a>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-[#322f26]">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-px bg-[#322f26]">
           {items.map((s: any, i: number) => (
             <motion.a
               key={s.id}
@@ -596,59 +596,6 @@ function RecentReplays({ replays }: { replays: any[] }) {
             </motion.a>
           ))}
         </div>
-      </div>
-    </section>
-  )
-}
-
-// ─── AI Coach Section ─────────────────────────────────────────────────────────
-function AICoachSection() {
-  const features = [
-    { icon: <BookOpen size={14} />, label: 'Summary + timestamps', sub: 'Key moments from every class, jumpable', free: true },
-    { icon: <Sparkles size={14} />, label: 'Quiz every class', sub: 'Test yourself after each session', free: false },
-    { icon: <Layers size={14} />, label: 'Flashcards', sub: 'Technique cards with spaced repetition', free: false },
-    { icon: <MessageCircle size={14} />, label: 'Ask your coach', sub: 'Chat grounded in your actual classes', free: false },
-  ]
-
-  return (
-    <section className="border-b border-[#322f26]">
-      <div className="max-w-[1280px] mx-auto px-6 py-8">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <div className="w-5 h-px bg-[#b3402f]" />
-            <h2 className="font-mincho text-2xl text-[#f0eadc] tracking-[1px]">AI COACH</h2>
-          </div>
-          <span className="font-mincho text-[10px] text-[#b3402f] tracking-[3px] uppercase border border-[#b3402f]/20 bg-[#b3402f]/5 px-3 py-1.5 rounded-sm">
-            Coming Soon
-          </span>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-[#322f26]">
-          {features.map((f, i) => (
-            <motion.div
-              key={f.label}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.2, delay: i * 0.05 }}
-              className={`bg-[#1c1c16] p-5 flex flex-col gap-3 ${!f.free ? 'opacity-60' : ''}`}
-            >
-              <div className="flex items-center justify-between">
-                <span className={f.free ? 'text-[#b3402f]' : 'text-[#7a7568]'}>{f.icon}</span>
-                {f.free
-                  ? <span className="font-mincho text-[10px] text-[#b3402f] tracking-[2px] uppercase">Free</span>
-                  : <Lock size={10} className="text-[#7a7568]" />}
-              </div>
-              <div>
-                <p className="font-mincho text-lg text-[#f0eadc] tracking-[1px] leading-tight">{f.label}</p>
-                <p className="font-mincho text-xs text-[#7a7568] mt-0.5">{f.sub}</p>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-
-        <p className="font-mincho text-[#7a7568] text-xs mt-4">
-          After every class, AI Coach analyses the transcript and generates your personal study tools. Available on all replays.
-        </p>
       </div>
     </section>
   )
@@ -716,7 +663,6 @@ export default function DashboardClient({ user, memberships, upcoming, replays, 
         <MyGyms memberships={memberships} />
         <UpcomingClasses sessions={upcoming} />
         <RecentReplays replays={replays} />
-        <AICoachSection />
 
         {memberships.length === 0 && (
           <section className="border-b border-[#322f26]">

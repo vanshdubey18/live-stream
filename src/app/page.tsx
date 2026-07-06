@@ -107,8 +107,8 @@ function Hero() {
             <motion.h1
               initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, ease: 'easeOut', delay: 0.05 }}
-              className="font-mincho font-normal leading-[1.08] tracking-[.5px]"
-              style={{ fontSize: 'clamp(48px, 7vw, 84px)' }}
+              className="font-mincho font-medium leading-[1.05] tracking-[.5px]"
+              style={{ fontSize: 'clamp(64px, 9.5vw, 116px)' }}
             >
               <span className="block text-[#f0eadc]">World-class</span>
               <span className="block text-[#f0eadc]">training.</span>
@@ -167,7 +167,7 @@ function Hero() {
               { value: 8, suffix: '', label: 'DISCIPLINES' },
             ].map(({ value, suffix, label }) => (
               <div key={label} className="px-4 sm:px-6 lg:px-10 py-6 lg:py-8 first:pl-0">
-                <div className="font-mincho text-4xl sm:text-5xl lg:text-6xl text-[#f0eadc] tracking-[.5px] leading-none">
+                <div className="font-mincho text-4xl sm:text-5xl lg:text-6xl text-[#c9bda0] tracking-[.5px] leading-none">
                   <StatCounter end={value} suffix={suffix} />
                 </div>
                 <p className="font-mincho text-[10px] sm:text-[11px] text-[#7a7568] tracking-[3px] sm:tracking-[4px] uppercase mt-2">{label}</p>
@@ -250,7 +250,7 @@ function HowItWorks() {
               transition={{ duration: 0.2, ease: 'easeOut', delay: i * 0.06 }}
               className="bg-[#18180f] p-8"
             >
-              <div className="font-mincho text-7xl text-[#b3402f]/15 tracking-[.5px] leading-none mb-6">{num}</div>
+              <div className="font-mincho text-7xl text-[#942f22]/25 tracking-[.5px] leading-none mb-6">{num}</div>
               <h3 className="font-mincho font-normal text-2xl text-[#f0eadc] tracking-[.5px] leading-none mb-4">{title}</h3>
               <p className="font-mincho text-sm text-[#7a7568] leading-relaxed">{desc}</p>
             </motion.div>

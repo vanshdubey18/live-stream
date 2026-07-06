@@ -135,7 +135,7 @@ export default function GymDetailClient({ gym, coaches, sessions, memberCount, m
 
         {/* Live session banner */}
         {liveSessions.length > 0 && (
-          <div className="bg-[#1c1c16] border border-[#b3402f]/40 rounded-sm px-6 py-4 flex items-center justify-between gap-4 shadow-[0_0_0_1px_rgba(255,59,59,0.1),0_0_20px_rgba(255,59,59,0.06)]">
+          <div className="bg-[#1c1c16] border border-[#b3402f]/40 rounded-sm px-6 py-4 flex items-center justify-between gap-4 shadow-[0_0_0_1px_rgba(179, 64, 47,0.1),0_0_20px_rgba(179, 64, 47,0.06)]">
             <div>
               <p className="font-mincho text-xs text-[#b3402f] tracking-[3px] uppercase mb-1">● Live Now</p>
               <p className="font-mincho text-xl text-[#f0eadc]">{liveSessions[0].title}</p>

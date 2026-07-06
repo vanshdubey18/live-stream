@@ -93,7 +93,7 @@ export default function BrowseGymsClient({ gyms, joinedGymIds }: Props) {
                     href={`/gyms/${g.slug}`}
                     className={`bg-[#1c1c16] rounded-sm p-5 transition-all flex flex-col gap-4 group ${
                       isLive
-                        ? 'border border-[#b3402f]/50 shadow-[0_0_0_1px_rgba(255,59,59,0.1),0_0_28px_rgba(255,59,59,0.08)] hover:border-[#b3402f]/70'
+                        ? 'border border-[#b3402f]/50 shadow-[0_0_0_1px_rgba(179, 64, 47,0.1),0_0_28px_rgba(179, 64, 47,0.08)] hover:border-[#b3402f]/70'
                         : 'border border-[#322f26] hover:bg-[#242420] hover:border-[#b3402f]/40'
                     }`}
                   >

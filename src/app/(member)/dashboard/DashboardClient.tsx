@@ -322,7 +322,7 @@ function StatsRow({ completedCount, totalHours, monthCount, upcoming, replays }:
               {/* Progress bar */}
               <div className="mt-3 h-0.5 bg-[#242420] rounded-full overflow-visible">
                 <motion.div
-                  className="h-full bg-[#b3402f] rounded-full shadow-[0_0_8px_1px_rgba(255,59,59,0.6)]"
+                  className="h-full bg-[#b3402f] rounded-full shadow-[0_0_8px_1px_rgba(179, 64, 47,0.6)]"
                   initial={{ width: 0 }}
                   animate={{ width: `${weekProgress * 100}%` }}
                   transition={{ duration: 0.6, ease: 'easeOut', delay: 0.2 }}

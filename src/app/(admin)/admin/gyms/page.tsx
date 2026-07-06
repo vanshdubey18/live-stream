@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Search, ExternalLink } from 'lucide-react'
+import { Search, ExternalLink, Trash2 } from 'lucide-react'
 import AdminSidebar from '@/components/layout/AdminSidebar'
 
 interface Gym {
@@ -18,6 +18,8 @@ export default function ActiveGymsPage() {
   const [gyms, setGyms] = useState<Gym[]>([])
   const [search, setSearch] = useState('')
   const [loading, setLoading] = useState(true)
+  const [confirmId, setConfirmId] = useState<string | null>(null)
+  const [deletingId, setDeletingId] = useState<string | null>(null)
 
   useEffect(() => {
     fetch('/api/admin/gyms')
@@ -26,6 +28,23 @@ export default function ActiveGymsPage() {
       .catch(() => {})
       .finally(() => setLoading(false))
   }, [])
+
+  async function handleDelete(gymId: string) {
+    setDeletingId(gymId)
+    try {
+      const res = await fetch('/api/admin/gyms', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ gymId }),
+      })
+      if (res.ok) {
+        setGyms(p => p.filter(g => g.id !== gymId))
+      }
+    } finally {
+      setDeletingId(null)
+      setConfirmId(null)
+    }
+  }
 
   const filtered = gyms.filter(g =>
     g.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -96,7 +115,31 @@ export default function ActiveGymsPage() {
                           {new Date(g.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
                         </td>
                         <td className="px-4 py-3.5">
-                          <a href={`/gyms/${g.slug}`} className="text-[#555555] hover:text-white transition-colors"><ExternalLink size={14} /></a>
+                          <div className="flex items-center justify-end gap-3">
+                            {confirmId === g.id ? (
+                              <div className="flex items-center gap-2">
+                                <span className="font-inter text-[11px] text-[#999999]">Delete?</span>
+                                <button
+                                  onClick={() => handleDelete(g.id)}
+                                  disabled={deletingId === g.id}
+                                  className="font-bebas tracking-[1px] text-xs bg-[#FF3B3B] text-white px-2.5 py-1 rounded-sm hover:bg-[#cc2f2f] transition-colors disabled:opacity-50"
+                                >
+                                  {deletingId === g.id ? '...' : 'YES'}
+                                </button>
+                                <button
+                                  onClick={() => setConfirmId(null)}
+                                  className="font-inter text-[11px] text-[#555555] hover:text-white transition-colors"
+                                >
+                                  Cancel
+                                </button>
+                              </div>
+                            ) : (
+                              <>
+                                <a href={`/gyms/${g.slug}`} className="text-[#555555] hover:text-white transition-colors"><ExternalLink size={14} /></a>
+                                <button onClick={() => setConfirmId(g.id)} className="text-[#555555] hover:text-[#FF3B3B] transition-colors"><Trash2 size={14} /></button>
+                              </>
+                            )}
+                          </div>
                         </td>
                       </tr>
                     ))}
@@ -111,7 +154,23 @@ export default function ActiveGymsPage() {
                       <p className="font-inter text-white font-semibold text-sm">{g.name}</p>
                       <p className="font-inter text-[#999999] text-xs mt-0.5">{g.city ?? '—'}</p>
                     </div>
-                    <ExternalLink size={14} className="text-[#555555] shrink-0" />
+                    {confirmId === g.id ? (
+                      <div className="flex items-center gap-2 shrink-0">
+                        <button
+                          onClick={() => handleDelete(g.id)}
+                          disabled={deletingId === g.id}
+                          className="font-bebas tracking-[1px] text-xs bg-[#FF3B3B] text-white px-2.5 py-1 rounded-sm hover:bg-[#cc2f2f] transition-colors disabled:opacity-50"
+                        >
+                          {deletingId === g.id ? '...' : 'YES'}
+                        </button>
+                        <button onClick={() => setConfirmId(null)} className="font-inter text-[11px] text-[#555555]">Cancel</button>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-3 shrink-0">
+                        <ExternalLink size={14} className="text-[#555555]" />
+                        <button onClick={() => setConfirmId(g.id)} className="text-[#555555] hover:text-[#FF3B3B] transition-colors"><Trash2 size={14} /></button>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>

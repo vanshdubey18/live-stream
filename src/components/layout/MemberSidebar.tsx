@@ -50,17 +50,17 @@ export default function MemberSidebar({ active = 'Dashboard', onSearchOpen }: Me
   return (
     <>
       {/* Mobile top bar */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-[#0D0D0D] border-b border-[#333333] px-4 h-14 flex items-center justify-between">
-        <span className="font-bebas tracking-[2px] text-xl text-[#FF3B3B]">MATPEAK</span>
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-[#141410] border-b border-[#322f26] px-4 h-14 flex items-center justify-between">
+        <span className="font-mincho tracking-[2px] text-xl text-[#b3402f]">MATPEAK</span>
         <div className="flex items-center gap-2">
           <button
             onClick={handleSearchClick}
-            className="w-9 h-9 flex items-center justify-center text-[#555555] hover:text-white transition-colors"
+            className="w-9 h-9 flex items-center justify-center text-[#7a7568] hover:text-[#f0eadc] transition-colors"
             aria-label="Search"
           >
             <Search size={18} />
           </button>
-          <button onClick={() => setOpen(!open)} className="text-white">
+          <button onClick={() => setOpen(!open)} className="text-[#f0eadc]">
             {open ? <X size={22} /> : <Menu size={22} />}
           </button>
         </div>
@@ -76,43 +76,43 @@ export default function MemberSidebar({ active = 'Dashboard', onSearchOpen }: Me
 
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 h-full z-40 w-[75vw] max-w-[280px] lg:w-64 bg-[#0D0D0D] border-r border-[#333333] flex flex-col transition-transform duration-300
+        className={`fixed top-0 left-0 h-full z-40 w-[75vw] max-w-[280px] lg:w-64 bg-[#141410] border-r border-[#322f26] flex flex-col transition-transform duration-300
           ${open ? 'translate-x-0' : '-translate-x-full'}
           lg:translate-x-0`}
       >
         {/* Logo */}
-        <div className="h-16 flex items-center px-6 border-b border-[#333333]">
-          <span className="font-bebas tracking-[2px] text-xl text-[#FF3B3B]">MATPEAK</span>
+        <div className="h-16 flex items-center px-6 border-b border-[#322f26]">
+          <span className="font-mincho tracking-[2px] text-xl text-[#b3402f]">MATPEAK</span>
         </div>
 
         {/* Search button */}
-        <div className="px-3 py-3 border-b border-[#333333]">
+        <div className="px-3 py-3 border-b border-[#322f26]">
           <button
             onClick={handleSearchClick}
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm font-inter text-[#555555] hover:text-white transition-colors group"
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm font-mincho text-[#7a7568] hover:text-[#f0eadc] transition-colors group"
           >
             <Search size={18} className="shrink-0" />
             <span className="flex-1 text-left">Search</span>
-            <kbd className="hidden lg:flex items-center gap-0.5 text-[#444] text-[10px] bg-[#1A1A1A] border border-[#333333] rounded-sm px-1.5 py-0.5 font-mono">
+            <kbd className="hidden lg:flex items-center gap-0.5 text-[#444] text-[10px] bg-[#1c1c16] border border-[#322f26] rounded-sm px-1.5 py-0.5 font-mono">
               ⌘K
             </kbd>
           </button>
         </div>
 
         {/* AI Coach CTA */}
-        <div className="px-3 py-3 border-b border-[#333333]">
+        <div className="px-3 py-3 border-b border-[#322f26]">
           <button
             onClick={() => window.dispatchEvent(new CustomEvent('open-ai-coach'))}
-            className="w-full flex items-center gap-3 px-3 py-3 rounded-sm bg-[#FF3B3B]/10 border border-[#FF3B3B]/20 hover:bg-[#FF3B3B]/20 transition-colors group"
+            className="w-full flex items-center gap-3 px-3 py-3 rounded-sm bg-[#b3402f]/10 border border-[#b3402f]/20 hover:bg-[#b3402f]/20 transition-colors group"
           >
-            <div className="w-6 h-6 rounded-sm bg-[#FF3B3B]/20 flex items-center justify-center shrink-0">
-              <Sparkles size={13} className="text-[#FF3B3B]" />
+            <div className="w-6 h-6 rounded-sm bg-[#b3402f]/20 flex items-center justify-center shrink-0">
+              <Sparkles size={13} className="text-[#b3402f]" />
             </div>
             <div className="flex-1 text-left">
-              <p className="font-bebas text-sm text-white tracking-[1px] leading-none">AI COACH</p>
-              <p className="font-inter text-[10px] text-[#FF3B3B]/70 mt-0.5">Ask about your classes</p>
+              <p className="font-mincho text-sm text-[#f0eadc] tracking-[1px] leading-none">AI COACH</p>
+              <p className="font-mincho text-[10px] text-[#b3402f]/70 mt-0.5">Ask about your classes</p>
             </div>
-            <span className="font-inter text-[9px] text-[#FF3B3B] tracking-[2px] uppercase border border-[#FF3B3B]/30 px-1.5 py-0.5 rounded-sm shrink-0">
+            <span className="font-mincho text-[9px] text-[#b3402f] tracking-[2px] uppercase border border-[#b3402f]/30 px-1.5 py-0.5 rounded-sm shrink-0">
               Soon
             </span>
           </button>
@@ -127,16 +127,16 @@ export default function MemberSidebar({ active = 'Dashboard', onSearchOpen }: Me
                 key={label}
                 href={href}
                 onClick={() => setOpen(false)}
-                className={`flex items-center gap-3 px-3 py-2.5 text-sm font-inter transition-colors duration-200
+                className={`flex items-center gap-3 px-3 py-2.5 text-sm font-mincho transition-colors duration-200
                   ${isActive
-                    ? 'text-white bg-[#1A1A1A] border-l-2 border-[#FF3B3B]'
-                    : 'text-[#999999] hover:text-white'
+                    ? 'text-[#f0eadc] bg-[#1c1c16] border-l-2 border-[#b3402f]'
+                    : 'text-[#a29c8c] hover:text-[#f0eadc]'
                   }`}
               >
-                <Icon size={18} className={isActive ? 'text-[#FF3B3B]' : ''} />
+                <Icon size={18} className={isActive ? 'text-[#b3402f]' : ''} />
                 <span className="flex-1">{label}</span>
                 {soon && (
-                  <span className="font-inter text-[9px] text-[#FF3B3B] tracking-[2px] uppercase border border-[#FF3B3B]/30 px-1.5 py-0.5 rounded-sm shrink-0">
+                  <span className="font-mincho text-[9px] text-[#b3402f] tracking-[2px] uppercase border border-[#b3402f]/30 px-1.5 py-0.5 rounded-sm shrink-0">
                     Soon
                   </span>
                 )}
@@ -146,10 +146,10 @@ export default function MemberSidebar({ active = 'Dashboard', onSearchOpen }: Me
         </nav>
 
         {/* Logout */}
-        <div className="px-3 py-4 border-t border-[#333333]">
+        <div className="px-3 py-4 border-t border-[#322f26]">
           <button
             onClick={async () => { await createClient().auth.signOut(); router.push('/login') }}
-            className="flex items-center gap-3 px-3 py-2.5 text-sm font-inter text-[#555555] hover:text-white transition-colors w-full"
+            className="flex items-center gap-3 px-3 py-2.5 text-sm font-mincho text-[#7a7568] hover:text-[#f0eadc] transition-colors w-full"
           >
             <LogOut size={18} />
             Log out

@@ -16,11 +16,11 @@ export default function GymCard({
   city,
 }: GymCardProps) {
   return (
-    <div className="bg-[#1A1A1A] border border-[#2A2A2A] rounded-sm p-6 hover:border-[#333333] transition-all duration-200 flex flex-col gap-4">
+    <div className="bg-[#1c1c16] border border-[#2a2a20] rounded-sm p-6 hover:border-[#322f26] transition-all duration-200 flex flex-col gap-4">
       {/* Header */}
       <div>
-        <h3 className="font-bebas text-2xl text-white leading-tight">{name}</h3>
-        <p className="font-inter text-sm text-[#999999] mt-0.5">{city}</p>
+        <h3 className="font-mincho text-2xl text-[#f0eadc] leading-tight">{name}</h3>
+        <p className="font-mincho text-sm text-[#a29c8c] mt-0.5">{city}</p>
       </div>
 
       {/* Disciplines */}
@@ -28,7 +28,7 @@ export default function GymCard({
         {disciplines.map((d) => (
           <span
             key={d}
-            className="font-inter text-[10px] text-[#555555] tracking-[2px] uppercase"
+            className="font-mincho text-[10px] text-[#7a7568] tracking-[2px] uppercase"
           >
             {d}
           </span>
@@ -36,18 +36,18 @@ export default function GymCard({
       </div>
 
       {/* Next class */}
-      <div className="flex items-center gap-2 bg-[#0D0D0D] rounded-sm px-4 py-3">
-        <Calendar size={14} className="text-[#FF3B3B] shrink-0" />
+      <div className="flex items-center gap-2 bg-[#141410] rounded-sm px-4 py-3">
+        <Calendar size={14} className="text-[#b3402f] shrink-0" />
         <div className="min-w-0">
-          <p className="text-white text-xs font-medium truncate">{nextClass}</p>
-          <p className="text-[#999999] text-xs">{nextClassTime}</p>
+          <p className="text-[#f0eadc] text-xs font-medium truncate">{nextClass}</p>
+          <p className="text-[#a29c8c] text-xs">{nextClassTime}</p>
         </div>
       </div>
 
       {/* CTA */}
       <a
         href="#"
-        className="flex items-center justify-center gap-1.5 border border-[#333333] hover:bg-[#222222] text-white text-sm font-semibold py-2.5 rounded-sm transition-all duration-200"
+        className="flex items-center justify-center gap-1.5 border border-[#322f26] hover:bg-[#242420] text-[#f0eadc] text-sm font-semibold py-2.5 rounded-sm transition-all duration-200"
       >
         View Schedule <ChevronRight size={14} />
       </a>

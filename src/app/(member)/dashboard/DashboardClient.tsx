@@ -21,11 +21,11 @@ interface Props {
 }
 
 const DISCIPLINE_COLOR: Record<string, string> = {
-  BJJ: '#ffffff',
-  Boxing: '#999999',
-  'Muay Thai': '#555555',
-  Wrestling: '#333333',
-  MMA: '#444444',
+  BJJ: '#f0eadc',
+  Boxing: '#a29c8c',
+  'Muay Thai': '#7a7568',
+  Wrestling: '#322f26',
+  MMA: '#635f54',
 }
 
 function formatTime(iso: string) {
@@ -49,21 +49,21 @@ function LiveBanner({ session }: { session: any }) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.2, ease: 'easeOut' }}
-      className="block border-b border-[#333333] bg-[#1A1A1A] hover:bg-[#222222] transition-colors duration-150"
+      className="block border-b border-[#322f26] bg-[#1c1c16] hover:bg-[#242420] transition-colors duration-150"
     >
       <div className="max-w-[1280px] mx-auto px-6 py-4 flex items-center justify-between gap-4">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[#FF3B3B] live-pulse" />
-            <span className="font-inter text-[11px] text-[#FF3B3B] tracking-[4px] uppercase">Live Now</span>
+            <span className="w-2 h-2 rounded-full bg-[#b3402f] live-pulse" />
+            <span className="font-mincho text-[11px] text-[#b3402f] tracking-[4px] uppercase">Live Now</span>
           </div>
-          <span className="font-bebas text-xl text-white tracking-[1px]">{session.title}</span>
-          <span className="font-inter text-sm text-[#999999] hidden sm:inline">
+          <span className="font-mincho text-xl text-[#f0eadc] tracking-[1px]">{session.title}</span>
+          <span className="font-mincho text-sm text-[#a29c8c] hidden sm:inline">
             {session.gyms?.name ?? session.gym_name}
           </span>
         </div>
-        <div className="flex items-center gap-2 text-[#FF3B3B] shrink-0">
-          <span className="font-inter text-xs">Watch now</span>
+        <div className="flex items-center gap-2 text-[#b3402f] shrink-0">
+          <span className="font-mincho text-xs">Watch now</span>
           <ArrowRight size={14} />
         </div>
       </div>
@@ -94,13 +94,13 @@ function StreakRing({ weekSessions, goal = 4 }: { weekSessions: number; goal?: n
       {/* Ring */}
       <div className="relative" style={{ width: size, height: size }}>
         {/* Ambient glow behind the whole ring */}
-        <div className="absolute -inset-6 bg-[#FF3B3B]/[0.08] blur-[36px] rounded-full pointer-events-none" />
+        <div className="absolute -inset-6 bg-[#b3402f]/[0.08] blur-[36px] rounded-full pointer-events-none" />
         {/* Glow layer */}
         <svg className="absolute inset-0 blur-[8px] opacity-50" width={size} height={size}>
           <circle
             cx={cx} cy={cy} r={r}
             fill="none"
-            stroke="#FF3B3B"
+            stroke="#b3402f"
             strokeWidth={strokeWidth + 2}
             strokeDasharray={`${dash} ${gap}`}
             strokeLinecap="round"
@@ -109,14 +109,14 @@ function StreakRing({ weekSessions, goal = 4 }: { weekSessions: number; goal?: n
         </svg>
         {/* Track ring */}
         <svg className="absolute inset-0" width={size} height={size}>
-          <circle cx={cx} cy={cy} r={r} fill="none" stroke="#1A1A1A" strokeWidth={strokeWidth} />
+          <circle cx={cx} cy={cy} r={r} fill="none" stroke="#1c1c16" strokeWidth={strokeWidth} />
         </svg>
         {/* Progress ring */}
         <svg className="absolute inset-0" width={size} height={size}>
           <defs>
             <linearGradient id="ring-grad" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#FF3B3B" />
-              <stop offset="100%" stopColor="#FF6B6B" />
+              <stop offset="0%" stopColor="#b3402f" />
+              <stop offset="100%" stopColor="#c25040" />
             </linearGradient>
           </defs>
           <circle
@@ -132,10 +132,10 @@ function StreakRing({ weekSessions, goal = 4 }: { weekSessions: number; goal?: n
         </svg>
         {/* Center content */}
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-0.5">
-          <span className="font-bebas text-[52px] text-white leading-none tracking-[1px]">
+          <span className="font-mincho text-[52px] text-[#f0eadc] leading-none tracking-[1px]">
             {weekSessions}
           </span>
-          <span className="font-inter text-[10px] text-[#555555] uppercase tracking-[3px]">
+          <span className="font-mincho text-[10px] text-[#7a7568] uppercase tracking-[3px]">
             / {goal} this week
           </span>
         </div>
@@ -152,10 +152,10 @@ function StreakRing({ weekSessions, goal = 4 }: { weekSessions: number; goal?: n
             <div key={i} className="flex flex-col items-center gap-1.5">
               <span
                 className={`w-1.5 h-1.5 rounded-full transition-colors ${
-                  isToday ? 'bg-[#FF3B3B]' : isPast ? 'bg-[#333333]' : 'bg-[#222222]'
+                  isToday ? 'bg-[#b3402f]' : isPast ? 'bg-[#322f26]' : 'bg-[#242420]'
                 }`}
               />
-              <span className={`font-inter text-[9px] uppercase tracking-[1px] ${isToday ? 'text-white' : 'text-[#444444]'}`}>
+              <span className={`font-mincho text-[9px] uppercase tracking-[1px] ${isToday ? 'text-[#f0eadc]' : 'text-[#635f54]'}`}>
                 {label}
               </span>
             </div>
@@ -163,7 +163,7 @@ function StreakRing({ weekSessions, goal = 4 }: { weekSessions: number; goal?: n
         })}
       </div>
 
-      <p className="font-inter text-[10px] text-[#444444] uppercase tracking-[3px]">Weekly Goal</p>
+      <p className="font-mincho text-[10px] text-[#635f54] uppercase tracking-[3px]">Weekly Goal</p>
     </div>
   )
 }
@@ -190,26 +190,26 @@ function HeroPanel({ upcoming, user, memberships }: { upcoming: any[]; user: { n
   const firstName = user.name?.split(' ')[0] ?? 'Fighter'
 
   return (
-    <section className="relative border-b border-[#333333] overflow-hidden">
+    <section className="relative border-b border-[#322f26] overflow-hidden">
       {/* Ambient glow — atmospheric depth behind the hero stat */}
-      <div className="absolute -top-24 -left-24 w-[420px] h-[420px] bg-[#FF3B3B]/[0.07] blur-[100px] rounded-full pointer-events-none" />
+      <div className="absolute -top-24 -left-24 w-[420px] h-[420px] bg-[#b3402f]/[0.07] blur-[100px] rounded-full pointer-events-none" />
       <div className="relative max-w-[1280px] mx-auto px-4 sm:px-6 py-8 lg:py-12">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 lg:gap-12">
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-5 h-px bg-[#FF3B3B]" />
-              <p className="font-inter text-[11px] text-[#FF3B3B] uppercase tracking-[4px]">Today&apos;s Training</p>
+              <div className="w-5 h-px bg-[#b3402f]" />
+              <p className="font-mincho text-[11px] text-[#b3402f] uppercase tracking-[4px]">Today&apos;s Training</p>
             </div>
             <div className="relative inline-block">
-              <div className="absolute -inset-6 bg-[#FF3B3B]/[0.12] blur-[40px] rounded-full pointer-events-none" />
-              <div className="relative font-bebas text-[56px] sm:text-[80px] lg:text-[96px] text-white leading-none tracking-[1px]">
+              <div className="absolute -inset-6 bg-[#b3402f]/[0.12] blur-[40px] rounded-full pointer-events-none" />
+              <div className="relative font-mincho text-[56px] sm:text-[80px] lg:text-[96px] text-[#f0eadc] leading-none tracking-[1px]">
                 {todayCount || upcoming.length || 0}
               </div>
             </div>
-            <p className="font-inter text-sm text-[#999999] mt-3">
+            <p className="font-mincho text-sm text-[#a29c8c] mt-3">
               {(todayCount || upcoming.length) ? 'Classes available today' : 'No classes scheduled yet'}
             </p>
-            <p className="font-inter text-xs text-[#555555] mt-1 uppercase tracking-[2px]">
+            <p className="font-mincho text-xs text-[#7a7568] mt-1 uppercase tracking-[2px]">
               Good to see you, {firstName}
             </p>
 
@@ -218,7 +218,7 @@ function HeroPanel({ upcoming, user, memberships }: { upcoming: any[]; user: { n
                 {memberships.map((m: any) => (
                   <span
                     key={m.id ?? m.gyms?.id}
-                    className="inline-flex items-center gap-2 font-inter text-[11px] text-[#00D4AA] tracking-[3px] uppercase border border-[#00D4AA]/20 bg-[#00D4AA]/5 px-3 py-1.5 rounded-sm"
+                    className="inline-flex items-center gap-2 font-mincho text-[11px] text-[#00D4AA] tracking-[3px] uppercase border border-[#00D4AA]/20 bg-[#00D4AA]/5 px-3 py-1.5 rounded-sm"
                   >
                     {m.gyms?.logo_url ? (
                       <img src={m.gyms.logo_url} alt="" className="w-4 h-4 rounded-sm object-cover shrink-0" />
@@ -244,14 +244,14 @@ function HeroPanel({ upcoming, user, memberships }: { upcoming: any[]; user: { n
 
 // ─── Stats Row ────────────────────────────────────────────────────────────────
 const DISCIPLINE_BAR_COLOR: Record<string, string> = {
-  BJJ: '#FF3B3B',
-  Boxing: '#FFFFFF',
-  'Muay Thai': '#999999',
-  Wrestling: '#666666',
-  MMA: '#444444',
-  Kickboxing: '#555555',
-  Judo: '#333333',
-  Sambo: '#2A2A2A',
+  BJJ: '#b3402f',
+  Boxing: '#f0eadc',
+  'Muay Thai': '#a29c8c',
+  Wrestling: '#7a7568',
+  MMA: '#635f54',
+  Kickboxing: '#7a7568',
+  Judo: '#322f26',
+  Sambo: '#2a2a20',
 }
 
 function StatsRow({ completedCount, totalHours, monthCount, upcoming, replays }: {
@@ -301,34 +301,34 @@ function StatsRow({ completedCount, totalHours, monthCount, upcoming, replays }:
   const topDisc = Object.entries(discCounts).sort(([, a], [, b]) => b - a).slice(0, 5)
 
   return (
-    <section className="border-b border-[#333333]">
+    <section className="border-b border-[#322f26]">
       <div className="max-w-[1280px] mx-auto px-6 py-6 space-y-6">
 
         {/* ── Top: weekly goal + supporting stats ── */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 divide-x divide-y sm:divide-y-0 divide-[#333333]">
+        <div className="grid grid-cols-2 sm:grid-cols-4 divide-x divide-y sm:divide-y-0 divide-[#322f26]">
           {/* Weekly sessions — anchor stat */}
           <motion.div
             initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.2, ease: 'easeOut' }}
             className="relative pr-6 pb-6 sm:pb-0"
           >
-            <div className="absolute left-0 top-2 bottom-2 w-0.5 bg-[#FF3B3B]" />
+            <div className="absolute left-0 top-2 bottom-2 w-0.5 bg-[#b3402f]" />
             <div className="pl-4">
-              <p className="font-inter text-[10px] text-[#999999] uppercase tracking-[3px] mb-2">This Week</p>
+              <p className="font-mincho text-[10px] text-[#a29c8c] uppercase tracking-[3px] mb-2">This Week</p>
               <div className="flex items-baseline gap-1">
-                <span className="font-bebas text-5xl sm:text-6xl text-white leading-none tracking-[1px]">{weekCount}</span>
-                <span className="font-bebas text-2xl text-[#333333] leading-none tracking-[1px]">/ {weekGoal}</span>
+                <span className="font-mincho text-5xl sm:text-6xl text-[#f0eadc] leading-none tracking-[1px]">{weekCount}</span>
+                <span className="font-mincho text-2xl text-[#322f26] leading-none tracking-[1px]">/ {weekGoal}</span>
               </div>
               {/* Progress bar */}
-              <div className="mt-3 h-0.5 bg-[#222222] rounded-full overflow-visible">
+              <div className="mt-3 h-0.5 bg-[#242420] rounded-full overflow-visible">
                 <motion.div
-                  className="h-full bg-[#FF3B3B] rounded-full shadow-[0_0_8px_1px_rgba(255,59,59,0.6)]"
+                  className="h-full bg-[#b3402f] rounded-full shadow-[0_0_8px_1px_rgba(179, 64, 47,0.6)]"
                   initial={{ width: 0 }}
                   animate={{ width: `${weekProgress * 100}%` }}
                   transition={{ duration: 0.6, ease: 'easeOut', delay: 0.2 }}
                 />
               </div>
-              <p className="font-inter text-[10px] text-[#999999] mt-1.5 tracking-[2px] uppercase">
+              <p className="font-mincho text-[10px] text-[#a29c8c] mt-1.5 tracking-[2px] uppercase">
                 {weekCount >= weekGoal ? 'Goal reached' : `${weekGoal - weekCount} to go`}
               </p>
             </div>
@@ -346,8 +346,8 @@ function StatsRow({ completedCount, totalHours, monthCount, upcoming, replays }:
               transition={{ duration: 0.2, ease: 'easeOut', delay: (i + 1) * 0.05 }}
               className="px-6 py-0 flex flex-col justify-center"
             >
-              <div className="font-bebas text-4xl sm:text-5xl text-white leading-none tracking-[1px]">{number}</div>
-              <p className="font-inter text-[10px] text-[#999999] uppercase tracking-[3px] mt-1.5">{label}</p>
+              <div className="font-mincho text-4xl sm:text-5xl text-[#f0eadc] leading-none tracking-[1px]">{number}</div>
+              <p className="font-mincho text-[10px] text-[#a29c8c] uppercase tracking-[3px] mt-1.5">{label}</p>
             </motion.div>
           ))}
         </div>
@@ -356,11 +356,11 @@ function StatsRow({ completedCount, totalHours, monthCount, upcoming, replays }:
         <motion.div
           initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.2, ease: 'easeOut', delay: 0.25 }}
-          className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 border-t border-[#1A1A1A]"
+          className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 border-t border-[#1c1c16]"
         >
           {/* 7-day activity bars */}
           <div>
-            <p className="font-inter text-[10px] text-[#999999] uppercase tracking-[3px] mb-3">Week Activity</p>
+            <p className="font-mincho text-[10px] text-[#a29c8c] uppercase tracking-[3px] mb-3">Week Activity</p>
             <div className="flex items-end gap-1.5 h-10">
               {dayCounts.map((count, i) => {
                 const isToday = i === todayIdx
@@ -368,7 +368,7 @@ function StatsRow({ completedCount, totalHours, monthCount, upcoming, replays }:
                 return (
                   <div key={i} className="flex-1 flex flex-col items-center gap-1.5">
                     <motion.div
-                      className={`w-full rounded-sm ${isToday ? 'bg-[#FF3B3B]' : count > 0 ? 'bg-[#555555]' : 'bg-[#1A1A1A]'}`}
+                      className={`w-full rounded-sm ${isToday ? 'bg-[#b3402f]' : count > 0 ? 'bg-[#7a7568]' : 'bg-[#1c1c16]'}`}
                       style={{ height: `${heightPct}%` }}
                       initial={{ scaleY: 0 }}
                       animate={{ scaleY: 1 }}
@@ -381,7 +381,7 @@ function StatsRow({ completedCount, totalHours, monthCount, upcoming, replays }:
             <div className="flex gap-1.5 mt-1.5">
               {dayLabels.map((label, i) => (
                 <div key={i} className="flex-1 flex justify-center">
-                  <span className={`font-inter text-[9px] uppercase tracking-[1px] ${i === todayIdx ? 'text-[#FF3B3B]' : 'text-[#333333]'}`}>
+                  <span className={`font-mincho text-[9px] uppercase tracking-[1px] ${i === todayIdx ? 'text-[#b3402f]' : 'text-[#322f26]'}`}>
                     {label}
                   </span>
                 </div>
@@ -391,7 +391,7 @@ function StatsRow({ completedCount, totalHours, monthCount, upcoming, replays }:
 
           {/* Discipline breakdown */}
           <div>
-            <p className="font-inter text-[10px] text-[#999999] uppercase tracking-[3px] mb-3">Discipline Split</p>
+            <p className="font-mincho text-[10px] text-[#a29c8c] uppercase tracking-[3px] mb-3">Discipline Split</p>
             {totalDisc > 1 ? (
               <>
                 {/* Segmented bar */}
@@ -410,14 +410,14 @@ function StatsRow({ completedCount, totalHours, monthCount, upcoming, replays }:
                   {topDisc.map(([disc, count]) => (
                     <div key={disc} className="flex items-center gap-1.5">
                       <span className="w-1.5 h-1.5 rounded-sm shrink-0" style={{ backgroundColor: DISCIPLINE_BAR_COLOR[disc] ?? '#444' }} />
-                      <span className="font-inter text-[10px] text-[#999999] uppercase tracking-[1px]">{disc}</span>
-                      <span className="font-inter text-[10px] text-[#999999]">{Math.round((count / totalDisc) * 100)}%</span>
+                      <span className="font-mincho text-[10px] text-[#a29c8c] uppercase tracking-[1px]">{disc}</span>
+                      <span className="font-mincho text-[10px] text-[#a29c8c]">{Math.round((count / totalDisc) * 100)}%</span>
                     </div>
                   ))}
                 </div>
               </>
             ) : (
-              <p className="font-inter text-xs text-[#333333]">Train more to see your split</p>
+              <p className="font-mincho text-xs text-[#322f26]">Train more to see your split</p>
             )}
           </div>
         </motion.div>
@@ -432,13 +432,13 @@ function MyGyms({ memberships }: { memberships: any[] }) {
   if (!memberships.length) return null
 
   return (
-    <section className="border-b border-[#333333]">
+    <section className="border-b border-[#322f26]">
       <div className="max-w-[1280px] mx-auto px-6 py-8">
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-5 h-px bg-[#FF3B3B]" />
-          <p className="font-inter text-[11px] text-[#FF3B3B] uppercase tracking-[4px]">My Gyms</p>
+          <div className="w-5 h-px bg-[#b3402f]" />
+          <p className="font-mincho text-[11px] text-[#b3402f] uppercase tracking-[4px]">My Gyms</p>
         </div>
-        <div className="divide-y divide-[#333333]">
+        <div className="divide-y divide-[#322f26]">
           {memberships.map((m: any) => {
             const gym = m.gyms ?? {}
             const disciplines: string[] = gym.disciplines ?? m.disciplines ?? []
@@ -454,29 +454,29 @@ function MyGyms({ memberships }: { memberships: any[] }) {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-3 mb-1.5">
                     {isLive && (
-                      <span className="flex items-center gap-1.5 font-inter text-[10px] text-[#FF3B3B] tracking-[2px] uppercase">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#FF3B3B] live-pulse" />
+                      <span className="flex items-center gap-1.5 font-mincho text-[10px] text-[#b3402f] tracking-[2px] uppercase">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#b3402f] live-pulse" />
                         Live
                       </span>
                     )}
-                    <span className="font-bebas text-xl text-white tracking-[1px] group-hover:text-[#FF3B3B] transition-colors duration-150">
+                    <span className="font-mincho text-xl text-[#f0eadc] tracking-[1px] group-hover:text-[#b3402f] transition-colors duration-150">
                       {gym.name ?? 'Unknown Gym'}
                     </span>
                   </div>
                   <div className="flex items-center gap-2 flex-wrap">
                     {disciplines.slice(0, 4).map((d: string, idx: number) => (
                       <span key={d} className="flex items-center gap-2">
-                        {idx > 0 && <span className="text-[#333333] text-xs">·</span>}
-                        <span className="font-inter text-xs text-[#555555] uppercase tracking-[2px]">{d}</span>
+                        {idx > 0 && <span className="text-[#322f26] text-xs">·</span>}
+                        <span className="font-mincho text-xs text-[#7a7568] uppercase tracking-[2px]">{d}</span>
                       </span>
                     ))}
                   </div>
                 </div>
                 <div className="flex items-center gap-4 ml-4 shrink-0">
                   {nextTime && !isLive && (
-                    <span className="font-inter text-sm text-[#999999]">Next {nextTime}</span>
+                    <span className="font-mincho text-sm text-[#a29c8c]">Next {nextTime}</span>
                   )}
-                  <ChevronRight size={16} className="text-[#555555] group-hover:text-white transition-colors duration-150" />
+                  <ChevronRight size={16} className="text-[#7a7568] group-hover:text-[#f0eadc] transition-colors duration-150" />
                 </div>
               </a>
             )
@@ -492,28 +492,28 @@ function UpcomingClasses({ sessions }: { sessions: any[] }) {
   const items = sessions.slice(0, 6)
 
   return (
-    <section className="border-b border-[#333333]">
+    <section className="border-b border-[#322f26]">
       <div className="max-w-[1280px] mx-auto px-6 py-8">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
-            <div className="w-5 h-px bg-[#FF3B3B]" />
-            <p className="font-inter text-[11px] text-[#FF3B3B] uppercase tracking-[4px]">Upcoming Classes</p>
+            <div className="w-5 h-px bg-[#b3402f]" />
+            <p className="font-mincho text-[11px] text-[#b3402f] uppercase tracking-[4px]">Upcoming Classes</p>
           </div>
-          <a href="/dashboard/schedule" className="font-inter text-xs text-[#555555] hover:text-white transition-colors flex items-center gap-1">
+          <a href="/dashboard/schedule" className="font-mincho text-xs text-[#7a7568] hover:text-[#f0eadc] transition-colors flex items-center gap-1">
             View all <ChevronRight size={12} />
           </a>
         </div>
 
         {items.length === 0 ? (
-          <div className="relative bg-[#1A1A1A] border border-[#333333] rounded-sm px-6 py-10 text-center overflow-hidden">
-            <span className="absolute inset-0 flex items-center justify-center font-bebas text-[120px] text-white/[0.03] leading-none select-none pointer-events-none">LIVE</span>
-            <p className="relative font-inter text-sm text-[#555555]">No upcoming classes. Join a gym to get started.</p>
+          <div className="relative bg-[#1c1c16] border border-[#322f26] rounded-sm px-6 py-10 text-center overflow-hidden">
+            <span className="absolute inset-0 flex items-center justify-center font-mincho text-[120px] text-[#f0eadc]/[0.03] leading-none select-none pointer-events-none">LIVE</span>
+            <p className="relative font-mincho text-sm text-[#7a7568]">No upcoming classes. Join a gym to get started.</p>
           </div>
         ) : (
-          <div className="divide-y divide-[#333333]">
+          <div className="divide-y divide-[#322f26]">
             {items.map((s: any, i: number) => {
               const discipline = s.discipline ?? 'BJJ'
-              const dotColor = DISCIPLINE_COLOR[discipline] ?? '#999999'
+              const dotColor = DISCIPLINE_COLOR[discipline] ?? '#a29c8c'
               return (
                 <motion.a
                   key={s.id}
@@ -525,18 +525,18 @@ function UpcomingClasses({ sessions }: { sessions: any[] }) {
                 >
                   <div className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: dotColor }} />
                   <div className="flex-1 min-w-0">
-                    <p className="font-bebas text-lg text-white tracking-[1px] leading-none mb-1 group-hover:text-[#FF3B3B] transition-colors duration-150">
+                    <p className="font-mincho text-lg text-[#f0eadc] tracking-[1px] leading-none mb-1 group-hover:text-[#b3402f] transition-colors duration-150">
                       {s.title}
                     </p>
-                    <p className="font-inter text-xs text-[#555555]">
+                    <p className="font-mincho text-xs text-[#7a7568]">
                       {s.coaches?.name ?? 'Coach'}&nbsp;·&nbsp;{s.gyms?.name ?? ''}
                     </p>
                   </div>
                   <div className="text-right shrink-0">
-                    <p className="font-inter text-sm text-[#999999]">{formatTime(s.scheduled_at)}</p>
-                    <p className="font-inter text-[11px] text-[#555555]">{formatRelDay(s.scheduled_at)}</p>
+                    <p className="font-mincho text-sm text-[#a29c8c]">{formatTime(s.scheduled_at)}</p>
+                    <p className="font-mincho text-[11px] text-[#7a7568]">{formatRelDay(s.scheduled_at)}</p>
                   </div>
-                  <span className="font-inter text-[10px] text-[#555555] uppercase tracking-[2px] border border-[#333333] bg-[#222222] px-2 py-0.5 rounded-sm shrink-0">
+                  <span className="font-mincho text-[10px] text-[#7a7568] uppercase tracking-[2px] border border-[#322f26] bg-[#242420] px-2 py-0.5 rounded-sm shrink-0">
                     {discipline}
                   </span>
                 </motion.a>
@@ -555,18 +555,18 @@ function RecentReplays({ replays }: { replays: any[] }) {
   if (!items.length) return null
 
   return (
-    <section className="border-b border-[#333333]">
+    <section className="border-b border-[#322f26]">
       <div className="max-w-[1280px] mx-auto px-6 py-8">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
-            <div className="w-5 h-px bg-[#FF3B3B]" />
-            <p className="font-inter text-[11px] text-[#FF3B3B] uppercase tracking-[4px]">Replay Library</p>
+            <div className="w-5 h-px bg-[#b3402f]" />
+            <p className="font-mincho text-[11px] text-[#b3402f] uppercase tracking-[4px]">Replay Library</p>
           </div>
-          <a href="/dashboard/replays" className="font-inter text-xs text-[#555555] hover:text-white transition-colors flex items-center gap-1">
+          <a href="/dashboard/replays" className="font-mincho text-xs text-[#7a7568] hover:text-[#f0eadc] transition-colors flex items-center gap-1">
             View all <ChevronRight size={12} />
           </a>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-[#333333]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-[#322f26]">
           {items.map((s: any, i: number) => (
             <motion.a
               key={s.id}
@@ -574,24 +574,24 @@ function RecentReplays({ replays }: { replays: any[] }) {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.2, ease: 'easeOut', delay: i * 0.04 }}
-              className="bg-[#1A1A1A] p-5 block group hover:bg-[#222222] transition-colors duration-150"
+              className="bg-[#1c1c16] p-5 block group hover:bg-[#242420] transition-colors duration-150"
             >
               <div className="flex items-center justify-between mb-3">
-                <span className="font-inter text-[10px] text-[#555555] uppercase tracking-[2px] border border-[#333333] bg-[#222222] px-2 py-0.5 rounded-sm">
+                <span className="font-mincho text-[10px] text-[#7a7568] uppercase tracking-[2px] border border-[#322f26] bg-[#242420] px-2 py-0.5 rounded-sm">
                   {s.discipline ?? 'BJJ'}
                 </span>
                 {s.ai_summary && (
-                  <span className="font-inter text-[10px] text-[#999999] uppercase tracking-[2px]">AI NOTES</span>
+                  <span className="font-mincho text-[10px] text-[#a29c8c] uppercase tracking-[2px]">AI NOTES</span>
                 )}
               </div>
-              <p className="font-bebas text-lg text-white leading-tight tracking-[1px] mb-2 group-hover:text-[#FF3B3B] transition-colors duration-150">
+              <p className="font-mincho text-lg text-[#f0eadc] leading-tight tracking-[1px] mb-2 group-hover:text-[#b3402f] transition-colors duration-150">
                 {s.title}
               </p>
-              <p className="font-inter text-xs text-[#555555]">
+              <p className="font-mincho text-xs text-[#7a7568]">
                 {s.coaches?.name ?? 'Coach'}&nbsp;·&nbsp;{s.duration_minutes ?? 60}m
               </p>
-              <div className="mt-4 h-px bg-[#333333]">
-                <div className="h-px bg-white" style={{ width: '40%' }} />
+              <div className="mt-4 h-px bg-[#322f26]">
+                <div className="h-px bg-[#f0eadc]" style={{ width: '40%' }} />
               </div>
             </motion.a>
           ))}
@@ -611,42 +611,42 @@ function AICoachSection() {
   ]
 
   return (
-    <section className="border-b border-[#333333]">
+    <section className="border-b border-[#322f26]">
       <div className="max-w-[1280px] mx-auto px-6 py-8">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
-            <div className="w-5 h-px bg-[#FF3B3B]" />
-            <h2 className="font-bebas text-2xl text-white tracking-[1px]">AI COACH</h2>
+            <div className="w-5 h-px bg-[#b3402f]" />
+            <h2 className="font-mincho text-2xl text-[#f0eadc] tracking-[1px]">AI COACH</h2>
           </div>
-          <span className="font-inter text-[10px] text-[#FF3B3B] tracking-[3px] uppercase border border-[#FF3B3B]/20 bg-[#FF3B3B]/5 px-3 py-1.5 rounded-sm">
+          <span className="font-mincho text-[10px] text-[#b3402f] tracking-[3px] uppercase border border-[#b3402f]/20 bg-[#b3402f]/5 px-3 py-1.5 rounded-sm">
             Coming Soon
           </span>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-[#333333]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-[#322f26]">
           {features.map((f, i) => (
             <motion.div
               key={f.label}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.2, delay: i * 0.05 }}
-              className={`bg-[#1A1A1A] p-5 flex flex-col gap-3 ${!f.free ? 'opacity-60' : ''}`}
+              className={`bg-[#1c1c16] p-5 flex flex-col gap-3 ${!f.free ? 'opacity-60' : ''}`}
             >
               <div className="flex items-center justify-between">
-                <span className={f.free ? 'text-[#FF3B3B]' : 'text-[#555555]'}>{f.icon}</span>
+                <span className={f.free ? 'text-[#b3402f]' : 'text-[#7a7568]'}>{f.icon}</span>
                 {f.free
-                  ? <span className="font-inter text-[10px] text-[#FF3B3B] tracking-[2px] uppercase">Free</span>
-                  : <Lock size={10} className="text-[#555555]" />}
+                  ? <span className="font-mincho text-[10px] text-[#b3402f] tracking-[2px] uppercase">Free</span>
+                  : <Lock size={10} className="text-[#7a7568]" />}
               </div>
               <div>
-                <p className="font-bebas text-lg text-white tracking-[1px] leading-tight">{f.label}</p>
-                <p className="font-inter text-xs text-[#555555] mt-0.5">{f.sub}</p>
+                <p className="font-mincho text-lg text-[#f0eadc] tracking-[1px] leading-tight">{f.label}</p>
+                <p className="font-mincho text-xs text-[#7a7568] mt-0.5">{f.sub}</p>
               </div>
             </motion.div>
           ))}
         </div>
 
-        <p className="font-inter text-[#555555] text-xs mt-4">
+        <p className="font-mincho text-[#7a7568] text-xs mt-4">
           After every class, AI Coach analyses the transcript and generates your personal study tools. Available on all replays.
         </p>
       </div>
@@ -704,7 +704,7 @@ export default function DashboardClient({ user, memberships, upcoming, replays, 
   }, [gymIds, gymNames])
 
   return (
-    <div className="min-h-screen bg-[#0D0D0D] flex">
+    <div className="min-h-screen bg-[#141410] flex">
       <MemberSidebar active="Dashboard" onSearchOpen={() => setSearchOpen(true)} />
 
       <main className="flex-1 lg:ml-64 min-w-0">
@@ -719,7 +719,7 @@ export default function DashboardClient({ user, memberships, upcoming, replays, 
         <AICoachSection />
 
         {memberships.length === 0 && (
-          <section className="border-b border-[#333333]">
+          <section className="border-b border-[#322f26]">
             <div className="max-w-[1280px] mx-auto px-6 py-8">
               <InsightCard body="Welcome to Matpeak. Browse gyms and join one with your invite code to start training." />
             </div>

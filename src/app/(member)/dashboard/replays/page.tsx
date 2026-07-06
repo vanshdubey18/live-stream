@@ -19,7 +19,7 @@ export default async function ReplaysPage() {
   const replays = await getReplayLibrary(gymIds)
 
   return (
-    <div className="min-h-screen bg-[#0D0D0D] flex">
+    <div className="min-h-screen bg-[#141410] flex">
       <MemberSidebar active="Replays" />
       <ReplaysClient replays={replays as any} gyms={gyms} />
     </div>

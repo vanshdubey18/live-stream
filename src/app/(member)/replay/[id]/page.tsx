@@ -71,18 +71,18 @@ export default async function ReplayPage({ params }: { params: { id: string } })
     const windowMs = REPLAY_WINDOW_DAYS * 24 * 60 * 60 * 1000
     if (classAgeMs > windowMs) {
       return (
-        <div className="min-h-screen bg-[#0D0D0D] flex items-center justify-center px-4">
-          <div className="relative bg-[#1A1A1A] border border-[#333333] rounded-sm px-8 py-16 max-w-md w-full text-center overflow-hidden">
-            <span className="absolute inset-0 flex items-center justify-center font-bebas text-[110px] text-white/[0.03] leading-none select-none pointer-events-none">
+        <div className="min-h-screen bg-[#141410] flex items-center justify-center px-4">
+          <div className="relative bg-[#1c1c16] border border-[#322f26] rounded-sm px-8 py-16 max-w-md w-full text-center overflow-hidden">
+            <span className="absolute inset-0 flex items-center justify-center font-mincho text-[110px] text-[#f0eadc]/[0.03] leading-none select-none pointer-events-none">
               ARCHIVED
             </span>
             <div className="relative space-y-3">
-              <p className="font-inter text-[11px] text-[#555555] tracking-[4px] uppercase">Replay Archived</p>
-              <h1 className="font-bebas text-3xl text-white tracking-[1px]">NO LONGER AVAILABLE</h1>
-              <p className="font-inter text-[#999999] text-sm leading-relaxed">
+              <p className="font-mincho text-[11px] text-[#7a7568] tracking-[4px] uppercase">Replay Archived</p>
+              <h1 className="font-mincho text-3xl text-[#f0eadc] tracking-[1px]">NO LONGER AVAILABLE</h1>
+              <p className="font-mincho text-[#a29c8c] text-sm leading-relaxed">
                 Replays are available for {REPLAY_WINDOW_DAYS} days after class. This one has aged out of the library.
               </p>
-              <a href="/dashboard/replays" className="inline-block font-inter text-[#555555] hover:text-white text-xs transition-colors pt-2">
+              <a href="/dashboard/replays" className="inline-block font-mincho text-[#7a7568] hover:text-[#f0eadc] text-xs transition-colors pt-2">
                 Back to replays
               </a>
             </div>

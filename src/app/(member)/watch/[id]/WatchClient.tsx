@@ -39,53 +39,53 @@ function WaitingRoom({ session }: { session: SessionInfo }) {
 
   return (
     <motion.div key="waiting" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, scale: 0.98 }}
-      transition={{ duration: 0.4 }} className="min-h-screen bg-[#0D0D0D] text-white flex flex-col">
+      transition={{ duration: 0.4 }} className="min-h-screen bg-[#141410] text-[#f0eadc] flex flex-col">
       <div className="px-6 pt-6">
-        <Link href="/dashboard" className="inline-flex items-center gap-2 text-[#999999] hover:text-white font-inter text-sm transition-colors">
+        <Link href="/dashboard" className="inline-flex items-center gap-2 text-[#a29c8c] hover:text-[#f0eadc] font-mincho text-sm transition-colors">
           <ArrowLeft size={14} /> Dashboard
         </Link>
       </div>
       <div className="flex flex-col items-center justify-center flex-1 px-4 py-12 text-center">
         <div className="flex items-center gap-2 mb-8">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#FF3B3B] animate-pulse" />
-          <span className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase">Waiting for stream</span>
+          <span className="w-1.5 h-1.5 rounded-full bg-[#b3402f] animate-pulse" />
+          <span className="font-mincho text-[11px] text-[#a29c8c] tracking-[4px] uppercase">Waiting for stream</span>
         </div>
-        <h1 className="font-bebas text-5xl text-white tracking-[1px] mb-2">{session.title}</h1>
-        <p className="font-inter text-[#999999] text-sm mb-12">
+        <h1 className="font-mincho text-5xl text-[#f0eadc] tracking-[1px] mb-2">{session.title}</h1>
+        <p className="font-mincho text-[#a29c8c] text-sm mb-12">
           {session.coaches?.name ?? 'Coach'}{session.gyms?.name ? ` · ${session.gyms.name}` : ''}
         </p>
         <div className="flex flex-col items-center gap-3 mb-12">
-          <span className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase">Starts in</span>
-          <div className="font-bebas text-7xl text-white tracking-[1px] tabular-nums">
+          <span className="font-mincho text-[11px] text-[#a29c8c] tracking-[4px] uppercase">Starts in</span>
+          <div className="font-mincho text-7xl text-[#f0eadc] tracking-[1px] tabular-nums">
             {pad(Math.floor(mins / 60) > 0 ? Math.floor(mins / 60) : mins)}
-            <span className="text-[#333333] mx-1">:</span>
+            <span className="text-[#322f26] mx-1">:</span>
             {pad(Math.floor(mins / 60) > 0 ? mins % 60 : secs)}
           </div>
-          {seconds === 0 && <p className="font-inter text-[#999999] text-sm animate-pulse">Waiting for the gym to start…</p>}
+          {seconds === 0 && <p className="font-mincho text-[#a29c8c] text-sm animate-pulse">Waiting for the gym to start…</p>}
         </div>
         <div className="w-full max-w-2xl flex flex-col sm:flex-row gap-4">
           <motion.div initial={{ y: 16, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.15 }}
-            className="flex-1 bg-[#1A1A1A] border border-[#333333] rounded-sm p-5 text-left">
-            <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-4">Session</p>
+            className="flex-1 bg-[#1c1c16] border border-[#322f26] rounded-sm p-5 text-left">
+            <p className="font-mincho text-[11px] text-[#a29c8c] tracking-[4px] uppercase mb-4">Session</p>
             <div className="space-y-1 mb-4">
-              <p className="font-inter text-white text-sm font-medium">{session.coaches?.name ?? 'Coach'}</p>
-              <p className="font-inter text-[#999999] text-xs">{session.gyms?.name}</p>
+              <p className="font-mincho text-[#f0eadc] text-sm font-medium">{session.coaches?.name ?? 'Coach'}</p>
+              <p className="font-mincho text-[#a29c8c] text-xs">{session.gyms?.name}</p>
             </div>
-            <div className="border-t border-[#2A2A2A] pt-4 flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#FF3B3B] animate-pulse" />
-              <span className="font-inter text-[#999999] text-xs">Waiting for stream to start</span>
+            <div className="border-t border-[#2a2a20] pt-4 flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#b3402f] animate-pulse" />
+              <span className="font-mincho text-[#a29c8c] text-xs">Waiting for stream to start</span>
             </div>
           </motion.div>
           <motion.div initial={{ y: 16, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.25 }}
-            className="sm:w-64 bg-[#1A1A1A] border border-[#333333] rounded-sm p-5 text-left flex flex-col gap-4">
-            <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase">Get ready</p>
+            className="sm:w-64 bg-[#1c1c16] border border-[#322f26] rounded-sm p-5 text-left flex flex-col gap-4">
+            <p className="font-mincho text-[11px] text-[#a29c8c] tracking-[4px] uppercase">Get ready</p>
             <div className="space-y-3">
               {checkItems.map((item, i) => (
                 <button key={item} onClick={() => toggle(i)} className="w-full flex items-center gap-3 text-left group">
                   {checklist[i]
-                    ? <CheckCircle2 size={16} className="text-white shrink-0" />
+                    ? <CheckCircle2 size={16} className="text-[#f0eadc] shrink-0" />
                     : <Circle size={16} className="text-[#444] shrink-0 group-hover:text-[#666] transition-colors" />}
-                  <span className={`font-inter text-sm transition-colors ${checklist[i] ? 'text-[#999999] line-through' : 'text-[#aaa] group-hover:text-white'}`}>{item}</span>
+                  <span className={`font-mincho text-sm transition-colors ${checklist[i] ? 'text-[#a29c8c] line-through' : 'text-[#aaa] group-hover:text-[#f0eadc]'}`}>{item}</span>
                 </button>
               ))}
             </div>
@@ -184,9 +184,9 @@ function WhepPlayer({ playbackUrl, attempt, onRetry }: { playbackUrl: string | n
     return (
       <div className="w-full h-full flex items-center justify-center bg-black">
         <div className="text-center space-y-3 px-6">
-          <p className="font-inter text-[#FF3B3B] text-xs tracking-[2px] uppercase">Stream error</p>
-          <p className="font-inter text-[#555555] text-xs">{error}</p>
-          <button onClick={onRetry} className="font-inter text-xs text-[#999999] hover:text-white underline">Retry</button>
+          <p className="font-mincho text-[#b3402f] text-xs tracking-[2px] uppercase">Stream error</p>
+          <p className="font-mincho text-[#7a7568] text-xs">{error}</p>
+          <button onClick={onRetry} className="font-mincho text-xs text-[#a29c8c] hover:text-[#f0eadc] underline">Retry</button>
         </div>
       </div>
     )
@@ -200,14 +200,14 @@ function WhepPlayer({ playbackUrl, attempt, onRetry }: { playbackUrl: string | n
           <div className="text-center space-y-4">
             <div className="flex gap-2 justify-center">
               {[0, 1, 2].map(i => (
-                <motion.div key={i} className="w-2 h-2 rounded-full bg-[#FF3B3B]"
+                <motion.div key={i} className="w-2 h-2 rounded-full bg-[#b3402f]"
                   animate={{ scale: [1, 1.5, 1], opacity: [0.4, 1, 0.4] }}
                   transition={{ duration: 0.9, delay: i * 0.25, repeat: Infinity }} />
               ))}
             </div>
-            <p className="font-inter text-[#999999] text-[11px] tracking-[2px] uppercase">Connecting to stream…</p>
+            <p className="font-mincho text-[#a29c8c] text-[11px] tracking-[2px] uppercase">Connecting to stream…</p>
             {timedOut && (
-              <button onClick={onRetry} className="pointer-events-auto font-inter text-xs text-[#555555] hover:text-white underline transition-colors">
+              <button onClick={onRetry} className="pointer-events-auto font-mincho text-xs text-[#7a7568] hover:text-[#f0eadc] underline transition-colors">
                 Taking longer than usual — tap to retry
               </button>
             )}
@@ -215,7 +215,7 @@ function WhepPlayer({ playbackUrl, attempt, onRetry }: { playbackUrl: string | n
         </div>
       )}
       {!connecting && muted && (
-        <button onClick={unmute} className="absolute top-3 right-3 flex items-center gap-1.5 bg-black/70 hover:bg-black/90 border border-white/20 text-white font-inter text-xs px-3 py-1.5 rounded-sm transition-all">
+        <button onClick={unmute} className="absolute top-3 right-3 flex items-center gap-1.5 bg-black/70 hover:bg-black/90 border border-[#f0eadc]/20 text-[#f0eadc] font-mincho text-xs px-3 py-1.5 rounded-sm transition-all">
           <span>🔇</span> TAP TO UNMUTE
         </button>
       )}
@@ -264,7 +264,7 @@ function LiveViewer({ playbackId, sessionId, session, userId, userName }: {
   }, [sessionId, userId, userName])
 
   return (
-    <motion.div key="live" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="min-h-screen bg-[#0D0D0D] flex flex-col lg:flex-row">
+    <motion.div key="live" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="min-h-screen bg-[#141410] flex flex-col lg:flex-row">
       {/* Video — 70% on desktop */}
       <div className="flex-1 lg:w-[70%] bg-black flex items-center min-h-[56vw] lg:min-h-screen">
         {playbackId ? (
@@ -274,58 +274,58 @@ function LiveViewer({ playbackId, sessionId, session, userId, userName }: {
             <div className="text-center space-y-6">
               <div className="flex gap-2 justify-center">
                 {[0, 1, 2].map(i => (
-                  <motion.div key={i} className="w-2 h-2 rounded-full bg-[#FF3B3B]"
+                  <motion.div key={i} className="w-2 h-2 rounded-full bg-[#b3402f]"
                     animate={{ scale: [1, 1.5, 1], opacity: [0.4, 1, 0.4] }}
                     transition={{ duration: 0.9, delay: i * 0.25, repeat: Infinity }} />
                 ))}
               </div>
-              <p className="font-inter text-[#999999] text-[11px] tracking-[2px] uppercase">Stream starting…</p>
+              <p className="font-mincho text-[#a29c8c] text-[11px] tracking-[2px] uppercase">Stream starting…</p>
             </div>
           </div>
         )}
       </div>
 
       {/* Data panel — 30% on desktop */}
-      <div className="lg:w-[30%] bg-[#1A1A1A] border-t lg:border-t-0 lg:border-l border-[#333333] flex flex-col">
-        <div className="px-5 h-12 border-b border-[#2A2A2A] flex items-center">
-          <Link href="/dashboard" className="text-[#999999] hover:text-white transition-colors"><ArrowLeft size={16} /></Link>
+      <div className="lg:w-[30%] bg-[#1c1c16] border-t lg:border-t-0 lg:border-l border-[#322f26] flex flex-col">
+        <div className="px-5 h-12 border-b border-[#2a2a20] flex items-center">
+          <Link href="/dashboard" className="text-[#a29c8c] hover:text-[#f0eadc] transition-colors"><ArrowLeft size={16} /></Link>
         </div>
 
-        <div className="px-5 py-5 border-b border-[#2A2A2A]">
+        <div className="px-5 py-5 border-b border-[#2a2a20]">
           <div className="flex items-center gap-2 mb-3">
-            <span className="inline-flex items-center gap-1.5 bg-[#FF3B3B] px-2 py-0.5 rounded-sm">
-              <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-              <span className="font-inter text-white text-[11px] tracking-[4px] uppercase font-medium">Live</span>
+            <span className="inline-flex items-center gap-1.5 bg-[#b3402f] px-2 py-0.5 rounded-sm">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#f0eadc] animate-pulse" />
+              <span className="font-mincho text-[#f0eadc] text-[11px] tracking-[4px] uppercase font-medium">Live</span>
             </span>
           </div>
-          <h1 className="font-bebas text-[28px] text-white tracking-[1px] leading-tight">{session.title}</h1>
+          <h1 className="font-mincho text-[28px] text-[#f0eadc] tracking-[1px] leading-tight">{session.title}</h1>
         </div>
 
-        <div className="px-5 py-4 border-b border-[#2A2A2A] flex items-center justify-between">
+        <div className="px-5 py-4 border-b border-[#2a2a20] flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[#FF3B3B] animate-pulse" />
-            <span className="font-inter text-[11px] text-[#FF3B3B] tracking-[4px] uppercase">Streaming live</span>
+            <span className="w-2 h-2 rounded-full bg-[#b3402f] animate-pulse" />
+            <span className="font-mincho text-[11px] text-[#b3402f] tracking-[4px] uppercase">Streaming live</span>
           </div>
-          <span className="font-inter text-[11px] text-[#555555]">
+          <span className="font-mincho text-[11px] text-[#7a7568]">
             {startedMinsAgo === 0 ? 'Just started' : `Started ${startedMinsAgo}m ago`}
           </span>
         </div>
 
-        <div className="px-5 py-5 border-b border-[#2A2A2A]">
-          <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-2">Coach</p>
-          <p className="font-bebas text-[18px] text-white tracking-[1px]">{session.coaches?.name ?? 'Coach'}</p>
-          {session.gyms?.name && <p className="font-inter text-[11px] text-[#999999] mt-0.5">{session.gyms.name}</p>}
+        <div className="px-5 py-5 border-b border-[#2a2a20]">
+          <p className="font-mincho text-[11px] text-[#a29c8c] tracking-[4px] uppercase mb-2">Coach</p>
+          <p className="font-mincho text-[18px] text-[#f0eadc] tracking-[1px]">{session.coaches?.name ?? 'Coach'}</p>
+          {session.gyms?.name && <p className="font-mincho text-[11px] text-[#a29c8c] mt-0.5">{session.gyms.name}</p>}
         </div>
 
-        <div className="px-5 py-5 border-b border-[#2A2A2A]">
-          <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-2">Elapsed</p>
-          <div className="font-bebas text-[40px] text-white tracking-[1px] tabular-nums leading-none">
+        <div className="px-5 py-5 border-b border-[#2a2a20]">
+          <p className="font-mincho text-[11px] text-[#a29c8c] tracking-[4px] uppercase mb-2">Elapsed</p>
+          <div className="font-mincho text-[40px] text-[#f0eadc] tracking-[1px] tabular-nums leading-none">
             {pad(Math.floor(elapsed / 3600) > 0 ? Math.floor(elapsed / 3600) : Math.floor(elapsed / 60))}:{pad(Math.floor(elapsed / 3600) > 0 ? Math.floor((elapsed % 3600) / 60) : elapsed % 60)}
           </div>
         </div>
 
         <div className="px-5 py-5 flex-1">
-          <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase mb-4">AI Coach</p>
+          <p className="font-mincho text-[11px] text-[#a29c8c] tracking-[4px] uppercase mb-4">AI Coach</p>
           <div className="space-y-2 mb-5">
             {[
               { icon: <BookOpen size={12} />, label: 'Summary + timestamps', free: true },
@@ -334,13 +334,13 @@ function LiveViewer({ playbackId, sessionId, session, userId, userName }: {
               { icon: <MessageCircle size={12} />, label: 'Ask your coach', free: false },
             ].map(item => (
               <div key={item.label} className={`flex items-center gap-3 px-3 py-2 rounded-sm ${item.free ? 'opacity-100' : 'opacity-40'}`}>
-                <span className={item.free ? 'text-[#00D4AA]' : 'text-[#555555]'}>{item.icon}</span>
-                <span className="font-inter text-sm text-white flex-1">{item.label}</span>
-                {item.free ? <span className="font-inter text-[10px] text-[#00D4AA] tracking-[2px] uppercase">Free</span> : <Lock size={10} className="text-[#FF3B3B]" />}
+                <span className={item.free ? 'text-[#00D4AA]' : 'text-[#7a7568]'}>{item.icon}</span>
+                <span className="font-mincho text-sm text-[#f0eadc] flex-1">{item.label}</span>
+                {item.free ? <span className="font-mincho text-[10px] text-[#00D4AA] tracking-[2px] uppercase">Free</span> : <Lock size={10} className="text-[#b3402f]" />}
               </div>
             ))}
           </div>
-          <p className="font-inter text-[#555555] text-xs leading-relaxed">
+          <p className="font-mincho text-[#7a7568] text-xs leading-relaxed">
             AI Coach analyses this class after it ends. Summary + timestamps are free. Quiz, flashcards and chat unlock with AI Coach.
           </p>
         </div>
@@ -352,30 +352,30 @@ function LiveViewer({ playbackId, sessionId, session, userId, userName }: {
 // ─── Post-class summary ───────────────────────────────────────────────────────
 function PostViewer({ sessionId }: { sessionId: string }) {
   return (
-    <motion.div key="post" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="min-h-screen bg-[#0D0D0D] px-4 py-12 overflow-y-auto">
+    <motion.div key="post" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="min-h-screen bg-[#141410] px-4 py-12 overflow-y-auto">
       <div className="max-w-2xl mx-auto flex flex-col items-center gap-8">
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="text-center space-y-2">
-          <p className="font-inter text-[11px] text-[#999999] tracking-[4px] uppercase">Session complete</p>
-          <h1 className="font-bebas text-5xl text-white tracking-[1px]">Stream Ended</h1>
-          <p className="font-inter text-[#999999] text-sm">
+          <p className="font-mincho text-[11px] text-[#a29c8c] tracking-[4px] uppercase">Session complete</p>
+          <h1 className="font-mincho text-5xl text-[#f0eadc] tracking-[1px]">Stream Ended</h1>
+          <p className="font-mincho text-[#a29c8c] text-sm">
             Your replay and AI summary are being processed. This can take a few minutes — check the replay page to see progress.
           </p>
         </motion.div>
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}
-          className="w-full bg-[#1A1A1A] border border-[#333333] rounded-sm px-6 py-8 flex flex-col items-center gap-5">
+          className="w-full bg-[#1c1c16] border border-[#322f26] rounded-sm px-6 py-8 flex flex-col items-center gap-5">
           <div className="flex gap-2">
             {[0, 1, 2].map(i => (
-              <motion.div key={i} className="w-2 h-2 rounded-full bg-[#FF3B3B]"
+              <motion.div key={i} className="w-2 h-2 rounded-full bg-[#b3402f]"
                 animate={{ scale: [1, 1.6, 1], opacity: [0.4, 1, 0.4] }}
                 transition={{ duration: 0.9, delay: i * 0.25, repeat: Infinity }} />
             ))}
           </div>
-          <p className="font-inter text-[#999999] text-sm">Processing your class…</p>
+          <p className="font-mincho text-[#a29c8c] text-sm">Processing your class…</p>
         </motion.div>
-        <Link href={`/replay/${sessionId}`} className="font-inter text-white hover:text-[#E5E5E5] text-sm transition-colors underline underline-offset-4">
+        <Link href={`/replay/${sessionId}`} className="font-mincho text-[#f0eadc] hover:text-[#e4dcc8] text-sm transition-colors underline underline-offset-4">
           View replay
         </Link>
-        <Link href="/dashboard" className="font-inter text-[#555] hover:text-[#999999] text-sm transition-colors">Back to dashboard</Link>
+        <Link href="/dashboard" className="font-mincho text-[#555] hover:text-[#a29c8c] text-sm transition-colors">Back to dashboard</Link>
       </div>
     </motion.div>
   )
@@ -450,7 +450,7 @@ export default function WatchClient({ session, initialPhase, initialPlaybackId, 
   }, [session.id, phase])
 
   return (
-    <div className="min-h-screen bg-[#0D0D0D] overflow-x-hidden">
+    <div className="min-h-screen bg-[#141410] overflow-x-hidden">
       <AnimatePresence mode="wait">
         {phase === 'waiting' && <WaitingRoom key="waiting" session={session} />}
         {phase === 'live' && (

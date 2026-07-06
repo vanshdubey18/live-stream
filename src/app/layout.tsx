@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Bebas_Neue, Inter } from 'next/font/google'
+import { Bebas_Neue, Inter, Shippori_Mincho } from 'next/font/google'
 import './globals.css'
 import PageTransition from '@/components/layout/PageTransition'
 import SearchProvider from '@/components/search/SearchProvider'
@@ -17,11 +17,18 @@ const inter = Inter({
   display: 'swap',
 })
 
+const shippori = Shippori_Mincho({
+  weight: ['400', '500', '600'],
+  subsets: ['latin'],
+  variable: '--font-mincho',
+  display: 'swap',
+})
+
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   viewportFit: 'cover',
-  themeColor: '#0D0D0D',
+  themeColor: '#141410',
 }
 
 export const metadata: Metadata = {
@@ -42,7 +49,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${bebasNeue.variable} ${inter.variable} font-inter antialiased bg-[#0D0D0D] text-white`}>
+      <body className={`${bebasNeue.variable} ${inter.variable} ${shippori.variable} font-inter antialiased bg-[#141410] text-[#f0eadc]`}>
         <SearchProvider>
           <PageTransition>
             {children}

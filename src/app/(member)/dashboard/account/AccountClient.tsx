@@ -24,16 +24,16 @@ interface AccountClientProps {
 function SectionHeader({ label }: { label: string }) {
   return (
     <div className="flex items-center gap-3 mb-4">
-      <div className="w-5 h-px bg-[#FF3B3B]" />
-      <p className="font-inter text-[11px] text-[#FF3B3B] tracking-[4px] uppercase">{label}</p>
+      <div className="w-5 h-px bg-[#b3402f]" />
+      <p className="font-mincho text-[11px] text-[#b3402f] tracking-[4px] uppercase">{label}</p>
     </div>
   )
 }
 
 const inputClass =
-  'font-inter w-full bg-[#0D0D0D] border border-[#333333] rounded-sm px-4 py-3 text-white placeholder-[#555555] text-sm focus:outline-none focus:border-white transition-colors duration-150'
+  'font-mincho w-full bg-[#141410] border border-[#322f26] rounded-sm px-4 py-3 text-[#f0eadc] placeholder-[#7a7568] text-sm focus:outline-none focus:border-[#f0eadc] transition-colors duration-150'
 
-const labelClass = 'block font-bebas tracking-[2px] text-white text-sm mb-2'
+const labelClass = 'block font-mincho tracking-[2px] text-[#f0eadc] text-sm mb-2'
 
 export default function AccountClient({ email, name: initialName, phone: initialPhone, gyms }: AccountClientProps) {
   const router = useRouter()
@@ -109,23 +109,23 @@ export default function AccountClient({ email, name: initialName, phone: initial
   }
 
   return (
-    <div className="flex-1 min-h-screen bg-[#0D0D0D] lg:pl-64">
+    <div className="flex-1 min-h-screen bg-[#141410] lg:pl-64">
       <div className="pt-14 lg:pt-0">
         <div className="max-w-3xl mx-auto px-6 py-8 space-y-10">
 
           {/* Header */}
           <div>
             <div className="flex items-center gap-3 mb-2">
-              <div className="w-5 h-px bg-[#FF3B3B]" />
-              <p className="font-inter text-[11px] text-[#FF3B3B] tracking-[4px] uppercase">Settings</p>
+              <div className="w-5 h-px bg-[#b3402f]" />
+              <p className="font-mincho text-[11px] text-[#b3402f] tracking-[4px] uppercase">Settings</p>
             </div>
-            <h1 className="font-bebas text-4xl text-white tracking-[1px]">ACCOUNT</h1>
+            <h1 className="font-mincho text-4xl text-[#f0eadc] tracking-[1px]">ACCOUNT</h1>
           </div>
 
           {/* Profile */}
           <section>
             <SectionHeader label="Profile" />
-            <form onSubmit={saveProfile} className="bg-[#1A1A1A] border border-[#333333] rounded-sm p-6 space-y-5">
+            <form onSubmit={saveProfile} className="bg-[#1c1c16] border border-[#322f26] rounded-sm p-6 space-y-5">
               <div>
                 <label className={labelClass}>NAME</label>
                 <input
@@ -149,13 +149,13 @@ export default function AccountClient({ email, name: initialName, phone: initial
               <div>
                 <label className={labelClass}>EMAIL</label>
                 <input type="email" value={email} disabled className={`${inputClass} opacity-50 cursor-not-allowed`} />
-                <p className="font-inter text-[11px] text-[#555555] mt-1.5">Contact support to change your email.</p>
+                <p className="font-mincho text-[11px] text-[#7a7568] mt-1.5">Contact support to change your email.</p>
               </div>
-              {profileError && <p className="font-inter text-[#FF3B3B] text-sm">{profileError}</p>}
+              {profileError && <p className="font-mincho text-[#b3402f] text-sm">{profileError}</p>}
               <button
                 type="submit"
                 disabled={profileSaving}
-                className="font-bebas tracking-[3px] w-full bg-white hover:bg-[#E5E5E5] disabled:opacity-40 disabled:cursor-not-allowed text-black py-3.5 rounded-sm text-sm transition-colors duration-150 flex items-center justify-center gap-2"
+                className="font-mincho tracking-[3px] w-full bg-[#f0eadc] hover:bg-[#e4dcc8] disabled:opacity-40 disabled:cursor-not-allowed text-[#141410] py-3.5 rounded-sm text-sm transition-colors duration-150 flex items-center justify-center gap-2"
               >
                 {profileSaving ? <Loader2 size={16} className="animate-spin" /> : 'SAVE PROFILE'}
               </button>
@@ -165,7 +165,7 @@ export default function AccountClient({ email, name: initialName, phone: initial
           {/* Password */}
           <section>
             <SectionHeader label="Password" />
-            <form onSubmit={savePassword} className="bg-[#1A1A1A] border border-[#333333] rounded-sm p-6 space-y-5">
+            <form onSubmit={savePassword} className="bg-[#1c1c16] border border-[#322f26] rounded-sm p-6 space-y-5">
               <div>
                 <label className={labelClass}>NEW PASSWORD</label>
                 <div className="relative">
@@ -180,7 +180,7 @@ export default function AccountClient({ email, name: initialName, phone: initial
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#555555] hover:text-white transition-colors duration-150"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#7a7568] hover:text-[#f0eadc] transition-colors duration-150"
                     aria-label={showPassword ? 'Hide password' : 'Show password'}
                   >
                     {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -198,11 +198,11 @@ export default function AccountClient({ email, name: initialName, phone: initial
                   className={inputClass}
                 />
               </div>
-              {passwordError && <p className="font-inter text-[#FF3B3B] text-sm">{passwordError}</p>}
+              {passwordError && <p className="font-mincho text-[#b3402f] text-sm">{passwordError}</p>}
               <button
                 type="submit"
                 disabled={passwordSaving || !password}
-                className="font-bebas tracking-[3px] w-full bg-white hover:bg-[#E5E5E5] disabled:opacity-40 disabled:cursor-not-allowed text-black py-3.5 rounded-sm text-sm transition-colors duration-150 flex items-center justify-center gap-2"
+                className="font-mincho tracking-[3px] w-full bg-[#f0eadc] hover:bg-[#e4dcc8] disabled:opacity-40 disabled:cursor-not-allowed text-[#141410] py-3.5 rounded-sm text-sm transition-colors duration-150 flex items-center justify-center gap-2"
               >
                 {passwordSaving ? <Loader2 size={16} className="animate-spin" /> : 'UPDATE PASSWORD'}
               </button>
@@ -213,31 +213,31 @@ export default function AccountClient({ email, name: initialName, phone: initial
           <section>
             <SectionHeader label="Memberships" />
             {gyms.length === 0 ? (
-              <div className="relative bg-[#1A1A1A] border border-[#333333] rounded-sm px-6 py-12 text-center overflow-hidden">
-                <span className="absolute inset-0 flex items-center justify-center font-bebas text-[100px] text-white/[0.03] leading-none select-none pointer-events-none">
+              <div className="relative bg-[#1c1c16] border border-[#322f26] rounded-sm px-6 py-12 text-center overflow-hidden">
+                <span className="absolute inset-0 flex items-center justify-center font-mincho text-[100px] text-[#f0eadc]/[0.03] leading-none select-none pointer-events-none">
                   GYMS
                 </span>
-                <p className="relative font-inter text-[#555555] text-sm">You haven&apos;t joined a gym yet.</p>
+                <p className="relative font-mincho text-[#7a7568] text-sm">You haven&apos;t joined a gym yet.</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 gap-px bg-[#333333] border border-[#333333] rounded-sm overflow-hidden">
+              <div className="grid grid-cols-1 gap-px bg-[#322f26] border border-[#322f26] rounded-sm overflow-hidden">
                 {gyms.map((g) => (
                   <a
                     key={g.id}
                     href={`/gyms/${g.slug}`}
-                    className="bg-[#1A1A1A] hover:bg-[#222222] px-5 py-4 flex items-center justify-between transition-colors duration-150"
+                    className="bg-[#1c1c16] hover:bg-[#242420] px-5 py-4 flex items-center justify-between transition-colors duration-150"
                   >
                     <div>
-                      <p className="font-bebas text-lg text-white tracking-[1px]">{g.name}</p>
+                      <p className="font-mincho text-lg text-[#f0eadc] tracking-[1px]">{g.name}</p>
                       {g.accessUntil && (
-                        <p className="font-inter text-xs text-[#555555] mt-0.5">
+                        <p className="font-mincho text-xs text-[#7a7568] mt-0.5">
                           Access {g.accessExpired ? 'ended' : 'until'}{' '}
                           {new Date(g.accessUntil).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
                         </p>
                       )}
                     </div>
                     <span
-                      className={`font-inter text-[10px] tracking-[2px] uppercase px-2 py-1 rounded-sm border ${
+                      className={`font-mincho text-[10px] tracking-[2px] uppercase px-2 py-1 rounded-sm border ${
                         g.accessExpired
                           ? 'text-[#FFD60A] border-[#FFD60A]/30 bg-[#FFD60A]/5'
                           : 'text-[#00D4AA] border-[#00D4AA]/30 bg-[#00D4AA]/5'
@@ -254,15 +254,15 @@ export default function AccountClient({ email, name: initialName, phone: initial
           {/* Session */}
           <section>
             <SectionHeader label="Session" />
-            <div className="bg-[#1A1A1A] border border-[#333333] rounded-sm p-6 space-y-4">
+            <div className="bg-[#1c1c16] border border-[#322f26] rounded-sm p-6 space-y-4">
               <button
                 onClick={signOutEverywhere}
                 disabled={signingOut}
-                className="font-bebas tracking-[3px] w-full border border-[#333333] hover:border-[#FF3B3B]/50 hover:text-[#FF3B3B] disabled:opacity-40 text-white py-3.5 rounded-sm text-sm transition-colors duration-150 flex items-center justify-center gap-2"
+                className="font-mincho tracking-[3px] w-full border border-[#322f26] hover:border-[#b3402f]/50 hover:text-[#b3402f] disabled:opacity-40 text-[#f0eadc] py-3.5 rounded-sm text-sm transition-colors duration-150 flex items-center justify-center gap-2"
               >
                 {signingOut ? <Loader2 size={16} className="animate-spin" /> : (<><LogOut size={14} /> SIGN OUT OF ALL DEVICES</>)}
               </button>
-              <p className="font-inter text-[11px] text-[#555555] text-center">
+              <p className="font-mincho text-[11px] text-[#7a7568] text-center">
                 To delete your account, contact support.
               </p>
             </div>
@@ -279,10 +279,10 @@ export default function AccountClient({ email, name: initialName, phone: initial
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 12 }}
             transition={{ duration: 0.2 }}
-            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-[#1A1A1A] border border-[#333333] rounded-sm px-5 py-3 flex items-center gap-2.5 shadow-xl"
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-[#1c1c16] border border-[#322f26] rounded-sm px-5 py-3 flex items-center gap-2.5 shadow-xl"
           >
             <CheckCircle2 size={15} className="text-[#00D4AA]" />
-            <span className="font-inter text-sm text-white">{toast}</span>
+            <span className="font-mincho text-sm text-[#f0eadc]">{toast}</span>
           </motion.div>
         )}
       </AnimatePresence>

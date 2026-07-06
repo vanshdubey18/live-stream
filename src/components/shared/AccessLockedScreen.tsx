@@ -40,22 +40,22 @@ export default function AccessLockedScreen({ gymId, expiryDate }: AccessLockedSc
   }
 
   return (
-    <div className="min-h-screen bg-[#0D0D0D] flex items-center justify-center px-4">
-      <div className="relative bg-[#1A1A1A] border border-[#333333] rounded-sm p-10 max-w-md w-full text-center overflow-hidden space-y-5">
+    <div className="min-h-screen bg-[#141410] flex items-center justify-center px-4">
+      <div className="relative bg-[#1c1c16] border border-[#322f26] rounded-sm p-10 max-w-md w-full text-center overflow-hidden space-y-5">
         {/* Ghost watermark */}
-        <span className="absolute inset-0 flex items-center justify-center font-bebas text-[120px] text-white/[0.03] leading-none select-none pointer-events-none">
+        <span className="absolute inset-0 flex items-center justify-center font-mincho text-[120px] text-[#f0eadc]/[0.03] leading-none select-none pointer-events-none">
           LOCKED
         </span>
 
         <div className="relative space-y-5">
           <div>
-            <p className="font-inter text-[11px] text-[#555555] tracking-[4px] uppercase mb-3">Access Expired</p>
-            <h1 className="font-bebas text-4xl text-white tracking-[1px]">ACCESS LOCKED</h1>
+            <p className="font-mincho text-[11px] text-[#7a7568] tracking-[4px] uppercase mb-3">Access Expired</p>
+            <h1 className="font-mincho text-4xl text-[#f0eadc] tracking-[1px]">ACCESS LOCKED</h1>
           </div>
 
-          <p className="font-inter text-[#999999] text-sm leading-relaxed">
+          <p className="font-mincho text-[#a29c8c] text-sm leading-relaxed">
             Your access period ended on{' '}
-            <span className="text-white">
+            <span className="text-[#f0eadc]">
               {new Date(expiryDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
             </span>
             . You&apos;re still a member — apply a new coupon code to continue watching.
@@ -64,7 +64,7 @@ export default function AccessLockedScreen({ gymId, expiryDate }: AccessLockedSc
           {!showCoupon && !success && (
             <button
               onClick={() => setShowCoupon(true)}
-              className="font-bebas tracking-[3px] w-full bg-white hover:bg-[#E5E5E5] text-black py-4 rounded-sm text-sm transition-colors duration-150"
+              className="font-mincho tracking-[3px] w-full bg-[#f0eadc] hover:bg-[#e4dcc8] text-[#141410] py-4 rounded-sm text-sm transition-colors duration-150"
             >
               APPLY COUPON CODE
             </button>
@@ -72,7 +72,7 @@ export default function AccessLockedScreen({ gymId, expiryDate }: AccessLockedSc
 
           {showCoupon && !success && (
             <form onSubmit={handleRenew} className="space-y-3 text-left">
-              <label className="block font-bebas tracking-[2px] text-white text-sm">
+              <label className="block font-mincho tracking-[2px] text-[#f0eadc] text-sm">
                 COUPON CODE
               </label>
               <input
@@ -81,13 +81,13 @@ export default function AccessLockedScreen({ gymId, expiryDate }: AccessLockedSc
                 onChange={(e) => { setCode(e.target.value.toUpperCase()); setError('') }}
                 placeholder="ENTER CODE"
                 autoFocus
-                className="font-inter w-full bg-[#0D0D0D] border border-[#333333] rounded-sm px-4 py-3 text-white placeholder-[#555555] text-sm focus:outline-none focus:border-white transition-colors duration-150 tracking-[2px]"
+                className="font-mincho w-full bg-[#141410] border border-[#322f26] rounded-sm px-4 py-3 text-[#f0eadc] placeholder-[#7a7568] text-sm focus:outline-none focus:border-[#f0eadc] transition-colors duration-150 tracking-[2px]"
               />
-              {error && <p className="font-inter text-[#FF3B3B] text-sm">{error}</p>}
+              {error && <p className="font-mincho text-[#b3402f] text-sm">{error}</p>}
               <button
                 type="submit"
                 disabled={loading || !code.trim()}
-                className="font-bebas tracking-[3px] w-full bg-white hover:bg-[#E5E5E5] disabled:opacity-40 disabled:cursor-not-allowed text-black py-4 rounded-sm text-sm transition-colors duration-150 flex items-center justify-center gap-2"
+                className="font-mincho tracking-[3px] w-full bg-[#f0eadc] hover:bg-[#e4dcc8] disabled:opacity-40 disabled:cursor-not-allowed text-[#141410] py-4 rounded-sm text-sm transition-colors duration-150 flex items-center justify-center gap-2"
               >
                 {loading ? <Loader2 size={16} className="animate-spin" /> : 'UNLOCK ACCESS'}
               </button>
@@ -95,12 +95,12 @@ export default function AccessLockedScreen({ gymId, expiryDate }: AccessLockedSc
           )}
 
           {success && (
-            <p className="font-inter text-[#00D4AA] text-sm">{success}</p>
+            <p className="font-mincho text-[#00D4AA] text-sm">{success}</p>
           )}
 
           <a
             href="/dashboard"
-            className="block font-inter text-[#555555] hover:text-white text-xs transition-colors duration-150"
+            className="block font-mincho text-[#7a7568] hover:text-[#f0eadc] text-xs transition-colors duration-150"
           >
             Back to dashboard
           </a>

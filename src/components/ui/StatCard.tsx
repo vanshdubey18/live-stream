@@ -7,13 +7,13 @@ interface Props {
 
 export default function StatCard({ number, label, sublabel, accent }: Props) {
   return (
-    <div className="bg-[#1A1A1A] border border-[#333333] p-6">
-      <div className={`font-bebas text-5xl leading-none tracking-[1px] ${accent ? 'text-[#FF3B3B]' : 'text-white'}`}>
+    <div className="bg-[#1c1c16] border border-[#322f26] p-6">
+      <div className={`font-mincho text-5xl leading-none tracking-[1px] ${accent ? 'text-[#b3402f]' : 'text-[#f0eadc]'}`}>
         {number}
       </div>
-      <div className="font-inter text-[11px] text-[#999999] uppercase tracking-[4px] mt-2">{label}</div>
+      <div className="font-mincho text-[11px] text-[#a29c8c] uppercase tracking-[4px] mt-2">{label}</div>
       {sublabel && (
-        <div className="font-inter text-xs text-[#555555] mt-1">{sublabel}</div>
+        <div className="font-mincho text-xs text-[#7a7568] mt-1">{sublabel}</div>
       )}
     </div>
   )

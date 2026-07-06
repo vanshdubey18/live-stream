@@ -107,8 +107,8 @@ function Hero() {
             <motion.h1
               initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, ease: 'easeOut', delay: 0.05 }}
-              className="font-mincho font-normal leading-[1.08] tracking-[.5px]"
-              style={{ fontSize: 'clamp(48px, 7vw, 84px)' }}
+              className="font-mincho font-medium leading-[1.05] tracking-[.5px]"
+              style={{ fontSize: 'clamp(64px, 9.5vw, 116px)' }}
             >
               <span className="block text-[#f0eadc]">World-class</span>
               <span className="block text-[#f0eadc]">training.</span>

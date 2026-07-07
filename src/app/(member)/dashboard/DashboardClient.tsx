@@ -30,6 +30,23 @@ const DISCIPLINE_COLOR: Record<string, string> = {
   MMA: '#635f54',
 }
 
+// Placeholder training photos shown until a replay has a real Cloudflare
+// Stream thumbnail (cf_video_uid). Swap for real class photography when
+// available — these are just to avoid an empty card in the meantime.
+const MOCK_REPLAY_PHOTOS = [
+  'https://images.pexels.com/photos/4761598/pexels-photo-4761598.jpeg?auto=compress&cs=tinysrgb&w=800',
+  'https://images.pexels.com/photos/5750947/pexels-photo-5750947.jpeg?auto=compress&cs=tinysrgb&w=800',
+  'https://images.pexels.com/photos/6296121/pexels-photo-6296121.jpeg?auto=compress&cs=tinysrgb&w=800',
+  'https://images.pexels.com/photos/7991692/pexels-photo-7991692.jpeg?auto=compress&cs=tinysrgb&w=800',
+  'https://images.pexels.com/photos/6793653/pexels-photo-6793653.jpeg?auto=compress&cs=tinysrgb&w=800',
+]
+
+function mockPhotoFor(id: string) {
+  let hash = 0
+  for (let i = 0; i < id.length; i++) hash = (hash * 31 + id.charCodeAt(i)) >>> 0
+  return MOCK_REPLAY_PHOTOS[hash % MOCK_REPLAY_PHOTOS.length]
+}
+
 function formatTime(iso: string) {
   return new Date(iso).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })
 }
@@ -560,6 +577,59 @@ function UpcomingClasses({ sessions }: { sessions: any[] }) {
   )
 }
 
+function ReplayCard({ s, i }: { s: any; i: number }) {
+  const cfThumb = cfThumbnailUrl(s.cf_video_uid)
+  const [imgSrc, setImgSrc] = useState<string | null>(cfThumb ?? mockPhotoFor(String(s.id)))
+
+  return (
+    <motion.a
+      href={`/replay/${s.id}`}
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.2, ease: 'easeOut', delay: i * 0.04 }}
+      whileHover={{ y: -3 }}
+      className="block group border border-[#322f26] rounded-sm overflow-hidden bg-[#1c1c16]"
+    >
+      <div className="relative h-32 overflow-hidden bg-[#18180f]">
+        {imgSrc ? (
+          <img
+            src={imgSrc}
+            alt=""
+            onError={() => setImgSrc(null)}
+            className="absolute inset-0 w-full h-full object-cover grayscale contrast-110 group-hover:scale-105 transition-transform duration-300"
+          />
+        ) : (
+          <span className="absolute inset-0 flex items-center justify-center font-mincho text-[56px] text-[#f0eadc]/[0.04] leading-none select-none pointer-events-none">
+            {s.discipline?.charAt(0) ?? 'M'}
+          </span>
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#1c1c16] via-transparent to-transparent" />
+        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+          <span className="w-9 h-9 rounded-full bg-[#141410]/70 border border-[#f0eadc]/30 flex items-center justify-center backdrop-blur-sm">
+            <Play size={14} className="text-[#f0eadc] ml-0.5" fill="currentColor" />
+          </span>
+        </div>
+        <span className="absolute top-2.5 left-2.5 font-mincho text-[9px] text-[#f0eadc] uppercase tracking-[2px] border border-[#f0eadc]/20 bg-[#141410]/70 backdrop-blur-sm px-2 py-0.5 rounded-sm">
+          {s.discipline ?? 'BJJ'}
+        </span>
+        {s.ai_summary && (
+          <span className="absolute top-2.5 right-2.5 font-mincho text-[9px] text-[#b3402f] uppercase tracking-[2px] border border-[#b3402f]/30 bg-[#141410]/70 backdrop-blur-sm px-2 py-0.5 rounded-sm">
+            AI Notes
+          </span>
+        )}
+      </div>
+      <div className="p-4">
+        <p className="font-mincho text-base text-[#f0eadc] leading-tight tracking-[1px] mb-1.5 group-hover:text-[#b3402f] transition-colors duration-150 truncate">
+          {s.title}
+        </p>
+        <p className="font-mincho text-xs text-[#7a7568] truncate">
+          {s.coaches?.name ?? 'Coach'}&nbsp;·&nbsp;{s.duration_minutes ?? 60}m
+        </p>
+      </div>
+    </motion.a>
+  )
+}
+
 // ─── Recent Replays ───────────────────────────────────────────────────────────
 function RecentReplays({ replays, hasGyms }: { replays: any[]; hasGyms: boolean }) {
   const items = replays.slice(0, 3)
@@ -581,56 +651,7 @@ function RecentReplays({ replays, hasGyms }: { replays: any[]; hasGyms: boolean 
         <EmptyState ghost="REPLAY" message="No replays yet. They'll show up here once a class you attend ends." size="sm" />
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {items.map((s: any, i: number) => {
-            const thumb = cfThumbnailUrl(s.cf_video_uid)
-            return (
-              <motion.a
-                key={s.id}
-                href={`/replay/${s.id}`}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.2, ease: 'easeOut', delay: i * 0.04 }}
-                whileHover={{ y: -3 }}
-                className="block group border border-[#322f26] rounded-sm overflow-hidden bg-[#1c1c16]"
-              >
-                <div className="relative h-32 overflow-hidden bg-[#18180f]">
-                  {thumb ? (
-                    <img
-                      src={thumb}
-                      alt=""
-                      className="absolute inset-0 w-full h-full object-cover grayscale contrast-110 group-hover:scale-105 transition-transform duration-300"
-                    />
-                  ) : (
-                    <span className="absolute inset-0 flex items-center justify-center font-mincho text-[56px] text-[#f0eadc]/[0.04] leading-none select-none pointer-events-none">
-                      {s.discipline?.charAt(0) ?? 'M'}
-                    </span>
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#1c1c16] via-transparent to-transparent" />
-                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-150">
-                    <span className="w-9 h-9 rounded-full bg-[#141410]/70 border border-[#f0eadc]/30 flex items-center justify-center backdrop-blur-sm">
-                      <Play size={14} className="text-[#f0eadc] ml-0.5" fill="currentColor" />
-                    </span>
-                  </div>
-                  <span className="absolute top-2.5 left-2.5 font-mincho text-[9px] text-[#f0eadc] uppercase tracking-[2px] border border-[#f0eadc]/20 bg-[#141410]/70 backdrop-blur-sm px-2 py-0.5 rounded-sm">
-                    {s.discipline ?? 'BJJ'}
-                  </span>
-                  {s.ai_summary && (
-                    <span className="absolute top-2.5 right-2.5 font-mincho text-[9px] text-[#b3402f] uppercase tracking-[2px] border border-[#b3402f]/30 bg-[#141410]/70 backdrop-blur-sm px-2 py-0.5 rounded-sm">
-                      AI Notes
-                    </span>
-                  )}
-                </div>
-                <div className="p-4">
-                  <p className="font-mincho text-base text-[#f0eadc] leading-tight tracking-[1px] mb-1.5 group-hover:text-[#b3402f] transition-colors duration-150 truncate">
-                    {s.title}
-                  </p>
-                  <p className="font-mincho text-xs text-[#7a7568] truncate">
-                    {s.coaches?.name ?? 'Coach'}&nbsp;·&nbsp;{s.duration_minutes ?? 60}m
-                  </p>
-                </div>
-              </motion.a>
-            )
-          })}
+          {items.map((s: any, i: number) => <ReplayCard key={s.id} s={s} i={i} />)}
         </div>
       )}
     </div>

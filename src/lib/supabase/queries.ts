@@ -29,6 +29,7 @@ export async function getMemberGyms(userId: string) {
         location,
         disciplines,
         logo_url,
+        cover_url,
         status
       )
     `)
@@ -66,7 +67,7 @@ export async function getRecentReplays(gymIds: string[]) {
   const { data, error } = await supabase
     .from('sessions')
     .select(`
-      id, title, discipline, duration_minutes, mux_playback_id, scheduled_at,
+      id, title, discipline, duration_minutes, mux_playback_id, cf_video_uid, ai_summary, scheduled_at,
       coaches ( name ),
       gyms ( name )
     `)

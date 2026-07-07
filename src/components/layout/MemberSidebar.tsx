@@ -123,9 +123,9 @@ export default function MemberSidebar({ active = 'Dashboard', onSearchOpen }: Me
             <div className="w-6 h-6 rounded-sm bg-[#b3402f]/20 flex items-center justify-center shrink-0">
               <Sparkles size={13} className="text-[#b3402f]" />
             </div>
-            <div className="flex-1 text-left">
-              <p className="font-mincho text-sm text-[#f0eadc] tracking-[1px] leading-none">AI COACH</p>
-              <p className="font-mincho text-[10px] text-[#b3402f]/70 mt-0.5">Ask about your classes</p>
+            <div className="flex-1 min-w-0 text-left">
+              <p className="font-mincho text-sm text-[#f0eadc] tracking-[1px] leading-none truncate">Matpeak Coach</p>
+              <p className="font-mincho text-[10px] text-[#b3402f]/70 mt-0.5 truncate">Ask about your classes</p>
             </div>
             <span className="font-mincho text-[9px] text-[#b3402f] tracking-[2px] uppercase border border-[#b3402f]/30 px-1.5 py-0.5 rounded-sm shrink-0">
               Soon

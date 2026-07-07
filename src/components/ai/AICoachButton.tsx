@@ -78,7 +78,7 @@ export default function AICoachButton({ gymId }: { gymId?: string }) {
                   <Sparkles size={12} className="text-[#b3402f]" />
                 </div>
                 <div>
-                  <p className="font-mincho text-sm text-[#f0eadc] tracking-[1px]">AI COACH</p>
+                  <p className="font-mincho text-sm text-[#f0eadc] tracking-[1px]">MATPEAK COACH</p>
                   <p className="font-mincho text-[10px] text-[#7a7568]">Knows every class you attended</p>
                 </div>
               </div>
@@ -159,19 +159,19 @@ export default function AICoachButton({ gymId }: { gymId?: string }) {
         )}
       </AnimatePresence>
 
-      {/* FAB */}
+      {/* FAB — height is auto (not fixed) so the vertical label always has room to fit */}
       <motion.button
         onClick={() => setOpen(v => !v)}
-        className="fixed top-1/2 -translate-y-1/2 right-0 z-50 w-12 h-20 bg-[#b3402f] rounded-l-sm flex flex-col items-center justify-center gap-1 shadow-lg hover:bg-[#942f22] transition-colors"
+        className="fixed top-1/2 -translate-y-1/2 right-0 z-50 w-11 py-5 bg-[#b3402f] rounded-l-sm flex flex-col items-center justify-center gap-2 shadow-lg hover:bg-[#942f22] transition-colors"
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
       >
         <AnimatePresence mode="wait">
           {open
             ? <motion.div key="x" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.15 }}><X size={16} className="text-[#f0eadc]" /></motion.div>
-            : <motion.div key="spark" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex flex-col items-center gap-1">
-                <Sparkles size={16} className="text-[#f0eadc]" />
-                <span className="font-mincho text-[#f0eadc] text-[10px] tracking-[2px] [writing-mode:vertical-rl] rotate-180">AI COACH</span>
+            : <motion.div key="spark" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex flex-col items-center gap-2">
+                <Sparkles size={16} className="text-[#f0eadc] shrink-0" />
+                <span className="font-mincho text-[#f0eadc] text-[10px] tracking-[2px] [writing-mode:vertical-rl] rotate-180 whitespace-nowrap">MATPEAK COACH</span>
               </motion.div>
           }
         </AnimatePresence>

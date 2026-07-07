@@ -74,7 +74,7 @@ function Hero() {
           src="https://images.pexels.com/photos/10006587/pexels-photo-10006587.jpeg?auto=compress&cs=tinysrgb&w=1600&h=1200&fit=crop"
           alt=""
           aria-hidden="true"
-          className="w-full h-full object-cover object-center grayscale contrast-110 brightness-110"
+          className="w-full h-full object-cover object-[78%_center] sm:object-center grayscale contrast-110 brightness-110"
         />
         {/* Subtle base dim — keep photo readable */}
         <div className="absolute inset-0 bg-black/35" />

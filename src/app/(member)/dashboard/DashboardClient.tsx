@@ -239,17 +239,30 @@ function HeroPanel({ upcoming, user, memberships }: { upcoming: any[]; user: { n
 }
 
 // ─── Card chrome shared by the Activity Ring card and the stat boxes ─────────
-function CardHeader({ label, icon: Icon, href }: { label: string; icon: React.ElementType; href?: string }) {
-  const button = (
-    <span className="w-7 h-7 rounded-sm border border-[#322f26] bg-[#242420] flex items-center justify-center text-[#7a7568] group-hover:text-[#f0eadc] group-hover:border-[#3a3630] transition-colors duration-150 shrink-0">
-      <Icon size={13} />
-    </span>
-  )
+// The whole card is the link (StatCard below) — this header just renders the
+// label + a circular affordance button that reacts to the card's own hover.
+function CardHeader({ label, icon: Icon }: { label: string; icon: React.ElementType }) {
   return (
     <div className="flex items-center justify-between mb-4">
       <p className="font-mincho text-[10px] text-[#a29c8c] uppercase tracking-[3px]">{label}</p>
-      {href ? <a href={href} className="group">{button}</a> : button}
+      <span className="w-8 h-8 rounded-full border border-[#322f26] bg-[#242420] flex items-center justify-center text-[#a29c8c] group-hover:text-[#f0eadc] group-hover:border-[#b3402f]/40 group-hover:bg-[#2a2a20] transition-colors duration-150 shrink-0">
+        <Icon size={14} />
+      </span>
     </div>
+  )
+}
+
+function StatCard({ href, delay, children }: { href: string; delay: number; children: React.ReactNode }) {
+  return (
+    <motion.a
+      href={href}
+      initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.2, ease: 'easeOut', delay }}
+      whileHover={{ y: -2 }}
+      className="group block border border-[#322f26] rounded-sm bg-[#1c1c16] hover:bg-[#201f19] hover:border-[#3a3630] transition-colors duration-150 p-5 cursor-pointer"
+    >
+      {children}
+    </motion.a>
   )
 }
 
@@ -315,12 +328,14 @@ function StatsRow({ completedCount, totalHours, monthCount, upcoming, replays }:
       <div className="max-w-[1280px] mx-auto px-6 py-8 space-y-4">
 
         {/* ── Activity Ring card ── */}
-        <motion.div
+        <motion.a
+          href="/dashboard/schedule"
           initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.2, ease: 'easeOut' }}
-          className="border border-[#322f26] rounded-sm bg-[#1c1c16] p-6"
+          whileHover={{ y: -2 }}
+          className="group block border border-[#322f26] rounded-sm bg-[#1c1c16] hover:bg-[#201f19] hover:border-[#3a3630] transition-colors duration-150 p-6 cursor-pointer"
         >
-          <CardHeader label="Weekly Goal" icon={ArrowUpRight} href="/dashboard/schedule" />
+          <CardHeader label="Weekly Goal" icon={ArrowUpRight} />
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
             <StreakRing weekSessions={weekCount} goal={weekGoal} />
             <div className="flex-1 text-center sm:text-left pt-2">
@@ -330,18 +345,17 @@ function StatsRow({ completedCount, totalHours, monthCount, upcoming, replays }:
               <p className="font-mincho text-xs text-[#7a7568] mt-1.5">
                 {weekCount} of {weekGoal} classes this week across every gym you train at.
               </p>
+              <p className="font-mincho text-[10px] text-[#7a7568] group-hover:text-[#a29c8c] uppercase tracking-[2px] mt-4 transition-colors duration-150">
+                View schedule &rarr;
+              </p>
             </div>
           </div>
-        </motion.div>
+        </motion.a>
 
-        {/* ── 2x2 stat box grid ── */}
+        {/* ── 2x2 stat box grid — every card is a real link, not just the icon ── */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {/* This Week — sparkline is the 7-day bar chart */}
-          <motion.div
-            initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.2, ease: 'easeOut', delay: 0.05 }}
-            className="border border-[#322f26] rounded-sm bg-[#1c1c16] p-5"
-          >
+          <StatCard href="/dashboard/schedule" delay={0.05}>
             <CardHeader label="This Week" icon={CalendarDays} />
             <div className="flex items-baseline gap-1 mb-3">
               <span className="font-mincho text-4xl text-[#f0eadc] leading-none tracking-[1px]">{weekCount}</span>
@@ -363,36 +377,24 @@ function StatsRow({ completedCount, totalHours, monthCount, upcoming, replays }:
                 )
               })}
             </div>
-          </motion.div>
+          </StatCard>
 
           {/* Hours Trained */}
-          <motion.div
-            initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.2, ease: 'easeOut', delay: 0.1 }}
-            className="border border-[#322f26] rounded-sm bg-[#1c1c16] p-5"
-          >
+          <StatCard href="/dashboard/replays" delay={0.1}>
             <CardHeader label="Hours Trained" icon={Clock} />
             <div className="font-mincho text-4xl text-[#f0eadc] leading-none tracking-[1px] mb-3">{totalHours}h</div>
             <p className="font-mincho text-[11px] text-[#7a7568]">Total mat time logged</p>
-          </motion.div>
+          </StatCard>
 
           {/* Replays */}
-          <motion.div
-            initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.2, ease: 'easeOut', delay: 0.15 }}
-            className="border border-[#322f26] rounded-sm bg-[#1c1c16] p-5"
-          >
-            <CardHeader label="Replays" icon={RotateCcw} href="/dashboard/replays" />
+          <StatCard href="/dashboard/replays" delay={0.15}>
+            <CardHeader label="Replays" icon={RotateCcw} />
             <div className="font-mincho text-4xl text-[#f0eadc] leading-none tracking-[1px] mb-3">{completedCount}</div>
             <p className="font-mincho text-[11px] text-[#7a7568]">Classes completed all-time</p>
-          </motion.div>
+          </StatCard>
 
           {/* This Month — discipline split lives here since it's also an aggregate view */}
-          <motion.div
-            initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.2, ease: 'easeOut', delay: 0.2 }}
-            className="border border-[#322f26] rounded-sm bg-[#1c1c16] p-5"
-          >
+          <StatCard href="/dashboard/replays" delay={0.2}>
             <CardHeader label="This Month" icon={ChevronRight} />
             <div className="font-mincho text-4xl text-[#f0eadc] leading-none tracking-[1px] mb-3">{monthCount}</div>
             {totalDisc > 1 ? (
@@ -410,7 +412,7 @@ function StatsRow({ completedCount, totalHours, monthCount, upcoming, replays }:
             ) : (
               <p className="font-mincho text-[11px] text-[#7a7568]">Classes completed this month</p>
             )}
-          </motion.div>
+          </StatCard>
         </div>
 
       </div>

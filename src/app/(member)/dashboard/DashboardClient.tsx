@@ -4,8 +4,10 @@ import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import MemberSidebar from '@/components/layout/MemberSidebar'
 import InsightCard from '@/components/ui/InsightCard'
-import { ChevronRight, ArrowRight } from 'lucide-react'
+import EmptyState from '@/components/ui/EmptyState'
+import { ChevronRight, ArrowRight, Play } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
+import { cfThumbnailUrl } from '@/lib/cf-thumbnail'
 
 interface Props {
   user: { name: string; email: string }
@@ -218,12 +220,12 @@ function HeroPanel({ upcoming, user, memberships }: { upcoming: any[]; user: { n
                 {memberships.map((m: any) => (
                   <span
                     key={m.id ?? m.gyms?.id}
-                    className="inline-flex items-center gap-2 font-mincho text-[11px] text-[#00D4AA] tracking-[3px] uppercase border border-[#00D4AA]/20 bg-[#00D4AA]/5 px-3 py-1.5 rounded-sm"
+                    className="inline-flex items-center gap-2 font-mincho text-[11px] text-[#c9bda0] tracking-[3px] uppercase border border-[#322f26] bg-[#1c1c16] px-3 py-1.5 rounded-sm"
                   >
                     {m.gyms?.logo_url ? (
-                      <img src={m.gyms.logo_url} alt="" className="w-4 h-4 rounded-sm object-cover shrink-0" />
+                      <img src={m.gyms.logo_url} alt="" className="w-4 h-4 rounded-sm object-cover shrink-0 grayscale" />
                     ) : (
-                      <span className="w-1.5 h-1.5 rounded-sm bg-[#00D4AA] shrink-0" />
+                      <span className="w-1.5 h-1.5 rounded-sm bg-[#c9bda0] shrink-0" />
                     )}
                     Member of {m.gyms?.name ?? 'your gym'}
                   </span>
@@ -432,58 +434,71 @@ function MyGyms({ memberships }: { memberships: any[] }) {
   if (!memberships.length) return null
 
   return (
-    <section className="border-b border-[#322f26]">
-      <div className="max-w-[1280px] mx-auto px-6 py-8">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-5 h-px bg-[#b3402f]" />
-          <p className="font-mincho text-[11px] text-[#b3402f] uppercase tracking-[4px]">My Gyms</p>
-        </div>
-        <div className="divide-y divide-[#322f26]">
-          {memberships.map((m: any) => {
-            const gym = m.gyms ?? {}
-            const disciplines: string[] = gym.disciplines ?? m.disciplines ?? []
-            const isLive = m.nextSession?.status === 'live'
-            const nextTime = m.nextSession?.scheduled_at ? formatRelDay(m.nextSession.scheduled_at) : null
-
-            return (
-              <a
-                key={m.id ?? gym.id}
-                href={`/gyms/${gym.slug ?? ''}`}
-                className="flex items-center justify-between py-4 group"
-              >
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-3 mb-1.5">
-                    {isLive && (
-                      <span className="flex items-center gap-1.5 font-mincho text-[10px] text-[#b3402f] tracking-[2px] uppercase">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#b3402f] live-pulse" />
-                        Live
-                      </span>
-                    )}
-                    <span className="font-mincho text-xl text-[#f0eadc] tracking-[1px] group-hover:text-[#b3402f] transition-colors duration-150">
-                      {gym.name ?? 'Unknown Gym'}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2 flex-wrap">
-                    {disciplines.slice(0, 4).map((d: string, idx: number) => (
-                      <span key={d} className="flex items-center gap-2">
-                        {idx > 0 && <span className="text-[#322f26] text-xs">·</span>}
-                        <span className="font-mincho text-xs text-[#7a7568] uppercase tracking-[2px]">{d}</span>
-                      </span>
-                    ))}
-                  </div>
-                </div>
-                <div className="flex items-center gap-4 ml-4 shrink-0">
-                  {nextTime && !isLive && (
-                    <span className="font-mincho text-sm text-[#a29c8c]">Next {nextTime}</span>
-                  )}
-                  <ChevronRight size={16} className="text-[#7a7568] group-hover:text-[#f0eadc] transition-colors duration-150" />
-                </div>
-              </a>
-            )
-          })}
-        </div>
+    <div>
+      <div className="flex items-center gap-3 mb-5">
+        <div className="w-5 h-px bg-[#b3402f]" />
+        <p className="font-mincho text-[11px] text-[#b3402f] uppercase tracking-[4px]">My Gyms</p>
       </div>
-    </section>
+      <div className="space-y-3">
+        {memberships.map((m: any, i: number) => {
+          const gym = m.gyms ?? {}
+          const disciplines: string[] = gym.disciplines ?? m.disciplines ?? []
+          const isLive = m.nextSession?.status === 'live'
+          const nextTime = m.nextSession?.scheduled_at ? formatRelDay(m.nextSession.scheduled_at) : null
+          const image = gym.cover_url ?? gym.logo_url
+
+          return (
+            <motion.a
+              key={m.id ?? gym.id}
+              href={`/gyms/${gym.slug ?? ''}`}
+              initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.2, ease: 'easeOut', delay: i * 0.05 }}
+              whileHover={{ y: -2 }}
+              className="relative block h-28 rounded-sm overflow-hidden border border-[#322f26] group bg-[#1c1c16]"
+            >
+              {image ? (
+                <img
+                  src={image}
+                  alt=""
+                  className="absolute inset-0 w-full h-full object-cover grayscale contrast-110 group-hover:scale-105 transition-transform duration-300"
+                />
+              ) : (
+                <span className="absolute inset-0 flex items-center justify-center font-mincho text-[64px] text-[#f0eadc]/[0.04] leading-none select-none pointer-events-none">
+                  {(gym.name ?? 'G').charAt(0)}
+                </span>
+              )}
+              <div className="absolute inset-0 bg-gradient-to-t from-[#141410] via-[#141410]/60 to-transparent" />
+              <div className="absolute inset-0 bg-[#b3402f]/[0.06] mix-blend-overlay" />
+
+              <div className="relative h-full flex flex-col justify-end p-4">
+                <div className="flex items-center gap-2 mb-1">
+                  {isLive && (
+                    <span className="flex items-center gap-1.5 font-mincho text-[9px] text-[#b3402f] tracking-[2px] uppercase">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#b3402f] live-pulse" />
+                      Live
+                    </span>
+                  )}
+                  {nextTime && !isLive && (
+                    <span className="font-mincho text-[9px] text-[#a29c8c] tracking-[2px] uppercase">Next {nextTime}</span>
+                  )}
+                </div>
+                <div className="flex items-end justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="font-mincho text-lg text-[#f0eadc] tracking-[1px] leading-none truncate group-hover:text-[#c9bda0] transition-colors duration-150">
+                      {gym.name ?? 'Unknown Gym'}
+                    </p>
+                    <p className="font-mincho text-[10px] text-[#a29c8c] uppercase tracking-[1px] mt-1.5 truncate">
+                      {disciplines.slice(0, 3).join(' · ')}
+                    </p>
+                  </div>
+                  <ChevronRight size={16} className="text-[#a29c8c] group-hover:text-[#f0eadc] group-hover:translate-x-0.5 transition-all duration-150 shrink-0" />
+                </div>
+              </div>
+            </motion.a>
+          )
+        })}
+      </div>
+    </div>
   )
 }
 
@@ -492,112 +507,133 @@ function UpcomingClasses({ sessions }: { sessions: any[] }) {
   const items = sessions.slice(0, 3)
 
   return (
-    <section className="border-b border-[#322f26]">
-      <div className="max-w-[1280px] mx-auto px-6 py-8">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <div className="w-5 h-px bg-[#b3402f]" />
-            <p className="font-mincho text-[11px] text-[#b3402f] uppercase tracking-[4px]">Upcoming Classes</p>
-          </div>
-          <a href="/dashboard/schedule" className="font-mincho text-xs text-[#7a7568] hover:text-[#f0eadc] transition-colors flex items-center gap-1">
-            View all <ChevronRight size={12} />
-          </a>
+    <div>
+      <div className="flex items-center justify-between mb-5">
+        <div className="flex items-center gap-3">
+          <div className="w-5 h-px bg-[#b3402f]" />
+          <p className="font-mincho text-[11px] text-[#b3402f] uppercase tracking-[4px]">Upcoming Classes</p>
         </div>
-
-        {items.length === 0 ? (
-          <div className="relative bg-[#1c1c16] border border-[#322f26] rounded-sm px-6 py-10 text-center overflow-hidden">
-            <span className="absolute inset-0 flex items-center justify-center font-mincho text-[120px] text-[#f0eadc]/[0.03] leading-none select-none pointer-events-none">LIVE</span>
-            <p className="relative font-mincho text-sm text-[#7a7568]">No upcoming classes. Join a gym to get started.</p>
-          </div>
-        ) : (
-          <div className="divide-y divide-[#322f26]">
-            {items.map((s: any, i: number) => {
-              const discipline = s.discipline ?? 'BJJ'
-              const dotColor = DISCIPLINE_COLOR[discipline] ?? '#a29c8c'
-              return (
-                <motion.a
-                  key={s.id}
-                  href={`/watch/${s.id}`}
-                  initial={{ opacity: 0, x: -8 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.2, ease: 'easeOut', delay: i * 0.04 }}
-                  className="flex items-center gap-4 py-4 group"
-                >
-                  <div className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: dotColor }} />
-                  <div className="flex-1 min-w-0">
-                    <p className="font-mincho text-lg text-[#f0eadc] tracking-[1px] leading-none mb-1 group-hover:text-[#b3402f] transition-colors duration-150">
-                      {s.title}
-                    </p>
-                    <p className="font-mincho text-xs text-[#7a7568]">
-                      {s.coaches?.name ?? 'Coach'}&nbsp;·&nbsp;{s.gyms?.name ?? ''}
-                    </p>
-                  </div>
-                  <div className="text-right shrink-0">
-                    <p className="font-mincho text-sm text-[#a29c8c]">{formatTime(s.scheduled_at)}</p>
-                    <p className="font-mincho text-[11px] text-[#7a7568]">{formatRelDay(s.scheduled_at)}</p>
-                  </div>
-                  <span className="font-mincho text-[10px] text-[#7a7568] uppercase tracking-[2px] border border-[#322f26] bg-[#242420] px-2 py-0.5 rounded-sm shrink-0">
-                    {discipline}
-                  </span>
-                </motion.a>
-              )
-            })}
-          </div>
-        )}
+        <a href="/dashboard/schedule" className="font-mincho text-xs text-[#7a7568] hover:text-[#f0eadc] transition-colors flex items-center gap-1">
+          View all <ChevronRight size={12} />
+        </a>
       </div>
-    </section>
+
+      {items.length === 0 ? (
+        <EmptyState ghost="LIVE" message="No upcoming classes. Join a gym to get started." />
+      ) : (
+        <div className="divide-y divide-[#322f26] border border-[#322f26] rounded-sm bg-[#1c1c16]">
+          {items.map((s: any, i: number) => {
+            const discipline = s.discipline ?? 'BJJ'
+            const dotColor = DISCIPLINE_COLOR[discipline] ?? '#a29c8c'
+            return (
+              <motion.a
+                key={s.id}
+                href={`/watch/${s.id}`}
+                initial={{ opacity: 0, x: -8 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.2, ease: 'easeOut', delay: i * 0.04 }}
+                whileHover={{ x: 3 }}
+                className="flex items-center gap-4 px-5 py-4 group"
+              >
+                <div className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: dotColor }} />
+                <div className="flex-1 min-w-0">
+                  <p className="font-mincho text-lg text-[#f0eadc] tracking-[1px] leading-none mb-1 group-hover:text-[#b3402f] transition-colors duration-150 truncate">
+                    {s.title}
+                  </p>
+                  <p className="font-mincho text-xs text-[#7a7568] truncate">
+                    {s.coaches?.name ?? 'Coach'}&nbsp;·&nbsp;{s.gyms?.name ?? ''}
+                  </p>
+                </div>
+                <div className="text-right shrink-0 hidden sm:block">
+                  <p className="font-mincho text-sm text-[#a29c8c]">{formatTime(s.scheduled_at)}</p>
+                  <p className="font-mincho text-[11px] text-[#7a7568]">{formatRelDay(s.scheduled_at)}</p>
+                </div>
+                <span className="font-mincho text-[10px] text-[#7a7568] uppercase tracking-[2px] border border-[#322f26] bg-[#242420] px-2 py-0.5 rounded-sm shrink-0 hidden md:inline-block">
+                  {discipline}
+                </span>
+              </motion.a>
+            )
+          })}
+        </div>
+      )}
+    </div>
   )
 }
 
 // ─── Recent Replays ───────────────────────────────────────────────────────────
-function RecentReplays({ replays }: { replays: any[] }) {
+function RecentReplays({ replays, hasGyms }: { replays: any[]; hasGyms: boolean }) {
   const items = replays.slice(0, 3)
-  if (!items.length) return null
+  if (!items.length && !hasGyms) return null
 
   return (
-    <section className="border-b border-[#322f26]">
-      <div className="max-w-[1280px] mx-auto px-6 py-8">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <div className="w-5 h-px bg-[#b3402f]" />
-            <p className="font-mincho text-[11px] text-[#b3402f] uppercase tracking-[4px]">Replay Library</p>
-          </div>
-          <a href="/dashboard/replays" className="font-mincho text-xs text-[#7a7568] hover:text-[#f0eadc] transition-colors flex items-center gap-1">
-            View all <ChevronRight size={12} />
-          </a>
+    <div>
+      <div className="flex items-center justify-between mb-5">
+        <div className="flex items-center gap-3">
+          <div className="w-5 h-px bg-[#b3402f]" />
+          <p className="font-mincho text-[11px] text-[#b3402f] uppercase tracking-[4px]">Replay Library</p>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-px bg-[#322f26]">
-          {items.map((s: any, i: number) => (
-            <motion.a
-              key={s.id}
-              href={`/replay/${s.id}`}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.2, ease: 'easeOut', delay: i * 0.04 }}
-              className="bg-[#1c1c16] p-5 block group hover:bg-[#242420] transition-colors duration-150"
-            >
-              <div className="flex items-center justify-between mb-3">
-                <span className="font-mincho text-[10px] text-[#7a7568] uppercase tracking-[2px] border border-[#322f26] bg-[#242420] px-2 py-0.5 rounded-sm">
-                  {s.discipline ?? 'BJJ'}
-                </span>
-                {s.ai_summary && (
-                  <span className="font-mincho text-[10px] text-[#a29c8c] uppercase tracking-[2px]">AI NOTES</span>
-                )}
-              </div>
-              <p className="font-mincho text-lg text-[#f0eadc] leading-tight tracking-[1px] mb-2 group-hover:text-[#b3402f] transition-colors duration-150">
-                {s.title}
-              </p>
-              <p className="font-mincho text-xs text-[#7a7568]">
-                {s.coaches?.name ?? 'Coach'}&nbsp;·&nbsp;{s.duration_minutes ?? 60}m
-              </p>
-              <div className="mt-4 h-px bg-[#322f26]">
-                <div className="h-px bg-[#f0eadc]" style={{ width: '40%' }} />
-              </div>
-            </motion.a>
-          ))}
-        </div>
+        <a href="/dashboard/replays" className="font-mincho text-xs text-[#7a7568] hover:text-[#f0eadc] transition-colors flex items-center gap-1">
+          View all <ChevronRight size={12} />
+        </a>
       </div>
-    </section>
+
+      {items.length === 0 ? (
+        <EmptyState ghost="REPLAY" message="No replays yet. They'll show up here once a class you attend ends." size="sm" />
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {items.map((s: any, i: number) => {
+            const thumb = cfThumbnailUrl(s.cf_video_uid)
+            return (
+              <motion.a
+                key={s.id}
+                href={`/replay/${s.id}`}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.2, ease: 'easeOut', delay: i * 0.04 }}
+                whileHover={{ y: -3 }}
+                className="block group border border-[#322f26] rounded-sm overflow-hidden bg-[#1c1c16]"
+              >
+                <div className="relative h-32 overflow-hidden bg-[#18180f]">
+                  {thumb ? (
+                    <img
+                      src={thumb}
+                      alt=""
+                      className="absolute inset-0 w-full h-full object-cover grayscale contrast-110 group-hover:scale-105 transition-transform duration-300"
+                    />
+                  ) : (
+                    <span className="absolute inset-0 flex items-center justify-center font-mincho text-[56px] text-[#f0eadc]/[0.04] leading-none select-none pointer-events-none">
+                      {s.discipline?.charAt(0) ?? 'M'}
+                    </span>
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#1c1c16] via-transparent to-transparent" />
+                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+                    <span className="w-9 h-9 rounded-full bg-[#141410]/70 border border-[#f0eadc]/30 flex items-center justify-center backdrop-blur-sm">
+                      <Play size={14} className="text-[#f0eadc] ml-0.5" fill="currentColor" />
+                    </span>
+                  </div>
+                  <span className="absolute top-2.5 left-2.5 font-mincho text-[9px] text-[#f0eadc] uppercase tracking-[2px] border border-[#f0eadc]/20 bg-[#141410]/70 backdrop-blur-sm px-2 py-0.5 rounded-sm">
+                    {s.discipline ?? 'BJJ'}
+                  </span>
+                  {s.ai_summary && (
+                    <span className="absolute top-2.5 right-2.5 font-mincho text-[9px] text-[#b3402f] uppercase tracking-[2px] border border-[#b3402f]/30 bg-[#141410]/70 backdrop-blur-sm px-2 py-0.5 rounded-sm">
+                      AI Notes
+                    </span>
+                  )}
+                </div>
+                <div className="p-4">
+                  <p className="font-mincho text-base text-[#f0eadc] leading-tight tracking-[1px] mb-1.5 group-hover:text-[#b3402f] transition-colors duration-150 truncate">
+                    {s.title}
+                  </p>
+                  <p className="font-mincho text-xs text-[#7a7568] truncate">
+                    {s.coaches?.name ?? 'Coach'}&nbsp;·&nbsp;{s.duration_minutes ?? 60}m
+                  </p>
+                </div>
+              </motion.a>
+            )
+          })}
+        </div>
+      )}
+    </div>
   )
 }
 
@@ -660,17 +696,24 @@ export default function DashboardClient({ user, memberships, upcoming, replays, 
         {liveSession && <LiveBanner session={liveSession} />}
         <HeroPanel upcoming={upcoming} user={user} memberships={memberships} />
         <StatsRow memberships={memberships} completedCount={completedCount} totalHours={totalHours} monthCount={monthCount} upcoming={upcoming} replays={replays} />
-        <MyGyms memberships={memberships} />
-        <UpcomingClasses sessions={upcoming} />
-        <RecentReplays replays={replays} />
 
-        {memberships.length === 0 && (
-          <section className="border-b border-[#322f26]">
-            <div className="max-w-[1280px] mx-auto px-6 py-8">
-              <InsightCard body="Welcome to Matpeak. Browse gyms and join one with your invite code to start training." />
+        <section className="max-w-[1280px] mx-auto px-6 py-8">
+          {memberships.length === 0 ? (
+            <InsightCard body="Welcome to Matpeak. Browse gyms and join one with your invite code to start training." />
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+              {/* Main feed */}
+              <div className="lg:col-span-2 space-y-10">
+                <UpcomingClasses sessions={upcoming} />
+                <RecentReplays replays={replays} hasGyms={memberships.length > 0} />
+              </div>
+              {/* Rail */}
+              <div className="lg:col-span-1">
+                <MyGyms memberships={memberships} />
+              </div>
             </div>
-          </section>
-        )}
+          )}
+        </section>
       </main>
     </div>
   )

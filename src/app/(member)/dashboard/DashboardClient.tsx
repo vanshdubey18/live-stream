@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 import MemberSidebar from '@/components/layout/MemberSidebar'
 import InsightCard from '@/components/ui/InsightCard'
 import EmptyState from '@/components/ui/EmptyState'
-import { ChevronRight, ArrowRight, Play } from 'lucide-react'
+import { ChevronRight, ArrowRight, ArrowUpRight, Play, Clock, RotateCcw, CalendarDays } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { cfThumbnailUrl } from '@/lib/cf-thumbnail'
 
@@ -181,8 +181,6 @@ function StreakRing({ weekSessions, goal = 4 }: { weekSessions: number; goal?: n
           )
         })}
       </div>
-
-      <p className="font-mincho text-[10px] text-[#635f54] uppercase tracking-[3px]">Weekly Goal</p>
     </div>
   )
 }
@@ -194,18 +192,6 @@ function HeroPanel({ upcoming, user, memberships }: { upcoming: any[]; user: { n
     return d.toDateString() === new Date().toDateString()
   }).length
 
-  // Count sessions this week (Mon–Sun)
-  const now = new Date()
-  const weekStart = new Date(now)
-  weekStart.setDate(now.getDate() - ((now.getDay() + 6) % 7))
-  weekStart.setHours(0, 0, 0, 0)
-  const weekEnd = new Date(weekStart)
-  weekEnd.setDate(weekStart.getDate() + 7)
-  const weekCount = upcoming.filter(s => {
-    const d = new Date(s.scheduled_at)
-    return d >= weekStart && d < weekEnd
-  }).length
-
   const firstName = user.name?.split(' ')[0] ?? 'Fighter'
 
   return (
@@ -213,51 +199,57 @@ function HeroPanel({ upcoming, user, memberships }: { upcoming: any[]; user: { n
       {/* Ambient glow — atmospheric depth behind the hero stat */}
       <div className="absolute -top-24 -left-24 w-[420px] h-[420px] bg-[#b3402f]/[0.07] blur-[100px] rounded-full pointer-events-none" />
       <div className="relative max-w-[1280px] mx-auto px-4 sm:px-6 py-8 lg:py-12">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 lg:gap-12">
-          <div className="flex-1">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-5 h-px bg-[#b3402f]" />
-              <p className="font-mincho text-[11px] text-[#b3402f] uppercase tracking-[4px]">Today&apos;s Training</p>
-            </div>
-            <div className="relative inline-block">
-              <div className="absolute -inset-6 bg-[#b3402f]/[0.12] blur-[40px] rounded-full pointer-events-none" />
-              <div className="relative font-mincho text-[56px] sm:text-[80px] lg:text-[96px] text-[#f0eadc] leading-none tracking-[1px]">
-                {todayCount || upcoming.length || 0}
-              </div>
-            </div>
-            <p className="font-mincho text-sm text-[#a29c8c] mt-3">
-              {(todayCount || upcoming.length) ? 'Classes available today' : 'No classes scheduled yet'}
-            </p>
-            <p className="font-mincho text-xs text-[#7a7568] mt-1 uppercase tracking-[2px]">
-              Good to see you, {firstName}
-            </p>
-
-            {memberships.length > 0 && (
-              <div className="flex flex-wrap gap-2 mt-5">
-                {memberships.map((m: any) => (
-                  <span
-                    key={m.id ?? m.gyms?.id}
-                    className="inline-flex items-center gap-2 font-mincho text-[11px] text-[#c9bda0] tracking-[3px] uppercase border border-[#322f26] bg-[#1c1c16] px-3 py-1.5 rounded-sm"
-                  >
-                    {m.gyms?.logo_url ? (
-                      <img src={m.gyms.logo_url} alt="" className="w-4 h-4 rounded-sm object-cover shrink-0 grayscale" />
-                    ) : (
-                      <span className="w-1.5 h-1.5 rounded-sm bg-[#c9bda0] shrink-0" />
-                    )}
-                    Member of {m.gyms?.name ?? 'your gym'}
-                  </span>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Streak ring — desktop: right side, mobile: below text */}
-          <div className="flex justify-center lg:justify-end">
-            <StreakRing weekSessions={weekCount} goal={4} />
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-5 h-px bg-[#b3402f]" />
+          <p className="font-mincho text-[11px] text-[#b3402f] uppercase tracking-[4px]">Today&apos;s Training</p>
+        </div>
+        <div className="relative inline-block">
+          <div className="absolute -inset-6 bg-[#b3402f]/[0.12] blur-[40px] rounded-full pointer-events-none" />
+          <div className="relative font-mincho text-[56px] sm:text-[80px] lg:text-[96px] text-[#f0eadc] leading-none tracking-[1px]">
+            {todayCount || upcoming.length || 0}
           </div>
         </div>
+        <p className="font-mincho text-sm text-[#a29c8c] mt-3">
+          {(todayCount || upcoming.length) ? 'Classes available today' : 'No classes scheduled yet'}
+        </p>
+        <p className="font-mincho text-xs text-[#7a7568] mt-1 uppercase tracking-[2px]">
+          Good to see you, {firstName}
+        </p>
+
+        {memberships.length > 0 && (
+          <div className="flex flex-wrap gap-2 mt-5">
+            {memberships.map((m: any) => (
+              <span
+                key={m.id ?? m.gyms?.id}
+                className="inline-flex items-center gap-2 font-mincho text-[11px] text-[#c9bda0] tracking-[3px] uppercase border border-[#322f26] bg-[#1c1c16] px-3 py-1.5 rounded-sm"
+              >
+                {m.gyms?.logo_url ? (
+                  <img src={m.gyms.logo_url} alt="" className="w-4 h-4 rounded-sm object-cover shrink-0 grayscale" />
+                ) : (
+                  <span className="w-1.5 h-1.5 rounded-sm bg-[#c9bda0] shrink-0" />
+                )}
+                Member of {m.gyms?.name ?? 'your gym'}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
     </section>
+  )
+}
+
+// ─── Card chrome shared by the Activity Ring card and the stat boxes ─────────
+function CardHeader({ label, icon: Icon, href }: { label: string; icon: React.ElementType; href?: string }) {
+  const button = (
+    <span className="w-7 h-7 rounded-sm border border-[#322f26] bg-[#242420] flex items-center justify-center text-[#7a7568] group-hover:text-[#f0eadc] group-hover:border-[#3a3630] transition-colors duration-150 shrink-0">
+      <Icon size={13} />
+    </span>
+  )
+  return (
+    <div className="flex items-center justify-between mb-4">
+      <p className="font-mincho text-[10px] text-[#a29c8c] uppercase tracking-[3px]">{label}</p>
+      {href ? <a href={href} className="group">{button}</a> : button}
+    </div>
   )
 }
 
@@ -292,7 +284,6 @@ function StatsRow({ completedCount, totalHours, monthCount, upcoming, replays }:
     const d = new Date(s.scheduled_at)
     return d >= weekStart && d < weekEnd
   }).length
-  const weekProgress = Math.min(weekCount / weekGoal, 1)
 
   // 7-day bar chart — combine upcoming + replays
   const allSessions = [...upcoming, ...replays]
@@ -320,126 +311,107 @@ function StatsRow({ completedCount, totalHours, monthCount, upcoming, replays }:
   const topDisc = Object.entries(discCounts).sort(([, a], [, b]) => b - a).slice(0, 5)
 
   return (
-    <section className="border-b border-[#322f26]">
-      <div className="max-w-[1280px] mx-auto px-6 py-6 space-y-6">
+    <section className="border-b border-[#322f26] bg-[#18180f]">
+      <div className="max-w-[1280px] mx-auto px-6 py-8 space-y-4">
 
-        {/* ── Top: weekly goal + supporting stats ── */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 divide-x divide-y sm:divide-y-0 divide-[#322f26]">
-          {/* Weekly sessions — anchor stat */}
-          <motion.div
-            initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.2, ease: 'easeOut' }}
-            className="relative pr-6 pb-6 sm:pb-0"
-          >
-            <div className="absolute left-0 top-2 bottom-2 w-0.5 bg-[#b3402f]" />
-            <div className="pl-4">
-              <p className="font-mincho text-[10px] text-[#a29c8c] uppercase tracking-[3px] mb-2">This Week</p>
-              <div className="flex items-baseline gap-1">
-                <span className="font-mincho text-5xl sm:text-6xl text-[#f0eadc] leading-none tracking-[1px]">{weekCount}</span>
-                <span className="font-mincho text-2xl text-[#322f26] leading-none tracking-[1px]">/ {weekGoal}</span>
-              </div>
-              {/* Progress bar */}
-              <div className="mt-3 h-0.5 bg-[#242420] rounded-full overflow-visible">
-                <motion.div
-                  className="h-full bg-[#b3402f] rounded-full shadow-[0_0_8px_1px_rgba(179, 64, 47,0.6)]"
-                  initial={{ width: 0 }}
-                  animate={{ width: `${weekProgress * 100}%` }}
-                  transition={{ duration: 0.6, ease: 'easeOut', delay: 0.2 }}
-                />
-              </div>
-              <p className="font-mincho text-[10px] text-[#a29c8c] mt-1.5 tracking-[2px] uppercase">
-                {weekCount >= weekGoal ? 'Goal reached' : `${weekGoal - weekCount} to go`}
-              </p>
-            </div>
-          </motion.div>
-
-          {/* Supporting stats */}
-          {[
-            { number: `${totalHours}h`, label: 'Hours Trained' },
-            { number: String(completedCount), label: 'Replays' },
-            { number: String(monthCount), label: 'This Month' },
-          ].map(({ number, label }, i) => (
-            <motion.div
-              key={label}
-              initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.2, ease: 'easeOut', delay: (i + 1) * 0.05 }}
-              className="px-6 py-0 flex flex-col justify-center"
-            >
-              <div className="font-mincho text-4xl sm:text-5xl text-[#f0eadc] leading-none tracking-[1px]">{number}</div>
-              <p className="font-mincho text-[10px] text-[#a29c8c] uppercase tracking-[3px] mt-1.5">{label}</p>
-            </motion.div>
-          ))}
-        </div>
-
-        {/* ── Bottom: 7-day bars + discipline breakdown ── */}
+        {/* ── Activity Ring card ── */}
         <motion.div
           initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.2, ease: 'easeOut', delay: 0.25 }}
-          className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4 border-t border-[#1c1c16]"
+          transition={{ duration: 0.2, ease: 'easeOut' }}
+          className="border border-[#322f26] rounded-sm bg-[#1c1c16] p-6"
         >
-          {/* 7-day activity bars */}
-          <div>
-            <p className="font-mincho text-[10px] text-[#a29c8c] uppercase tracking-[3px] mb-3">Week Activity</p>
-            <div className="flex items-end gap-1.5 h-10">
+          <CardHeader label="Weekly Goal" icon={ArrowUpRight} href="/dashboard/schedule" />
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
+            <StreakRing weekSessions={weekCount} goal={weekGoal} />
+            <div className="flex-1 text-center sm:text-left pt-2">
+              <p className="font-mincho text-sm text-[#f0eadc]">
+                {weekCount >= weekGoal ? 'Weekly goal reached.' : `${weekGoal - weekCount} session${weekGoal - weekCount === 1 ? '' : 's'} to hit your goal.`}
+              </p>
+              <p className="font-mincho text-xs text-[#7a7568] mt-1.5">
+                {weekCount} of {weekGoal} classes this week across every gym you train at.
+              </p>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* ── 2x2 stat box grid ── */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* This Week — sparkline is the 7-day bar chart */}
+          <motion.div
+            initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.2, ease: 'easeOut', delay: 0.05 }}
+            className="border border-[#322f26] rounded-sm bg-[#1c1c16] p-5"
+          >
+            <CardHeader label="This Week" icon={CalendarDays} />
+            <div className="flex items-baseline gap-1 mb-3">
+              <span className="font-mincho text-4xl text-[#f0eadc] leading-none tracking-[1px]">{weekCount}</span>
+              <span className="font-mincho text-lg text-[#635f54] leading-none tracking-[1px]">/{weekGoal}</span>
+            </div>
+            <div className="flex items-end gap-1 h-8">
               {dayCounts.map((count, i) => {
                 const isToday = i === todayIdx
-                const heightPct = count > 0 ? Math.max((count / maxDayCount) * 100, 20) : 8
+                const heightPct = count > 0 ? Math.max((count / maxDayCount) * 100, 25) : 10
                 return (
-                  <div key={i} className="flex-1 flex flex-col items-center gap-1.5">
-                    <motion.div
-                      className={`w-full rounded-sm ${isToday ? 'bg-[#b3402f]' : count > 0 ? 'bg-[#7a7568]' : 'bg-[#1c1c16]'}`}
-                      style={{ height: `${heightPct}%` }}
-                      initial={{ scaleY: 0 }}
-                      animate={{ scaleY: 1 }}
-                      transition={{ duration: 0.3, ease: 'easeOut', delay: 0.3 + i * 0.04 }}
-                    />
-                  </div>
+                  <motion.div
+                    key={i}
+                    className={`flex-1 rounded-sm ${isToday ? 'bg-[#b3402f]' : count > 0 ? 'bg-[#7a7568]' : 'bg-[#242420]'}`}
+                    style={{ height: `${heightPct}%` }}
+                    initial={{ scaleY: 0 }}
+                    animate={{ scaleY: 1 }}
+                    transition={{ duration: 0.3, ease: 'easeOut', delay: 0.3 + i * 0.04 }}
+                  />
                 )
               })}
             </div>
-            <div className="flex gap-1.5 mt-1.5">
-              {dayLabels.map((label, i) => (
-                <div key={i} className="flex-1 flex justify-center">
-                  <span className={`font-mincho text-[9px] uppercase tracking-[1px] ${i === todayIdx ? 'text-[#b3402f]' : 'text-[#322f26]'}`}>
-                    {label}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
+          </motion.div>
 
-          {/* Discipline breakdown */}
-          <div>
-            <p className="font-mincho text-[10px] text-[#a29c8c] uppercase tracking-[3px] mb-3">Discipline Split</p>
+          {/* Hours Trained */}
+          <motion.div
+            initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.2, ease: 'easeOut', delay: 0.1 }}
+            className="border border-[#322f26] rounded-sm bg-[#1c1c16] p-5"
+          >
+            <CardHeader label="Hours Trained" icon={Clock} />
+            <div className="font-mincho text-4xl text-[#f0eadc] leading-none tracking-[1px] mb-3">{totalHours}h</div>
+            <p className="font-mincho text-[11px] text-[#7a7568]">Total mat time logged</p>
+          </motion.div>
+
+          {/* Replays */}
+          <motion.div
+            initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.2, ease: 'easeOut', delay: 0.15 }}
+            className="border border-[#322f26] rounded-sm bg-[#1c1c16] p-5"
+          >
+            <CardHeader label="Replays" icon={RotateCcw} href="/dashboard/replays" />
+            <div className="font-mincho text-4xl text-[#f0eadc] leading-none tracking-[1px] mb-3">{completedCount}</div>
+            <p className="font-mincho text-[11px] text-[#7a7568]">Classes completed all-time</p>
+          </motion.div>
+
+          {/* This Month — discipline split lives here since it's also an aggregate view */}
+          <motion.div
+            initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.2, ease: 'easeOut', delay: 0.2 }}
+            className="border border-[#322f26] rounded-sm bg-[#1c1c16] p-5"
+          >
+            <CardHeader label="This Month" icon={ChevronRight} />
+            <div className="font-mincho text-4xl text-[#f0eadc] leading-none tracking-[1px] mb-3">{monthCount}</div>
             {totalDisc > 1 ? (
-              <>
-                {/* Segmented bar */}
-                <div className="flex h-1.5 rounded-sm overflow-hidden gap-px mb-3">
-                  {topDisc.map(([disc, count]) => (
-                    <motion.div
-                      key={disc}
-                      style={{ backgroundColor: DISCIPLINE_BAR_COLOR[disc] ?? '#444', width: `${(count / totalDisc) * 100}%` }}
-                      initial={{ scaleX: 0 }}
-                      animate={{ scaleX: 1 }}
-                      transition={{ duration: 0.5, ease: 'easeOut', delay: 0.35 }}
-                    />
-                  ))}
-                </div>
-                <div className="flex flex-wrap gap-x-4 gap-y-1.5">
-                  {topDisc.map(([disc, count]) => (
-                    <div key={disc} className="flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-sm shrink-0" style={{ backgroundColor: DISCIPLINE_BAR_COLOR[disc] ?? '#444' }} />
-                      <span className="font-mincho text-[10px] text-[#a29c8c] uppercase tracking-[1px]">{disc}</span>
-                      <span className="font-mincho text-[10px] text-[#a29c8c]">{Math.round((count / totalDisc) * 100)}%</span>
-                    </div>
-                  ))}
-                </div>
-              </>
+              <div className="flex h-1.5 rounded-sm overflow-hidden gap-px">
+                {topDisc.map(([disc, count]) => (
+                  <motion.div
+                    key={disc}
+                    style={{ backgroundColor: DISCIPLINE_BAR_COLOR[disc] ?? '#444', width: `${(count / totalDisc) * 100}%` }}
+                    initial={{ scaleX: 0 }}
+                    animate={{ scaleX: 1 }}
+                    transition={{ duration: 0.5, ease: 'easeOut', delay: 0.35 }}
+                  />
+                ))}
+              </div>
             ) : (
-              <p className="font-mincho text-xs text-[#322f26]">Train more to see your split</p>
+              <p className="font-mincho text-[11px] text-[#7a7568]">Classes completed this month</p>
             )}
-          </div>
-        </motion.div>
+          </motion.div>
+        </div>
 
       </div>
     </section>

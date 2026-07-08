@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import {
   LayoutDashboard,
-  Building2,
   Calendar,
   PlaySquare,
   CreditCard,
@@ -29,7 +28,6 @@ const navGroups = [
   {
     label: 'Train',
     items: [
-      { label: 'Browse Gyms', href: '/gyms', icon: Building2 },
       { label: 'Schedule', href: '/dashboard/schedule', icon: Calendar },
       { label: 'Replays', href: '/dashboard/replays', icon: PlaySquare },
       { label: 'Progression', href: '/dashboard/progression', icon: Award, soon: true },

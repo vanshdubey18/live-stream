@@ -19,6 +19,8 @@ interface Props {
   canModerate?: boolean
   /** flex-1 fills the parent's remaining height (used in the watch-page rail). */
   fill?: boolean
+  /** Replay view — historical log only, no input box and no Realtime subscription. */
+  readOnly?: boolean
 }
 
 const MAX_LEN = 300
@@ -27,7 +29,7 @@ function formatTime(iso: string) {
   return new Date(iso).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })
 }
 
-export default function LiveChat({ sessionId, userId, canModerate = false, fill = false }: Props) {
+export default function LiveChat({ sessionId, userId, canModerate = false, fill = false, readOnly = false }: Props) {
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [input, setInput] = useState('')
   const [sending, setSending] = useState(false)
@@ -48,8 +50,10 @@ export default function LiveChat({ sessionId, userId, canModerate = false, fill 
     return () => { cancelled = true }
   }, [sessionId, scrollToBottom])
 
-  // Realtime — new messages push in instantly, deletions remove instantly
+  // Realtime — new messages push in instantly, deletions remove instantly.
+  // Skipped in readOnly (replay) mode — the class is over, nothing new to push.
   useEffect(() => {
+    if (readOnly) return
     const supabase = createClient()
     const channel = supabase.channel(`live-chat-${sessionId}`)
     channel.on(
@@ -71,7 +75,7 @@ export default function LiveChat({ sessionId, userId, canModerate = false, fill 
     )
     channel.subscribe()
     return () => { supabase.removeChannel(channel) }
-  }, [sessionId, scrollToBottom])
+  }, [sessionId, scrollToBottom, readOnly])
 
   async function handleSend(e: React.FormEvent) {
     e.preventDefault()
@@ -99,12 +103,14 @@ export default function LiveChat({ sessionId, userId, canModerate = false, fill 
     <div className={`bg-[#1c1c16] border border-[#322f26] rounded-sm flex flex-col ${fill ? 'h-[50vh] lg:h-auto lg:flex-1 lg:min-h-0' : ''}`}>
       <div className="px-5 py-3 border-b border-[#2a2a20] flex items-center gap-2 shrink-0">
         <MessageCircle size={13} className="text-[#7a7568]" />
-        <span className="font-mincho text-[11px] text-[#a29c8c] tracking-[4px] uppercase">Live Chat</span>
+        <span className="font-mincho text-[11px] text-[#a29c8c] tracking-[4px] uppercase">{readOnly ? 'Class Chat' : 'Live Chat'}</span>
       </div>
 
       <div ref={listRef} className={`overflow-y-auto px-4 py-3 space-y-2.5 ${fill ? 'flex-1 min-h-0' : 'max-h-96'}`}>
         {messages.length === 0 ? (
-          <p className="font-mincho text-[#7a7568] text-xs text-center py-6">No messages yet — say hi.</p>
+          <p className="font-mincho text-[#7a7568] text-xs text-center py-6">
+            {readOnly ? 'No messages were sent during this class.' : 'No messages yet — say hi.'}
+          </p>
         ) : (
           messages.map(m => (
             <div key={m.id} className="group flex items-start gap-2">
@@ -129,22 +135,24 @@ export default function LiveChat({ sessionId, userId, canModerate = false, fill 
         )}
       </div>
 
-      <form onSubmit={handleSend} className="p-3 border-t border-[#2a2a20] flex items-center gap-2 shrink-0">
-        <input
-          value={input}
-          onChange={e => setInput(e.target.value)}
-          maxLength={MAX_LEN}
-          placeholder="Send a message…"
-          className="flex-1 min-w-0 bg-[#141410] border border-[#322f26] rounded-sm px-3 py-2 font-mincho text-sm text-[#f0eadc] placeholder-[#635f54] focus:outline-none focus:border-[#7a7568] transition-colors"
-        />
-        <button
-          type="submit"
-          disabled={!input.trim() || sending}
-          className="w-9 h-9 shrink-0 bg-[#b3402f]/10 border border-[#b3402f]/20 rounded-sm flex items-center justify-center text-[#b3402f] hover:bg-[#b3402f]/20 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-        >
-          <Send size={14} />
-        </button>
-      </form>
+      {!readOnly && (
+        <form onSubmit={handleSend} className="p-3 border-t border-[#2a2a20] flex items-center gap-2 shrink-0">
+          <input
+            value={input}
+            onChange={e => setInput(e.target.value)}
+            maxLength={MAX_LEN}
+            placeholder="Send a message…"
+            className="flex-1 min-w-0 bg-[#141410] border border-[#322f26] rounded-sm px-3 py-2 font-mincho text-sm text-[#f0eadc] placeholder-[#635f54] focus:outline-none focus:border-[#7a7568] transition-colors"
+          />
+          <button
+            type="submit"
+            disabled={!input.trim() || sending}
+            className="w-9 h-9 shrink-0 bg-[#b3402f]/10 border border-[#b3402f]/20 rounded-sm flex items-center justify-center text-[#b3402f] hover:bg-[#b3402f]/20 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          >
+            <Send size={14} />
+          </button>
+        </form>
+      )}
     </div>
   )
 }

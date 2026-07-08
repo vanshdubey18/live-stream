@@ -36,7 +36,10 @@ export async function getMemberGyms(userId: string) {
     .eq('user_id', userId)
     .eq('status', 'active')
 
-  if (error) { console.error('getMemberGyms:', error); return [] }
+  // A real Supabase error (e.g. a JWT-refresh race on page reload) is not the
+  // same as "this member has no gyms" — throw so the error boundary offers a
+  // retry instead of silently showing "join a gym" to someone who already has.
+  if (error) { console.error('getMemberGyms:', error); throw new Error(`Failed to load memberships: ${error.message}`) }
   return data ?? []
 }
 

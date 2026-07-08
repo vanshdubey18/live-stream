@@ -102,7 +102,7 @@ export default function ScheduleClassModal({ coaches, onClose, onScheduled }: Sc
               onChange={e => set('title', e.target.value)} required />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className={labelCls}>Discipline</label>
               <select className={inputCls} value={form.discipline} onChange={e => set('discipline', e.target.value)}>
@@ -118,7 +118,7 @@ export default function ScheduleClassModal({ coaches, onClose, onScheduled }: Sc
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className={labelCls}>Date</label>
               <input type="date" className={inputCls} value={form.date}
@@ -132,7 +132,7 @@ export default function ScheduleClassModal({ coaches, onClose, onScheduled }: Sc
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className={labelCls}>Duration (min)</label>
               <select className={inputCls} value={form.duration} onChange={e => set('duration', e.target.value)}>

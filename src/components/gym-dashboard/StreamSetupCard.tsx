@@ -43,11 +43,11 @@ export default function StreamSetupCard({ gymId }: Props) {
 
   return (
     <div className="bg-[#1c1c16] border border-[#322f26] rounded-sm p-6">
-      <div className="flex items-start justify-between gap-4">
-        <div>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div className="min-w-0">
           <p className="font-mincho text-[11px] text-[#a29c8c] tracking-[4px] uppercase mb-2">Stream Status</p>
-          <span className={`font-mincho text-5xl tracking-[1px] flex items-center gap-3 ${display.color}`}>
-            {display.spinner && <Loader2 size={28} className="animate-spin" />}
+          <span className={`font-mincho text-3xl sm:text-5xl tracking-[1px] flex items-center gap-3 ${display.color}`}>
+            {display.spinner && <Loader2 size={28} className="animate-spin shrink-0" />}
             {display.label}
           </span>
         </div>

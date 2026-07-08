@@ -110,7 +110,7 @@ export default function ScheduleClient({ gym, sessions, coaches }: Props) {
         <div className="px-6 py-8 max-w-4xl space-y-8">
 
           {/* Stats strip */}
-          <div className="grid grid-cols-3 gap-px bg-[#322f26] rounded-sm overflow-hidden">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-px bg-[#322f26] rounded-sm overflow-hidden">
             {/* First stat — Scheduled — gets the red left-bar accent */}
             <div className="relative">
               <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-[#b3402f] z-10" />

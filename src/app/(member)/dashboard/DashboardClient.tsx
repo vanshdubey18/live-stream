@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 import MemberSidebar from '@/components/layout/MemberSidebar'
 import InsightCard from '@/components/ui/InsightCard'
 import EmptyState from '@/components/ui/EmptyState'
-import { ChevronRight, ArrowRight, ArrowUpRight, Play, Clock, RotateCcw, CalendarDays } from 'lucide-react'
+import { ChevronRight, ArrowRight, ArrowUpRight, Play, Clock, RotateCcw, CalendarDays, Megaphone } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { cfThumbnailUrl } from '@/lib/cf-thumbnail'
 
@@ -20,6 +20,7 @@ interface Props {
   monthCount: number
   gymIds: string[]
   gymNames: Record<string, string>
+  announcements: any[]
 }
 
 const DISCIPLINE_COLOR: Record<string, string> = {
@@ -61,6 +62,13 @@ function formatRelDay(iso: string) {
 }
 
 // ─── Live Banner ──────────────────────────────────────────────────────────────
+function formatAgo(iso: string) {
+  const diff = Math.floor((Date.now() - new Date(iso).getTime()) / 60000)
+  if (diff < 60) return `${Math.max(diff, 1)}m ago`
+  if (diff < 1440) return `${Math.floor(diff / 60)}h ago`
+  return `${Math.floor(diff / 1440)}d ago`
+}
+
 function LiveBanner({ session }: { session: any }) {
   return (
     <motion.a
@@ -493,6 +501,38 @@ function MyGyms({ memberships }: { memberships: any[] }) {
   )
 }
 
+// ─── Announcements ────────────────────────────────────────────────────────────
+function Announcements({ announcements }: { announcements: any[] }) {
+  if (!announcements.length) return null
+
+  return (
+    <div>
+      <div className="flex items-center gap-3 mb-5">
+        <div className="w-5 h-px bg-[#b3402f]" />
+        <p className="font-mincho text-[11px] text-[#b3402f] uppercase tracking-[4px]">Announcements</p>
+      </div>
+      <div className="bg-[#1c1c16] border border-[#322f26] rounded-sm divide-y divide-[#242420]">
+        {announcements.slice(0, 4).map((a: any, i: number) => (
+          <motion.div
+            key={a.id}
+            initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.2, ease: 'easeOut', delay: i * 0.05 }}
+            className="px-4 py-3.5 flex items-start gap-3"
+          >
+            <Megaphone size={14} className="text-[#b3402f] mt-0.5 shrink-0" />
+            <div className="min-w-0">
+              <p className="font-mincho text-sm text-[#f0eadc] leading-relaxed">{a.body}</p>
+              <p className="font-mincho text-[10px] text-[#7a7568] mt-1.5 uppercase tracking-[1px]">
+                {a.gyms?.name ?? 'Your gym'} · {formatAgo(a.created_at)}
+              </p>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 // ─── Upcoming Classes ─────────────────────────────────────────────────────────
 function UpcomingClasses({ sessions }: { sessions: any[] }) {
   const items = sessions.slice(0, 3)
@@ -633,7 +673,7 @@ function RecentReplays({ replays, hasGyms }: { replays: any[]; hasGyms: boolean 
 }
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
-export default function DashboardClient({ user, memberships, upcoming, replays, liveSession: initialLiveSession, completedCount, totalHours, monthCount, gymIds, gymNames }: Props) {
+export default function DashboardClient({ user, memberships, upcoming, replays, liveSession: initialLiveSession, completedCount, totalHours, monthCount, gymIds, gymNames, announcements }: Props) {
   const [, setSearchOpen] = useState(false)
   const [liveSession, setLiveSession] = useState<any | null>(initialLiveSession)
 
@@ -703,7 +743,8 @@ export default function DashboardClient({ user, memberships, upcoming, replays, 
                 <RecentReplays replays={replays} hasGyms={memberships.length > 0} />
               </div>
               {/* Rail */}
-              <div className="lg:col-span-1">
+              <div className="lg:col-span-1 space-y-10">
+                <Announcements announcements={announcements} />
                 <MyGyms memberships={memberships} />
               </div>
             </div>

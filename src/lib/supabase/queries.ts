@@ -162,6 +162,20 @@ export async function getGymBySlug(slug: string) {
   return data
 }
 
+export async function getMemberAnnouncements(gymIds: string[]) {
+  if (gymIds.length === 0) return []
+  const supabase = createClient()
+  const { data, error } = await supabase
+    .from('announcements')
+    .select('id, gym_id, body, created_at, gyms ( name, logo_url )')
+    .in('gym_id', gymIds)
+    .order('created_at', { ascending: false })
+    .limit(10)
+
+  if (error) { console.error('getMemberAnnouncements:', error); return [] }
+  return data ?? []
+}
+
 export async function getMembershipForGym(userId: string, gymId: string) {
   const supabase = createClient()
   const { data, error } = await supabase

@@ -198,7 +198,11 @@ function ActionItems({
     items.push({
       key: `setup-${need}`, tone: 'setup', icon: <AlertTriangle size={15} />,
       title: need === 'logo' ? 'Add your gym logo' : need === 'coaches' ? 'Add your first coach' : 'Schedule your first class',
-      sub: 'Finish setting up your gym',
+      sub: need === 'logo'
+        ? 'Helps members recognize your gym'
+        : need === 'coaches'
+        ? 'Assign classes to a real coach'
+        : 'Get on the schedule so members can join',
       cta: {
         label: 'Set up',
         href: need === 'logo' ? '/gym-dashboard/profile' : need === 'coaches' ? '/gym-dashboard/coaches' : undefined,
@@ -243,9 +247,11 @@ function ActionItems({
               {item.cta && (item.cta.href ? (
                 <a
                   href={item.cta.href}
-                  className="shrink-0 flex items-center gap-1 font-mincho tracking-[2px] text-sm text-[#141410] bg-[#f0eadc] hover:bg-[#e4dcc8] px-3 py-1.5 rounded-sm transition-colors"
+                  aria-label={item.cta.label}
+                  title={item.cta.label}
+                  className="shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-[#f0eadc] hover:bg-[#e4dcc8] text-[#141410] transition-colors"
                 >
-                  {item.cta.label} <ArrowRight size={12} />
+                  <ArrowRight size={14} />
                 </a>
               ) : item.cta.onClick ? (
                 <button

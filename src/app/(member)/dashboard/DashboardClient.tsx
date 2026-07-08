@@ -8,6 +8,7 @@ import EmptyState from '@/components/ui/EmptyState'
 import { ChevronRight, ArrowRight, ArrowUpRight, Play, Clock, RotateCcw, CalendarDays, Megaphone } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { cfThumbnailUrl } from '@/lib/cf-thumbnail'
+import { mockPhotoFor } from '@/lib/mock-replay-photo'
 
 interface Props {
   user: { name: string; email: string }
@@ -29,23 +30,6 @@ const DISCIPLINE_COLOR: Record<string, string> = {
   'Muay Thai': '#7a7568',
   Wrestling: '#322f26',
   MMA: '#635f54',
-}
-
-// Placeholder training photos shown until a replay has a real Cloudflare
-// Stream thumbnail (cf_video_uid). Swap for real class photography when
-// available — these are just to avoid an empty card in the meantime.
-const MOCK_REPLAY_PHOTOS = [
-  'https://images.pexels.com/photos/4761598/pexels-photo-4761598.jpeg?auto=compress&cs=tinysrgb&w=800',
-  'https://images.pexels.com/photos/5750947/pexels-photo-5750947.jpeg?auto=compress&cs=tinysrgb&w=800',
-  'https://images.pexels.com/photos/6296121/pexels-photo-6296121.jpeg?auto=compress&cs=tinysrgb&w=800',
-  'https://images.pexels.com/photos/7991692/pexels-photo-7991692.jpeg?auto=compress&cs=tinysrgb&w=800',
-  'https://images.pexels.com/photos/6793653/pexels-photo-6793653.jpeg?auto=compress&cs=tinysrgb&w=800',
-]
-
-function mockPhotoFor(id: string) {
-  let hash = 0
-  for (let i = 0; i < id.length; i++) hash = (hash * 31 + id.charCodeAt(i)) >>> 0
-  return MOCK_REPLAY_PHOTOS[hash % MOCK_REPLAY_PHOTOS.length]
 }
 
 function formatTime(iso: string) {

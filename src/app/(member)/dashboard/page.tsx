@@ -6,6 +6,7 @@ import {
   getRecentReplays,
   getLiveSession,
   getNextSessionForGym,
+  getMemberAnnouncements,
 } from '@/lib/supabase/queries'
 import DashboardClient from './DashboardClient'
 
@@ -18,13 +19,14 @@ export default async function DashboardPage() {
   const memberships = await getMemberGyms(user.id)
   const gymIds = memberships.map((m: any) => m.gyms?.id).filter(Boolean)
 
-  const [upcoming, replays, liveSession, allSessions] = await Promise.all([
+  const [upcoming, replays, liveSession, allSessions, announcements] = await Promise.all([
     getUpcomingSessions(gymIds),
     getRecentReplays(gymIds),
     getLiveSession(gymIds),
     gymIds.length > 0
       ? createClient().from('sessions').select('id, status, duration_minutes, scheduled_at').in('gym_id', gymIds).eq('status', 'ended')
       : Promise.resolve({ data: [] }),
+    getMemberAnnouncements(gymIds),
   ])
 
   const completedSessions = (allSessions as any)?.data ?? []
@@ -58,6 +60,7 @@ export default async function DashboardPage() {
       monthCount={monthCount}
       gymIds={gymIds}
       gymNames={gymNames}
+      announcements={announcements}
     />
   )
 }

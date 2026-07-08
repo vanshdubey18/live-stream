@@ -1,12 +1,13 @@
 'use client'
 
 import { useState } from 'react'
-import { ExternalLink, Plus, CheckCircle, Clock, Radio, AlertTriangle, UserPlus, ArrowRight, Download, X, RefreshCw } from 'lucide-react'
+import { ExternalLink, Plus, CheckCircle, Clock, Radio, AlertTriangle, UserPlus, ArrowRight, Download, X, RefreshCw, Users, IndianRupee, CalendarClock } from 'lucide-react'
 import GymSidebar from '@/components/layout/GymSidebar'
 import StatsCard from '@/components/gym-dashboard/StatsCard'
 import StreamSetupCard from '@/components/gym-dashboard/StreamSetupCard'
 import ScheduleClassModal, { type ScheduledClass } from '@/components/gym-dashboard/ScheduleClassModal'
 import Toast from '@/components/gym-dashboard/Toast'
+import EmptyState from '@/components/ui/EmptyState'
 import { isSessionLive } from '@/lib/session-live'
 
 interface MemberStats {
@@ -355,26 +356,30 @@ export default function GymDashboardClient({ gym, ownerName, sessions, coaches, 
 
           {/* Stats row */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="relative">
-              <div className="absolute -inset-4 bg-[#b3402f]/[0.06] blur-[32px] rounded-full pointer-events-none" />
-              <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-[#b3402f] z-10 shadow-[0_0_8px_1px_rgba(179, 64, 47,0.5)]" />
-              <StatsCard
-                label="Members"
-                value={String(memberCount)}
-                sub={memberStats.newThisWeek > 0 ? `+${memberStats.newThisWeek} this week` : 'Active memberships'}
-              />
-            </div>
             <StatsCard
-              label="Est. Revenue (₹)"
+              href="/gym-dashboard/members"
+              icon={Users}
+              label="Members"
+              value={String(memberCount)}
+              sub={memberStats.newThisWeek > 0 ? `+${memberStats.newThisWeek} this week` : 'Active memberships'}
+            />
+            <StatsCard
+              href="/gym-dashboard/revenue"
+              icon={IndianRupee}
+              label="Est. Revenue"
               value={`₹${totalRevenue.toLocaleString('en-IN')}`}
               sub="Your 70% share (est.)"
             />
             <StatsCard
+              href="/gym-dashboard/members"
+              icon={AlertTriangle}
               label="Expiring Soon"
               value={String(memberStats.expiringSoon)}
               sub={memberStats.expiringSoon > 0 ? 'Within 7 days — remind them' : 'None this week'}
             />
             <StatsCard
+              href="/gym-dashboard/schedule"
+              icon={CalendarClock}
               label="Sessions"
               value={String(localSessions.length)}
               sub={`${completedCount} ended · ${scheduledCount} scheduled`}
@@ -400,21 +405,19 @@ export default function GymDashboardClient({ gym, ownerName, sessions, coaches, 
             </div>
 
             {localSessions.length === 0 ? (
-              <div className="relative bg-[#1c1c16] border border-[#322f26] rounded-sm px-6 py-12 text-center overflow-hidden">
-                <span className="absolute inset-0 flex items-center justify-center font-mincho text-[120px] text-[#f0eadc]/[0.03] leading-none select-none pointer-events-none">LIVE</span>
-                <p className="relative font-mincho text-[#7a7568] text-sm mb-5">No sessions scheduled yet.</p>
+              <EmptyState ghost="LIVE" message="No sessions scheduled yet.">
                 <button
                   onClick={() => setShowModal(true)}
-                  className="relative bg-[#f0eadc] hover:bg-[#e4dcc8] text-[#141410] font-mincho tracking-[3px] text-sm px-6 py-2.5 rounded-sm transition-colors"
+                  className="bg-[#f0eadc] hover:bg-[#e4dcc8] text-[#141410] font-mincho tracking-[3px] text-sm px-6 py-2.5 rounded-sm transition-colors"
                 >
                   Schedule First Class
                 </button>
-              </div>
+              </EmptyState>
             ) : (
               <div className="bg-[#1c1c16] border border-[#322f26] rounded-sm divide-y divide-[#242420]">
                 {localSessions.slice(0, 3).map((s: any) => (
                   <div key={s.id} className="px-5 py-4 flex items-center justify-between gap-3">
-                    <div className="min-w-0">
+                    <div className="flex-1 min-w-0">
                       <p className="font-mincho text-[#f0eadc] text-sm font-medium truncate">{s.title}</p>
                       <p className="font-mincho text-[#a29c8c] text-xs mt-0.5">
                         {s.scheduled_at ? formatDateShort(s.scheduled_at) : s.date}
@@ -422,7 +425,7 @@ export default function GymDashboardClient({ gym, ownerName, sessions, coaches, 
                         {s.scheduled_at ? formatTime(s.scheduled_at) : s.time}
                       </p>
                     </div>
-                    <div className="flex items-center gap-3 shrink-0">
+                    <div className="flex items-center gap-2 sm:gap-3 shrink-0">
                       <StatusBadge status={s.status ?? 'scheduled'} />
                       {s.status !== 'ended' && (
                         <a
@@ -452,10 +455,7 @@ export default function GymDashboardClient({ gym, ownerName, sessions, coaches, 
               <p className="font-mincho text-[11px] text-[#b3402f] tracking-[4px] uppercase">Recent Payouts</p>
             </div>
             {payouts.length === 0 ? (
-              <div className="relative bg-[#1c1c16] border border-[#322f26] rounded-sm px-6 py-8 text-center overflow-hidden">
-                <span className="absolute inset-0 flex items-center justify-center font-mincho text-[120px] text-[#f0eadc]/[0.03] leading-none select-none pointer-events-none">EARN</span>
-                <p className="relative font-mincho text-[#7a7568] text-sm">No payouts yet.</p>
-              </div>
+              <EmptyState ghost="EARN" message="No payouts yet." size="sm" />
             ) : (
               <div className="bg-[#1c1c16] border border-[#322f26] rounded-sm divide-y divide-[#242420]">
                 {payouts.slice(0, 3).map((p: any) => (

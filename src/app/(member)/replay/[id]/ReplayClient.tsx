@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowLeft, Play, Pause, Volume2, Maximize, Settings, Lock, Sparkles, BookOpen, Layers, MessageCircle, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
 import Hls from 'hls.js'
+import LiveChat from '@/components/live/LiveChat'
 
 interface SessionMeta {
   title: string
@@ -53,7 +54,7 @@ const DEMO_CHAT = [
   { role: 'user', text: 'What if my hips are too flat?' },
 ]
 
-type Tab = 'summary' | 'quiz' | 'flashcards' | 'ask'
+type Tab = 'summary' | 'chat' | 'quiz' | 'flashcards' | 'ask'
 
 // ─── Upgrade CTA overlay ──────────────────────────────────────────────────────
 function UpgradeOverlay({ feature }: { feature: string }) {
@@ -187,6 +188,15 @@ function SummaryTab({
   )
 }
 
+// ─── Chat tab (FREE) — the live class chat log, optional to view ─────────────
+function ChatReplayTab({ sessionId, userId }: { sessionId: string; userId: string }) {
+  return (
+    <div className="px-5 py-5">
+      <LiveChat sessionId={sessionId} userId={userId} readOnly />
+    </div>
+  )
+}
+
 // ─── Quiz tab (LOCKED) ────────────────────────────────────────────────────────
 function QuizTab() {
   return (
@@ -283,29 +293,34 @@ function AISidebar({
   onTimestampClick,
   seekable = true,
   aiData,
+  sessionId,
+  userId,
 }: {
   onTimestampClick: (ts: string) => void
   seekable?: boolean
   aiData?: AIData | null
+  sessionId: string
+  userId: string
 }) {
   const [activeTab, setActiveTab] = useState<Tab>('summary')
 
   const tabs: { id: Tab; label: string; icon: React.ReactNode; locked: boolean }[] = [
     { id: 'summary', label: 'Summary', icon: <BookOpen size={12} />, locked: false },
+    { id: 'chat', label: 'Chat', icon: <MessageCircle size={12} />, locked: false },
     { id: 'quiz', label: 'Quiz', icon: <Sparkles size={12} />, locked: true },
     { id: 'flashcards', label: 'Cards', icon: <Layers size={12} />, locked: true },
-    { id: 'ask', label: 'Ask Coach', icon: <MessageCircle size={12} />, locked: true },
+    { id: 'ask', label: 'Coach', icon: <MessageCircle size={12} />, locked: true },
   ]
 
   return (
     <div className="flex flex-col h-full">
-      {/* Tab bar */}
-      <div className="flex border-b border-[#2a2a20] shrink-0">
+      {/* Tab bar — horizontally scrollable so 5 tabs never wrap/collide on narrow screens */}
+      <div className="flex overflow-x-auto border-b border-[#2a2a20] shrink-0">
         {tabs.map(tab => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`flex-1 flex items-center justify-center gap-1.5 py-3 font-mincho text-[11px] tracking-[2px] uppercase transition-colors relative ${
+            className={`shrink-0 flex items-center justify-center gap-1 px-3.5 py-3 font-mincho text-[10px] tracking-[1.5px] uppercase transition-colors relative whitespace-nowrap ${
               activeTab === tab.id
                 ? 'text-[#f0eadc]'
                 : 'text-[#7a7568] hover:text-[#a29c8c]'
@@ -332,6 +347,7 @@ function AISidebar({
             transition={{ duration: 0.15 }}
           >
             {activeTab === 'summary' && <SummaryTab onTimestampClick={onTimestampClick} seekable={seekable} aiData={aiData} />}
+            {activeTab === 'chat' && <ChatReplayTab sessionId={sessionId} userId={userId} />}
             {activeTab === 'quiz' && <QuizTab />}
             {activeTab === 'flashcards' && <FlashcardsTab />}
             {activeTab === 'ask' && <AskCoachTab />}
@@ -350,11 +366,15 @@ interface Chapter {
 }
 
 export default function ReplayClient({
+  sessionId,
+  userId,
   replayUrl,
   session,
   aiData,
   chapters = [],
 }: {
+  sessionId: string
+  userId: string
   replayUrl?: string
   session?: SessionMeta
   aiData?: AIData | null
@@ -515,7 +535,7 @@ export default function ReplayClient({
                 <p className="font-mincho text-[11px] text-[#b3402f] tracking-[4px] uppercase">Chapters</p>
               </div>
               <div className="space-y-1">
-                {chapters.map((ch, i) => (
+                {chapters.map((ch) => (
                   <button
                     key={ch.id}
                     onClick={() => handleChapterSeek(ch.timestamp_seconds)}
@@ -542,7 +562,7 @@ export default function ReplayClient({
 
           {/* Mobile AI sidebar */}
           <div className="lg:hidden border-t border-[#322f26]">
-            <AISidebar onTimestampClick={handleTimestamp} seekable={Boolean(replayUrl)} aiData={aiData} />
+            <AISidebar onTimestampClick={handleTimestamp} seekable={Boolean(replayUrl)} aiData={aiData} sessionId={sessionId} userId={userId} />
           </div>
         </div>
 
@@ -561,7 +581,7 @@ export default function ReplayClient({
 
           {/* Tabbed AI panel */}
           <div className="flex-1 flex flex-col overflow-hidden">
-            <AISidebar onTimestampClick={handleTimestamp} seekable={Boolean(replayUrl)} aiData={aiData} />
+            <AISidebar onTimestampClick={handleTimestamp} seekable={Boolean(replayUrl)} aiData={aiData} sessionId={sessionId} userId={userId} />
           </div>
         </motion.div>
 

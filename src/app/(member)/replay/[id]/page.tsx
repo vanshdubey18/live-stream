@@ -97,6 +97,8 @@ export default async function ReplayPage({ params }: { params: { id: string } })
 
   return (
     <ReplayClient
+      sessionId={session.id}
+      userId={user.id}
       replayUrl={session.replay_url ?? undefined}
       chapters={chaptersData ?? []}
       session={{

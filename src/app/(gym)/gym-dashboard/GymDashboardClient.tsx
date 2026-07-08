@@ -196,7 +196,7 @@ function ActionItems({
 
   for (const need of setupNeeds) {
     items.push({
-      key: `setup-${need}`, tone: 'setup', icon: <AlertTriangle size={15} />,
+      key: `setup-${need}`, tone: 'setup', icon: <Plus size={15} />,
       title: need === 'logo' ? 'Add your gym logo' : need === 'coaches' ? 'Add your first coach' : 'Schedule your first class',
       sub: need === 'logo'
         ? 'Helps members recognize your gym'
@@ -222,7 +222,7 @@ function ActionItems({
     live: { dot: 'bg-[#b3402f]', icon: 'text-[#b3402f]', border: 'border-[#b3402f]/30' },
     warn: { dot: 'bg-[#FFD60A]', icon: 'text-[#FFD60A]', border: 'border-[#FFD60A]/20' },
     info: { dot: 'bg-[#7a7568]', icon: 'text-[#a29c8c]', border: 'border-[#322f26]' },
-    setup: { dot: 'bg-[#FFD60A]', icon: 'text-[#FFD60A]', border: 'border-[#322f26]' },
+    setup: { dot: 'bg-[#7a7568]', icon: 'text-[#a29c8c]', border: 'border-[#322f26]' },
   }
 
   return (

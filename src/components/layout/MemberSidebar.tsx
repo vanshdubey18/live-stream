@@ -127,9 +127,6 @@ export default function MemberSidebar({ active = 'Dashboard', onSearchOpen }: Me
               <p className="font-mincho text-sm text-[#f0eadc] tracking-[1px] leading-none truncate">Matpeak Coach</p>
               <p className="font-mincho text-[10px] text-[#b3402f]/70 mt-0.5 truncate">Ask about your classes</p>
             </div>
-            <span className="font-mincho text-[9px] text-[#b3402f] tracking-[2px] uppercase border border-[#b3402f]/30 px-1.5 py-0.5 rounded-sm shrink-0">
-              Soon
-            </span>
           </button>
         </div>
 

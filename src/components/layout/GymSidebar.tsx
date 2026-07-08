@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import {
   LayoutDashboard, Radio, CalendarDays, Users,
-  DollarSign, BarChart2, Settings, LogOut, Menu, X, UserCheck, Megaphone,
+  DollarSign, BarChart2, Settings, LogOut, Menu, X, UserCheck, Megaphone, Sparkles,
 } from 'lucide-react'
 
 const navGroups = [
@@ -61,9 +61,24 @@ export default function GymSidebar({ active = 'Overview' }: GymSidebarProps) {
       )}
 
       <aside className={`fixed top-0 left-0 h-full z-40 w-[75vw] max-w-[280px] lg:w-64 bg-[#141410] border-r border-[#322f26] flex flex-col transition-transform duration-300 ${open ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
-        <div className="h-16 flex items-center justify-between px-6 border-b border-[#322f26]">
+        <div className="h-16 flex items-center px-6 border-b border-[#322f26]">
           <span className="font-mincho tracking-[2px] text-xl text-[#b3402f]">MATPEAK</span>
-          <span className="font-mincho text-[10px] text-[#7a7568] bg-[#1c1c16] border border-[#322f26] px-2 py-0.5 rounded-sm">GYM</span>
+        </div>
+
+        {/* Matpeak Coach CTA */}
+        <div className="px-3 py-3 border-b border-[#322f26]">
+          <button
+            onClick={() => window.dispatchEvent(new CustomEvent('open-ai-coach'))}
+            className="w-full flex items-center gap-3 px-3 py-3 rounded-sm bg-[#b3402f]/10 border border-[#b3402f]/20 hover:bg-[#b3402f]/20 transition-colors group"
+          >
+            <div className="w-6 h-6 rounded-sm bg-[#b3402f]/20 flex items-center justify-center shrink-0">
+              <Sparkles size={13} className="text-[#b3402f]" />
+            </div>
+            <div className="flex-1 min-w-0 text-left">
+              <p className="font-mincho text-sm text-[#f0eadc] tracking-[1px] leading-none truncate">Matpeak Coach</p>
+              <p className="font-mincho text-[10px] text-[#b3402f]/70 mt-0.5 truncate">Ask about your gym&apos;s classes</p>
+            </div>
+          </button>
         </div>
 
         <nav className="flex-1 px-3 py-4 overflow-y-auto">

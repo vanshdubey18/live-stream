@@ -60,35 +60,49 @@ export default function AICoachButton({ gymId }: { gymId?: string }) {
 
   return (
     <>
-      {/* Chat panel */}
+      {/* Backdrop — mobile full-screen sheet only */}
       <AnimatePresence>
         {open && (
           <motion.div
-            initial={{ opacity: 0, y: 16, scale: 0.97 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 16, scale: 0.97 }}
-            transition={{ duration: 0.2 }}
-            className="fixed top-1/2 -translate-y-1/2 right-14 z-50 w-[340px] bg-[#1c1c16] border border-[#322f26] rounded-sm shadow-2xl flex flex-col overflow-hidden"
-            style={{ maxHeight: 'calc(100vh - 80px)' }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+            className="lg:hidden fixed inset-0 z-50 bg-black/80"
+            onClick={() => setOpen(false)}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Chat panel — full-screen sheet on mobile, side panel on desktop */}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 24 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+            className="fixed inset-x-0 bottom-0 top-14 z-50 lg:inset-auto lg:top-1/2 lg:-translate-y-1/2 lg:right-14 lg:bottom-auto lg:w-[380px] bg-[#1c1c16] border-t lg:border border-[#322f26] rounded-t-sm lg:rounded-sm shadow-2xl flex flex-col overflow-hidden"
+            style={{ maxHeight: 'calc(100vh - 56px)' }}
           >
-            {/* Header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-[#2a2a20] bg-[#141410] shrink-0">
-              <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded-sm bg-[#b3402f]/10 border border-[#b3402f]/20 flex items-center justify-center">
-                  <Sparkles size={12} className="text-[#b3402f]" />
+            {/* Header — coach avatar + greeting, Whoop-Coach style */}
+            <div className="flex items-center justify-between gap-3 px-5 py-4 border-b border-[#2a2a20] bg-[#141410] shrink-0">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-10 h-10 rounded-sm bg-[#b3402f]/10 border border-[#b3402f]/20 flex items-center justify-center shrink-0">
+                  <Sparkles size={18} className="text-[#b3402f]" />
                 </div>
-                <div>
-                  <p className="font-mincho text-sm text-[#f0eadc] tracking-[1px]">MATPEAK COACH</p>
-                  <p className="font-mincho text-[10px] text-[#7a7568]">Knows every class you attended</p>
+                <div className="min-w-0">
+                  <p className="font-mincho text-lg text-[#f0eadc] tracking-[1px] leading-none">Matpeak Coach</p>
+                  <p className="font-mincho text-[11px] text-[#7a7568] mt-1 truncate">Knows every class you&apos;ve trained</p>
                 </div>
               </div>
-              <button onClick={() => setOpen(false)} className="text-[#7a7568] hover:text-[#f0eadc] transition-colors">
-                <X size={16} />
+              <button onClick={() => setOpen(false)} className="text-[#7a7568] hover:text-[#f0eadc] transition-colors shrink-0">
+                <X size={20} />
               </button>
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3 min-h-[200px]">
+            <div className="flex-1 overflow-y-auto px-5 py-5 space-y-4 min-h-[200px]">
               {messages.map((msg, i) => (
                 <motion.div
                   key={i}
@@ -96,10 +110,10 @@ export default function AICoachButton({ gymId }: { gymId?: string }) {
                   animate={{ opacity: 1, y: 0 }}
                   className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
-                  <div className={`max-w-[85%] px-3 py-2.5 rounded-sm font-mincho text-sm leading-relaxed ${
+                  <div className={`max-w-[85%] px-4 py-3 rounded-sm font-mincho text-sm leading-relaxed ${
                     msg.role === 'user'
                       ? 'bg-[#b3402f]/10 border border-[#b3402f]/20 text-[#f0eadc]'
-                      : 'bg-[#141410] border border-[#2a2a20] text-[#a29c8c]'
+                      : 'bg-[#141410] border border-[#2a2a20] text-[#c9bda0]'
                   }`}>
                     {msg.text}
                   </div>
@@ -111,8 +125,8 @@ export default function AICoachButton({ gymId }: { gymId?: string }) {
                   animate={{ opacity: 1 }}
                   className="flex justify-start"
                 >
-                  <div className="bg-[#141410] border border-[#2a2a20] px-3 py-2.5 rounded-sm flex items-center gap-2">
-                    <Loader2 size={12} className="text-[#b3402f] animate-spin" />
+                  <div className="bg-[#141410] border border-[#2a2a20] px-4 py-3 rounded-sm flex items-center gap-2.5">
+                    <Loader2 size={13} className="text-[#b3402f] animate-spin" />
                     <span className="font-mincho text-xs text-[#7a7568]">Searching your classes…</span>
                   </div>
                 </motion.div>
@@ -122,12 +136,12 @@ export default function AICoachButton({ gymId }: { gymId?: string }) {
 
             {/* Suggestions */}
             {messages.length <= 1 && !loading && (
-              <div className="px-4 pb-3 flex flex-col gap-1.5 shrink-0">
+              <div className="px-5 pb-4 flex flex-col gap-2 shrink-0">
                 {SUGGESTED.map(s => (
                   <button
                     key={s}
                     onClick={() => sendQuestion(s)}
-                    className="text-left px-3 py-2 border border-[#322f26] rounded-sm font-mincho text-xs text-[#a29c8c] hover:border-[#7a7568] hover:text-[#f0eadc] transition-colors"
+                    className="text-left px-3.5 py-2.5 border border-[#322f26] rounded-sm font-mincho text-xs text-[#a29c8c] hover:border-[#7a7568] hover:text-[#f0eadc] transition-colors"
                   >
                     {s}
                   </button>
@@ -136,22 +150,22 @@ export default function AICoachButton({ gymId }: { gymId?: string }) {
             )}
 
             {/* Input */}
-            <div className="px-4 py-3 border-t border-[#2a2a20] shrink-0">
+            <div className="px-5 py-4 border-t border-[#2a2a20] shrink-0">
               <div className="flex items-center gap-2">
                 <input
                   value={input}
                   onChange={e => setInput(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && sendQuestion(input)}
-                  placeholder="Ask about your classes…"
+                  placeholder="Ask your coach anything…"
                   disabled={loading}
-                  className="flex-1 bg-[#141410] border border-[#322f26] rounded-sm px-3 py-2 font-mincho text-sm text-[#f0eadc] placeholder-[#635f54] focus:outline-none focus:border-[#7a7568] disabled:opacity-50 transition-colors"
+                  className="flex-1 bg-[#141410] border border-[#322f26] rounded-sm px-3.5 py-2.5 font-mincho text-sm text-[#f0eadc] placeholder-[#635f54] focus:outline-none focus:border-[#7a7568] disabled:opacity-50 transition-colors"
                 />
                 <button
                   onClick={() => sendQuestion(input)}
                   disabled={!input.trim() || loading}
-                  className="w-8 h-8 bg-[#b3402f]/10 border border-[#b3402f]/20 rounded-sm flex items-center justify-center text-[#b3402f] hover:bg-[#b3402f]/20 disabled:opacity-30 disabled:cursor-not-allowed transition-colors shrink-0"
+                  className="w-10 h-10 bg-[#b3402f]/10 border border-[#b3402f]/20 rounded-sm flex items-center justify-center text-[#b3402f] hover:bg-[#b3402f]/20 disabled:opacity-30 disabled:cursor-not-allowed transition-colors shrink-0"
                 >
-                  <Send size={13} />
+                  <Send size={14} />
                 </button>
               </div>
             </div>
@@ -159,10 +173,11 @@ export default function AICoachButton({ gymId }: { gymId?: string }) {
         )}
       </AnimatePresence>
 
-      {/* FAB — height is auto (not fixed) so the vertical label always has room to fit */}
+      {/* FAB — height is auto (not fixed) so the vertical label always has room to fit.
+          Hidden on mobile while the full-screen sheet is open (its own X handles close). */}
       <motion.button
         onClick={() => setOpen(v => !v)}
-        className="fixed top-1/2 -translate-y-1/2 right-0 z-50 w-11 py-5 bg-[#b3402f] rounded-l-sm flex flex-col items-center justify-center gap-2 shadow-lg hover:bg-[#942f22] transition-colors"
+        className={`fixed top-1/2 -translate-y-1/2 right-0 z-40 w-11 py-5 bg-[#b3402f] rounded-l-sm flex flex-col items-center justify-center gap-2 shadow-lg hover:bg-[#942f22] transition-colors ${open ? 'hidden lg:flex' : 'flex'}`}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
       >

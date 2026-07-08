@@ -29,6 +29,7 @@ export default async function StreamSetupPage({ searchParams }: { searchParams: 
   return (
     <StreamSetupPageClient
       gymId={gym.id}
+      ownerId={user.id}
       hasCfStream={!!gym.cf_live_input_uid}
       sessionId={searchParams.session_id ?? null}
       gymDisciplines={gym.disciplines ?? []}

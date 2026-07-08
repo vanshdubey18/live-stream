@@ -199,7 +199,10 @@ export async function getGymByOwnerId(userId: string) {
     .eq('owner_id', userId)
     .maybeSingle()
 
-  if (error) { console.error('getGymByOwnerId:', error); return null }
+  // A real Supabase error (e.g. a JWT-refresh race on page reload) is not the
+  // same as "this account has no gym" — throw so the error boundary offers a
+  // retry instead of silently showing the misleading "no gym" screen.
+  if (error) { console.error('getGymByOwnerId:', error); throw new Error(`Failed to load gym: ${error.message}`) }
   return data
 }
 

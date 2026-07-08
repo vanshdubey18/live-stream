@@ -4,9 +4,11 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import GymSidebar from '@/components/layout/GymSidebar'
 import { Loader2, Radio, Wifi, WifiOff, AlertCircle, Camera, Mic, Monitor, Users, SwitchCamera, Tag, Pencil } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
+import LiveChat from '@/components/live/LiveChat'
 
 interface Props {
   gymId: string
+  ownerId: string
   hasCfStream: boolean
   sessionId?: string | null
   gymDisciplines?: string[]
@@ -22,6 +24,7 @@ function pad(n: number) { return String(n).padStart(2, '0') }
 
 export default function StreamSetupPageClient({
   gymId,
+  ownerId,
   hasCfStream: initialHasCfStream,
   sessionId: scheduledSessionId,
   gymDisciplines = [],
@@ -566,6 +569,11 @@ export default function StreamSetupPageClient({
                 </div>
               )}
             </div>
+          )}
+
+          {/* Live chat — moderatable, same feed members see on the watch page */}
+          {isLive && activeSessionId && (
+            <LiveChat sessionId={activeSessionId} userId={ownerId} canModerate />
           )}
 
           {/* Primary action */}

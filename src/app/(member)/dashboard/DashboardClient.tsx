@@ -194,7 +194,7 @@ function StreakRing({ weekSessions, goal = 4 }: { weekSessions: number; goal?: n
 }
 
 // ─── Hero Status Panel ────────────────────────────────────────────────────────
-function HeroPanel({ upcoming, user, memberships }: { upcoming: any[]; user: { name: string }; memberships: any[] }) {
+function HeroPanel({ upcoming, user }: { upcoming: any[]; user: { name: string } }) {
   const todayCount = upcoming.filter(s => {
     const d = new Date(s.scheduled_at)
     return d.toDateString() === new Date().toDateString()
@@ -223,24 +223,6 @@ function HeroPanel({ upcoming, user, memberships }: { upcoming: any[]; user: { n
         <p className="font-mincho text-xs text-[#7a7568] mt-1 uppercase tracking-[2px]">
           Good to see you, {firstName}
         </p>
-
-        {memberships.length > 0 && (
-          <div className="flex flex-wrap gap-2 mt-5">
-            {memberships.map((m: any) => (
-              <span
-                key={m.id ?? m.gyms?.id}
-                className="inline-flex items-center gap-2 font-mincho text-[11px] text-[#c9bda0] tracking-[3px] uppercase border border-[#322f26] bg-[#1c1c16] px-3 py-1.5 rounded-sm"
-              >
-                {m.gyms?.logo_url ? (
-                  <img src={m.gyms.logo_url} alt="" className="w-4 h-4 rounded-sm object-cover shrink-0 grayscale" />
-                ) : (
-                  <span className="w-1.5 h-1.5 rounded-sm bg-[#c9bda0] shrink-0" />
-                )}
-                Member of {m.gyms?.name ?? 'your gym'}
-              </span>
-            ))}
-          </div>
-        )}
       </div>
     </section>
   )
@@ -729,7 +711,7 @@ export default function DashboardClient({ user, memberships, upcoming, replays, 
         <div className="h-14 lg:hidden" />
 
         {liveSession && <LiveBanner session={liveSession} />}
-        <HeroPanel upcoming={upcoming} user={user} memberships={memberships} />
+        <HeroPanel upcoming={upcoming} user={user} />
         <StatsRow memberships={memberships} completedCount={completedCount} totalHours={totalHours} monthCount={monthCount} upcoming={upcoming} replays={replays} />
 
         <section className="max-w-[1280px] mx-auto px-6 py-8">

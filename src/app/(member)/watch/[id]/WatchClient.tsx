@@ -2,9 +2,10 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowLeft, CheckCircle2, Circle, Lock, Sparkles, BookOpen, Layers, MessageCircle } from 'lucide-react'
+import { ArrowLeft, CheckCircle2, Circle, Lock } from 'lucide-react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
+import LiveChat from '@/components/live/LiveChat'
 
 function pad(n: number) { return String(n).padStart(2, '0') }
 
@@ -324,24 +325,17 @@ function LiveViewer({ playbackId, sessionId, session, userId, userName }: {
           </div>
         </div>
 
-        <div className="px-5 py-5 flex-1">
-          <p className="font-mincho text-[11px] text-[#a29c8c] tracking-[4px] uppercase mb-4">AI Coach</p>
-          <div className="space-y-2 mb-5">
-            {[
-              { icon: <BookOpen size={12} />, label: 'Summary + timestamps', free: true },
-              { icon: <Sparkles size={12} />, label: 'Quiz this class', free: false },
-              { icon: <Layers size={12} />, label: 'Flashcards', free: false },
-              { icon: <MessageCircle size={12} />, label: 'Ask your coach', free: false },
-            ].map(item => (
-              <div key={item.label} className={`flex items-center gap-3 px-3 py-2 rounded-sm ${item.free ? 'opacity-100' : 'opacity-40'}`}>
-                <span className={item.free ? 'text-[#00D4AA]' : 'text-[#7a7568]'}>{item.icon}</span>
-                <span className="font-mincho text-sm text-[#f0eadc] flex-1">{item.label}</span>
-                {item.free ? <span className="font-mincho text-[10px] text-[#00D4AA] tracking-[2px] uppercase">Free</span> : <Lock size={10} className="text-[#b3402f]" />}
-              </div>
-            ))}
+        <div className="px-5 py-5 flex-1 min-h-0 flex flex-col">
+          <LiveChat sessionId={sessionId} userId={userId} fill />
+        </div>
+
+        <div className="px-5 py-4 border-t border-[#2a2a20]">
+          <div className="flex items-center gap-2 mb-1">
+            <p className="font-mincho text-[11px] text-[#a29c8c] tracking-[4px] uppercase">AI Coach</p>
+            <Lock size={10} className="text-[#b3402f]" />
           </div>
           <p className="font-mincho text-[#7a7568] text-xs leading-relaxed">
-            AI Coach analyses this class after it ends. Summary + timestamps are free. Quiz, flashcards and chat unlock with AI Coach.
+            Summary + timestamps are free after class. Quiz, flashcards and chat unlock with AI Coach.
           </p>
         </div>
       </div>

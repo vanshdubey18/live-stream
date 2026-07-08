@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { adminClient } from '@/lib/supabase/admin'
 
+// Public signup can only ever create a member or gym_owner account — 'admin'
+// (or any other value) must never be reachable from a client-supplied role,
+// or anyone could POST their way into admin access.
+const PUBLIC_ROLES = new Set(['member', 'gym_owner'])
+
 export async function POST(req: NextRequest) {
   const { name, email, password, role } = await req.json()
 
@@ -11,6 +16,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Password must be at least 8 characters' }, { status: 400 })
   }
 
+  const safeRole = PUBLIC_ROLES.has(role) ? role : 'member'
+
   const admin = adminClient()
 
   // Auto-confirm the email server-side so account creation never depends on
@@ -19,7 +26,7 @@ export async function POST(req: NextRequest) {
     email,
     password,
     email_confirm: true,
-    user_metadata: { full_name: name, role },
+    user_metadata: { full_name: name, role: safeRole },
   })
 
   if (error) return NextResponse.json({ error: error.message }, { status: 400 })

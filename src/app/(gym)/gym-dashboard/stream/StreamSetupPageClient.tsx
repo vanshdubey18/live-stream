@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react'
 import GymSidebar from '@/components/layout/GymSidebar'
-import { Loader2, Radio, Wifi, WifiOff, AlertCircle, Camera, Mic, Monitor, Users, SwitchCamera, Tag, Pencil } from 'lucide-react'
+import { Loader2, Radio, AlertCircle, Camera, Mic, Monitor, Users, SwitchCamera, Tag, Pencil, Clock } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import LiveChat from '@/components/live/LiveChat'
 
@@ -14,13 +14,29 @@ interface Props {
   gymDisciplines?: string[]
   scheduledTitle?: string | null
   scheduledDiscipline?: string | null
+  scheduledAt?: string | null
 }
 
 type ConnState = 'idle' | 'connecting' | 'live' | 'reconnecting'
-type Health = 'good' | 'fair' | 'poor'
 interface Viewer { user_id: string; name: string; joined_at: number }
 
 function pad(n: number) { return String(n).padStart(2, '0') }
+
+// Countdown to a scheduled class: "Xh Ym" while far out, a live ticking
+// MM:SS once under an hour away, or "Starting now" once past start time.
+function formatCountdown(scheduledAt: string, nowMs: number) {
+  const diffMs = new Date(scheduledAt).getTime() - nowMs
+  if (diffMs <= 0) return 'Starting now'
+  const totalSeconds = Math.floor(diffMs / 1000)
+  if (totalSeconds >= 3600) {
+    const hrs = Math.floor(totalSeconds / 3600)
+    const mins = Math.round((totalSeconds % 3600) / 60)
+    return `${hrs}h ${mins}m`
+  }
+  const mins = Math.floor(totalSeconds / 60)
+  const secs = totalSeconds % 60
+  return `${pad(mins)}:${pad(secs)}`
+}
 
 export default function StreamSetupPageClient({
   gymId,
@@ -30,6 +46,7 @@ export default function StreamSetupPageClient({
   gymDisciplines = [],
   scheduledTitle,
   scheduledDiscipline,
+  scheduledAt,
 }: Props) {
   // ── State ─────────────────────────────────────────────────────────────────────
   const [conn, setConn] = useState<ConnState>('idle')
@@ -57,9 +74,8 @@ export default function StreamSetupPageClient({
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null)
   const [viewers, setViewers] = useState<Viewer[]>([])
 
-  // Stream health
-  const [health, setHealth] = useState<Health | null>(null)
-  const lastBytesRef = useRef(0)
+  // Countdown to a scheduled class — only ticks while not yet broadcasting
+  const [now, setNow] = useState(() => Date.now())
 
   const pcRef = useRef<RTCPeerConnection | null>(null)
   const localStreamRef = useRef<MediaStream | null>(null)
@@ -122,32 +138,12 @@ export default function StreamSetupPageClient({
     return () => clearInterval(t)
   }, [conn])
 
-  // ── Stream health (poll getStats every 3s while live) ─────────────────────────
+  // ── Countdown tick — only while a scheduled class hasn't gone live yet ────────
   useEffect(() => {
-    if (!isLive) { setHealth(null); lastBytesRef.current = 0; return }
-    const t = setInterval(async () => {
-      const pc = pcRef.current
-      if (!pc) return
-      try {
-        const stats = await pc.getStats()
-        stats.forEach(report => {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const r = report as any
-          if (r.type === 'outbound-rtp' && r.kind === 'video') {
-            const bytes: number = r.bytesSent ?? 0
-            const prev = lastBytesRef.current
-            lastBytesRef.current = bytes
-            if (prev === 0) return // skip first tick — no delta yet
-            const kbps = ((bytes - prev) * 8) / 3000
-            if (kbps > 400) setHealth('good')
-            else if (kbps > 100) setHealth('fair')
-            else setHealth('poor')
-          }
-        })
-      } catch { /* ignore */ }
-    }, 3000)
+    if (broadcasting || !scheduledAt) return
+    const t = setInterval(() => setNow(Date.now()), 1000)
     return () => clearInterval(t)
-  }, [isLive])
+  }, [broadcasting, scheduledAt])
 
   // ── Viewer presence subscription ──────────────────────────────────────────────
   useEffect(() => {
@@ -336,43 +332,16 @@ export default function StreamSetupPageClient({
     }
   }
 
-  // ── Badge styling ─────────────────────────────────────────────────────────────
-  const badge = isLive
-    ? { border: 'border-[#b3402f]/30 bg-[#b3402f]/10', text: 'text-[#b3402f]', label: 'LIVE NOW', icon: <Radio size={12} className="text-[#b3402f] live-pulse" /> }
-    : isReconnecting
-    ? { border: 'border-[#FFD60A]/30 bg-[#FFD60A]/10', text: 'text-[#FFD60A]', label: 'RECONNECTING', icon: <WifiOff size={12} className="text-[#FFD60A]" /> }
-    : isConnecting || provisioning
-    ? { border: 'border-[#322f26] bg-[#1c1c16]', text: 'text-[#a29c8c]', label: isConnecting ? 'CONNECTING…' : 'CHECKING…', icon: <Loader2 size={12} className="animate-spin text-[#a29c8c]" /> }
-    : { border: 'border-[#322f26] bg-[#1c1c16]', text: 'text-[#a29c8c]', label: 'OFFLINE', icon: <Wifi size={12} className="text-[#a29c8c]" /> }
-
-  const healthDot = health === 'good' ? 'bg-[#00D4AA]' : health === 'fair' ? 'bg-[#FFD60A]' : 'bg-[#b3402f]'
-  const healthText = health === 'good' ? 'text-[#00D4AA]' : health === 'fair' ? 'text-[#FFD60A]' : 'text-[#b3402f]'
-
   return (
     <div className="min-h-screen bg-[#141410] flex">
       <GymSidebar active="Stream Setup" />
 
       <main className="flex-1 lg:ml-64 min-w-0">
         {/* Header */}
-        <div className="sticky top-0 z-20 bg-[#141410] border-b border-[#242420] px-6 h-16 flex items-center justify-between mt-14 lg:mt-0">
+        <div className="sticky top-0 z-20 bg-[#141410] border-b border-[#242420] px-6 h-16 flex items-center mt-14 lg:mt-0">
           <div>
             <p className="font-mincho text-[11px] text-[#a29c8c] tracking-[4px] uppercase">Gym Dashboard</p>
             <h1 className="font-mincho text-xl text-[#f0eadc] tracking-[1px] leading-tight">Go Live</h1>
-          </div>
-          <div className="flex items-center gap-3">
-            {/* Signal health — only when live */}
-            {isLive && health && (
-              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-sm border border-[#322f26] bg-[#1c1c16]">
-                <span className={`w-1.5 h-1.5 rounded-full ${healthDot}`} />
-                <span className={`font-mincho text-[10px] tracking-[2px] uppercase ${healthText}`}>
-                  {health === 'good' ? 'Good signal' : health === 'fair' ? 'Fair' : 'Poor signal'}
-                </span>
-              </div>
-            )}
-            <div className={`flex items-center gap-2 px-3 py-1.5 rounded-sm border ${badge.border}`}>
-              {badge.icon}
-              <span className={`font-mincho tracking-[2px] text-sm ${badge.text}`}>{badge.label}</span>
-            </div>
           </div>
         </div>
 
@@ -574,6 +543,19 @@ export default function StreamSetupPageClient({
           {/* Live chat — moderatable, same feed members see on the watch page */}
           {isLive && activeSessionId && (
             <LiveChat sessionId={activeSessionId} userId={ownerId} canModerate />
+          )}
+
+          {/* Countdown to a scheduled class — informational only, never gates GO LIVE */}
+          {!broadcasting && !provisioning && !provisionError && scheduledSessionId && scheduledAt && (
+            <div className="flex items-center justify-center gap-2 font-mincho">
+              <Clock size={13} className="text-[#a29c8c]" />
+              <span className="text-sm text-[#a29c8c]">
+                Class starts in{' '}
+                <span className={`tabular-nums tracking-[1px] ${formatCountdown(scheduledAt, now) === 'Starting now' ? 'text-[#b3402f]' : 'text-[#f0eadc]'}`}>
+                  {formatCountdown(scheduledAt, now)}
+                </span>
+              </span>
+            </div>
           )}
 
           {/* Primary action */}

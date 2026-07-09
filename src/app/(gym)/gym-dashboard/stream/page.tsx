@@ -15,15 +15,17 @@ export default async function StreamSetupPage({ searchParams }: { searchParams: 
   // are already known — no need to ask again on this screen.
   let scheduledTitle: string | null = null
   let scheduledDiscipline: string | null = null
+  let scheduledAt: string | null = null
   if (searchParams.session_id) {
     const { data: scheduled } = await supabase
       .from('sessions')
-      .select('title, discipline')
+      .select('title, discipline, scheduled_at')
       .eq('id', searchParams.session_id)
       .eq('gym_id', gym.id)
       .maybeSingle()
     scheduledTitle = scheduled?.title ?? null
     scheduledDiscipline = scheduled?.discipline ?? null
+    scheduledAt = scheduled?.scheduled_at ?? null
   }
 
   return (
@@ -35,6 +37,7 @@ export default async function StreamSetupPage({ searchParams }: { searchParams: 
       gymDisciplines={gym.disciplines ?? []}
       scheduledTitle={scheduledTitle}
       scheduledDiscipline={scheduledDiscipline}
+      scheduledAt={scheduledAt}
     />
   )
 }

@@ -393,7 +393,7 @@ export default function GymDashboardClient({ gym, ownerName, sessions, coaches, 
           </div>
 
           {/* Stream Setup */}
-          <StreamSetupCard gymId={gym.id} />
+          <StreamSetupCard gymId={gym.id} nextSession={nextSession} />
 
           {/* Sessions — peek only, full table lives on Schedule Classes */}
           <section>

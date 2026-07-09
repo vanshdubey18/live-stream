@@ -56,16 +56,6 @@ function StatusBadge({ status }: { status: string }) {
   )
 }
 
-function formatRelTime(iso: string) {
-  const diff = new Date(iso).getTime() - Date.now()
-  const mins = Math.round(diff / 60000)
-  if (mins < 0) return 'now'
-  if (mins < 60) return `in ${mins}m`
-  const hrs = Math.round(mins / 60)
-  if (hrs < 24) return `in ${hrs}h`
-  return `in ${Math.round(hrs / 24)}d`
-}
-
 // ─── Clip Banner ───────────────────────────────────────────────────────────────
 function ClipBanner({ session, onDismiss }: { session: any; onDismiss: (id: string) => void }) {
   const [retrying, setRetrying] = useState(false)
@@ -143,10 +133,9 @@ function ClipBanner({ session, onDismiss }: { session: any; onDismiss: (id: stri
 // ─── Action Items ──────────────────────────────────────────────────────────────
 // The "what needs my attention today" row — the first thing the owner sees.
 function ActionItems({
-  liveSession, nextSession, expiringSoon, newThisWeek, setupNeeds, onGoLive,
+  liveSession, expiringSoon, newThisWeek, setupNeeds, onGoLive,
 }: {
   liveSession: any | null
-  nextSession: any | null
   expiringSoon: number
   newThisWeek: number
   setupNeeds: string[]
@@ -168,13 +157,6 @@ function ActionItems({
       title: `${liveSession.title} is live`,
       sub: 'Your class is streaming right now',
       cta: { label: 'Manage', onClick: () => onGoLive(liveSession.id) },
-    })
-  } else if (nextSession) {
-    items.push({
-      key: 'next', tone: 'info', icon: <Clock size={15} />,
-      title: `${nextSession.title} starts ${formatRelTime(nextSession.scheduled_at)}`,
-      sub: 'Get ready to go live',
-      cta: { label: 'Go Live', onClick: () => onGoLive(nextSession.id) },
     })
   }
 
@@ -353,7 +335,6 @@ export default function GymDashboardClient({ gym, ownerName, sessions, coaches, 
           {/* Action items — first thing the owner sees */}
           <ActionItems
             liveSession={liveSession}
-            nextSession={nextSession}
             expiringSoon={memberStats.expiringSoon}
             newThisWeek={memberStats.newThisWeek}
             setupNeeds={setupNeeds}

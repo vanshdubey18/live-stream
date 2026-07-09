@@ -9,10 +9,15 @@ function adminClient() {
   )
 }
 
-// ─── Member queries ───────────────────────────────────────────────────────────
+// ─── Member queries ─────────────────────────────────────────────────────────────
 
 export async function getMemberGyms(userId: string) {
-  const supabase = createClient()
+  // Uses the admin client, not the request-scoped session client — this read is
+  // already tightly gated by an authenticated userId from getUser() upstream, so
+  // routing it through the browser's rotating auth cookies just exposes it to a
+  // JWT-refresh race (a stale/mid-refresh token can make RLS legitimately return
+  // zero rows) that looks identical to "this member really has no gyms."
+  const supabase = adminClient()
   const { data, error } = await supabase
     .from('memberships')
     .select(`
@@ -36,9 +41,9 @@ export async function getMemberGyms(userId: string) {
     .eq('user_id', userId)
     .eq('status', 'active')
 
-  // A real Supabase error (e.g. a JWT-refresh race on page reload) is not the
-  // same as "this member has no gyms" — throw so the error boundary offers a
-  // retry instead of silently showing "join a gym" to someone who already has.
+  // A real Supabase error is not the same as "this member has no gyms" —
+  // throw so the error boundary offers a retry instead of silently showing
+  // "join a gym" to someone who already has.
   if (error) { console.error('getMemberGyms:', error); throw new Error(`Failed to load memberships: ${error.message}`) }
   return data ?? []
 }
@@ -195,16 +200,19 @@ export async function getMembershipForGym(userId: string, gymId: string) {
 // ─── Gym owner queries ────────────────────────────────────────────────────────
 
 export async function getGymByOwnerId(userId: string) {
-  const supabase = createClient()
+  // Same reasoning as getMemberGyms above — avoid the request-scoped session
+  // client's JWT-refresh race for a read that's already gated by an
+  // authenticated userId.
+  const supabase = adminClient()
   const { data, error } = await supabase
     .from('gyms')
     .select('*')
     .eq('owner_id', userId)
     .maybeSingle()
 
-  // A real Supabase error (e.g. a JWT-refresh race on page reload) is not the
-  // same as "this account has no gym" — throw so the error boundary offers a
-  // retry instead of silently showing the misleading "no gym" screen.
+  // A real Supabase error is not the same as "this account has no gym" —
+  // throw so the error boundary offers a retry instead of silently
+  // showing the misleading "no gym" screen.
   if (error) { console.error('getGymByOwnerId:', error); throw new Error(`Failed to load gym: ${error.message}`) }
   return data
 }

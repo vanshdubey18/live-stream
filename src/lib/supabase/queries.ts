@@ -9,7 +9,7 @@ function adminClient() {
   )
 }
 
-// ─── Member queries ───────────────────────────────────────────────────────────
+// ─── Member queries ─────────────────────────────────────────────────────────────
 
 export async function getMemberGyms(userId: string) {
   // Uses the admin client, not the request-scoped session client — this read is

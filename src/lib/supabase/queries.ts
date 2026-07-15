@@ -108,6 +108,34 @@ export async function getReplayLibrary(gymIds: string[]) {
   return data ?? []
 }
 
+// Reads the modules_public view — a plain Postgres view has no FK metadata
+// for PostgREST to embed coaches/gyms through, so this is deliberately flat.
+// Callers already have the member's own gym list to map gym_id -> name.
+export async function getInstructionalsLibrary(gymIds: string[]) {
+  if (gymIds.length === 0) return []
+  const supabase = createClient()
+  const { data, error } = await supabase
+    .from('modules_public')
+    .select('id, title, description, discipline, level, price_paise, status, thumbnail_uid, duration_seconds, sales_count, gym_id, coach_id, created_at')
+    .in('gym_id', gymIds)
+    .order('created_at', { ascending: false })
+
+  if (error) { console.error('getInstructionalsLibrary:', error); return [] }
+  return data ?? []
+}
+
+export async function getOwnedModuleIds(userId: string) {
+  const supabase = createClient()
+  const { data, error } = await supabase
+    .from('module_purchases')
+    .select('module_id')
+    .eq('user_id', userId)
+    .eq('status', 'paid')
+
+  if (error) { console.error('getOwnedModuleIds:', error); return [] }
+  return (data ?? []).map(r => r.module_id)
+}
+
 export async function getLiveSession(gymIds: string[]) {
   if (gymIds.length === 0) return null
   const supabase = createClient()

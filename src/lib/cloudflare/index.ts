@@ -45,6 +45,32 @@ export async function createLiveInput(name: string): Promise<CloudflareLiveInput
   return { uid: result.uid as string, whipUrl, hlsUrl }
 }
 
+export interface CloudflareDirectUpload {
+  uploadUrl: string
+  uid: string
+}
+
+// For pre-recorded instructional uploads (not live). Cloudflare returns the
+// video uid synchronously, before the browser has uploaded any bytes — so
+// the caller can store cf_video_uid immediately and use it, rather than a
+// heuristic, to match this upload up in the "ready to stream" webhook later.
+export async function createDirectUpload(maxDurationSeconds = 3600): Promise<CloudflareDirectUpload> {
+  const res = await fetch(
+    `${BASE}/accounts/${accountId()}/stream/direct_upload`,
+    {
+      method: 'POST',
+      headers: authHeaders(),
+      body: JSON.stringify({ maxDurationSeconds }),
+    }
+  )
+  if (!res.ok) {
+    const text = await res.text()
+    throw new Error(`Cloudflare ${res.status}: ${text}`)
+  }
+  const { result } = await res.json()
+  return { uploadUrl: result.uploadURL as string, uid: result.uid as string }
+}
+
 export async function getLiveInputStatus(uid: string): Promise<'connected' | 'disconnected'> {
   const res = await fetch(
     `${BASE}/accounts/${accountId()}/stream/live_inputs/${uid}`,

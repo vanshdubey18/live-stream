@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import crypto from 'crypto'
 import { processSession } from '@/lib/ai/process-session'
+import { processModule } from '@/lib/ai/process-module'
 
 export const runtime = 'nodejs'
 
@@ -72,7 +73,17 @@ export async function POST(req: NextRequest) {
     const videoUid: string = event.uid
     const liveInputUid: string | undefined = event.meta?.live_input
 
-    if (liveInputUid) {
+    // Check instructional uploads first — a direct-upload has no
+    // meta.live_input, so without this check it would fall into
+    // handleClipReady, find no clip_video_uid match, and silently no-op
+    // (the module would stay stuck in 'uploading' forever).
+    const admin = getAdmin()
+    const { data: module } = await admin
+      .from('modules').select('id').eq('cf_video_uid', videoUid).maybeSingle()
+
+    if (module) {
+      await handleModuleRecordingReady(module.id, videoUid, event)
+    } else if (liveInputUid) {
       await handleRecordingReady(videoUid, liveInputUid, event)
     } else {
       await handleClipReady(videoUid)
@@ -147,6 +158,24 @@ async function handleRecordingReady(videoUid: string, liveInputUid: string, data
   } else {
     await admin.from('sessions').update({ clip_status: 'failed' }).eq('id', session.id)
   }
+}
+
+async function handleModuleRecordingReady(moduleId: string, videoUid: string, data: any) {
+  const admin = getAdmin()
+  const durationSeconds: number = data.duration ?? 0
+
+  // Video is watchable/sellable as soon as this lands — don't block
+  // purchase on the AI transcript/summary pipeline finishing.
+  await admin.from('modules').update({
+    status: 'ready',
+    duration_seconds: durationSeconds,
+  }).eq('id', moduleId)
+
+  console.log(`[cf-webhook] Module recording ready: ${moduleId} (${videoUid})`)
+
+  processModule(moduleId).catch(err =>
+    console.error('[cf-webhook] processModule error:', err)
+  )
 }
 
 async function handleClipReady(clipUid: string) {

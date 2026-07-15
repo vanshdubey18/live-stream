@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import {
   LayoutDashboard, Radio, CalendarDays, Users,
-  DollarSign, BarChart2, Settings, LogOut, Menu, X, UserCheck, Megaphone, Sparkles,
+  DollarSign, BarChart2, Settings, LogOut, Menu, X, UserCheck, Megaphone, Sparkles, Video,
 } from 'lucide-react'
 
 const navGroups = [
@@ -20,6 +20,7 @@ const navGroups = [
     items: [
       { label: 'Stream Setup', href: '/gym-dashboard/stream', icon: Radio },
       { label: 'Schedule Classes', href: '/gym-dashboard/schedule', icon: CalendarDays },
+      { label: 'Instructionals', href: '/gym-dashboard/instructionals', icon: Video },
       { label: 'Members', href: '/gym-dashboard/members', icon: UserCheck },
       { label: 'Coaches', href: '/gym-dashboard/coaches', icon: Users },
       { label: 'Announcements', href: '/gym-dashboard/announcements', icon: Megaphone },

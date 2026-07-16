@@ -5,6 +5,7 @@ import GymSidebar from '@/components/layout/GymSidebar'
 import { Loader2, Radio, AlertCircle, Camera, Mic, Monitor, Users, SwitchCamera, Tag, Pencil, Clock } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import LiveChat from '@/components/live/LiveChat'
+import FloatingReactions from '@/components/live/FloatingReactions'
 import { formatCountdown } from '@/lib/countdown'
 
 interface Props {
@@ -454,6 +455,7 @@ export default function StreamSetupPageClient({
           {/* Camera preview — always mounted; toggled with CSS */}
           <div className={`bg-[#18180f] border border-[#322f26] rounded-sm overflow-hidden ${broadcasting ? '' : 'hidden'}`}>
             <div className="relative aspect-video bg-black">
+              {activeSessionId && <FloatingReactions sessionId={activeSessionId} />}
               <video ref={videoRef} autoPlay muted playsInline className="w-full h-full object-cover" />
               {isLive && (
                 <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-[#b3402f] px-2 py-1 rounded-sm">
@@ -527,7 +529,7 @@ export default function StreamSetupPageClient({
 
           {/* Live chat — moderatable, same feed members see on the watch page */}
           {isLive && activeSessionId && (
-            <LiveChat sessionId={activeSessionId} userId={ownerId} canModerate />
+            <LiveChat sessionId={activeSessionId} userId={ownerId} canModerate ownerUserId={ownerId} viewerCount={viewers.length} />
           )}
 
           {/* Countdown to a scheduled class — informational only, never gates GO LIVE */}

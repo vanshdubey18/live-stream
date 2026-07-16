@@ -6,6 +6,7 @@ import { ArrowLeft, CheckCircle2, Circle, Lock } from 'lucide-react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import LiveChat from '@/components/live/LiveChat'
+import FloatingReactions from '@/components/live/FloatingReactions'
 
 function pad(n: number) { return String(n).padStart(2, '0') }
 
@@ -17,7 +18,7 @@ interface SessionInfo {
   gym_id: string
   scheduled_at: string
   coaches: { name: string } | null
-  gyms: { name: string } | null
+  gyms: { name: string; owner_id: string | null } | null
 }
 
 // ─── Waiting room (session is scheduled) ─────────────────────────────────────
@@ -236,6 +237,7 @@ function LiveViewer({ playbackId, sessionId, session, userId, userName }: {
   const [elapsed, setElapsed] = useState(getElapsedSecs)
   const [attempt, setAttempt] = useState(0)
   const [startedMinsAgo, setStartedMinsAgo] = useState(0)
+  const [viewerCount, setViewerCount] = useState(1)
 
   // Elapsed counts from the class's actual go-live time, not from when this
   // member's browser opened the page — a member joining late should see the
@@ -258,6 +260,9 @@ function LiveViewer({ playbackId, sessionId, session, userId, userName }: {
   useEffect(() => {
     const supabase = createClient()
     const channel = supabase.channel(`session-${sessionId}`, { config: { presence: { key: userId } } })
+    channel.on('presence', { event: 'sync' }, () => {
+      setViewerCount(Object.keys(channel.presenceState()).length || 1)
+    })
     channel.subscribe(async (status) => {
       if (status === 'SUBSCRIBED') await channel.track({ user_id: userId, name: userName, joined_at: Date.now() })
     })
@@ -267,7 +272,8 @@ function LiveViewer({ playbackId, sessionId, session, userId, userName }: {
   return (
     <motion.div key="live" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="min-h-screen bg-[#141410] flex flex-col lg:flex-row">
       {/* Video — 70% on desktop */}
-      <div className="flex-1 lg:w-[70%] bg-black flex items-center min-h-[56vw] lg:min-h-screen">
+      <div className="relative flex-1 lg:w-[70%] bg-black flex items-center min-h-[56vw] lg:min-h-screen">
+        <FloatingReactions sessionId={sessionId} />
         {playbackId ? (
           <WhepPlayer playbackUrl={playbackId} attempt={attempt} onRetry={() => setAttempt(a => a + 1)} />
         ) : (
@@ -312,6 +318,11 @@ function LiveViewer({ playbackId, sessionId, session, userId, userName }: {
           </span>
         </div>
 
+        <div className="px-5 py-4 border-b border-[#2a2a20] flex items-center gap-2">
+          <span className="font-mincho text-[26px] text-[#f0eadc] tracking-[1px] leading-none tabular-nums">{viewerCount}</span>
+          <span className="font-mincho text-[11px] text-[#7a7568] tracking-[2px] uppercase">watching now</span>
+        </div>
+
         <div className="px-5 py-5 border-b border-[#2a2a20]">
           <p className="font-mincho text-[11px] text-[#a29c8c] tracking-[4px] uppercase mb-2">Coach</p>
           <p className="font-mincho text-[18px] text-[#f0eadc] tracking-[1px]">{session.coaches?.name ?? 'Coach'}</p>
@@ -326,7 +337,7 @@ function LiveViewer({ playbackId, sessionId, session, userId, userName }: {
         </div>
 
         <div className="px-5 py-5 flex-1 min-h-0 flex flex-col">
-          <LiveChat sessionId={sessionId} userId={userId} fill />
+          <LiveChat sessionId={sessionId} userId={userId} fill viewerCount={viewerCount} ownerUserId={session.gyms?.owner_id ?? undefined} />
         </div>
 
         <div className="px-5 py-4 border-t border-[#2a2a20]">

@@ -40,7 +40,7 @@ export async function GET(req: NextRequest) {
 
   const { data, error } = await adminClient()
     .from('live_chat_messages')
-    .select('id, user_id, user_name, body, created_at')
+    .select('id, user_id, user_name, body, created_at, is_pinned')
     .eq('session_id', sessionId)
     .order('created_at', { ascending: true })
     .limit(200)
@@ -73,7 +73,7 @@ export async function POST(req: NextRequest) {
       user_name: profile?.name?.trim() || 'Member',
       body: body.trim(),
     })
-    .select('id, user_id, user_name, body, created_at')
+    .select('id, user_id, user_name, body, created_at, is_pinned')
     .single()
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })

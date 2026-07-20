@@ -2,13 +2,27 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowLeft, CheckCircle2, Circle, Lock } from 'lucide-react'
+import { ArrowLeft, CheckCircle2, Circle, Lock, PanelRightClose, PanelRightOpen } from 'lucide-react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import LiveChat from '@/components/live/LiveChat'
 import FloatingReactions from '@/components/live/FloatingReactions'
 
 function pad(n: number) { return String(n).padStart(2, '0') }
+
+// Phone/tablet rotated sideways (below the lg breakpoint where the desktop
+// side-rail layout takes over) — drives the YouTube-style fullscreen mode.
+function useIsMobileLandscape() {
+  const [landscape, setLandscape] = useState(false)
+  useEffect(() => {
+    const mq = window.matchMedia('(orientation: landscape) and (max-width: 1023px)')
+    const update = () => setLandscape(mq.matches)
+    update()
+    mq.addEventListener('change', update)
+    return () => mq.removeEventListener('change', update)
+  }, [])
+  return landscape
+}
 
 interface SessionInfo {
   id: string
@@ -101,10 +115,31 @@ function WaitingRoom({ session }: { session: SessionInfo }) {
 // ─── WHEP (WebRTC) live player ────────────────────────────────────────────────
 function WhepPlayer({ playbackUrl, attempt, onRetry }: { playbackUrl: string | null; attempt: number; onRetry: () => void }) {
   const videoRef = useRef<HTMLVideoElement>(null)
+  const pcLiveRef = useRef<RTCPeerConnection | null>(null)
   const [muted, setMuted] = useState(true)
   const [connecting, setConnecting] = useState(true)
+  const connectingRef = useRef(true)
+  connectingRef.current = connecting
   const [timedOut, setTimedOut] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  // Backgrounding the tab/app kills or stalls the WebRTC connection on most
+  // mobile browsers — without this, coming back shows a frozen/black frame
+  // until a manual reload. Rebuild the connection through the same path the
+  // manual Retry button uses whenever the tab returns unhealthy.
+  useEffect(() => {
+    const onVisible = () => {
+      if (document.visibilityState !== 'visible') return
+      if (connectingRef.current) return
+      const pc = pcLiveRef.current
+      const video = videoRef.current
+      const dead = !pc || pc.connectionState === 'failed' || pc.connectionState === 'disconnected' || pc.connectionState === 'closed'
+      const stalled = !video || video.readyState < 2
+      if (dead || stalled) onRetry()
+    }
+    document.addEventListener('visibilitychange', onVisible)
+    return () => document.removeEventListener('visibilitychange', onVisible)
+  }, [onRetry])
 
   useEffect(() => {
     if (!playbackUrl) return
@@ -118,6 +153,7 @@ function WhepPlayer({ playbackUrl, attempt, onRetry }: { playbackUrl: string | n
     const timeoutTimer = setTimeout(() => { if (!cancelled) setTimedOut(true) }, 30_000)
 
     const pc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.cloudflare.com:3478' }] })
+    pcLiveRef.current = pc
     pc.addTransceiver('video', { direction: 'recvonly' })
     pc.addTransceiver('audio', { direction: 'recvonly' })
 
@@ -133,9 +169,22 @@ function WhepPlayer({ playbackUrl, attempt, onRetry }: { playbackUrl: string | n
       if (video.paused) video.play().catch(() => {})
       if (e.track.kind === 'video') { setConnecting(false); clearTimeout(timeoutTimer) }
     }
+    let reconnectTimer: ReturnType<typeof setTimeout> | undefined
     pc.onconnectionstatechange = () => {
       if (cancelled) return
-      if (pc.connectionState === 'failed') setError('Could not connect to the stream')
+      if (pc.connectionState === 'failed') {
+        // Auto-rebuild instead of stranding the viewer on an error screen —
+        // only surface the error if the tab is hidden (retry happens on return).
+        if (document.visibilityState === 'visible') onRetry()
+        else setError('Could not connect to the stream')
+      } else if (pc.connectionState === 'disconnected') {
+        // 'disconnected' can self-heal; give it a few seconds before rebuilding.
+        reconnectTimer = setTimeout(() => {
+          if (!cancelled && pc.connectionState === 'disconnected' && document.visibilityState === 'visible') onRetry()
+        }, 4000)
+      } else if (pc.connectionState === 'connected') {
+        clearTimeout(reconnectTimer)
+      }
     }
 
     ;(async () => {
@@ -171,7 +220,14 @@ function WhepPlayer({ playbackUrl, attempt, onRetry }: { playbackUrl: string | n
       }
     })()
 
-    return () => { cancelled = true; clearTimeout(timeoutTimer); pc.close() }
+    return () => {
+      cancelled = true
+      clearTimeout(timeoutTimer)
+      clearTimeout(reconnectTimer)
+      if (pcLiveRef.current === pc) pcLiveRef.current = null
+      pc.close()
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [playbackUrl, attempt])
 
   function unmute() {
@@ -238,6 +294,8 @@ function LiveViewer({ playbackId, sessionId, session, userId, userName }: {
   const [attempt, setAttempt] = useState(0)
   const [startedMinsAgo, setStartedMinsAgo] = useState(0)
   const [viewerCount, setViewerCount] = useState(1)
+  const [chatOpen, setChatOpen] = useState(true)
+  const landscape = useIsMobileLandscape()
 
   // Elapsed counts from the class's actual go-live time, not from when this
   // member's browser opened the page — a member joining late should see the
@@ -269,33 +327,86 @@ function LiveViewer({ playbackId, sessionId, session, userId, userName }: {
     return () => { supabase.removeChannel(channel) }
   }, [sessionId, userId, userName])
 
+  const videoContent = playbackId ? (
+    <WhepPlayer playbackUrl={playbackId} attempt={attempt} onRetry={() => setAttempt(a => a + 1)} />
+  ) : (
+    <div className="w-full aspect-video flex items-center justify-center">
+      <div className="text-center space-y-6">
+        <div className="flex gap-2 justify-center">
+          {[0, 1, 2].map(i => (
+            <motion.div key={i} className="w-2 h-2 rounded-full bg-[#b3402f]"
+              animate={{ scale: [1, 1.5, 1], opacity: [0.4, 1, 0.4] }}
+              transition={{ duration: 0.9, delay: i * 0.25, repeat: Infinity }} />
+          ))}
+        </div>
+        <p className="font-mincho text-[#a29c8c] text-[11px] tracking-[2px] uppercase">Stream starting…</p>
+      </div>
+    </div>
+  )
+
+  // Rotated phone — video fills the screen like YouTube's landscape mode.
+  // Chat rides as a slide-in drawer on the right instead of below the video.
+  if (landscape) {
+    return (
+      <motion.div key="live" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fixed inset-0 z-40 bg-black">
+        <div className="relative w-full h-full flex items-center">
+          <FloatingReactions sessionId={sessionId} />
+          {videoContent}
+        </div>
+
+        <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-[#b3402f] px-2 py-0.5 rounded-sm pointer-events-none">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#f0eadc] animate-pulse" />
+          <span className="font-mincho text-[#f0eadc] text-[10px] tracking-[3px] uppercase">Live</span>
+        </div>
+
+        {/* Chat drawer — slides off-screen right when dismissed */}
+        <div className={`absolute right-0 top-0 bottom-0 w-[300px] max-w-[70vw] p-2 flex flex-col transition-transform duration-300 ${chatOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+          <LiveChat sessionId={sessionId} userId={userId} fill viewerCount={viewerCount} ownerUserId={session.gyms?.owner_id ?? undefined}
+            className="!h-full flex-1 min-h-0 !bg-[#141410]/90 backdrop-blur-sm" />
+        </div>
+
+        {/* Drawer handle — always reachable to summon chat back */}
+        <button
+          onClick={() => setChatOpen(o => !o)}
+          aria-label={chatOpen ? 'Hide chat' : 'Show chat'}
+          className={`absolute top-1/2 -translate-y-1/2 z-10 w-7 h-14 flex items-center justify-center bg-[#141410]/80 border border-[#322f26] rounded-sm text-[#a29c8c] hover:text-[#f0eadc] transition-all duration-300 ${chatOpen ? 'right-[302px]' : 'right-2'}`}
+        >
+          {chatOpen ? <PanelRightClose size={15} /> : <PanelRightOpen size={15} />}
+        </button>
+      </motion.div>
+    )
+  }
+
   return (
     <motion.div key="live" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="min-h-screen bg-[#141410] flex flex-col lg:flex-row">
-      {/* Video — 70% on desktop */}
-      <div className="relative flex-1 lg:w-[70%] bg-black flex items-center min-h-[56vw] lg:min-h-screen">
+      {/* Video — 70% on desktop, full width when the rail is collapsed */}
+      <div className="relative flex-1 bg-black flex items-center min-h-[56vw] lg:min-h-screen">
         <FloatingReactions sessionId={sessionId} />
-        {playbackId ? (
-          <WhepPlayer playbackUrl={playbackId} attempt={attempt} onRetry={() => setAttempt(a => a + 1)} />
-        ) : (
-          <div className="w-full aspect-video flex items-center justify-center">
-            <div className="text-center space-y-6">
-              <div className="flex gap-2 justify-center">
-                {[0, 1, 2].map(i => (
-                  <motion.div key={i} className="w-2 h-2 rounded-full bg-[#b3402f]"
-                    animate={{ scale: [1, 1.5, 1], opacity: [0.4, 1, 0.4] }}
-                    transition={{ duration: 0.9, delay: i * 0.25, repeat: Infinity }} />
-                ))}
-              </div>
-              <p className="font-mincho text-[#a29c8c] text-[11px] tracking-[2px] uppercase">Stream starting…</p>
-            </div>
-          </div>
-        )}
+        {videoContent}
       </div>
 
-      {/* Data panel — 30% on desktop */}
-      <div className="lg:w-[30%] bg-[#1c1c16] border-t lg:border-t-0 lg:border-l border-[#322f26] flex flex-col">
-        <div className="px-5 h-12 border-b border-[#2a2a20] flex items-center">
+      {/* Collapsed-rail summon tab (desktop only) */}
+      {!chatOpen && (
+        <button
+          onClick={() => setChatOpen(true)}
+          aria-label="Show chat"
+          className="hidden lg:flex fixed right-3 top-1/2 -translate-y-1/2 z-30 w-8 h-16 items-center justify-center bg-[#141410]/90 border border-[#322f26] rounded-sm text-[#a29c8c] hover:text-[#f0eadc] transition-colors"
+        >
+          <PanelRightOpen size={16} />
+        </button>
+      )}
+
+      {/* Data panel — 30% on desktop; collapsible there, always visible stacked on portrait mobile */}
+      <div className={`lg:w-[30%] shrink-0 bg-[#1c1c16] border-t lg:border-t-0 lg:border-l border-[#322f26] flex flex-col ${chatOpen ? '' : 'lg:hidden'}`}>
+        <div className="px-5 h-12 border-b border-[#2a2a20] flex items-center justify-between">
           <Link href="/dashboard" className="text-[#a29c8c] hover:text-[#f0eadc] transition-colors"><ArrowLeft size={16} /></Link>
+          <button
+            onClick={() => setChatOpen(false)}
+            aria-label="Hide chat"
+            className="hidden lg:flex text-[#7a7568] hover:text-[#f0eadc] transition-colors"
+          >
+            <PanelRightClose size={16} />
+          </button>
         </div>
 
         <div className="px-5 py-5 border-b border-[#2a2a20]">

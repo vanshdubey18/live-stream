@@ -27,7 +27,8 @@ interface Props {
   ownerUserId?: string
   /** Shown next to the header, mirrors Twitch/YouTube's prominent live viewer count. */
   viewerCount?: number
-  /** How close to the bottom (px) counts as "at the live edge" for auto-scroll. */
+  /** Extra classes on the root (e.g. height override for the landscape overlay drawer). */
+  className?: string
 }
 
 const MAX_LEN = 300
@@ -38,7 +39,7 @@ function formatTime(iso: string) {
   return new Date(iso).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })
 }
 
-export default function LiveChat({ sessionId, userId, canModerate = false, fill = false, readOnly = false, ownerUserId, viewerCount }: Props) {
+export default function LiveChat({ sessionId, userId, canModerate = false, fill = false, readOnly = false, ownerUserId, viewerCount, className = '' }: Props) {
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [input, setInput] = useState('')
   const [sending, setSending] = useState(false)
@@ -137,7 +138,7 @@ export default function LiveChat({ sessionId, userId, canModerate = false, fill 
   const pinned = messages.find(m => m.is_pinned)
 
   return (
-    <div className={`bg-[#1c1c16] border border-[#322f26] rounded-sm flex flex-col ${fill ? 'h-[50vh] lg:h-auto lg:flex-1 lg:min-h-0' : ''}`}>
+    <div className={`bg-[#1c1c16] border border-[#322f26] rounded-sm flex flex-col ${fill ? 'h-[50vh] lg:h-auto lg:flex-1 lg:min-h-0' : ''} ${className}`}>
       <div className="px-5 py-3 border-b border-[#2a2a20] flex items-center justify-between shrink-0">
         <div className="flex items-center gap-2">
           <MessageCircle size={13} className="text-[#7a7568]" />

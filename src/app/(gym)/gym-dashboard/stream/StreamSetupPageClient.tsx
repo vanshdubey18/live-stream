@@ -138,7 +138,15 @@ export default function StreamSetupPageClient({
     const channel = supabase.channel(`session-${activeSessionId}`)
     channel.on('presence', { event: 'sync' }, () => {
       const state = channel.presenceState<Viewer>()
-      setViewers(Object.values(state).flat())
+      // One row per presence key (member user id) — a rejoin/second tab stacks
+      // extra metas under the same key, and flattening them all duplicated names.
+      const latest = Object.values(state).map(metas => metas[metas.length - 1]).filter(Boolean)
+      const seen = new Set<string>()
+      setViewers(latest.filter(v => {
+        if (!v.user_id || seen.has(v.user_id)) return false
+        seen.add(v.user_id)
+        return true
+      }))
     })
     channel.subscribe()
     return () => { supabase.removeChannel(channel) }

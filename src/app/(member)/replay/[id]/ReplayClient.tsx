@@ -22,7 +22,9 @@ export interface AIData {
   coachQuote: string
 }
 
-// Demo data for free summary tab
+// Fixed set of technique names used only to size the blurred Quiz/Flashcards
+// previews (those tabs are a locked "coming soon" feature, not real class
+// data) — never shown as this class's actual content.
 const DEMO_TECHNIQUES = [
   { name: 'Hip escape entry', timestamp: '08:14' },
   { name: 'Underhook battle', timestamp: '14:32' },
@@ -30,13 +32,6 @@ const DEMO_TECHNIQUES = [
   { name: 'Coyote half guard', timestamp: '41:15' },
   { name: 'Knee shield defense', timestamp: '52:08' },
 ]
-const DEMO_MOMENTS = [
-  { timestamp: '08:14', label: 'Hip escape entry detail' },
-  { timestamp: '28:20', label: 'The sweep mechanics' },
-  { timestamp: '41:15', label: 'Common mistakes' },
-  { timestamp: '52:08', label: 'Live drilling demo' },
-]
-const DEMO_QUOTE = "The sweep doesn't work without the underhook. Drill the grip fight first."
 
 // Locked tab blur content
 const DEMO_QUIZ = [
@@ -90,25 +85,42 @@ function SummaryTab({
   seekable?: boolean
   aiData?: AIData | null
 }) {
-  const techniques = aiData ? aiData.techniques : DEMO_TECHNIQUES.map(t => ({ name: t.name, timestamp: t.timestamp }))
-  const moments = aiData ? aiData.moments : DEMO_MOMENTS
-  const quote = aiData ? aiData.coachQuote : DEMO_QUOTE
+  if (!aiData) {
+    return (
+      <div className="px-5 py-5">
+        <div className="relative bg-[#141410] border border-[#322f26] rounded-sm px-6 py-14 text-center overflow-hidden">
+          <span className="absolute inset-0 flex items-center justify-center font-mincho text-[90px] text-[#f0eadc]/[0.03] leading-none select-none pointer-events-none">
+            AI
+          </span>
+          <div className="relative flex gap-2 justify-center mb-4">
+            {[0, 1, 2].map(i => (
+              <motion.div key={i} className="w-1.5 h-1.5 rounded-full bg-[#b3402f]"
+                animate={{ scale: [1, 1.5, 1], opacity: [0.4, 1, 0.4] }}
+                transition={{ duration: 0.9, delay: i * 0.25, repeat: Infinity }} />
+            ))}
+          </div>
+          <p className="relative font-mincho text-[#f0eadc] text-sm mb-1">Still analyzing this class</p>
+          <p className="relative font-mincho text-[#7a7568] text-xs max-w-xs mx-auto">
+            Transcription and technique breakdown usually finish within a few minutes of the class ending. Check back shortly.
+          </p>
+        </div>
+      </div>
+    )
+  }
+
+  const techniques = aiData.techniques
+  const moments = aiData.moments
+  const quote = aiData.coachQuote
 
   return (
     <div className="space-y-6 px-5 py-5">
 
       {/* Badge */}
       <div className="flex items-center gap-2">
-        {aiData ? (
-          <span className="font-mincho text-[10px] text-[#b3402f] tracking-[3px] uppercase border border-[#b3402f]/20 bg-[#b3402f]/5 px-2 py-1 rounded-sm flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#b3402f]" />
-            AI Analysis · This Class
-          </span>
-        ) : (
-          <span className="font-mincho text-[10px] text-[#00D4AA] tracking-[3px] uppercase border border-[#00D4AA]/20 bg-[#00D4AA]/5 px-2 py-1 rounded-sm">
-            ✓ Free with membership
-          </span>
-        )}
+        <span className="font-mincho text-[10px] text-[#b3402f] tracking-[3px] uppercase border border-[#b3402f]/20 bg-[#b3402f]/5 px-2 py-1 rounded-sm flex items-center gap-1.5">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#b3402f]" />
+          AI Analysis · This Class
+        </span>
       </div>
 
       {/* Techniques */}

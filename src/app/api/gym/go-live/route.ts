@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createClient as createAdminClient } from '@supabase/supabase-js'
 import { getDbRole } from '@/lib/supabase/admin'
+import { enableRecordingIfNeeded } from '@/lib/cloudflare'
 
 function admin() {
   return createAdminClient(
@@ -64,12 +65,20 @@ export async function POST(req: NextRequest) {
 
   const { data: gym } = await supabase
     .from('gyms')
-    .select('id, name, status, mux_playback_id, mux_live_stream_id, cf_hls_url')
+    .select('id, name, status, mux_playback_id, mux_live_stream_id, cf_hls_url, cf_live_input_uid')
     .eq('owner_id', user.id)
     .maybeSingle()
 
   if (!gym) return NextResponse.json({ error: 'No gym found' }, { status: 404 })
   if (gym.status !== 'active') return NextResponse.json({ error: 'Gym not active' }, { status: 403 })
+
+  // Self-heal recording on every single go-live, not just first-time setup —
+  // a live input provisioned before recording was wired in would otherwise
+  // stay silently unrecorded forever, since the client only re-provisions
+  // when it thinks there's no live input yet.
+  if (gym.cf_live_input_uid) {
+    enableRecordingIfNeeded(gym.cf_live_input_uid).catch(() => {})
+  }
 
   const { title, discipline, session_id } = await req.json().catch(() => ({}))
   const classTitle = title?.trim() || `Live Class — ${new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}`

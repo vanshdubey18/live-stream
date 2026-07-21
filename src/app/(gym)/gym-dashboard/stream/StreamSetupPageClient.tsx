@@ -68,6 +68,7 @@ export default function StreamSetupPageClient({
   const videoRef = useRef<HTMLVideoElement>(null)
   const connRef = useRef<ConnState>('idle')
   connRef.current = conn
+  const whipResourceUrlRef = useRef<string | null>(null)
 
   const isLive = conn === 'live'
   const isConnecting = conn === 'connecting'
@@ -267,11 +268,21 @@ export default function StreamSetupPageClient({
         throw new Error(msg)
       }
       const sdpAnswer = await whipRes.text()
+      whipResourceUrlRef.current = whipRes.headers.get('X-Whip-Resource-Url')
       await pc.setRemoteDescription({ type: 'answer', sdp: sdpAnswer })
 
       if (pc.connectionState === 'connected') setConn('live')
     } catch (err) {
       console.error('[GoLive]', err)
+      const resourceUrl = whipResourceUrlRef.current
+      whipResourceUrlRef.current = null
+      if (resourceUrl) {
+        fetch('/api/gym/cf-whip', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ resourceUrl }),
+        }).catch(() => {})
+      }
       teardown()
       setConn('idle')
       setGoLiveError(err instanceof Error ? err.message : 'Failed to start stream')
@@ -281,6 +292,19 @@ export default function StreamSetupPageClient({
   // ── END STREAM ────────────────────────────────────────────────────────────────
   async function handleEndStream() {
     setEndingStream(true)
+    // Explicitly end the WHIP session first — closing the local
+    // RTCPeerConnection alone leaves Cloudflare to detect the drop itself,
+    // which is slower/less reliable and can leave the recording stuck
+    // mid-conversion instead of finalizing it.
+    const resourceUrl = whipResourceUrlRef.current
+    whipResourceUrlRef.current = null
+    if (resourceUrl) {
+      await fetch('/api/gym/cf-whip', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ resourceUrl }),
+      }).catch(() => {})
+    }
     teardown()
     setConn('idle')
     setElapsed(0)

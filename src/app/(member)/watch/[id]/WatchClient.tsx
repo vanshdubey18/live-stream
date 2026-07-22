@@ -12,14 +12,26 @@ function pad(n: number) { return String(n).padStart(2, '0') }
 
 // Phone/tablet rotated sideways (below the lg breakpoint where the desktop
 // side-rail layout takes over) — drives the YouTube-style fullscreen mode.
+// Checked directly against window dimensions rather than only a matchMedia
+// query — some mobile browsers don't fire matchMedia 'change' reliably on
+// rotation, but a resize/orientationchange + innerWidth/innerHeight check
+// always reflects the real, current layout.
 function useIsMobileLandscape() {
   const [landscape, setLandscape] = useState(false)
   useEffect(() => {
-    const mq = window.matchMedia('(orientation: landscape) and (max-width: 1023px)')
-    const update = () => setLandscape(mq.matches)
+    const update = () => {
+      setLandscape(window.innerWidth > window.innerHeight && window.innerWidth < 1024)
+    }
     update()
+    window.addEventListener('resize', update)
+    window.addEventListener('orientationchange', update)
+    const mq = window.matchMedia('(orientation: landscape)')
     mq.addEventListener('change', update)
-    return () => mq.removeEventListener('change', update)
+    return () => {
+      window.removeEventListener('resize', update)
+      window.removeEventListener('orientationchange', update)
+      mq.removeEventListener('change', update)
+    }
   }, [])
   return landscape
 }

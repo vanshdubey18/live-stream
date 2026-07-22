@@ -10,17 +10,19 @@ import FloatingReactions from '@/components/live/FloatingReactions'
 
 function pad(n: number) { return String(n).padStart(2, '0') }
 
-// Phone/tablet rotated sideways (below the lg breakpoint where the desktop
-// side-rail layout takes over) — drives the YouTube-style fullscreen mode.
-// Checked directly against window dimensions rather than only a matchMedia
-// query — some mobile browsers don't fire matchMedia 'change' reliably on
-// rotation, but a resize/orientationchange + innerWidth/innerHeight check
-// always reflects the real, current layout.
-function useIsMobileLandscape() {
-  const [landscape, setLandscape] = useState(false)
+// Below the lg breakpoint (phone/tablet), chat is always a slide-in drawer
+// beside the video rather than stacked below it — in landscape the video
+// also goes edge-to-edge fullscreen; in portrait it stays its normal size
+// at the top, but chat still docks to the side, not below. Checked directly
+// against window dimensions rather than only a matchMedia query — some
+// mobile browsers don't fire matchMedia 'change' reliably on rotation.
+function useViewport() {
+  const [state, setState] = useState({ landscape: false, mobile: false })
   useEffect(() => {
     const update = () => {
-      setLandscape(window.innerWidth > window.innerHeight && window.innerWidth < 1024)
+      const w = window.innerWidth
+      const h = window.innerHeight
+      setState({ landscape: w > h && w < 1024, mobile: w < 1024 })
     }
     update()
     window.addEventListener('resize', update)
@@ -33,7 +35,34 @@ function useIsMobileLandscape() {
       mq.removeEventListener('change', update)
     }
   }, [])
-  return landscape
+  return state
+}
+
+// Slide-in chat panel used on mobile (both portrait and landscape) — docks
+// to the right edge of the video area with a handle to hide/summon it.
+function ChatDrawer({ sessionId, userId, viewerCount, ownerUserId, chatOpen, setChatOpen }: {
+  sessionId: string
+  userId: string
+  viewerCount: number
+  ownerUserId?: string
+  chatOpen: boolean
+  setChatOpen: (fn: (o: boolean) => boolean) => void
+}) {
+  return (
+    <>
+      <div className={`absolute right-0 top-0 bottom-0 w-[300px] max-w-[78%] p-2 flex flex-col transition-transform duration-300 ${chatOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+        <LiveChat sessionId={sessionId} userId={userId} fill viewerCount={viewerCount} ownerUserId={ownerUserId}
+          className="!h-full flex-1 min-h-0 !bg-[#141410]/90 backdrop-blur-sm" />
+      </div>
+      <button
+        onClick={() => setChatOpen(o => !o)}
+        aria-label={chatOpen ? 'Hide chat' : 'Show chat'}
+        className={`absolute top-1/2 -translate-y-1/2 z-10 w-7 h-14 flex items-center justify-center bg-[#141410]/80 border border-[#322f26] rounded-sm text-[#a29c8c] hover:text-[#f0eadc] transition-all duration-300 ${chatOpen ? 'right-[302px]' : 'right-2'}`}
+      >
+        {chatOpen ? <PanelRightClose size={15} /> : <PanelRightOpen size={15} />}
+      </button>
+    </>
+  )
 }
 
 interface SessionInfo {
@@ -307,7 +336,7 @@ function LiveViewer({ playbackId, sessionId, session, userId, userName }: {
   const [startedMinsAgo, setStartedMinsAgo] = useState(0)
   const [viewerCount, setViewerCount] = useState(1)
   const [chatOpen, setChatOpen] = useState(true)
-  const landscape = useIsMobileLandscape()
+  const { landscape, mobile } = useViewport()
 
   // Elapsed counts from the class's actual go-live time, not from when this
   // member's browser opened the page — a member joining late should see the
@@ -371,34 +400,27 @@ function LiveViewer({ playbackId, sessionId, session, userId, userName }: {
           <span className="font-mincho text-[#f0eadc] text-[10px] tracking-[3px] uppercase">Live</span>
         </div>
 
-        {/* Chat drawer — slides off-screen right when dismissed */}
-        <div className={`absolute right-0 top-0 bottom-0 w-[300px] max-w-[70vw] p-2 flex flex-col transition-transform duration-300 ${chatOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-          <LiveChat sessionId={sessionId} userId={userId} fill viewerCount={viewerCount} ownerUserId={session.gyms?.owner_id ?? undefined}
-            className="!h-full flex-1 min-h-0 !bg-[#141410]/90 backdrop-blur-sm" />
-        </div>
-
-        {/* Drawer handle — always reachable to summon chat back */}
-        <button
-          onClick={() => setChatOpen(o => !o)}
-          aria-label={chatOpen ? 'Hide chat' : 'Show chat'}
-          className={`absolute top-1/2 -translate-y-1/2 z-10 w-7 h-14 flex items-center justify-center bg-[#141410]/80 border border-[#322f26] rounded-sm text-[#a29c8c] hover:text-[#f0eadc] transition-all duration-300 ${chatOpen ? 'right-[302px]' : 'right-2'}`}
-        >
-          {chatOpen ? <PanelRightClose size={15} /> : <PanelRightOpen size={15} />}
-        </button>
+        <ChatDrawer sessionId={sessionId} userId={userId} viewerCount={viewerCount}
+          ownerUserId={session.gyms?.owner_id ?? undefined} chatOpen={chatOpen} setChatOpen={setChatOpen} />
       </motion.div>
     )
   }
 
   return (
     <motion.div key="live" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="min-h-screen bg-[#141410] flex flex-col lg:flex-row">
-      {/* Video — 70% on desktop, full width when the rail is collapsed */}
+      {/* Video — 70% on desktop, full width when the rail is collapsed. On
+          mobile, chat docks beside it as a drawer instead of stacking below. */}
       <div className="relative flex-1 bg-black flex items-center min-h-[56vw] lg:min-h-screen">
         <FloatingReactions sessionId={sessionId} />
         {videoContent}
+        {mobile && (
+          <ChatDrawer sessionId={sessionId} userId={userId} viewerCount={viewerCount}
+            ownerUserId={session.gyms?.owner_id ?? undefined} chatOpen={chatOpen} setChatOpen={setChatOpen} />
+        )}
       </div>
 
       {/* Collapsed-rail summon tab (desktop only) */}
-      {!chatOpen && (
+      {!mobile && !chatOpen && (
         <button
           onClick={() => setChatOpen(true)}
           aria-label="Show chat"
@@ -459,9 +481,13 @@ function LiveViewer({ playbackId, sessionId, session, userId, userName }: {
           </div>
         </div>
 
-        <div className="px-5 py-5 flex-1 min-h-0 flex flex-col">
-          <LiveChat sessionId={sessionId} userId={userId} fill viewerCount={viewerCount} ownerUserId={session.gyms?.owner_id ?? undefined} />
-        </div>
+        {/* Chat lives in the video-area drawer on mobile (see ChatDrawer above)
+            — only the desktop rail embeds it inline here. */}
+        {!mobile && (
+          <div className="px-5 py-5 flex-1 min-h-0 flex flex-col">
+            <LiveChat sessionId={sessionId} userId={userId} fill viewerCount={viewerCount} ownerUserId={session.gyms?.owner_id ?? undefined} />
+          </div>
+        )}
 
         <div className="px-5 py-4 border-t border-[#2a2a20]">
           <div className="flex items-center gap-2 mb-1">

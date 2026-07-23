@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Loader2, Eye, EyeOff, LogOut, CheckCircle2 } from 'lucide-react'
+import { Loader2, Eye, EyeOff, LogOut, CheckCircle2, Download, Trash2, X } from 'lucide-react'
 
 interface GymSummary {
   id: string
@@ -106,6 +106,55 @@ export default function AccountClient({ email, name: initialName, phone: initial
     setSigningOut(true)
     await supabase.auth.signOut({ scope: 'global' })
     router.push('/login')
+  }
+
+  // ── Data export ──
+  const [exporting, setExporting] = useState(false)
+
+  async function exportData() {
+    setExporting(true)
+    try {
+      const res = await fetch('/api/member/account/export')
+      if (!res.ok) throw new Error('Export failed')
+      const blob = await res.blob()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = 'matpeak-data-export.json'
+      a.click()
+      URL.revokeObjectURL(url)
+      showToast('Export downloaded')
+    } catch {
+      showToast('Export failed — try again')
+    } finally {
+      setExporting(false)
+    }
+  }
+
+  // ── Account deletion ──
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [deleteConfirmText, setDeleteConfirmText] = useState('')
+  const [deleting, setDeleting] = useState(false)
+  const [deleteError, setDeleteError] = useState('')
+
+  async function deleteAccount() {
+    setDeleting(true)
+    setDeleteError('')
+    try {
+      const res = await fetch('/api/member/account/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ confirm: deleteConfirmText }),
+      })
+      const data = await res.json()
+      if (!res.ok) { setDeleteError(data.error ?? 'Failed to delete account'); return }
+      await supabase.auth.signOut({ scope: 'global' })
+      router.push('/login')
+    } catch {
+      setDeleteError('Network error — try again')
+    } finally {
+      setDeleting(false)
+    }
   }
 
   return (
@@ -262,14 +311,103 @@ export default function AccountClient({ email, name: initialName, phone: initial
               >
                 {signingOut ? <Loader2 size={16} className="animate-spin" /> : (<><LogOut size={14} /> SIGN OUT OF ALL DEVICES</>)}
               </button>
-              <p className="font-mincho text-[11px] text-[#7a7568] text-center">
-                To delete your account, contact support.
-              </p>
+            </div>
+          </section>
+
+          {/* Data & Privacy */}
+          <section>
+            <SectionHeader label="Data & Privacy" />
+            <div className="bg-[#1c1c16] border border-[#322f26] rounded-sm p-6 space-y-4">
+              <div>
+                <p className="font-mincho text-sm text-[#f0eadc] mb-1">Export your data</p>
+                <p className="font-mincho text-xs text-[#7a7568] mb-3">Download everything MATPEAK has stored about your account as a JSON file.</p>
+                <button
+                  onClick={exportData}
+                  disabled={exporting}
+                  className="font-mincho tracking-[2px] border border-[#322f26] hover:border-[#7a7568] disabled:opacity-40 text-[#f0eadc] px-5 py-2.5 rounded-sm text-xs transition-colors duration-150 flex items-center gap-2"
+                >
+                  {exporting ? <Loader2 size={14} className="animate-spin" /> : <Download size={14} />}
+                  DOWNLOAD MY DATA
+                </button>
+              </div>
+              <div className="border-t border-[#2a2a20] pt-4">
+                <p className="font-mincho text-sm text-[#b3402f] mb-1">Delete account</p>
+                <p className="font-mincho text-xs text-[#7a7568] mb-3">Permanently deletes your account, memberships, and purchase history. This cannot be undone.</p>
+                <button
+                  onClick={() => setShowDeleteModal(true)}
+                  className="font-mincho tracking-[2px] border border-[#b3402f]/30 hover:border-[#b3402f] hover:bg-[#b3402f]/10 text-[#b3402f] px-5 py-2.5 rounded-sm text-xs transition-colors duration-150 flex items-center gap-2"
+                >
+                  <Trash2 size={14} /> DELETE MY ACCOUNT
+                </button>
+              </div>
             </div>
           </section>
 
         </div>
       </div>
+
+      {/* Delete confirmation modal */}
+      <AnimatePresence>
+        {showDeleteModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          >
+            <div className="absolute inset-0 bg-black/70" onClick={() => !deleting && setShowDeleteModal(false)} />
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 12 }}
+              className="relative bg-[#1c1c16] border border-[#322f26] rounded-sm w-full max-w-md"
+            >
+              <div className="flex items-center justify-between px-6 py-4 border-b border-[#2a2a20]">
+                <h2 className="font-mincho text-xl text-[#f0eadc] tracking-[1px]">DELETE ACCOUNT</h2>
+                {!deleting && (
+                  <button onClick={() => setShowDeleteModal(false)} className="text-[#7a7568] hover:text-[#f0eadc]"><X size={20} /></button>
+                )}
+              </div>
+              <div className="p-6 space-y-4">
+                <p className="font-mincho text-sm text-[#a29c8c] leading-relaxed">
+                  This permanently deletes your account, all gym memberships, purchase history, and watch history. This cannot be undone.
+                </p>
+                <div>
+                  <label className="block font-mincho tracking-[2px] text-[#f0eadc] text-xs mb-2">
+                    Type <span className="text-[#b3402f]">DELETE</span> to confirm
+                  </label>
+                  <input
+                    type="text"
+                    value={deleteConfirmText}
+                    onChange={(e) => { setDeleteConfirmText(e.target.value); setDeleteError('') }}
+                    className={inputClass}
+                    disabled={deleting}
+                  />
+                </div>
+                {deleteError && <p className="font-mincho text-[#b3402f] text-sm">{deleteError}</p>}
+                <div className="flex gap-3 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => setShowDeleteModal(false)}
+                    disabled={deleting}
+                    className="flex-1 py-3 border border-[#322f26] text-[#f0eadc] text-sm font-mincho tracking-[2px] rounded-sm transition-all hover:bg-[#242420] disabled:opacity-50"
+                  >
+                    CANCEL
+                  </button>
+                  <button
+                    type="button"
+                    onClick={deleteAccount}
+                    disabled={deleting || deleteConfirmText !== 'DELETE'}
+                    className="flex-1 py-3 bg-[#b3402f] hover:bg-[#942f22] disabled:opacity-40 disabled:cursor-not-allowed text-[#f0eadc] font-mincho tracking-[2px] text-sm rounded-sm transition-all flex items-center justify-center gap-2"
+                  >
+                    {deleting ? <Loader2 size={15} className="animate-spin" /> : 'DELETE FOREVER'}
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Toast */}
       <AnimatePresence>

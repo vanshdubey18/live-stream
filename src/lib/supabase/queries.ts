@@ -1,11 +1,24 @@
 import { createClient } from '@/lib/supabase/server'
 import { createClient as createAdminClient } from '@supabase/supabase-js'
+import { unstable_cache } from 'next/cache'
 import { staleLiveCutoffISO } from '@/lib/session-live'
 
 function adminClient() {
   return createAdminClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  )
+}
+
+// Anon-key client with no cookie/session dependency — required inside
+// unstable_cache (Next's Data Cache can't wrap anything that reads
+// cookies/headers, since the result would then vary per user despite being
+// cached). Only used for genuinely public reads: gym browsing, not
+// membership-gated or personalized data.
+function publicClient() {
+  return createAdminClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
   )
 }
 
@@ -181,29 +194,42 @@ export async function getNextSessionForGym(gymId: string) {
   return data
 }
 
-export async function getAllActiveGyms() {
-  const supabase = createClient()
-  const { data, error } = await supabase
-    .from('gyms')
-    .select('id, slug, name, city, location, disciplines, logo_url, description, sessions(status, scheduled_at)')
-    .eq('status', 'active')
-    .order('created_at', { ascending: false })
-  if (error) { console.error('getAllActiveGyms:', error); return [] }
-  return data ?? []
-}
+// Public gym browsing (list + detail) is the same data for every visitor,
+// changes slowly, and was previously re-fetched from the DB on literally
+// every page view — the biggest uncached hot path in the app. Cached for
+// 60s via Next's Data Cache; a gym-profile edit can take up to that long
+// to show publicly, which is an acceptable tradeoff for this data.
+export const getAllActiveGyms = unstable_cache(
+  async () => {
+    const supabase = publicClient()
+    const { data, error } = await supabase
+      .from('gyms')
+      .select('id, slug, name, city, location, disciplines, logo_url, description, sessions(status, scheduled_at)')
+      .eq('status', 'active')
+      .order('created_at', { ascending: false })
+    if (error) { console.error('getAllActiveGyms:', error); return [] }
+    return data ?? []
+  },
+  ['gyms-active-list'],
+  { revalidate: 60, tags: ['gyms'] }
+)
 
-export async function getGymBySlug(slug: string) {
-  const supabase = createClient()
-  const { data, error } = await supabase
-    .from('gyms')
-    // Explicit allowlist — stream_key / mux_live_stream_id / mux_playback_id are intentionally excluded
-    .select('id, name, slug, description, city, location, logo_url, cover_url, disciplines, monthly_price_paise, status, owner_id, instagram, created_at')
-    .eq('slug', slug)
-    .eq('status', 'active')
-    .maybeSingle()
-  if (error) { console.error('getGymBySlug:', error); return null }
-  return data
-}
+export const getGymBySlug = unstable_cache(
+  async (slug: string) => {
+    const supabase = publicClient()
+    const { data, error } = await supabase
+      .from('gyms')
+      // Explicit allowlist — stream_key / mux_live_stream_id / mux_playback_id are intentionally excluded
+      .select('id, name, slug, description, city, location, logo_url, cover_url, disciplines, monthly_price_paise, status, owner_id, instagram, created_at')
+      .eq('slug', slug)
+      .eq('status', 'active')
+      .maybeSingle()
+    if (error) { console.error('getGymBySlug:', error); return null }
+    return data
+  },
+  ['gym-by-slug'],
+  { revalidate: 60, tags: ['gyms'] }
+)
 
 export async function getMemberAnnouncements(gymIds: string[]) {
   if (gymIds.length === 0) return []
@@ -257,23 +283,29 @@ export async function getGymByOwnerId(userId: string) {
 // clip_* — those are column-locked (migration 019) and would otherwise let
 // a non-member extract a direct playback URL from the page's server-
 // rendered payload even if the UI never visibly renders them.
-export async function getGymSessionsPublic(gymId: string) {
-  const supabase = createClient()
-  const { data, error } = await supabase
-    .from('sessions')
-    .select(`
-      id, title, discipline, scheduled_at, duration_minutes,
-      level, status, mux_playback_id,
-      coaches ( id, name )
-    `)
-    .eq('gym_id', gymId)
-    .gte('scheduled_at', new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString())
-    .order('scheduled_at', { ascending: true })
-    .limit(20)
+export const getGymSessionsPublic = unstable_cache(
+  async (gymId: string) => {
+    const supabase = publicClient()
+    const { data, error } = await supabase
+      .from('sessions')
+      .select(`
+        id, title, discipline, scheduled_at, duration_minutes,
+        level, status, mux_playback_id,
+        coaches ( id, name )
+      `)
+      .eq('gym_id', gymId)
+      .gte('scheduled_at', new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString())
+      .order('scheduled_at', { ascending: true })
+      .limit(20)
 
-  if (error) { console.error('getGymSessionsPublic:', error); return [] }
-  return data ?? []
-}
+    if (error) { console.error('getGymSessionsPublic:', error); return [] }
+    return data ?? []
+  },
+  ['gym-sessions-public'],
+  // Shorter window than gym profile data — a class going live/ending is
+  // exactly the kind of change that shouldn't sit stale for a full minute.
+  { revalidate: 20, tags: ['gym-sessions'] }
+)
 
 // Owner-only — includes replay/clip management fields. Callers must already
 // have verified the caller owns this gym before calling this.
@@ -296,28 +328,36 @@ export async function getGymSessionsForOwner(gymId: string) {
   return data ?? []
 }
 
-export async function getGymCoaches(gymId: string) {
-  const supabase = createClient()
-  const { data, error } = await supabase
-    .from('coaches')
-    .select('*')
-    .eq('gym_id', gymId)
-    .order('created_at', { ascending: true })
+export const getGymCoaches = unstable_cache(
+  async (gymId: string) => {
+    const supabase = publicClient()
+    const { data, error } = await supabase
+      .from('coaches')
+      .select('*')
+      .eq('gym_id', gymId)
+      .order('created_at', { ascending: true })
 
-  if (error) { console.error('getGymCoaches:', error); return [] }
-  return data ?? []
-}
+    if (error) { console.error('getGymCoaches:', error); return [] }
+    return data ?? []
+  },
+  ['gym-coaches'],
+  { revalidate: 60, tags: ['gym-coaches'] }
+)
 
-export async function getGymMemberCount(gymId: string) {
-  const { count, error } = await adminClient()
-    .from('memberships')
-    .select('*', { count: 'exact', head: true })
-    .eq('gym_id', gymId)
-    .eq('status', 'active')
+export const getGymMemberCount = unstable_cache(
+  async (gymId: string) => {
+    const { count, error } = await adminClient()
+      .from('memberships')
+      .select('*', { count: 'exact', head: true })
+      .eq('gym_id', gymId)
+      .eq('status', 'active')
 
-  if (error) return 0
-  return count ?? 0
-}
+    if (error) return 0
+    return count ?? 0
+  },
+  ['gym-member-count'],
+  { revalidate: 60, tags: ['gym-member-count'] }
+)
 
 export async function getGymMembers(gymId: string) {
   const { data: memberships, error } = await adminClient()

@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
-import { getGymBySlug, getGymCoaches, getGymSessions, getGymMemberCount, getMembershipForGym } from '@/lib/supabase/queries'
+import { getGymBySlug, getGymCoaches, getGymSessionsPublic, getGymMemberCount, getMembershipForGym } from '@/lib/supabase/queries'
 import GymDetailClient from './GymDetailClient'
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
@@ -40,7 +40,7 @@ export default async function GymDetailPage({ params }: { params: { slug: string
 
   const [gymCoaches, gymSessions, memberCount, membership] = await Promise.all([
     getGymCoaches(gym.id),
-    getGymSessions(gym.id),
+    getGymSessionsPublic(gym.id),
     getGymMemberCount(gym.id),
     user ? getMembershipForGym(user.id, gym.id) : Promise.resolve(null),
   ])

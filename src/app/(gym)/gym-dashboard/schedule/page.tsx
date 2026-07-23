@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import { getGymByOwnerId, getGymSessions, getGymCoaches } from '@/lib/supabase/queries'
+import { getGymByOwnerId, getGymSessionsForOwner, getGymCoaches } from '@/lib/supabase/queries'
 import ScheduleClient from './ScheduleClient'
 
 export default async function SchedulePage() {
@@ -12,7 +12,7 @@ export default async function SchedulePage() {
   if (!gym) redirect('/gym-dashboard')
 
   const [sessions, coaches] = await Promise.all([
-    getGymSessions(gym.id),
+    getGymSessionsForOwner(gym.id),
     getGymCoaches(gym.id),
   ])
 

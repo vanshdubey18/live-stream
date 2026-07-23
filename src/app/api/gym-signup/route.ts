@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createClient as createAdminClient } from '@supabase/supabase-js'
+import { checkRateLimit, getClientIp } from '@/lib/rate-limit'
 
 function slugify(name: string) {
   return name
@@ -12,8 +13,17 @@ function slugify(name: string) {
 }
 
 export async function POST(req: NextRequest) {
+  const allowed = await checkRateLimit(`gym-signup:${getClientIp(req)}`, 5, 3600)
+  if (!allowed) return NextResponse.json({ error: 'Too many attempts — try again later.' }, { status: 429 })
+
   const body = await req.json()
-  const { email, password, gymName, city, location, description, disciplines, ownerName, monthlyPricePaise } = body
+  const { email, password, gymName, city, location, description, disciplines, ownerName, monthlyPricePaise: rawPrice } = body
+
+  // monthlyPricePaise was taken from the client unvalidated — clamp to a
+  // sane range (₹1 to ₹1,00,000/month) instead of trusting it directly.
+  const monthlyPricePaise = typeof rawPrice === 'number' && rawPrice > 0 && rawPrice <= 10_000_000
+    ? Math.round(rawPrice)
+    : null
 
   const supabase = createClient()
 

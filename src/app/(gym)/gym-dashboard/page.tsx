@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import {
   getGymByOwnerId,
-  getGymSessions,
+  getGymSessionsForOwner,
   getGymCoaches,
   getGymMemberCount,
   getGymMembershipStats,
@@ -77,7 +77,7 @@ export default async function GymDashboardPage() {
   }
 
   const [sessions, coaches, memberCount, memberStats] = await Promise.all([
-    getGymSessions(gym.id),
+    getGymSessionsForOwner(gym.id),
     getGymCoaches(gym.id),
     getGymMemberCount(gym.id),
     getGymMembershipStats(gym.id),

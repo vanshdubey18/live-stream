@@ -21,7 +21,9 @@ export async function POST(_req: NextRequest) {
     return NextResponse.json({ error: 'Not authorized' }, { status: 403 })
   }
 
-  const { data: gym, error: gymErr } = await supabase
+  // cf_* columns are column-locked (migration 019) — read via service role
+  // since ownership is already verified via .eq('owner_id', user.id).
+  const { data: gym, error: gymErr } = await getAdmin()
     .from('gyms')
     .select('id, status, name, cf_live_input_uid, cf_whip_url, cf_hls_url')
     .eq('owner_id', user.id)

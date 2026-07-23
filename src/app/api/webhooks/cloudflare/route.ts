@@ -1,10 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import crypto from 'crypto'
+import { waitUntil } from '@vercel/functions'
 import { processSession } from '@/lib/ai/process-session'
 import { processModule } from '@/lib/ai/process-module'
 
 export const runtime = 'nodejs'
+// processSession/processModule poll Deepgram for up to ~4 minutes
+// (ensureMp4Url: 16 x 15s) after this webhook responds. Without both
+// maxDuration raised AND waitUntil() keeping the invocation alive past the
+// response, Vercel freezes the function the moment it returns and the
+// "fire-and-forget" AI work silently never completes — this was the actual
+// cause of transcripts/summaries never appearing. maxDuration is capped by
+// your Vercel plan (Hobby: 60s max regardless of this value) — Pro or
+// above is required for this to actually take effect at 300s.
+export const maxDuration = 300
 
 function getAdmin() {
   return createClient(
@@ -134,11 +144,13 @@ async function handleRecordingReady(videoUid: string, liveInputUid: string, data
 
   console.log(`[cf-webhook] Recording ready for session ${session.id}: ${videoUid}`)
 
-  // Fire-and-forget AI processing — transcribe + extract techniques.
-  // Not awaited: this webhook must return quickly, and processSession
-  // internally polls for the MP4 download to finish (can take a while).
-  processSession(session.id).catch(err =>
-    console.error('[cf-webhook] processSession error:', err)
+  // Not awaited (the webhook still returns immediately), but waitUntil()
+  // keeps this Vercel invocation alive until it finishes instead of letting
+  // the runtime freeze it the moment the response is sent.
+  waitUntil(
+    processSession(session.id).catch(err =>
+      console.error('[cf-webhook] processSession error:', err)
+    )
   )
 
   // Short stream guard — skip clipping if less than 70s
@@ -173,8 +185,10 @@ async function handleModuleRecordingReady(moduleId: string, videoUid: string, da
 
   console.log(`[cf-webhook] Module recording ready: ${moduleId} (${videoUid})`)
 
-  processModule(moduleId).catch(err =>
-    console.error('[cf-webhook] processModule error:', err)
+  waitUntil(
+    processModule(moduleId).catch(err =>
+      console.error('[cf-webhook] processModule error:', err)
+    )
   )
 }
 

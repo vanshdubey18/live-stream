@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import { getDbRole } from '@/lib/supabase/admin'
+import { getDbRole, adminClient } from '@/lib/supabase/admin'
 import Link from 'next/link'
 import WatchClient from './WatchClient'
 import AccessLockedScreen from '@/components/shared/AccessLockedScreen'
@@ -10,8 +10,10 @@ export default async function WatchPage({ params }: { params: { id: string } }) 
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect(`/login?redirectTo=/watch/${params.id}`)
 
-  // Fetch session + coach + gym name
-  const { data: session } = await supabase
+  // cf_hls_url is column-locked (migration 019) — the membership check below
+  // is what actually gates access, so this reads via the service-role
+  // client rather than relying on RLS to differentiate members from anon.
+  const { data: session } = await adminClient()
     .from('sessions')
     .select('id, title, discipline, level, scheduled_at, status, cf_hls_url, gym_id, coaches(name), gyms(name, owner_id)')
     .eq('id', params.id)
@@ -92,7 +94,7 @@ export default async function WatchPage({ params }: { params: { id: string } }) 
     if ((session as any).cf_hls_url) {
       initialHlsUrl = (session as any).cf_hls_url
     } else {
-      const { data: gym } = await supabase
+      const { data: gym } = await adminClient()
         .from('gyms')
         .select('cf_hls_url')
         .eq('id', session.gym_id)

@@ -71,7 +71,12 @@ export async function getUpcomingSessions(gymIds: string[]) {
 
 export async function getRecentReplays(gymIds: string[]) {
   if (gymIds.length === 0) return []
-  const supabase = createClient()
+  // cf_video_uid/ai_summary are locked down at the column-grant level (see
+  // migration 019) since the RLS row-policy alone can't tell a member of
+  // this gym apart from a random anon caller. gymIds here always come from
+  // the authenticated caller's own getMemberGyms() upstream, so the
+  // service-role client is safe — the membership check already happened.
+  const supabase = adminClient()
   const { data, error } = await supabase
     .from('sessions')
     .select(`
@@ -90,7 +95,9 @@ export async function getRecentReplays(gymIds: string[]) {
 
 export async function getReplayLibrary(gymIds: string[]) {
   if (gymIds.length === 0) return []
-  const supabase = createClient()
+  // Same reasoning as getRecentReplays above — cf_video_uid is column-locked;
+  // gymIds is always the caller's own membership list, so admin client is safe.
+  const supabase = adminClient()
   const { data, error } = await supabase
     .from('sessions')
     .select(`
@@ -245,8 +252,33 @@ export async function getGymByOwnerId(userId: string) {
   return data
 }
 
-export async function getGymSessions(gymId: string) {
+// Public-safe — used by the /gyms/[slug] browse page, which anyone (not
+// just members) can view. Deliberately excludes replay_url/cf_video_uid/
+// clip_* — those are column-locked (migration 019) and would otherwise let
+// a non-member extract a direct playback URL from the page's server-
+// rendered payload even if the UI never visibly renders them.
+export async function getGymSessionsPublic(gymId: string) {
   const supabase = createClient()
+  const { data, error } = await supabase
+    .from('sessions')
+    .select(`
+      id, title, discipline, scheduled_at, duration_minutes,
+      level, status, mux_playback_id,
+      coaches ( id, name )
+    `)
+    .eq('gym_id', gymId)
+    .gte('scheduled_at', new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString())
+    .order('scheduled_at', { ascending: true })
+    .limit(20)
+
+  if (error) { console.error('getGymSessionsPublic:', error); return [] }
+  return data ?? []
+}
+
+// Owner-only — includes replay/clip management fields. Callers must already
+// have verified the caller owns this gym before calling this.
+export async function getGymSessionsForOwner(gymId: string) {
+  const supabase = adminClient()
   const { data, error } = await supabase
     .from('sessions')
     .select(`
@@ -260,7 +292,7 @@ export async function getGymSessions(gymId: string) {
     .order('scheduled_at', { ascending: true })
     .limit(20)
 
-  if (error) { console.error('getGymSessions:', error); return [] }
+  if (error) { console.error('getGymSessionsForOwner:', error); return [] }
   return data ?? []
 }
 

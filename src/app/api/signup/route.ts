@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { adminClient } from '@/lib/supabase/admin'
+import { checkRateLimit, getClientIp } from '@/lib/rate-limit'
 
 // Public signup can only ever create a member or gym_owner account — 'admin'
 // (or any other value) must never be reachable from a client-supplied role,
@@ -7,6 +8,9 @@ import { adminClient } from '@/lib/supabase/admin'
 const PUBLIC_ROLES = new Set(['member', 'gym_owner'])
 
 export async function POST(req: NextRequest) {
+  const allowed = await checkRateLimit(`signup:${getClientIp(req)}`, 5, 3600)
+  if (!allowed) return NextResponse.json({ error: 'Too many signup attempts — try again later.' }, { status: 429 })
+
   const { name, email, password, role } = await req.json()
 
   if (!name || !email || !password) {

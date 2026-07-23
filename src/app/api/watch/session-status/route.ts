@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { adminClient } from '@/lib/supabase/admin'
 import { isSessionLive } from '@/lib/session-live'
 
 export async function GET(req: NextRequest) {
@@ -12,7 +13,9 @@ export async function GET(req: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
 
-  const { data: session } = await supabase
+  // cf_hls_url is column-locked (migration 019) — the membership check below
+  // is what actually gates access to it.
+  const { data: session } = await adminClient()
     .from('sessions')
     .select('status, cf_hls_url, gym_id, scheduled_at')
     .eq('id', sessionId)
@@ -38,7 +41,7 @@ export async function GET(req: NextRequest) {
 
   let cfHlsUrl: string | null = session.cf_hls_url ?? null
   if (session.status === 'live' && !cfHlsUrl) {
-    const { data: gym } = await supabase
+    const { data: gym } = await adminClient()
       .from('gyms')
       .select('cf_hls_url')
       .eq('id', session.gym_id)

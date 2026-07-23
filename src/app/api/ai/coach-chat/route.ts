@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
 import { createClient } from '@/lib/supabase/server'
 import { createClient as createAdminClient } from '@supabase/supabase-js'
+import { checkRateLimit } from '@/lib/rate-limit'
 
 export const runtime = 'nodejs'
 
@@ -21,20 +22,46 @@ export async function POST(req: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
+  // Every call bills the Anthropic API — cap per-user usage so this can't
+  // become an uncapped-spend vector.
+  const allowed = await checkRateLimit(`coach-chat:${user.id}`, 10, 60)
+  if (!allowed) return NextResponse.json({ error: 'Too many questions — try again in a minute.' }, { status: 429 })
+
   const { question, gymId } = await req.json()
   if (!question?.trim()) return NextResponse.json({ error: 'Question required' }, { status: 400 })
+  if (question.length > 500) return NextResponse.json({ error: 'Question too long' }, { status: 400 })
 
-  let query = getAdmin()
+  const admin = getAdmin()
+
+  // Previously any logged-in user could pass any gymId (or omit it entirely
+  // and get every gym's transcripts) — restrict to gyms this user actually
+  // has access to: gyms they actively belong to, or the gym they own.
+  const [{ data: memberships }, { data: ownedGym }] = await Promise.all([
+    admin.from('memberships').select('gym_id').eq('user_id', user.id).eq('status', 'active'),
+    admin.from('gyms').select('id').eq('owner_id', user.id).maybeSingle(),
+  ])
+  const allowedGymIds = [
+    ...(memberships ?? []).map(m => m.gym_id),
+    ...(ownedGym ? [ownedGym.id] : []),
+  ]
+
+  if (allowedGymIds.length === 0) {
+    return NextResponse.json({
+      answer: "I don't have any class transcripts yet. Once your gym streams a session and the replay is ready, I'll be able to answer questions about what was taught.",
+      citations: [],
+    })
+  }
+
+  const targetGymIds = gymId && allowedGymIds.includes(gymId) ? [gymId] : allowedGymIds
+
+  const { data: sessions } = await admin
     .from('sessions')
     .select('id, title, discipline, transcript, ai_summary, ai_key_moments, scheduled_at, coaches(name)')
     .eq('status', 'ended')
     .not('transcript', 'is', null)
+    .in('gym_id', targetGymIds)
     .order('scheduled_at', { ascending: false })
     .limit(5)
-
-  if (gymId) query = query.eq('gym_id', gymId)
-
-  const { data: sessions } = await query
 
   if (!sessions?.length) {
     return NextResponse.json({

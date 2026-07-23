@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { getDbRole } from '@/lib/supabase/admin'
+import { getDbRole, adminClient } from '@/lib/supabase/admin'
 
 export async function POST(req: NextRequest) {
   const supabase = createClient()
@@ -12,7 +12,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Not authorized' }, { status: 403 })
   }
 
-  const { data: gym } = await supabase
+  // cf_whip_url is column-locked (migration 019) — ownership already
+  // verified via owner_id, so service role is fine.
+  const { data: gym } = await adminClient()
     .from('gyms')
     .select('cf_whip_url')
     .eq('owner_id', user.id)

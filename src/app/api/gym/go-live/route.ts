@@ -63,7 +63,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Not authorized' }, { status: 403 })
   }
 
-  const { data: gym } = await supabase
+  // cf_*/mux_live_stream_id are column-locked (migration 019) — service
+  // role is fine since ownership is already verified via owner_id.
+  const { data: gym } = await admin()
     .from('gyms')
     .select('id, name, status, mux_playback_id, mux_live_stream_id, cf_hls_url, cf_live_input_uid')
     .eq('owner_id', user.id)
@@ -112,7 +114,7 @@ export async function POST(req: NextRequest) {
       .single()
 
     if (error || !session) return NextResponse.json({ error: error?.message ?? 'Failed to update session' }, { status: 500 })
-    await notifyMembersGoingLive(gym.id, gym.name, { id: session.id, title: session.title }).catch(() => {})
+    notifyMembersGoingLive(gym.id, gym.name, { id: session.id, title: session.title }).catch(() => {})
     return NextResponse.json({ sessionId: session.id })
   }
 
@@ -135,6 +137,6 @@ export async function POST(req: NextRequest) {
 
   if (error || !session) return NextResponse.json({ error: error?.message ?? 'Failed to create session' }, { status: 500 })
 
-  await notifyMembersGoingLive(gym.id, gym.name, { id: session.id, title: classTitle }).catch(() => {})
+  notifyMembersGoingLive(gym.id, gym.name, { id: session.id, title: classTitle }).catch(() => {})
   return NextResponse.json({ sessionId: session.id })
 }

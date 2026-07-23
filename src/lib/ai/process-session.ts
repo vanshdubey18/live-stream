@@ -197,5 +197,7 @@ export async function processSession(sessionId: string): Promise<void> {
     console.log(`[process-session] Done for ${sessionId}: ${extraction.techniques.length} techniques, ${extraction.moments.length} moments`)
   } catch (err) {
     console.error(`[process-session] Error for ${sessionId}:`, err)
+    const Sentry = await import('@sentry/nextjs')
+    Sentry.captureException(err, { tags: { pipeline: 'process-session' }, extra: { sessionId } })
   }
 }

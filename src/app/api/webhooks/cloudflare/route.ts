@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import crypto from 'crypto'
+import * as Sentry from '@sentry/nextjs'
 import { waitUntil } from '@vercel/functions'
 import { processSession } from '@/lib/ai/process-session'
 import { processModule } from '@/lib/ai/process-module'
@@ -62,7 +63,9 @@ async function callClipApi(cfVideoUid: string): Promise<string | null> {
     }
   )
   if (!res.ok) {
-    console.error('[cf-webhook] clip API error:', res.status, await res.text())
+    const text = await res.text()
+    console.error('[cf-webhook] clip API error:', res.status, text)
+    Sentry.captureMessage('[cf-webhook] clip API error', { level: 'error', extra: { status: res.status, body: text } })
     return null
   }
   const json = await res.json()
@@ -148,9 +151,10 @@ async function handleRecordingReady(videoUid: string, liveInputUid: string, data
   // keeps this Vercel invocation alive until it finishes instead of letting
   // the runtime freeze it the moment the response is sent.
   waitUntil(
-    processSession(session.id).catch(err =>
+    processSession(session.id).catch(err => {
       console.error('[cf-webhook] processSession error:', err)
-    )
+      Sentry.captureException(err, { tags: { pipeline: 'cf-webhook-processSession' } })
+    })
   )
 
   // Short stream guard — skip clipping if less than 70s
@@ -186,9 +190,10 @@ async function handleModuleRecordingReady(moduleId: string, videoUid: string, da
   console.log(`[cf-webhook] Module recording ready: ${moduleId} (${videoUid})`)
 
   waitUntil(
-    processModule(moduleId).catch(err =>
+    processModule(moduleId).catch(err => {
       console.error('[cf-webhook] processModule error:', err)
-    )
+      Sentry.captureException(err, { tags: { pipeline: 'cf-webhook-processModule' } })
+    })
   )
 }
 

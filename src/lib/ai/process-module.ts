@@ -155,5 +155,7 @@ export async function processModule(moduleId: string): Promise<void> {
     console.log(`[process-module] Done for ${moduleId}: ${extraction.techniques.length} techniques, ${extraction.moments.length} moments`)
   } catch (err) {
     console.error(`[process-module] Error for ${moduleId}:`, err)
+    const Sentry = await import('@sentry/nextjs')
+    Sentry.captureException(err, { tags: { pipeline: 'process-module' }, extra: { moduleId } })
   }
 }

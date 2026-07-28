@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/reap-stale-sessions",
+      "schedule": "*/5 * * * *"
+    }
+  ]
+}

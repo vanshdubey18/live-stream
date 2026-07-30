@@ -261,6 +261,63 @@ function HowItWorks() {
   )
 }
 
+const WHY_MATPEAK = [
+  {
+    photo: 'https://images.pexels.com/photos/4761598/pexels-photo-4761598.jpeg?auto=compress&cs=tinysrgb&w=800',
+    title: 'Every class, saved automatically',
+    desc: 'Miss a session and it\'s already waiting for you. Every live class is recorded the moment it ends — no setup, nothing for your gym to remember to do.',
+  },
+  {
+    photo: 'https://images.pexels.com/photos/6296121/pexels-photo-6296121.jpeg?auto=compress&cs=tinysrgb&w=800',
+    title: 'AI breaks down every roll',
+    desc: 'Full transcripts and technique summaries generated automatically after class, so you can find the exact moment a position was explained without scrubbing through an hour of footage.',
+  },
+  {
+    photo: 'https://images.pexels.com/photos/7991692/pexels-photo-7991692.jpeg?auto=compress&cs=tinysrgb&w=800',
+    title: 'One membership, every session',
+    desc: 'Pay your gym directly, once. No separate app subscriptions, no per-class fees — live classes and the full replay library are already included.',
+  },
+]
+
+function WhyMatpeak() {
+  return (
+    <section className="bg-[#18180f] border-t border-[#322f26]">
+      <div className="max-w-[1280px] mx-auto px-6 py-20">
+        <div className="mb-16 max-w-xl">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-6 h-px bg-[#b3402f]" />
+            <p className="font-mincho text-[11px] text-[#b3402f] tracking-[4px] uppercase">Why MATPEAK</p>
+          </div>
+          <h2 className="font-mincho font-normal text-4xl lg:text-5xl text-[#f0eadc] tracking-[.5px] leading-tight">Built for the way you actually train.</h2>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {WHY_MATPEAK.map(({ photo, title, desc }, i) => (
+            <motion.div
+              key={title}
+              initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.2, ease: 'easeOut', delay: i * 0.06 }}
+            >
+              <div className="relative aspect-[4/3] rounded-sm overflow-hidden mb-6">
+                <img
+                  src={photo}
+                  alt=""
+                  aria-hidden="true"
+                  className="w-full h-full object-cover grayscale contrast-110"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#141410]/60 via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-[#b3402f]/10 mix-blend-overlay" />
+              </div>
+              <h3 className="font-mincho font-normal text-2xl text-[#f0eadc] tracking-[.5px] leading-tight mb-3">{title}</h3>
+              <p className="font-mincho text-sm text-[#7a7568] leading-relaxed">{desc}</p>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
 const PRICING_FEATURES = [
   'Full access to live classes & replays',
   'AI session summaries & technique breakdowns',
@@ -525,6 +582,7 @@ export default function LandingPage() {
       <Hero />
       <Disciplines />
       <HowItWorks />
+      <WhyMatpeak />
       <Pricing />
       <CTABanner />
       <GymWaitlist />
